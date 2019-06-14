@@ -41,7 +41,7 @@ class syntax_plugin_webcomponent_math extends DokuWiki_Syntax_Plugin
     /**
      * How Dokuwiki will add P element
      *
-     * * 'normal' - The plugin can be used inside paragraphs
+     *  * 'normal' - The plugin can be used inside paragraphs
      *  * 'block'  - Open paragraphs need to be closed before plugin output - block should not be inside paragraphs
      *  * 'stack'  - Special case. Plugin wraps other paragraphs. - Stacks can contain paragraphs
      *
@@ -49,7 +49,7 @@ class syntax_plugin_webcomponent_math extends DokuWiki_Syntax_Plugin
      */
     function getPType()
     {
-        return 'block';
+        return 'normal';
     }
 
     /**
@@ -58,7 +58,7 @@ class syntax_plugin_webcomponent_math extends DokuWiki_Syntax_Plugin
      */
     public function getSort()
     {
-        return 1;
+        return 195;
     }
 
     /**
@@ -140,6 +140,7 @@ class syntax_plugin_webcomponent_math extends DokuWiki_Syntax_Plugin
 
             case 'metadata':
                 // Adding a meta to say that there is a math expression
+                global $ID;
                 /** @var Doku_Renderer_metadata $renderer */
                 $renderer->meta[self::MATH_EXPRESSION]=true;
                 $renderer->persistent[self::MATH_EXPRESSION]=true;

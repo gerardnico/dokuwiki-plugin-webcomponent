@@ -139,7 +139,12 @@ class syntax_plugin_webcomponent_card extends DokuWiki_Syntax_Plugin
             case DOKU_LEXER_ENTER:
 
                 // Suppress the component name
-                $match = utf8_substr($match, strlen($this->getPluginComponent()) + 1, -1);
+                // Suppress the <>
+                $match = utf8_substr($match, 1, -1);
+                // Suppress the tag name
+                foreach (self::getTags() as $tag) {
+                    $match = str_replace( $tag, "",$match);
+                }
                 $parameters = webcomponent::parseMatch($match);
                 return array($state, $parameters);
 

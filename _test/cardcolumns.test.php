@@ -7,7 +7,7 @@ require_once(__DIR__ . '/../webcomponent.php');
  * @group plugin_webcomponent
  * @group plugins
  */
-class plugin_webcomponent_teasercolumns_test extends DokuWikiTest
+class plugin_webcomponent_cardcolumns_test extends DokuWikiTest
 {
 
     protected $pluginsEnabled = [webcomponent::PLUGIN_NAME];
@@ -17,7 +17,7 @@ class plugin_webcomponent_teasercolumns_test extends DokuWikiTest
 
         $componentName = syntax_plugin_webcomponent_cardcolumns::getElementName();
 
-        $this->assertEquals('teaser-columns', $componentName);
+        $this->assertEquals('card-columns', $componentName);
 
     }
 

@@ -75,16 +75,18 @@ class syntax_plugin_webcomponent_cardcolumns extends DokuWiki_Syntax_Plugin
      */
     function connectTo($mode)
     {
-
-        $pattern = '<' . self::getElementName() . '.*?>(?=.*?</' . self::getElementName() . '>)';
-        $this->Lexer->addEntryPattern($pattern, $mode, 'plugin_' . webcomponent::PLUGIN_NAME . '_' . $this->getPluginComponent());
+        foreach (self::getTags() as $tag) {
+            $pattern = '<' . $tag . '.*?>(?=.*?</' . $tag . '>)';
+            $this->Lexer->addEntryPattern($pattern, $mode, 'plugin_' . webcomponent::PLUGIN_NAME . '_' . $this->getPluginComponent());
+        }
 
     }
 
     public function postConnect()
     {
-
-        $this->Lexer->addExitPattern('</' . self::getElementName() . '>', 'plugin_' . webcomponent::PLUGIN_NAME . '_' . $this->getPluginComponent());
+        foreach (self::getTags() as $tag) {
+            $this->Lexer->addExitPattern('</' . $tag . '>', 'plugin_' . webcomponent::PLUGIN_NAME . '_' . $this->getPluginComponent());
+        }
 
     }
 
@@ -108,8 +110,12 @@ class syntax_plugin_webcomponent_cardcolumns extends DokuWiki_Syntax_Plugin
 
             case DOKU_LEXER_ENTER:
 
-                // Suppress the component name
-                $match = utf8_substr($match, strlen(self::getElementName()) + 1, -1);
+                // Suppress the <>
+                $match = utf8_substr($match, 1, -1);
+                // Suppress the tag name
+                foreach (self::getTags() as $tag) {
+                    $match = str_replace( $tag, "",$match);
+                }
                 $parameters = webcomponent::parseMatch($match);
                 return array($state, $parameters);
 
@@ -157,9 +163,9 @@ class syntax_plugin_webcomponent_cardcolumns extends DokuWiki_Syntax_Plugin
     }
 
 
-    public static function getElementName()
+    public static function getTags()
     {
-        return 'teaser-columns';
+        return array ('teaser-columns','card-columns');
     }
 
 

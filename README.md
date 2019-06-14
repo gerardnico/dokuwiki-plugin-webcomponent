@@ -10,29 +10,20 @@ This plugin implements several Web UI Component.
 
 ## List
 
-  * [Markdown Atx Heading](https://spec.commonmark.org/0.29/#atx-heading)
+The list of component can be found [here](https://gerardnico.com/dokuwiki/webcomponent/)
+
+  
+## Release
+
+### 2019-06-14
+
+  * Implementation of the [Markdown Atx Heading](https://spec.commonmark.org/0.29/#atx-heading)
+  * First version
 
 ## TODO
 
   * Suppress in teaser - the card body if there is only a image
   * Rename teaser-columns with card columns
   * Implement: image bottom for card
-  
-## Features
-
-  * The search component has a tabindex of 1. Which means, if you do on Windows `Alt+D` + `Tab`, you comes directly in the search bar.  
-
-
-## Release
-
-### Current
-
-  * Implementation of the [Markdown Atx Heading](https://spec.commonmark.org/0.29/#atx-heading)
-  
-### 2019-02-12
-  * First version
-
-
-
 
 

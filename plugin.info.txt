@@ -1,7 +1,7 @@
 base    webcomponent
 author  Nicolas GERARD
 email   gerardnico@gmail.com
-date    2019-02-12
-name    Web Component Plugin
-desc    Several UI Web component
-url     https://gerardnico.com/dokuwiki/webcomponent
+date    2019-06-14
+name    Web Components Plugin
+desc    A collection of UI Web component
+url     https://gerardnico.com/dokuwiki/webcomponent/

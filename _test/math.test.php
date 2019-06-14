@@ -67,5 +67,28 @@ class plugin_webcomponent_math_test extends DokuWikiTest
 
     }
 
+    /**
+     * Test if the MathJs library were added
+     */
+    public function test_library_added()
+    {
+
+        global $conf;
+        $conf['template'] = 'bootie';
+
+        $pageId = webcomponent::getNameSpace() . 'test_library_added';
+        $doku_text = '<math>x^2</math>';
+        saveWikiText($pageId, $doku_text, 'test_indexer test library added');
+        idx_addPage($pageId);
+        $testRequest = new TestRequest();
+        $testResponse = $testRequest->get(array('id' => $pageId));
+        $divId = webcomponent::PLUGIN_NAME . '_' . syntax_plugin_webcomponent_math::getComponentName();
+        $mathJaxDiv = $testResponse->queryHTML('#' . $divId)->elements;
+        $expected = 1;
+        $this->assertEquals($expected, sizeof($mathJaxDiv));
+
+
+    }
+
 
 }
