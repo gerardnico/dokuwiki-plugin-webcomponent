@@ -1,3 +1,2 @@
-# additional requirements for this plugin:
-# https://github.com/splitbrain/dokuwiki-travis
+# additional requirements for this plugin: https://github.com/splitbrain/dokuwiki-travis
 https://github.com/gerardnico/dokuwiki-template-bootie.git   lib/tpl/bootie
