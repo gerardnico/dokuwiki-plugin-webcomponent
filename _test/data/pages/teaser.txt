@@ -1,43 +1,10 @@
 ====== Teaser ======
 
 ===== About =====
-Page demonstrating a teaser.
+A teaser is just an alias for [[card|card]]. A teaser in essence is just a card that calls to click on an link/[[button|button]]
 
-A teaser is [[card|card]] that calls to click on an link.
-
-Exception: A teaser may have only a image.
+See [[card]]
 
 ===== Articles Related =====
 {{backlinks>.}}
 
-===== Visual =====
-
-\\
-<teaser-columns>
-<teaser >
-{{dokuwiki:webcomponent:teaser_image_1.png?30|}}
-=== Teaser Title  ===
-A example taken from [[https://getbootstrap.com/docs/4.3/components/card/#example|the bootstrap quick example]] on how to build a card title in order to make up the bulk of the teaser content. 
-<btn>[[dokuwiki:webcomponent:start|Go to this page !]]</btn>
-</teaser>
-
-<teaser>
-{{dokuwiki:webcomponent:teaser_image_2.jpg?25|}}
-=== Teaser Title  ===
-A example taken from [[https://getbootstrap.com/docs/4.3/components/card/#example|the bootstrap quick example]] on how to build a card title in order to make up the bulk of the teaser content.
-<btn>[[dokuwiki:webcomponent:start|Go to this page !]]</btn>
-</teaser>
-
-<teaser>
-
-=== Teaser Title  ===
-A example taken from [[https://getbootstrap.com/docs/4.3/components/card/#example|the bootstrap quick example]] on how to build a card title in order to make up the bulk of the teaser content.
-<btn>[[dokuwiki:webcomponent:start|Go to the index !]]</btn>
-</teaser>
-
-<teaser >
-{{dokuwiki:webcomponent:teaser_image_1.png?30|}}
-</teaser>
-
-
-</teaser-columns>

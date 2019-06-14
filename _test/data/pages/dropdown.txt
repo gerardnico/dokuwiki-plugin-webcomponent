@@ -8,24 +8,22 @@
 {{backlinks>.}}
 ===== Example =====
 
-<code>
+<webcode name="dropdown" frameborder=0 width=100% scrolling=yes externalResources="," renderingMode=story >
+<code dw>
+<navbar>
 <group>
-<dropdown name="DropDown Menu">
-[[test|First]]
-[[test2|Second]]
-[[test3|Second]]
+<dropdown name="Navbar component">
+[[dokuwiki:webcomponent:dropdown|dropdown]]
+[[dokuwiki:webcomponent:group|group]]
+[[dokuwiki:webcomponent:search|search]]
 </dropdown>
 </group>
+</navbar>
 </code>
+</webcode>
 
-Output:
-<group>
-<dropdown name="DropDown Menu">
-[[test|First]]
-[[test2|Second]]
-[[test3|Second]]
-</dropdown>
-</group>
+
+
 
 
 

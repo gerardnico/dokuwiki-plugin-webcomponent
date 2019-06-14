@@ -1,11 +1,17 @@
-# WebComponent - Heading
+# WebComponent - Heading (AtxMarkdown)
 
 ## Header 2
 
 This section is using a [[https://spec.commonmark.org/0.29/#atx-heading|Atx Markdown heading]] and should show a TOC.
 
-## Header 2
+===== Articles Related =====
+{{backlinks>.}}
 
-### Header 3
+## Example
 
-### Header 3
+<code dw>
+# First heading
+## Second heading
+### Third heading
+#### Fourth heading
+</code>

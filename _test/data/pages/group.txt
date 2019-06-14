@@ -11,12 +11,19 @@ This is used mostly if you want a group of element at the right and an other at 
 
 ===== Example =====
 The first group will be at the left and the search form at the right
-<code>
+<webcode name="Default" frameborder=0 width=100% scrolling=yes externalResources="," renderingMode=story >
+<code dw>
+<navbar>
 <group class="mr-auto">
-   <dropdown name="My First Menu"
-       [[link|link]]
-   </dropdown>
+<dropdown name="Nav Menu">
+[[dokuwiki:webcomponent:navbar|Navbar]]
+[[dokuwiki:webcomponent:dropdown|DropDown]]
+[[dokuwiki:webcomponent:search|Search]]
+</dropdown>
 </group>
 <search>
+</navbar>
 </code>
+</webcode>
+
 

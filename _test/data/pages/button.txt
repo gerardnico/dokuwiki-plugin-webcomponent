@@ -8,5 +8,10 @@
 
 ===== Example =====
 
+<webcode name="Button" frameborder=0 width=100% scrolling=yes externalResources="," renderingMode=story >
+<code dw>
 <btn>[[dokuwiki:webcomponent:start|Go to Web Component]]</btn>
+</code>
+</webcode>
+
 
