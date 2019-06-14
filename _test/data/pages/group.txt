@@ -1,0 +1,22 @@
+====== WebComponent - Group ======
+
+
+===== About =====
+''group'' implements the ''navbar-nav'' element that is used in a [[navbar|navbar]] to group element.
+
+This is used mostly if you want a group of element at the right and an other at the left
+
+===== Articles Related =====
+{{backlinks>.}}
+
+===== Example =====
+The first group will be at the left and the search form at the right
+<code>
+<group class="mr-auto">
+   <dropdown name="My First Menu"
+       [[link|link]]
+   </dropdown>
+</group>
+<search>
+</code>
+

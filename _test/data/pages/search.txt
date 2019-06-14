@@ -1,0 +1,23 @@
+====== WebComponent - Search ======
+
+
+===== About =====
+''search'' is a component that implement the [[doku>search|dokuwiki search form]] in a [[https://getbootstrap.com/docs/4.0/components/navbar/#forms|Bootstrap format]].
+
+It must be in a [[navbar|navbar component]].
+
+===== Articles Related =====
+{{backlinks>.}}
+
+===== Syntax =====
+
+<code>
+<search>
+</code>
+
+===== Example =====
+<code>
+<navbar>
+<search>
+</navbar>
+</code>

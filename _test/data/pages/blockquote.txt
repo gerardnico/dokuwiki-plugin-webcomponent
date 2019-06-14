@@ -1,0 +1,45 @@
+====== WebComponent - blockquote ======
+
+
+
+===== About =====
+A ''blockquote'' component is a [[teaser|card]]
+
+A blockquote has always:
+  * the text at the left side
+  * the citation at the right side
+  * a margin of [[https://getbootstrap.com/docs/4.0/utilities/spacing/|m-3]]
+
+===== Articles Related =====
+{{backlinks>.}}
+
+===== Example =====
+
+
+<teaser-columns>
+<blockquote>
+A Blockquote is a [[card|card]]
+{{:dokuwiki:webcomponent:teaser_image_1.png?400}}
+<cite>Say the [[card|card]]</cite>
+</blockquote>
+
+<blockquote>
+My Blockquote Without Cite
+{{:dokuwiki:webcomponent:teaser_image_2.jpg}}
+</blockquote>
+
+<blockquote>
+My Blockquote With Citation
+<cite>Citation</cite>
+</blockquote>
+
+
+</teaser-columns>
+
+<blockquote>Thanks for stopping by. This website is the personal website of a computer scientist, trainee for life.
+
+
+Welcome !
+
+<cite>Nico</cite>
+</blockquote>

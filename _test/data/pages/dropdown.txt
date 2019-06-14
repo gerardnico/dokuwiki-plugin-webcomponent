@@ -1,0 +1,31 @@
+====== Dropdown ======
+
+===== About =====
+''dropdown'' are a dropdown list for the [[navbar|navbar]] that must be placed inside a [[group|group]] element.
+
+
+===== Articles Related =====
+{{backlinks>.}}
+===== Example =====
+
+<code>
+<group>
+<dropdown name="DropDown Menu">
+[[test|First]]
+[[test2|Second]]
+[[test3|Second]]
+</dropdown>
+</group>
+</code>
+
+Output:
+<group>
+<dropdown name="DropDown Menu">
+[[test|First]]
+[[test2|Second]]
+[[test3|Second]]
+</dropdown>
+</group>
+
+
+

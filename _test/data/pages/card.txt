@@ -1,0 +1,27 @@
+====== Card ======
+
+===== About =====
+A card is content in a square.
+
+===== List =====
+  * [[teaser]]
+  * [[blockquote]]
+
+
+===== Card Columns =====
+<teaser-columns>
+<teaser >
+{{dokuwiki:webcomponent:teaser_image_1.png?30|}}
+=== Teaser Title  ===
+A example taken from [[https://getbootstrap.com/docs/4.3/components/card/#example|the bootstrap quick example]] on how to build a card title in order to make up the bulk of the teaser content. 
+<btn>[[dokuwiki:webcomponent:start|Go to this page !]]</btn>
+</teaser>
+
+
+<blockquote class="" >
+Lorem ipsum [[dokuwiki:webcomponent:start|dolor]] sit amet, consectetur adipiscing elit. Integer posuere erat a ante.
+<cite>Someone famous in [[dokuwiki:webcomponent:start|Source Title]]</cite>
+</blockquote>
+
+
+</teaser-columns>

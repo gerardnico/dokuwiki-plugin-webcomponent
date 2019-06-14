@@ -1,0 +1,12 @@
+====== Button ======
+
+===== About =====
+''Button'' example
+
+===== Articles Related =====
+{{backlinks>.}}
+
+===== Example =====
+
+<btn>[[dokuwiki:webcomponent:start|Go to Web Component]]</btn>
+

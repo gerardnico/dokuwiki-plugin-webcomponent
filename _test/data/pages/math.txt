@@ -1,0 +1,17 @@
+====== Math ======
+
+===== About =====
+''math'' component
+
+===== Articles Related =====
+{{backlinks>.}}
+
+===== Example =====
+
+==== Block ====
+
+<MATH>x^2</MATH>
+
+==== In-line ====
+
+<math>x^2</math>
