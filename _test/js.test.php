@@ -38,7 +38,7 @@ class plugin_webcomponent_js_test extends DokuWikiTest
     }
 
     /**
-     * Add a query string to make a difference between a SHOW and a EDIT act.
+     * Add a query string to make a difference between public and editor
      */
     public function test_js_show_query_string()
     {
@@ -51,7 +51,7 @@ class plugin_webcomponent_js_test extends DokuWikiTest
         $testRequest = new TestRequest();
         $testResponse = $testRequest->get(array('id' => $pageId));
         $jsSrcAttribute = $testResponse->queryHTML('script[src*="js.php"]' )->attr('src');
-        $pos = strpos($jsSrcAttribute,'act=show');
+        $pos = strpos($jsSrcAttribute,action_plugin_webcomponent_js::ACCESS.'=public');
         $this->assertEquals(true, $pos > 0);
 
 

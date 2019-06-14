@@ -37,7 +37,10 @@ class plugin_webcomponent_math_test extends DokuWikiTest
             $doku_text = '<' . $element . '>' . $content . '</' . $element . '>';
             $instructions = p_get_instructions($doku_text);
             $xhtml = p_render('xhtml', $instructions, $info);
-            $expected = '&lt;'.$element.'&gt;[[link]]&lt;/'.$element.'&gt;';
+            $expected = DOKU_LF.
+                '<p>'.DOKU_LF.
+                '&lt;'.$element.'&gt;[[link]]&lt;/'.$element.'&gt;'.DOKU_LF.
+                '</p>'.DOKU_LF;
             $this->assertEquals($expected, $xhtml);
         }
 

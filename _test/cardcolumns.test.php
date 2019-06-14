@@ -15,15 +15,18 @@ class plugin_webcomponent_cardcolumns_test extends DokuWikiTest
 
     public function test_component_name() {
 
-        $componentName = syntax_plugin_webcomponent_cardcolumns::getElementName();
-
-        $this->assertEquals('card-columns', $componentName);
+        $componentNames = syntax_plugin_webcomponent_cardcolumns::getTags();
+        $tags = array (
+            'card-columns',
+            'teaser-columns'
+        );
+        $this->assertEquals($tags, $componentNames);
 
     }
 
     public function test_base() {
 
-        $componentName = syntax_plugin_webcomponent_cardcolumns::getElementName();
+        $componentName = syntax_plugin_webcomponent_cardcolumns::getTags()[0];
         $doku_text = '<'. $componentName .'>'.DOKU_LF.
             '<'.syntax_plugin_webcomponent_card::getTag().' style="width: 18rem;">'.DOKU_LF.
             '===== Title ====='.DOKU_LF.

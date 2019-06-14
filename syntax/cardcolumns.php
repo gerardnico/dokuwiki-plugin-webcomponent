@@ -165,7 +165,7 @@ class syntax_plugin_webcomponent_cardcolumns extends DokuWiki_Syntax_Plugin
 
     public static function getTags()
     {
-        return array ('teaser-columns','card-columns');
+        return array ('card-columns','teaser-columns');
     }
 
 
