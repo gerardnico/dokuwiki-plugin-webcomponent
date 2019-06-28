@@ -1,0 +1,24 @@
+====== Web Component ======
+
+===== About =====
+
+This is the demo website of the [[https://www.dokuwiki.org/plugin:webcomponent|Web Component dokuwiki plugin]]
+
+===== Components =====
+
+  * [[card]]:
+      * [[card_column|Card column]]
+      * [[blockquote|blockquote]]
+      * [[button]]
+  * [[math]]
+  * [[button|button (btn)]]
+  * [[navbar|navbar]]
+      * [[search|search]]
+      * [[group|group]]
+      * [[dropdown|dropdown]]
+  * [[heading|heading (Markdown Atx)]]
+  * [[blockquote|blockquote]]
+  * [[doku>wiki:syntax#code_blocks|code block]] extension
+      * [[console|console]]
+      * [[unit|unit]]
+  * [[related|related]]

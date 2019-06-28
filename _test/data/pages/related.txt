@@ -1,0 +1,20 @@
+====== WebComponent - Related ======
+
+
+===== About =====
+''related'' is a [[webcomponent|webcomponent]] that shows the backlinks of a page ordered by pages importance where the page that has the more links toward it is the more important.
+
+===== Articles Related =====
+{{backlinks>.}}
+
+===== Syntax =====
+
+<webcode name="Default" frameborder=0 width=100% scrolling=yes externalResources="," renderingMode=story >
+<code dw>
+<related/>
+</code>
+</webcode>
+
+===== Configuration =====
+  * The max numbers of backlinks can be set
+  * An extra pattern can also be set if you come for instance from the ''backlinks'' plugin.
