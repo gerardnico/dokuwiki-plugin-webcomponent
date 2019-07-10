@@ -14,7 +14,7 @@ class plugin_webcomponent_test extends DokuWikiTest
 
     public function test_parse_parameters_base()
     {
-        $match = ' class="nico" ';
+        $match = ' class="nico"';
         $parameters = webcomponent::parseMatch($match);
         $this->assertEquals("nico", $parameters["class"]);
 

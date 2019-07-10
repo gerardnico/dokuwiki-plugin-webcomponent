@@ -23,6 +23,12 @@ class syntax_plugin_webcomponent_unit extends DokuWiki_Syntax_Plugin
 
 
 
+
+    private static function getTag()
+    {
+        return webcomponent::getTagName(get_called_class());
+    }
+
     /*
      * What is the type of this plugin ?
      * This a plugin categorization
@@ -93,9 +99,15 @@ class syntax_plugin_webcomponent_unit extends DokuWiki_Syntax_Plugin
 
             case DOKU_LEXER_ENTER :
 
+                // Suppress the tag name
+                $match = utf8_substr($match, strlen(self::getTag()) + 1, -1);
+                $parameters = webcomponent::parseMatch($match);
+                return array($state, $parameters);
+
                 break;
 
             case DOKU_LEXER_UNMATCHED :
+
 
                 
                 // 
@@ -105,8 +117,8 @@ class syntax_plugin_webcomponent_unit extends DokuWiki_Syntax_Plugin
                 // cdata  means normal text ??? See xhtml.php function cdata
                 // What it does exactly, I don't know
                 // but as we want to process the content
-                // w need to add a call to the lexer to go further
-                $handler->_addCall('cdata', array($match), $pos, null);
+                // we need to add a call to the lexer to go further
+                //$handler->_addCall('cdata', array($match), $pos, null);
                 break;
 
             case DOKU_LEXER_EXIT:
@@ -120,6 +132,10 @@ class syntax_plugin_webcomponent_unit extends DokuWiki_Syntax_Plugin
     /**
      * Create output
      * The rendering process
+     * @param string $mode
+     * @param Doku_Renderer $renderer
+     * @param array $data
+     * @return bool
      */
     public function render($mode, Doku_Renderer $renderer, $data)
     {
@@ -129,15 +145,29 @@ class syntax_plugin_webcomponent_unit extends DokuWiki_Syntax_Plugin
         // There is other mode such as metadata, odt 
         if ($mode == 'xhtml') {
 
-            $state = $data[0];
-            // No Unmatched because it's handled in the handle function
+            /**
+             * To help the parser recognize that _xmlEntities is a function of Doku_Renderer_xhtml
+             * and not of Doku_Renderer
+             *
+             * @var Doku_Renderer_xhtml $renderer
+             */
+
+            list($state, $parameters) = $data;
             switch ($state) {
 
                 case DOKU_LEXER_ENTER :
-                    $renderer->doc .= '<div class=".'.self::NODE_NAME.'.">';
+
+                    $renderer->doc .= '<div class="webcomponent_'.self::getTag() .'"';
+                    // Normally none
+                    if ($parameters['display']){
+                        $renderer->doc .= ' style="display:'.$parameters['display'].'" ';
+                    }
+                    $renderer->doc .= '>';
                     break;
 
+
                 case DOKU_LEXER_EXIT :
+
                     $renderer->doc .= '</div>';
                     break;
             }
