@@ -118,11 +118,13 @@ class syntax_plugin_webcomponent_unit extends DokuWiki_Syntax_Plugin
                 // What it does exactly, I don't know
                 // but as we want to process the content
                 // we need to add a call to the lexer to go further
-                //$handler->_addCall('cdata', array($match), $pos, null);
+                // Comes from the wrap plugin
+                $handler->_addCall('cdata', array($match), $pos, null);
                 break;
 
             case DOKU_LEXER_EXIT:
 
+                return array($state, '');
                 break;
 
         }
