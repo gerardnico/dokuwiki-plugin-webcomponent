@@ -153,20 +153,20 @@ class syntax_plugin_webcomponent_related extends DokuWiki_Syntax_Plugin
 
             $relatedPages = $this->related($id);
 
-            $renderer->doc .= '<div id="'.self::getElementId().'" class="'.self::getElementName().'-container">' . DW_LF;
+            $renderer->doc .= '<div id="'.self::getElementId().'" class="'.self::getElementName().'-container">' . DOKU_LF;
 
             if (empty($relatedPages)) {
 
                 // Dokuwiki debug
                 dbglog("No Backlinks", "Related plugins: all backlinks for page: $id");
-                $renderer->doc .= "<strong>Plugin ".webcomponent::PLUGIN_NAME." - Component ".self::getElementName().": " . $lang['nothingfound'] . "</strong>" . DW_LF;
+                $renderer->doc .= "<strong>Plugin ".webcomponent::PLUGIN_NAME." - Component ".self::getElementName().": " . $lang['nothingfound'] . "</strong>" . DOKU_LF;
 
             } else {
 
                 // Dokuwiki debug
                 dbglog($relatedPages, self::getElementName()." plugins: all backlinks for page: $id");
 
-                $renderer->doc .= '<ul>' . DW_LF;
+                $renderer->doc .= '<ul>' . DOKU_LF;
 
                 foreach ($relatedPages as $backlink) {
                     $backlinkId = $backlink[self::RELATED_PAGE_ID_PROP];
@@ -186,14 +186,14 @@ class syntax_plugin_webcomponent_related extends DokuWiki_Syntax_Plugin
                             $return = true
                             );
                     }
-                    $renderer->doc .= '</li>' . DW_LF;
+                    $renderer->doc .= '</li>' . DOKU_LF;
                 }
 
-                $renderer->doc .= '</ul>' . DW_LF;
+                $renderer->doc .= '</ul>' . DOKU_LF;
 
             }
 
-            $renderer->doc .= '</div>' . DW_LF;
+            $renderer->doc .= '</div>' . DOKU_LF;
 
             return true;
         }

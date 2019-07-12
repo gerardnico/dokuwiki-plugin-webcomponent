@@ -16,5 +16,5 @@
 </webcode>
 
 ===== Configuration =====
-  * The max numbers of backlinks can be set
-  * An extra pattern can also be set if you come for instance from the ''backlinks'' plugin.
+  * The max numbers of backlinks can be set. Default value: ''10''
+  * An extra pattern can also be set if you come for instance from the ''backlinks'' plugin. Default value: ''%%{{backlinks>.}}%%''
