@@ -16,7 +16,7 @@ echo Copying the pages:
 echo   * from %WEB_COMPO_VISUAL_PAGES%
 echo   * to %WEB_COMPO_VISUAL_PAGES_DST%
 echo .
-call cp %WEB_COMPO_VISUAL_PAGES% %WEB_COMPO_VISUAL_PAGES_DST%
+call copy %WEB_COMPO_VISUAL_PAGES% %WEB_COMPO_VISUAL_PAGES_DST%
 echo .
 
 SET WEB_COMPO_VISUAL_MEDIAS=%DOKU_DATA%\media\dokuwiki\webcomponent
@@ -26,6 +26,6 @@ echo Copying the images:
 echo   * from %WEB_COMPO_VISUAL_MEDIAS%
 echo   * to %WEB_COMPO_VISUAL_MEDIAS_DST%
 echo .
-call cp /V /Y %WEB_COMPO_VISUAL_MEDIAS% %WEB_COMPO_VISUAL_MEDIAS_DST%
+call copy /V /Y %WEB_COMPO_VISUAL_MEDIAS% %WEB_COMPO_VISUAL_MEDIAS_DST%
 echo .
 echo Done

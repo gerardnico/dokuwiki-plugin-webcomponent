@@ -26,7 +26,11 @@ class syntax_plugin_webcomponent_card extends DokuWiki_Syntax_Plugin
 
     // Pattern that we expect in a card (teaser)
     const HEADER_PATTERN = '[ \t]*={2,}[^\n]+={2,}[ \t]*(?=\n)';
-    const IMAGE_PATTERN = "\{\{(?:[^\}]|(?:\}[^\}]))+\}\}";
+
+    // The > in the pattern below is to be able to handle pluggin
+    // that uses a pattern such as {{changes>.}} from the change plugin
+    // https://github.com/cosmocode/changes/blob/master/syntax.php
+    const IMAGE_PATTERN = "\{\{(?:[^>\}]|(?:\}[^\}]))+\}\}";
 
 
     // The elements of a teaser

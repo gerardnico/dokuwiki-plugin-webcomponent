@@ -5,3 +5,21 @@
     margin-top: unset;
     margin-bottom: .75rem;
 }
+
+.card ul {
+    padding-left: 1em;
+    list-style-type: none;
+}
+
+.card ul {
+    padding-left: 0em;
+    list-style-type: none;
+}
+
+.card ul li:before {
+    content: "- ";
+}
+
+.card ul div {
+    display: inline;
+}
