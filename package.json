@@ -1,0 +1,23 @@
+{
+  "name": "webco",
+  "version": "1.0.0",
+  "description": "A bundler",
+  "private": true,
+  "main": "index.ts",
+  "scripts": {
+    "build": "cross-env NODE_ENV=production webpack --mode 'production'",
+    "watch": "webpack --watch",
+    "start": "cross-env NODE_ENV=development webpack-dev-server --progress -d --inline --open",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "devDependencies": {
+    "@types/jquery": "^3.3.31",
+    "ts-loader": "^6.2.1",
+    "typescript": "^3.7.3",
+    "webpack": "~4.20.2",
+    "webpack-cli": "~3.1.2"
+  },
+  "peerDependencies": {
+    "jquery": "^3.4.1"
+  }
+}

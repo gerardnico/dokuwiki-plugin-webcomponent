@@ -1,0 +1,5 @@
+
+
+
+
+export {consent} from './gdpr';

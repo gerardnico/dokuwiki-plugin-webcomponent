@@ -1,0 +1,20 @@
+{
+  "compilerOptions": {
+    "noImplicitAny": true,
+    "module": "es6",
+    "target": "es5",
+    "lib": ["es6", "dom", "es2017"],
+    "removeComments": true,
+    "allowJs": true,
+    "types": [
+      "jquery"
+    ]
+  },
+  "include": [
+    "js/*.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "**/*.spec.ts"
+  ]
+}
