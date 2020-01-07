@@ -1,5 +1,5 @@
 import * as jQuery from 'jquery';
-import * as country from './Country';
+import * as Country from './Country';
 
 // // Must be started after page load
 // jQuery(function () {
@@ -10,13 +10,7 @@ import * as country from './Country';
 // );
 
 
-// The key to store the consent (true, false or nonEur)
-import {getCountry} from "./Country";
-
 let consentKey: string = 'consent_gdpr';
-
-// They key to store the country why not
-let countryKey: string = 'country_code';
 
 // Consent Value set if the country is not an EU country
 let consentValueNonEu: string = 'nonEu';
@@ -80,7 +74,7 @@ function consentBox(config: Config) {
 }
 
 
-export function consent(config: Config) {
+export async function consent(config: Config) {
 
     let consentStorage: string = localStorage.getItem(consentKey);
     if (consentStorage==null) {
@@ -90,8 +84,8 @@ export function consent(config: Config) {
     let consent: boolean = ( consentStorage !== 'true' && consentStorage !== consentValueNonEu);
     if (consent) {
 
-        let countryCode: country = country.getCountry();
-        if (country.isEu(countryCode)) {
+        let country: Country.country = await Country.getCountry();
+        if (Country.isEu(country)) {
             consentBox(config);
         } else {
             localStorage.setItem(consentKey, consentValueNonEu);

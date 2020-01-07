@@ -19,56 +19,29 @@ export interface country {
     country: string
 }
 
-export function isEu(country: country):boolean {
-    let euCountryCodes: string[] = ['AL', 'AD', 'AM', 'AT', 'BY', 'BE', 'BA', 'BG', 'CH', 'CY', 'CZ', 'DE', 'DK', 'EE', 'ES', 'FO', 'FI', 'FR', 'GB', 'GE', 'GI', 'GR', 'HU', 'HR', 'IE', 'IS', 'IT', 'LT', 'LU', 'LV', 'MC', 'MK', 'MT', 'NO', 'NL', 'PO', 'PT', 'RO', 'RU', 'SE', 'SI', 'SK', 'SM', 'TR', 'UA', 'VA'];
-    return euCountryCodes.lastIndexOf(country.country2) > -1;
+export function isEu(country: country): boolean {
+    try {
+        let euCountryCodes: string[] = ['AL', 'AD', 'AM', 'AT', 'BY', 'BE', 'BA', 'BG', 'CH', 'CY', 'CZ', 'DE', 'DK', 'EE', 'ES', 'FO', 'FI', 'FR', 'GB', 'GE', 'GI', 'GR', 'HU', 'HR', 'IE', 'IS', 'IT', 'LT', 'LU', 'LV', 'MC', 'MK', 'MT', 'NO', 'NL', 'PO', 'PT', 'RO', 'RU', 'SE', 'SI', 'SK', 'SM', 'TR', 'UA', 'VA'];
+        return euCountryCodes.lastIndexOf(country.country2) > -1;
+    } catch (e) {
+        console.error("Unable to determine if the country is a EU country for the country (%o) %s", country, e.message);
+    }
 }
 
 /**
  *
- * @returns {string} the country code on two characters
+ * @returns {country} the country object
  */
-export function getCountry(): country {
+export async function getCountry(): Promise<country> {
 
-    let countryString : string = localStorage.getItem(countryKey);
+    let countryString: string = localStorage.getItem(countryKey);
 
-    if (countryString == null ) {
-        jQuery.ajax(
-            'https://api.gerardnico.com/ip',
-            {
-                success: function (data: ipJson) {
-                    let country: country =  {
-                        country2: data.country2,
-                        country3: data.country3,
-                        country: data.country,
-                    }
-                    localStorage.setItem(countryKey, JSON.stringify(country));
-                    return country;
-                },
-                error: function() {
-                    // An error occurred, trying the fallback
-                    jQuery.ajax(
-                        'https://ip2c.org/self',
-                        {
-                            success: function (data: string) {
-                                let strings = data.split(";");
-                                let result: string = strings[0];
-                                let country: country = {
-                                    country2: strings[1],
-                                    country3: strings[2],
-                                    country: strings[3],
-                                };
-                                // the country was found in the database, otherwise it return 2;;;UNKNOWN
-                                if (result=='1') {
-                                    localStorage.setItem(countryKey, JSON.stringify(country));
-                                }
-                                return country;
-                            }
-                        }
-                    )
-                }
-            }
-        )
+    if (countryString == null) {
+
+        let ctry: country = await getCountryFromBackend();
+        localStorage.setItem(countryKey, JSON.stringify(ctry));
+        return ctry;
+
     } else {
 
         return JSON.parse(countryString);
@@ -77,7 +50,46 @@ export function getCountry(): country {
 
 }
 
+async function getCountryFromBackend(): Promise<country> {
+    let fetchedCountry: ipJson = null;
+    try {
+
+        fetchedCountry = await jQuery.ajax('https://api.gerardnico.com/ip');
+
+    } catch (e) {
+
+        console.error("Unable to fetch the country from the backend (" + e.message + ")");
+
+    }
+
+    if (fetchedCountry != null) {
+        return {
+            country2: fetchedCountry.country2,
+            country3: fetchedCountry.country3,
+            country: fetchedCountry.country,
+        }
+    } else {
+        
+        return await getCountryFromIp2c();
+
+    }
 
 
+}
 
-
+async function getCountryFromIp2c(): Promise<country> {
+    console.log("Fetching the country from ip2c");
+    try {
+        const fetchedCountry: string = await jQuery.ajax('https://ip2c.org/self');
+        let strings = fetchedCountry.split(";");
+        // let result: string = strings[0];
+        // if the country was not found in the database, it returns the string '2;;;UNKNOWN'
+        return {
+            country2: strings[1],
+            country3: strings[2],
+            country: strings[3],
+        };
+    } catch (e) {
+        console.error("Unable to fetch the country from ip2c (" + e.message + ")");
+    }
+}
