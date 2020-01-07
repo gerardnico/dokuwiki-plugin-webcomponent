@@ -1,5 +1,5 @@
 import * as jQuery from 'jquery';
-import * as country from 'country';
+import * as country from './Country';
 
 // // Must be started after page load
 // jQuery(function () {
@@ -11,7 +11,7 @@ import * as country from 'country';
 
 
 // The key to store the consent (true, false or nonEur)
-import {getCountry} from "./country";
+import {getCountry} from "./Country";
 
 let consentKey: string = 'consent_gdpr';
 

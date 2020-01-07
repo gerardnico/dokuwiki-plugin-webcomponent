@@ -7,14 +7,16 @@
     "removeComments": true,
     "allowJs": true,
     "types": [
-      "jquery"
+      "jquery",
+      "jest"
     ]
   },
   "include": [
-    "js/*.ts"
+    "js/*.ts",
   ],
   "exclude": [
     "node_modules",
-    "**/*.spec.ts"
+    "**/*.spec.ts",
+    "**/*.test.ts",
   ]
 }

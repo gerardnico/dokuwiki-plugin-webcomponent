@@ -13,7 +13,7 @@ interface ipJson {
     country: string
 }
 
-interface country {
+export interface country {
     country2: string,
     country3: string,
     country: string
@@ -59,7 +59,7 @@ export function getCountry(): country {
                                     country: strings[3],
                                 };
                                 // the country was found in the database, otherwise it return 2;;;UNKNOWN
-                                if (result==1) {
+                                if (result=='1') {
                                     localStorage.setItem(countryKey, JSON.stringify(country));
                                 }
                                 return country;
