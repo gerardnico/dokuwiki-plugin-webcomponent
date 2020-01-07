@@ -1,0 +1,21 @@
+
+module.exports = api => {
+    // Jest will set process.env.NODE_ENV to 'test' if it's not set to something else.
+    const isTest = api.env('test');
+    // You can use isTest to determine what presets and plugins to use.
+
+    return {
+        presets: [
+            [
+                '@babel/preset-env',
+                '@babel/preset-typescript',
+                {
+                    targets: {
+                        node: 'current',
+                    },
+                },
+            ],
+        ],
+    };
+
+};

@@ -8,10 +8,15 @@
     "build": "cross-env NODE_ENV=production webpack --mode 'production'",
     "watch": "webpack --watch",
     "start": "cross-env NODE_ENV=development webpack-dev-server --progress -d --inline --open",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest"
   },
   "devDependencies": {
+    "@babel/core": "^7.7.7",
+    "@babel/preset-env": "^7.7.7",
     "@types/jquery": "^3.3.31",
+    "babel-cli": "^6.26.0",
+    "babel-jest": "^24.9.0",
+    "jest": "^24.9.0",
     "ts-loader": "^6.2.1",
     "typescript": "^3.7.3",
     "webpack": "~4.20.2",
