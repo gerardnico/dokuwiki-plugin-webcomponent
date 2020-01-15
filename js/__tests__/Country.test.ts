@@ -1,4 +1,7 @@
 import * as Country from "../Country";
+import Gdpr from "../Gdpr"
+
+
 
 test('France is a eur country', () => {
     let country: Country.country = {
@@ -10,14 +13,18 @@ test('France is a eur country', () => {
     expect(isEu).toBe(true);
 });
 
-describe('Google', () => {
-    
+
+describe('Consent Box', () => {
     beforeAll(async () => {
-        await page.goto('https://google.com')
+        await page.goto('http://localhost:8080')
     })
 
-    it('should display "google" text on page', async () => {
-        await expect(page).toMatch('google')
+    it('Should load the Consent Popup', async () => {
+        page.on('console', msg => console.log('PAGE LOG:', msg.text()));
+        await page.evaluate(() => console.log(`url is ${location.href}`));
+        await page.evaluate((storageKey) => {
+            localStorage.removeItem(storageKey);
+        }, Gdpr.storage_key);
+        await expect(page).toMatchElement('#' + Gdpr.element_id)
     })
-    
 })

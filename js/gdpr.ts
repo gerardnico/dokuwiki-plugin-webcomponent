@@ -10,7 +10,8 @@ import * as Country from './Country';
 // );
 
 
-let consentKey: string = 'consent_gdpr';
+export const consentKey: string = 'consent_gdpr';
+export const consentBoxId: string = 'gdpr_consent';
 
 // Consent Value set if the country is not an EU country
 let consentValueNonEu: string = 'nonEu';
@@ -34,7 +35,6 @@ function consentBox(config: Config) {
     if (typeof config.message === 'undefined') {
         config.message = 'By using our site, you acknowledge that you have read and understand our policy.';
     }
-    let consentBoxId: string = 'gdpr_consent';
     let consentBoxSelector: string = '#' + consentBoxId;
     let consentBox: string = `
                 <div id="${consentBoxId}" class="container alert alert-secondary alert-dismissible fixed-bottom text-center fade" role="alert" >
@@ -98,7 +98,11 @@ export async function consent(config: Config) {
 }
 
 
-
+export default {
+    consent: consent,
+    storage_key: consentKey,
+    element_id : consentBoxId
+}
 
 
 

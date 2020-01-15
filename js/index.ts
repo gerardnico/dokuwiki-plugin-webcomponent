@@ -2,4 +2,4 @@
 
 
 
-export {consent} from './Gdpr';
+export { consent } from './Gdpr';
