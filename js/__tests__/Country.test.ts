@@ -1,4 +1,4 @@
-import * as Country from "../js/Country";
+import * as Country from "../Country";
 
 test('France is a eur country', () => {
     let country: Country.country = {
@@ -9,5 +9,6 @@ test('France is a eur country', () => {
     let isEu = Country.isEu(country)
     expect(isEu).toBe(true);
 });
+
 
 

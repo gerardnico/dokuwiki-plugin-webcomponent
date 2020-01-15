@@ -39,8 +39,16 @@ export async function getCountry(): Promise<country> {
     if (countryString == null) {
 
         let ctry: country = await getCountryFromBackend();
-        localStorage.setItem(countryKey, JSON.stringify(ctry));
-        return ctry;
+        if (ctry ==null){
+            ctry = await getCountryFromIp2c();
+        }
+
+        if (ctry !=null){
+            localStorage.setItem(countryKey, JSON.stringify(ctry));
+            return ctry;
+        } else {
+            return null;
+        }
 
     } else {
 
@@ -50,27 +58,25 @@ export async function getCountry(): Promise<country> {
 
 }
 
+/**
+ * Return null if an error occurs
+ */
 async function getCountryFromBackend(): Promise<country> {
     let fetchedCountry: ipJson = null;
     try {
 
         fetchedCountry = await jQuery.ajax('https://api.gerardnico.com/ip');
-
-    } catch (e) {
-
-        console.error("Unable to fetch the country from the backend (" + e.message + ")");
-
-    }
-
-    if (fetchedCountry != null) {
+        
         return {
             country2: fetchedCountry.country2,
             country3: fetchedCountry.country3,
             country: fetchedCountry.country,
         }
-    } else {
-        
-        return await getCountryFromIp2c();
+
+    } catch (e) {
+
+        console.error("Unable to fetch the country from the backend (" + e.message + ")");
+        return null;
 
     }
 
@@ -91,5 +97,6 @@ async function getCountryFromIp2c(): Promise<country> {
         };
     } catch (e) {
         console.error("Unable to fetch the country from ip2c (" + e.message + ")");
+        return null;
     }
 }

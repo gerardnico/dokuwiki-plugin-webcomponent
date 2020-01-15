@@ -6,6 +6,7 @@
     "lib": ["es6", "dom", "es2017"],
     "removeComments": true,
     "allowJs": true,
+    "esModuleInterop": true,
     "types": [
       "jquery",
       "jest"

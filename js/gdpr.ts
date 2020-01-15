@@ -23,7 +23,7 @@ interface Config {
 // Declare global constant
 declare global {
     interface Window {
-        ezConsentCategories:any;
+        ezConsentCategories: any;
         __ezconsent: any;
     }
 }
@@ -77,23 +77,26 @@ function consentBox(config: Config) {
 export async function consent(config: Config) {
 
     let consentStorage: string = localStorage.getItem(consentKey);
-    if (consentStorage==null) {
+    if (consentStorage == null) {
         localStorage.setItem(consentKey, false.toString());
     }
     // getItem return a string, therefore !'false' is false and not true
-    let consent: boolean = ( consentStorage !== 'true' && consentStorage !== consentValueNonEu);
+    let consent: boolean = (consentStorage !== 'true' && consentStorage !== consentValueNonEu);
     if (consent) {
 
         let country: Country.country = await Country.getCountry();
-        if (Country.isEu(country)) {
-            consentBox(config);
-        } else {
-            localStorage.setItem(consentKey, consentValueNonEu);
+        if (country != null) {
+            if (Country.isEu(country)) {
+                consentBox(config);
+            } else {
+                localStorage.setItem(consentKey, consentValueNonEu);
+            }
         }
 
     }
 
 }
+
 
 
 
