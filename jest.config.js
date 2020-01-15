@@ -91,7 +91,7 @@ module.exports = {
   // notifyMode: "failure-change",
 
   // A preset that is used as a base for Jest's configuration
-  preset: 'ts-jest',
+  preset: './js/Preset.js',
 
   // Run tests from one or more projects
   // projects: null,
@@ -133,7 +133,8 @@ module.exports = {
 
   // The test environment that will be used for testing
   // testEnvironment: "jest-environment-jsdom",
-  testEnvironment: 'node', // Comes from ts-test
+  // testEnvironment: 'node', // Comes from ts-test
+  // jest-puppeteer preset manage the option testEnvironment option. See https://github.com/smooth-code/jest-puppeteer
 
   // Options that will be passed to the testEnvironment
   // testEnvironmentOptions: {},
