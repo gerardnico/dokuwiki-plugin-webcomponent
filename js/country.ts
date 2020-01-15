@@ -1,4 +1,4 @@
-import * as jQuery from "jquery";
+import jQuery from "jquery";
 
 // They key to store the country to not hit the service every time
 let countryKey = 'country_json';

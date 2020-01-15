@@ -1,4 +1,4 @@
-import * as jQuery from 'jquery';
+import jQuery from 'jquery';
 import * as Country from './Country';
 
 // // Must be started after page load
