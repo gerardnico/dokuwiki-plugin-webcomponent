@@ -38,12 +38,12 @@ declare global {
     }
 }
 
-let localConfig: Config; 
+let localConfig: Config;
 function consentBox(config: Config) {
 
     localConfig = config || {};
 
-    if (typeof localConfig.message === 'undefined'){
+    if (typeof localConfig.message === 'undefined') {
         localConfig.message = 'By using our site, you acknowledge that you have read and understood our policy.';
     }
     let consentBoxSelector: string = '#' + htmlBoxId;
@@ -92,7 +92,7 @@ function consentBox(config: Config) {
  * Store the consent
  * @param consent 
  */
-function set(consent: consent){
+function set(consent: consent) {
     localStorage.setItem(localStorageKey, JSON.stringify(consent));
 }
 
@@ -155,18 +155,21 @@ export function get(): consent {
         return null;
     } else {
         // getItem return a string, therefore !'false' is false and not true
-        let consent:consent = JSON.parse(consentString);
+        let consent: consent = JSON.parse(consentString);
         consent.date = new Date(consent.date);
         return consent;
     }
 }
 
 function remove() {
-    try {
+
+    let returnValue: string = localStorage.getItem(localStorageKey);
+    if (returnValue != null) {
         localStorage.removeItem(localStorageKey);
-    } catch (e) {
+    } else {
         console.log("The consent was not found. Not removed");
     }
+
 }
 
 /**
@@ -177,7 +180,7 @@ export function reset() {
     execute(localConfig);
 }
 
-function config(config:Config): Config{
+function config(config: Config): Config {
     localConfig = config || localConfig;
     return localConfig;
 }

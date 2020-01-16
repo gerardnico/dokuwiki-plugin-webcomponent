@@ -1,4 +1,4 @@
-import consent from './Gdpr';
+import consent from './Consent';
 import country from './Country';
 
 
