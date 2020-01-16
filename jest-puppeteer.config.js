@@ -7,10 +7,10 @@ module.exports = {
     //     launchTimeout: 30000
     // },
     launch: {
-        headless: false, // for debug:  to see what the browser is displaying
-        devtools: true,
+        // headless: false, // for debug:  to see what the browser is displaying
+        // slowMo: 250, // slow down by 250ms
+        devtools: true, // This lets you debug code in the application code browser
         timeout: 30000,
-        slowMo: 250, // slow down by 250ms
         dumpio: true // Whether to pipe the browser process stdout and stderr 
     }
 }

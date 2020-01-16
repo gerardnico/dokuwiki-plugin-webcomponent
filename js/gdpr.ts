@@ -11,7 +11,7 @@ import * as Country from './Country';
 
 
 export const consentKey: string = 'consent_gdpr';
-export const consentBoxId: string = 'gdpr_consent';
+export const consentBoxId: string = 'consent_gdpr';
 
 // Consent Value set if the country is not an EU country
 let consentValueNonEu: string = 'nonEu';
@@ -74,14 +74,9 @@ function consentBox(config: Config) {
 }
 
 
-export async function consent(config: Config) {
-
-    let consentStorage: string = localStorage.getItem(consentKey);
-    if (consentStorage == null) {
-        localStorage.setItem(consentKey, false.toString());
-    }
-    // getItem return a string, therefore !'false' is false and not true
-    let consent: boolean = (consentStorage !== 'true' && consentStorage !== consentValueNonEu);
+export async function execute(config: Config) {
+    
+    let consent: boolean = get();
     if (consent) {
 
         let country: Country.country = await Country.getCountry();
@@ -97,11 +92,28 @@ export async function consent(config: Config) {
 
 }
 
+export function get():boolean {
+    let consentStorage: string = localStorage.getItem(consentKey);
+    if (consentStorage == null) {
+        return false;
+    } else {
+        // getItem return a string, therefore !'false' is false and not true
+        return (consentStorage !== 'true' && consentStorage !== consentValueNonEu);
+    }
+}
+
+function remove() {
+    try {
+        localStorage.removeItem(consentKey);
+    } catch (e) {
+        console.log("The consent was not found. Not removed");
+    }
+}
 
 export default {
-    consent: consent,
-    storage_key: consentKey,
-    element_id : consentBoxId
+    execute: execute,
+    remove: remove,
+    get: get
 }
 
 

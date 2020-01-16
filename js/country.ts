@@ -1,4 +1,6 @@
 import jQuery from "jquery";
+import { JSONObject } from "puppeteer";
+import { country } from "./index";
 
 // They key to store the country to not hit the service every time
 let countryKey = 'country_json';
@@ -13,7 +15,7 @@ interface ipJson {
     country: string
 }
 
-export interface country {
+export interface country extends JSONObject {
     country2: string,
     country3: string,
     country: string
@@ -30,7 +32,7 @@ export function isEu(country: country): boolean {
 
 /**
  *
- * @returns {country} the country object
+ * @returns {country} the country of the caller
  */
 export async function getCountry(): Promise<country> {
 
@@ -44,7 +46,7 @@ export async function getCountry(): Promise<country> {
         }
 
         if (ctry !=null){
-            localStorage.setItem(countryKey, JSON.stringify(ctry));
+            store(ctry);
             return ctry;
         } else {
             return null;
@@ -56,6 +58,22 @@ export async function getCountry(): Promise<country> {
 
     }
 
+}
+
+/**
+ * 
+ * @param country A country to store locally
+ */
+export function store(country: country){
+    localStorage.setItem(countryKey, JSON.stringify(country));
+}
+
+/**
+ * 
+ * @param country A country to remove
+ */
+export function remove() {
+    localStorage.removeItem(countryKey);
 }
 
 /**
@@ -98,5 +116,15 @@ async function getCountryFromIp2c(): Promise<country> {
     } catch (e) {
         console.error("Unable to fetch the country from ip2c (" + e.message + ")");
         return null;
+    }
+}
+
+export default {
+    store: store,
+    remove: remove,
+    get: getCountry,
+    print: function(){
+         getCountry()
+        .then(value => console.log(value));
     }
 }
