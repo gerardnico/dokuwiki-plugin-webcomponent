@@ -122,7 +122,7 @@ async function onlyEuCountry(): Promise<boolean> {
  * Return if the consent box must be shown
  * @param consent 
  */
-async function showConsentBox(consent: consent): Promise<boolean> {
+async function consentBoxShouldAppear(consent: consent): Promise<boolean> {
 
     if (consent == null) {
         return onlyEuCountry();
@@ -130,7 +130,7 @@ async function showConsentBox(consent: consent): Promise<boolean> {
         // expired ?
         var today = new Date();
         var expirationDate = new Date(today.getTime() + 1000 * 60 * 60 * 30);
-        if (expirationDate > consent.date) {
+        if (expirationDate.getTime() > consent.date.getTime()) {
             return onlyEuCountry();
         } else {
             return false;
@@ -143,7 +143,8 @@ export async function execute(config: Config) {
 
     let consent: consent = get();
 
-    if (await showConsentBox(consent)) {
+    const showConsentBox: boolean = await consentBoxShouldAppear(consent);
+    if (showConsentBox == true) {
         consentBox(config);
     }
 
@@ -180,7 +181,7 @@ export function reset() {
     execute(localConfig);
 }
 
-function config(config: Config): Config {
+export function config(config: Config): Config {
     localConfig = config || localConfig;
     return localConfig;
 }

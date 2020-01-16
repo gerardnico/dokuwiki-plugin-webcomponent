@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "moduleResolution": "node", // error TS2307: Cannot find module
     "noImplicitAny": true,
     "module": "es6",
     "target": "es5",
@@ -16,11 +17,11 @@
     ]
   },
   "include": [
-    "js/*.ts",
+    "js/*.ts"
   ],
   "exclude": [
     "node_modules",
     "**/*.spec.ts",
-    "**/*.test.ts",
+    "**/*.test.ts"
   ]
 }

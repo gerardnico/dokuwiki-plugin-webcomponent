@@ -1,11 +1,11 @@
 import * as Country from "../Country";
 import * as Consent from "../Consent";
-
+import { Wco } from "../index"
 
 // Declare global constant
 declare global {
     interface Window {
-        wco: any;
+        wco: Wco;
     }
 }
 
@@ -15,7 +15,7 @@ jest.setTimeout(100000);
 
 
 
-describe('Consent Box in EU', () => {
+describe('Basic: Consent Box in EU country', () => {
     
     beforeAll(async () => {
         
@@ -58,6 +58,52 @@ describe('Consent Box in EU', () => {
         var dateGreater = new Date(today.getTime() - 60);
         var consentDate = new Date(consent.date);
         expect(consentDate.getTime()).toBeGreaterThan(dateGreater.getTime());
+    })
+
+})
+
+describe('Basic: No Consent Box in Non EU country', () => {
+
+    beforeAll(async () => {
+
+        // Log all console statement
+        await page.on('console', msg => console.log('PAGE LOG:', msg.text()));
+        await page.evaluate(() => console.log(`url is ${location.href}`));
+
+        // Get an empty local storage
+        await page.goto('http://localhost:8080')
+        await page.evaluate(() => {
+            window.wco.consent.remove();
+        });
+        // Set a Non-EU country
+        let nonEuCountry: Country.country = {
+            country: 'America',
+            country2: 'US',
+            country3: 'USA',
+        }
+        await page.evaluate((country) => {
+            window.wco.country.store(country);
+        }, nonEuCountry);
+
+        // Go back
+        await page.goto('http://localhost:8080')
+
+    })
+
+    test('Should not load the Consent Popup', async () => {
+        await expect(page).not.toMatchElement('#' + Consent.htmlBoxId)
+    })
+
+    test('Should have an implicit consent', async () => {
+        const consent: Consent.consent = JSON.parse(await page.evaluate(() => {
+            return JSON.stringify(window.wco.consent.get());
+        }));
+        expect(consent.choice).toBe(Consent.consent_choice.NEU);
+        var today = new Date();
+        var dateGreater = new Date(today.getTime() - 60);
+        var consentDate = new Date(consent.date);
+        expect(consentDate.getTime()).toBeGreaterThan(dateGreater.getTime());
+        
     })
 
 })

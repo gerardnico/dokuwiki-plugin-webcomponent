@@ -12,7 +12,7 @@ var config = {
             filename: 'webcomponent.js',
             library: "wco", // The name of the global variable
             libraryTarget: "umd",
-            libraryExport: 'default' // The export name. https://webpack.js.org/configuration/output/#outputlibraryexport
+            libraryExport: 'default' // The name exported. https://webpack.js.org/configuration/output/#outputlibraryexport
         },
         module: {
             rules: [
@@ -40,7 +40,14 @@ var config = {
 module.exports = (env, argv) => {
 
     if (argv.mode === 'production') {
-        config.devtool = 'source-map'
+        config.devtool = 'source-map';
+        config.plugins = [
+            new webpack.optimize.UglifyJsPlugin({
+                minimize: true,
+                sourceMap: true,
+                include: /\.min\.js$/,
+            })
+        ];
     }
 
     return config;

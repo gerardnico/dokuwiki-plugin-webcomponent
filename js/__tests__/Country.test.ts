@@ -1,5 +1,4 @@
 import * as Country from "../Country";
-import * as Gdpr from "../Consent";
 import wco from "../index";
 
 
