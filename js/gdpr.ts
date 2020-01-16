@@ -9,16 +9,25 @@ import * as Country from './Country';
 //     }
 // );
 
+export enum consent_choice {
+    YES = 'Yes',
+    NO = 'No',
+    NEU = 'Non Eu Country',
+}
 
-export const consentKey: string = 'consent_gdpr';
-export const consentBoxId: string = 'consent_gdpr';
+export interface consent {
+    date: Date,
+    choice: consent_choice
+}
 
-// Consent Value set if the country is not an EU country
-let consentValueNonEu: string = 'nonEu';
+const localStorageKey: string = 'consent_gdpr';
+
+export const htmlBoxId: string = localStorageKey;
+
 
 // The Json type
 interface Config {
-    message: string;
+    message?: string;
 }
 
 // Declare global constant
@@ -29,16 +38,18 @@ declare global {
     }
 }
 
-
+let localConfig: Config; 
 function consentBox(config: Config) {
 
-    if (typeof config.message === 'undefined') {
-        config.message = 'By using our site, you acknowledge that you have read and understand our policy.';
+    localConfig = config || {};
+
+    if (typeof localConfig.message === 'undefined'){
+        localConfig.message = 'By using our site, you acknowledge that you have read and understood our policy.';
     }
-    let consentBoxSelector: string = '#' + consentBoxId;
+    let consentBoxSelector: string = '#' + htmlBoxId;
     let consentBox: string = `
-                <div id="${consentBoxId}" class="container alert alert-secondary alert-dismissible fixed-bottom text-center fade" role="alert" >
-                    ${config.message}
+                <div id="${htmlBoxId}" class="container alert alert-secondary alert-dismissible fixed-bottom text-center fade" role="alert" >
+                    ${localConfig.message}
                     <button type="button" class="close" style="float:initial"  data-dismiss="alert" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -51,7 +62,11 @@ function consentBox(config: Config) {
     jQuery(consentBoxSelector).on('closed.bs.alert', function () {
 
         //  This event is fired when the alert has been closed (will wait for CSS transitions to complete)
-        localStorage.setItem(consentKey, true.toString());
+        let consent: consent = {
+            date: new Date(),
+            choice: consent_choice.YES
+        }
+        set(consent);
 
         // Ezoic on the pages ?
         // Check to make sure the ezoic consent receiver is on the page
@@ -73,47 +88,107 @@ function consentBox(config: Config) {
 
 }
 
+/**
+ * Store the consent
+ * @param consent 
+ */
+function set(consent: consent){
+    localStorage.setItem(localStorageKey, JSON.stringify(consent));
+}
 
-export async function execute(config: Config) {
-    
-    let consent: boolean = get();
-    if (consent) {
-
-        let country: Country.country = await Country.getCountry();
-        if (country != null) {
-            if (Country.isEu(country)) {
-                consentBox(config);
-            } else {
-                localStorage.setItem(consentKey, consentValueNonEu);
+/**
+ * Return if this is a EuCountry
+ * and save an implicit consent if not
+ */
+async function onlyEuCountry(): Promise<boolean> {
+    let country: Country.country = await Country.getCountry();
+    if (country != null) {
+        if (Country.isEu(country)) {
+            return true;
+        } else {
+            let consent: consent = {
+                date: new Date(),
+                choice: consent_choice.NEU
             }
+            set(consent);
+            return false;
         }
+    } else {
+        return false;
+    }
+}
 
+/**
+ * Return if the consent box must be shown
+ * @param consent 
+ */
+async function showConsentBox(consent: consent): Promise<boolean> {
+
+    if (consent == null) {
+        return onlyEuCountry();
+    } else {
+        // expired ?
+        var today = new Date();
+        var expirationDate = new Date(today.getTime() + 1000 * 60 * 60 * 30);
+        if (expirationDate > consent.date) {
+            return onlyEuCountry();
+        } else {
+            return false;
+        }
     }
 
 }
 
-export function get():boolean {
-    let consentStorage: string = localStorage.getItem(consentKey);
-    if (consentStorage == null) {
-        return false;
+export async function execute(config: Config) {
+
+    let consent: consent = get();
+
+    if (await showConsentBox(consent)) {
+        consentBox(config);
+    }
+
+}
+
+export function get(): consent {
+    let consentString: string = localStorage.getItem(localStorageKey);
+    if (consentString == null) {
+        return null;
     } else {
         // getItem return a string, therefore !'false' is false and not true
-        return (consentStorage !== 'true' && consentStorage !== consentValueNonEu);
+        let consent:consent = JSON.parse(consentString);
+        consent.date = new Date(consent.date);
+        return consent;
     }
 }
 
 function remove() {
     try {
-        localStorage.removeItem(consentKey);
+        localStorage.removeItem(localStorageKey);
     } catch (e) {
         console.log("The consent was not found. Not removed");
     }
 }
 
+/**
+ * Will delete the consent and execute it again
+ */
+export function reset() {
+    remove();
+    execute(localConfig);
+}
+
+function config(config:Config): Config{
+    localConfig = config || localConfig;
+    return localConfig;
+}
+
 export default {
     execute: execute,
     remove: remove,
-    get: get
+    get: get,
+    reset: reset,
+    set: set,
+    config: config
 }
 
 

@@ -41,12 +41,12 @@ describe('Consent Box', () => {
     })
 
     test('Should load the Consent Popup', async () => {
-        await expect(page).toMatchElement('#' + Gdpr.consentBoxId)
+        await expect(page).toMatchElement('#' + Gdpr.htmlBoxId)
     })
 
     test('A click should destroy the element and accepts Gdpr', async () => {
         await expect(page).toClick('#gdpr_consent > button');
-        await expect(page).not.toMatchElement('#' + Gdpr.consentBoxId)
+        await expect(page).not.toMatchElement('#' + Gdpr.htmlBoxId)
         const consent = await page.evaluate(() => {
             return wco.consent.get();            
         });

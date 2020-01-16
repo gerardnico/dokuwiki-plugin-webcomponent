@@ -22,15 +22,18 @@
     "babel-jest": "^24.9.0",
     "jest": "^24.9.0",
     "jest-puppeteer": "^4.4.0",
+    "jquery": "^3.4.1",
     "puppeteer": "^2.0.0",
     "ts-jest": "^24.3.0",
     "ts-loader": "^6.2.1",
     "typescript": "^3.7.3",
     "webpack": "~4.20.2",
-    "webpack-cli": "~3.1.2",
-    "jquery": "^3.4.1"
+    "webpack-cli": "~3.1.2"
   },
   "peerDependencies": {
     "jquery": "^3.4.1"
+  },
+  "dependencies": {
+    "moment": "^2.24.0"
   }
 }
