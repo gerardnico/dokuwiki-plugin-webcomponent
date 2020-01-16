@@ -1,6 +1,5 @@
 import jQuery from "jquery";
 import { JSONObject } from "puppeteer";
-import { country } from "./index";
 
 // They key to store the country to not hit the service every time
 let countryKey = 'country_json';

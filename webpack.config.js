@@ -11,7 +11,8 @@ var config = {
             path: path.resolve(__dirname, 'dist'),
             filename: 'webcomponent.js',
             library: "wco", // The name of the global variable
-            libraryTarget: "umd"
+            libraryTarget: "umd",
+            libraryExport: 'default' // The export name. https://webpack.js.org/configuration/output/#outputlibraryexport
         },
         module: {
             rules: [
