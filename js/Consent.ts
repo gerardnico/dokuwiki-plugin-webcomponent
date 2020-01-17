@@ -17,13 +17,18 @@ export enum consent_choice {
 }
 
 export interface consent {
-    date: Date,
-    choice: consent_choice
+    date: Date | null,
+    choice: consent_choice | null
 }
 
 const localStorageKey: string = 'consent_gdpr';
 
 export const htmlBoxId: string = localStorageKey;
+
+/**
+ * Expiration periode in days
+ */
+export const expiration_periode: number = 90;
 
 
 // The Json type
@@ -92,10 +97,11 @@ function consentBox(config: Config) {
 /**
  * Store the consent
  * @param consent 
+ * We can pass a string because this is the only way to pass information to puppeteer in the test
  */
-function set(consent: string | consent) {
+export function set(consent: string | consent) {
     let consentS: string;
-    if (typeof consent != 'string'){
+    if (typeof consent != 'string') {
         consentS = JSON.stringify(consent);
     } else {
         consentS = consent;
@@ -110,7 +116,7 @@ function set(consent: string | consent) {
  * and save an implicit consent if not
  */
 async function onlyEuCountry(): Promise<boolean> {
-    let country: Country.country = await Country.getCountry();
+    let country: Country.country | null = await Country.getCountry();
     if (country != null) {
         if (Country.isEu(country)) {
             return true;
@@ -137,13 +143,24 @@ async function consentBoxShouldAppear(consent: consent | null): Promise<boolean>
         return onlyEuCountry();
     } else {
         // expired ?
-        var today = new Date();
-        var expirationDate = new Date(today.getTime() + 1000 * 60 * 60 * 30);
-        if (expirationDate.getTime() > consent.date.getTime()) {
+        debugger;
+        if (hasExpired(consent)) {
             return onlyEuCountry();
         } else {
             return false;
         }
+    }
+
+}
+
+export function hasExpired(consent: consent) {
+
+    if (consent.date == null) {
+        return true;
+    } else {
+        var today = new Date();
+        var expirationDate = new Date(today.getTime() - 1000 * 60 * 60 * 24 * expiration_periode);
+        return expirationDate.getTime() >= consent.date.getTime()
     }
 
 }
@@ -159,12 +176,19 @@ export async function execute(config: Config) {
 
 }
 
-export function get(): consent | null {
-    let consentString: string | null = localStorage.getItem(localStorageKey);
-    if (consentString == null) {
+/**
+ * Return the current consent
+ * or build a consent from a JSON string
+ * @param consent 
+ */
+export function get(consent?: string | null): consent | null {
+    if (typeof consent === 'undefined' || consent == null){
+        consent = localStorage.getItem(localStorageKey);
+    }
+    if (consent == null) {
         return null;
     } else {
-        return toConsent(consentString);
+        return toConsent(consent);
     }
 }
 
@@ -182,7 +206,7 @@ function remove() {
 function toJsonObject(consent: consent): JSONObject {
     let consentObject: JSONObject = {
         choice: consent.choice,
-        date: consent.date.toString()
+        date: consent.date == null ? "null" : consent.date.toString()
     }
     return consentObject;
 }
@@ -191,7 +215,7 @@ function toConsent(consent: string): consent {
     let consentJson: consent = JSON.parse(consent);
     let consentObject: consent = {
         choice: consentJson.choice,
-        date: new Date(consentJson.date)
+        date: consentJson.date == null ? null : new Date(consentJson.date)
     }
     return consentObject;
 }
@@ -209,13 +233,21 @@ export function config(config: Config): Config {
     return localConfig;
 }
 
+function info() {
+    let consent: consent = get() || {
+        date: null,
+        choice: null
+    };
+    console.log(Object.assign(consent, hasExpired(consent)))
+}
 export default {
     execute: execute,
     remove: remove,
     get: get,
     reset: reset,
     set: set,
-    config: config
+    config: config,
+    info: info
 }
 
 
