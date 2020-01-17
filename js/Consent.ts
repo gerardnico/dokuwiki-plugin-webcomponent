@@ -178,19 +178,20 @@ export async function execute(config: Config) {
 
 /**
  * Return the current consent
- * or build a consent from a JSON string
+ * 
  * @param consent 
  */
-export function get(consent?: string | null): consent | null {
-    if (typeof consent === 'undefined' || consent == null){
-        consent = localStorage.getItem(localStorageKey);
-    }
-    if (consent == null) {
+export function get(): consent | null {
+
+    const consentStorage = localStorage.getItem(localStorageKey);
+    if (consentStorage == null) {
         return null;
     } else {
-        return toConsent(consent);
+        return toConsent(consentStorage);
     }
+
 }
+
 
 function remove() {
 
@@ -211,11 +212,25 @@ function toJsonObject(consent: consent): JSONObject {
     return consentObject;
 }
 
-function toConsent(consent: string): consent {
+/**
+ * Use for the test to deserialize a string
+ * Reverse of JSON.stringify
+ * @param consent 
+ */
+export function toConsent(consent: string): consent | null {
+    if (consent == "null"){
+        return null;
+    }
     let consentJson: consent = JSON.parse(consent);
-    let consentObject: consent = {
-        choice: consentJson.choice,
-        date: consentJson.date == null ? null : new Date(consentJson.date)
+    let consentObject: consent;
+    try {
+        consentObject = {
+            choice: consentJson.choice,
+            date: consentJson.date == null ? null : new Date(consentJson.date)
+        }
+    } catch (e) {
+        console.error("The string (" + consent + ") seems not to be a valid consent.");
+        throw (e);
     }
     return consentObject;
 }

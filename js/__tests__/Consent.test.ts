@@ -67,7 +67,7 @@ describe('EU no consent', () => {
     test('A click should destroy the element and accepts Gdpr', async () => {
         await expect(page).toClick('#' + Consent.htmlBoxId + ' > button');
         await expect(page).not.toMatchElement('#' + Consent.htmlBoxId)
-        const consent: Consent.consent | null = Consent.get(await page.evaluate(() => {
+        const consent: Consent.consent | null = Consent.toConsent(await page.evaluate(() => {
             return JSON.stringify(window.wco.consent.get());
         }));
         expect(consent).not.toBeNull();
@@ -170,7 +170,7 @@ describe('EU Consent expired', () => {
     test('A click should destroy the element and accepts Gdpr', async () => {
         await expect(page).toClick('#' + Consent.htmlBoxId + ' > button');
         await expect(page).not.toMatchElement('#' + Consent.htmlBoxId)
-        const consent: Consent.consent | null = Consent.get(await page.evaluate(() => {
+        const consent: Consent.consent | null = Consent.toConsent(await page.evaluate(() => {
             return JSON.stringify(window.wco.consent.get());
         }));
         expect(consent).not.toBeNull();
@@ -217,7 +217,7 @@ describe('Non EU Consent: No Consent Box in Non EU country', () => {
     })
 
     test('Should have an implicit consent', async () => {
-        const consent: Consent.consent | null = Consent.get(await page.evaluate(() => {
+        const consent: Consent.consent | null = Consent.toConsent(await page.evaluate(() => {
             return JSON.stringify(window.wco.consent.get());
         }));
         expect(consent).not.toBeNull();

@@ -44,8 +44,8 @@ async function fetchCountry(): Promise<country | null> {
 
 }
 
-export function hasExpired(country: country): boolean{
-    if (country.date==null){
+export function hasExpired(country: country): boolean {
+    if (country.date == null) {
         return true;
     } else {
         var today = new Date();
@@ -68,8 +68,7 @@ export async function getCountry(): Promise<country | null> {
         return fetchCountry();
 
     } else {
-
-        const country: country = JSON.parse(countryString);
+        const country: country = toCountry(countryString);
         if (hasExpired(country)) {
             return fetchCountry();
         } else {
@@ -80,14 +79,19 @@ export async function getCountry(): Promise<country | null> {
 
 }
 
+export function toCountry(country: string): country {
+    let countryObject: country = JSON.parse(country);
+    countryObject.date = new Date(countryObject.date);
+    return countryObject;
+}
 /**
  * 
  * @param country A country to store locally
  * The input must be a string because of the puppeteer test (Only serializable data may be passed)
  */
-export function store(country: country|string) {
+export function store(country: country | string) {
     let countryString: string;
-    if (typeof country == 'string'){
+    if (typeof country == 'string') {
         countryString = country;
     } else {
         countryString = JSON.stringify(country)

@@ -37,3 +37,13 @@ test('Country has not expired', () => {
     expect(Country.hasExpired(country)).toBe(false);
 })
 
+test('Country has not expired (today)', () => {
+    let country: Country.country = {
+        date: new Date(),
+        country: 'France',
+        country2: 'FR',
+        country3: 'FRA',
+    }
+    expect(Country.hasExpired(country)).toBe(false);
+})
+
