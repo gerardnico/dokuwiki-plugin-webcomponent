@@ -143,7 +143,6 @@ async function consentBoxShouldAppear(consent: consent | null): Promise<boolean>
         return onlyEuCountry();
     } else {
         // expired ?
-        debugger;
         if (hasExpired(consent)) {
             return onlyEuCountry();
         } else {

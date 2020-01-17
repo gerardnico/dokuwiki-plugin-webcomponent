@@ -19,10 +19,17 @@
 </head>
 
 <body>
-    <!-- <script>
+    
+    <script>
+        wco.consent.execute({
+            message: 'By using our site, you acknowledge that you have read, understand and agreed our <a href="legal/privacy">Privacy Policy</a> and <a href="legal/terms">Terms of service</a>.'
+        });
+        wco.httpListener.of().start();
+    </script>
+    <script>
         !function () {
             var analytics = window.analytics = window.analytics || []; if (!analytics.initialize) if (analytics.invoked) window.console && console.error && console.error("Segment snippet included twice."); else {
-            analytics.invoked = !0; analytics.methods = ["trackSubmit", "trackClick", "trackLink", "trackForm", "pageview", "identify", "reset", "group", "track", "ready", "alias", "debug", "page", "once", "off", "on"]; analytics.factory = function (t) { return function () { var e = Array.prototype.slice.call(arguments); e.unshift(t); analytics.push(e); return analytics } }; for (var t = 0; t < analytics.methods.length; t++) { var e = analytics.methods[t]; analytics[e] = analytics.factory(e) } analytics.load = function (t, e) { var n = document.createElement("script"); n.type = "text/javascript"; n.async = !0; n.src = "https://cdn.segment.com/analytics.js/v1/" + t + "/analytics.min.js"; var a = document.getElementsByTagName("script")[0]; a.parentNode.insertBefore(n, a); analytics._loadOptions = e }; analytics.SNIPPET_VERSION = "4.1.0";
+                analytics.invoked = !0; analytics.methods = ["trackSubmit", "trackClick", "trackLink", "trackForm", "pageview", "identify", "reset", "group", "track", "ready", "alias", "debug", "page", "once", "off", "on"]; analytics.factory = function (t) { return function () { var e = Array.prototype.slice.call(arguments); e.unshift(t); analytics.push(e); return analytics } }; for (var t = 0; t < analytics.methods.length; t++) { var e = analytics.methods[t]; analytics[e] = analytics.factory(e) } analytics.load = function (t, e) { var n = document.createElement("script"); n.type = "text/javascript"; n.async = !0; n.src = "https://cdn.segment.com/analytics.js/v1/" + t + "/analytics.min.js"; var a = document.getElementsByTagName("script")[0]; a.parentNode.insertBefore(n, a); analytics._loadOptions = e }; analytics.SNIPPET_VERSION = "4.1.0";
                 analytics.load("4lthHxPcOs4IxmkzeXeV38rj2U547SVC");
                 analytics.page();
             }
@@ -31,11 +38,6 @@
             location: 'header',
             type: 'button'
         });
-    </script> -->
-    <script>
-        wco.consent.execute({
-            message: 'By using our site, you acknowledge that you have read, understand and agreed our <a href="legal/privacy">Privacy Policy</a> and <a href="legal/terms">Terms of service</a>.'
-        })
     </script>
 </body>
 

@@ -18,6 +18,7 @@
     "@types/jest-environment-puppeteer": "^4.3.1",
     "@types/jquery": "^3.3.31",
     "@types/puppeteer": "^2.0.0",
+    "@types/uuid": "^3.4.6",
     "babel-cli": "^6.26.0",
     "babel-jest": "^24.9.0",
     "ci-info": "^2.0.0",
@@ -35,6 +36,6 @@
     "jquery": "^3.4.1"
   },
   "dependencies": {
-    "moment": "^2.24.0"
+    "uuid": "^3.4.0"
   }
 }

@@ -224,7 +224,7 @@ describe('Non EU Consent: No Consent Box in Non EU country', () => {
         if (consent != null) {
             expect(consent.choice).toBe(Consent.consent_choice.NEU);
             var today = new Date();
-            var dateGreater = new Date(today.getTime() - 60);
+            var dateGreater = new Date(today.getTime() - 6*1000);
             expect(consent.date).not.toBeNull();
             if (consent.date != null) {
                 expect(consent.date.getTime()).toBeGreaterThan(dateGreater.getTime());
