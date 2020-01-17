@@ -10,6 +10,7 @@ let wco: Wco = {
      consent,
      country
 }
+
 export default wco;
 
 

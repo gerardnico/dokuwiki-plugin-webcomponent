@@ -1,3 +1,4 @@
+// https://www.typescriptlang.org/docs/handbook/compiler-options.html
 {
   "compilerOptions": {
     "moduleResolution": "node", // error TS2307: Cannot find module
@@ -8,6 +9,7 @@
     "removeComments": true,
     "allowJs": true,
     "esModuleInterop": true,
+    "strictNullChecks": true,
     "types": [
       "jquery",
       "jest",

@@ -1,5 +1,6 @@
 import jQuery from 'jquery';
 import * as Country from './Country';
+import { JSONObject } from 'puppeteer';
 
 // // Must be started after page load
 // jQuery(function () {
@@ -92,9 +93,17 @@ function consentBox(config: Config) {
  * Store the consent
  * @param consent 
  */
-function set(consent: consent) {
-    localStorage.setItem(localStorageKey, JSON.stringify(consent));
+function set(consent: string | consent) {
+    let consentS: string;
+    if (typeof consent != 'string'){
+        consentS = JSON.stringify(consent);
+    } else {
+        consentS = consent;
+    }
+    localStorage.setItem(localStorageKey, consentS);
 }
+
+
 
 /**
  * Return if this is a EuCountry
@@ -122,7 +131,7 @@ async function onlyEuCountry(): Promise<boolean> {
  * Return if the consent box must be shown
  * @param consent 
  */
-async function consentBoxShouldAppear(consent: consent): Promise<boolean> {
+async function consentBoxShouldAppear(consent: consent | null): Promise<boolean> {
 
     if (consent == null) {
         return onlyEuCountry();
@@ -141,7 +150,7 @@ async function consentBoxShouldAppear(consent: consent): Promise<boolean> {
 
 export async function execute(config: Config) {
 
-    let consent: consent = get();
+    let consent: consent | null = get();
 
     const showConsentBox: boolean = await consentBoxShouldAppear(consent);
     if (showConsentBox == true) {
@@ -150,27 +159,41 @@ export async function execute(config: Config) {
 
 }
 
-export function get(): consent {
-    let consentString: string = localStorage.getItem(localStorageKey);
+export function get(): consent | null {
+    let consentString: string | null = localStorage.getItem(localStorageKey);
     if (consentString == null) {
         return null;
     } else {
-        // getItem return a string, therefore !'false' is false and not true
-        let consent: consent = JSON.parse(consentString);
-        consent.date = new Date(consent.date);
-        return consent;
+        return toConsent(consentString);
     }
 }
 
 function remove() {
 
-    let returnValue: string = localStorage.getItem(localStorageKey);
+    let returnValue: string | null = localStorage.getItem(localStorageKey);
     if (returnValue != null) {
         localStorage.removeItem(localStorageKey);
     } else {
         console.log("The consent was not found. Not removed");
     }
 
+}
+
+function toJsonObject(consent: consent): JSONObject {
+    let consentObject: JSONObject = {
+        choice: consent.choice,
+        date: consent.date.toString()
+    }
+    return consentObject;
+}
+
+function toConsent(consent: string): consent {
+    let consentJson: consent = JSON.parse(consent);
+    let consentObject: consent = {
+        choice: consentJson.choice,
+        date: new Date(consentJson.date)
+    }
+    return consentObject;
 }
 
 /**

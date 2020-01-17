@@ -21,30 +21,28 @@ export interface country extends JSONObject {
 }
 
 export function isEu(country: country): boolean {
-    try {
-        let euCountryCodes: string[] = ['AL', 'AD', 'AM', 'AT', 'BY', 'BE', 'BA', 'BG', 'CH', 'CY', 'CZ', 'DE', 'DK', 'EE', 'ES', 'FO', 'FI', 'FR', 'GB', 'GE', 'GI', 'GR', 'HU', 'HR', 'IE', 'IS', 'IT', 'LT', 'LU', 'LV', 'MC', 'MK', 'MT', 'NO', 'NL', 'PO', 'PT', 'RO', 'RU', 'SE', 'SI', 'SK', 'SM', 'TR', 'UA', 'VA'];
-        return euCountryCodes.lastIndexOf(country.country2) > -1;
-    } catch (e) {
-        console.error("Unable to determine if the country is a EU country for the country (%o) %s", country, e.message);
-    }
+
+    let euCountryCodes: string[] = ['AL', 'AD', 'AM', 'AT', 'BY', 'BE', 'BA', 'BG', 'CH', 'CY', 'CZ', 'DE', 'DK', 'EE', 'ES', 'FO', 'FI', 'FR', 'GB', 'GE', 'GI', 'GR', 'HU', 'HR', 'IE', 'IS', 'IT', 'LT', 'LU', 'LV', 'MC', 'MK', 'MT', 'NO', 'NL', 'PO', 'PT', 'RO', 'RU', 'SE', 'SI', 'SK', 'SM', 'TR', 'UA', 'VA'];
+    return euCountryCodes.lastIndexOf(country.country2) > -1;
+
 }
 
 /**
  *
  * @returns {country} the country of the caller
  */
-export async function getCountry(): Promise<country> {
+export async function getCountry(): Promise<country | null> {
 
-    let countryString: string = localStorage.getItem(countryKey);
+    let countryString: string | null = localStorage.getItem(countryKey);
 
     if (countryString == null) {
 
-        let ctry: country = await getCountryFromBackend();
-        if (ctry ==null){
+        let ctry: country | null = await getCountryFromBackend();
+        if (ctry == null) {
             ctry = await getCountryFromIp2c();
         }
 
-        if (ctry !=null){
+        if (ctry != null) {
             store(ctry);
             return ctry;
         } else {
@@ -63,7 +61,7 @@ export async function getCountry(): Promise<country> {
  * 
  * @param country A country to store locally
  */
-export function store(country: country){
+export function store(country: country) {
     localStorage.setItem(countryKey, JSON.stringify(country));
 }
 
@@ -78,12 +76,11 @@ export function remove() {
 /**
  * Return null if an error occurs
  */
-async function getCountryFromBackend(): Promise<country> {
-    let fetchedCountry: ipJson = null;
+async function getCountryFromBackend(): Promise<country|null> {
     try {
 
-        fetchedCountry = await jQuery.ajax('https://api.gerardnico.com/ip');
-        
+        let fetchedCountry : ipJson = await jQuery.ajax('https://api.gerardnico.com/ip');
+
         return {
             country2: fetchedCountry.country2,
             country3: fetchedCountry.country3,
@@ -100,7 +97,7 @@ async function getCountryFromBackend(): Promise<country> {
 
 }
 
-async function getCountryFromIp2c(): Promise<country> {
+async function getCountryFromIp2c(): Promise<country|null> {
     console.log("Fetching the country from ip2c");
     try {
         const fetchedCountry: string = await jQuery.ajax('https://ip2c.org/self');
@@ -122,8 +119,8 @@ export default {
     store: store,
     remove: remove,
     get: getCountry,
-    print: function(){
-         getCountry()
-        .then(value => console.log(value));
+    print: function () {
+        getCountry()
+            .then(value => console.log(value));
     }
 }
