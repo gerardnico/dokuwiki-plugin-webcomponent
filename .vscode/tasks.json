@@ -7,9 +7,12 @@
             "type": "npm",
             "script": "test",
             "group": {
-                "kind": "build",
+                "kind": "test",
                 "isDefault": true
-            }
+            },
+            "problemMatcher": [
+                "$tsc"
+            ]
         }
     ]
 }

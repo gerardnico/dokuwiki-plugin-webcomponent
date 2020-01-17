@@ -20,6 +20,7 @@
     "@types/puppeteer": "^2.0.0",
     "babel-cli": "^6.26.0",
     "babel-jest": "^24.9.0",
+    "ci-info": "^2.0.0",
     "jest": "^24.9.0",
     "jest-puppeteer": "^4.4.0",
     "jquery": "^3.4.1",
