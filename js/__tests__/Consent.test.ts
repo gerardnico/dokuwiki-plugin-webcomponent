@@ -49,10 +49,11 @@ describe('EU no consent', () => {
             country: 'France',
             country2: 'FR',
             country3: 'FRA',
+            date: new Date(),
         }
         await page.evaluate((country) => {
             window.wco.country.store(country);
-        }, frCountry);
+        }, JSON.stringify(frCountry));
 
         // Go back
         await page.goto('http://localhost:8080')
@@ -98,10 +99,11 @@ describe('EU consent not expired', () => {
             country: 'France',
             country2: 'FR',
             country3: 'FRA',
+            date: new Date()
         }
         await page.evaluate((country) => {
             window.wco.country.store(country);
-        }, frCountry);
+        }, JSON.stringify(frCountry));
 
         // Set an non expired consent
         let consent: Consent.consent = {
@@ -140,10 +142,11 @@ describe('EU Consent expired', () => {
             country: 'France',
             country2: 'FR',
             country3: 'FRA',
+            date: new Date()
         }
         await page.evaluate((country) => {
             window.wco.country.store(country);
-        }, frCountry);
+        }, JSON.stringify(frCountry));
 
         // Set an expired consent
         let consent: Consent.consent = {
@@ -198,10 +201,11 @@ describe('Non EU Consent: No Consent Box in Non EU country', () => {
             country: 'America',
             country2: 'US',
             country3: 'USA',
+            date: new Date()
         }
         await page.evaluate((country) => {
             window.wco.country.store(country);
-        }, nonEuCountry);
+        }, JSON.stringify(nonEuCountry));
 
         // Go back
         await page.goto('http://localhost:8080')

@@ -83,9 +83,16 @@ export async function getCountry(): Promise<country | null> {
 /**
  * 
  * @param country A country to store locally
+ * The input must be a string because of the puppeteer test (Only serializable data may be passed)
  */
-export function store(country: country) {
-    localStorage.setItem(countryKey, JSON.stringify(country));
+export function store(country: country|string) {
+    let countryString: string;
+    if (typeof country == 'string'){
+        countryString = country;
+    } else {
+        countryString = JSON.stringify(country)
+    }
+    localStorage.setItem(countryKey, countryString);
 }
 
 /**
