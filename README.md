@@ -13,39 +13,6 @@ This plugin implements several Web UI Component.
 The list of component can be found [here](https://gerardnico.com/dokuwiki/webcomponent/)
 
 
-## Dev 
-
-Javascript: 
-
-  * To install the javascript dependency:
-
-```bash
-yarn 
-# or
-yarn install
-```
-  
-  * To build the javascript library:
-
-```bash
-npm build
-``` 
-
-  * To develop the javascript library:
-
-```bash
-npm start
-```
-
-Php:
-
-  * To reload the page when a file has changed - [brow](browser-sync-start.bat)
-  
-```bash
-browser-sync-start.bat
-```
-
-
   
 ## Release
 
