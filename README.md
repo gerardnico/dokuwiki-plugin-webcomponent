@@ -5,7 +5,7 @@
 
 ## About
 
-This plugin implements several Web UI Component.
+This plugin adds several graphic component that are based on Bootstrap (Version 4.3.1)
 
 
 ## List
