@@ -18,7 +18,3 @@
 ===== Configuration =====
   * The max numbers of backlinks can be set. Default value: ''10''
   * An extra pattern can also be set if you come for instance from the ''backlinks'' plugin. Default value: ''%%{{backlinks>.}}%%''
-
-
-===== Documentation =====
-  * See also [[https://support.ezoic.com/support/solutions/articles/48000454111-why-does-my-site-look-different-|related section of this page]]

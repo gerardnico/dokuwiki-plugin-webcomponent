@@ -23,7 +23,7 @@ class plugin_webcomponent_button_test extends DokuWikiTest
 
     }
 
-    public function test_base()
+    public function test_internal_base()
     {
 
         // https://getbootstrap.com/docs/4.3/components/card/#using-custom-css
@@ -33,6 +33,24 @@ class plugin_webcomponent_button_test extends DokuWikiTest
         $info = array();
         foreach ($elements as $element) {
             $doku_text = '<' . $element . '>' . '[[:namespace:page#section|' . $link_content . ']]' . '</' . $element . '>';
+            $instructions = p_get_instructions($doku_text);
+            $xhtml = p_render('xhtml', $instructions, $info);
+            $this->assertEquals($expected, $xhtml);
+        }
+
+    }
+
+    public function test_external_link()
+    {
+
+        // https://getbootstrap.com/docs/4.3/components/card/#using-custom-css
+        $elements = syntax_plugin_webcomponent_button::getTags();
+        $link_content = 'Go Somewhere';
+        $external = 'https://gerardnico.com';
+        $expected = '<a href="'.$external.'" class="btn btn-primary">' . $link_content . '</a>';
+        $info = array();
+        foreach ($elements as $element) {
+            $doku_text = '<' . $element . '>' . '[['.$external.'|' . $link_content . ']]' . '</' . $element . '>';
             $instructions = p_get_instructions($doku_text);
             $xhtml = p_render('xhtml', $instructions, $info);
             $this->assertEquals($expected, $xhtml);

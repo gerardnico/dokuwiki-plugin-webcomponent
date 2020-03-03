@@ -213,7 +213,13 @@ class syntax_plugin_webcomponent_button extends DokuWiki_Syntax_Plugin
 
                             $pageid = $parameters['locallink']['pageid'];
                             $content = $parameters['locallink']['content'];
-                            $renderer->doc .= '<a href="' . wl($pageid) . '" class="btn btn-primary">' . $renderer->_xmlEntities($content) . '</a>';
+
+                            if (strpos($pageid, 'http') === 0) {
+                                $href=$pageid;
+                            } else {
+                                $href=wl($pageid);
+                            }
+                            $renderer->doc .= '<a href="' . $href . '" class="btn btn-primary">' . $renderer->_xmlEntities($content) . '</a>';
 
                         }
                         break;

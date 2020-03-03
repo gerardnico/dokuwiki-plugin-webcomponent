@@ -24,7 +24,7 @@ require_once(__DIR__ . '/../webcomponent.php');
 class syntax_plugin_webcomponent_card extends DokuWiki_Syntax_Plugin
 {
 
-    // Pattern that we expect in a card (teaser)
+    // Header pattern that we expect in a card (teaser) ie  ==== Hello =====
     const HEADER_PATTERN = '[ \t]*={2,}[^\n]+={2,}[ \t]*(?=\n)';
 
     // The > in the pattern below is to be able to handle pluggin
