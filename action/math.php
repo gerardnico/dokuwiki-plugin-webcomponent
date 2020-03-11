@@ -57,10 +57,11 @@ class action_plugin_webcomponent_math extends DokuWiki_Action_Plugin
             $math_div_id = webcomponent::PLUGIN_NAME . '_' . syntax_plugin_webcomponent_math::getComponentName();
 
             ptln('<div id="' . $math_div_id . '"">');
+            // Doc: https://docs.mathjax.org/en/v1.0/configuration.html#the-tex-setup
             ptln(DOKU_TAB . '<script type="text/x-mathjax-config">
                 MathJax.Hub.Config({
                     showProcessingMessages: true,
-                    extensions: ["tex2jax.js"],
+                    extensions: ["tex2jax.js","TeX/AMSmath.js","TeX/AMSsymbols.js"],
                     jax: ["input/TeX", "output/HTML-CSS"],
                     tex2jax: {
                         inlineMath: [ ["<math>","</math>"]],
