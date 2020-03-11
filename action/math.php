@@ -52,11 +52,12 @@ class action_plugin_webcomponent_math extends DokuWiki_Action_Plugin
         // https://www.dokuwiki.org/devel:metadata#metadata_index
         global $ID;
         $isMathExpression = p_get_metadata($ID, syntax_plugin_webcomponent_math::MATH_EXPRESSION);
+
+        // Node Id
+        $math_div_id = webcomponent::PLUGIN_NAME . '_' . syntax_plugin_webcomponent_math::getComponentName();
+        ptln('<div id="' . $math_div_id . '"">');
         if ($isMathExpression) {
 
-            $math_div_id = webcomponent::PLUGIN_NAME . '_' . syntax_plugin_webcomponent_math::getComponentName();
-
-            ptln('<div id="' . $math_div_id . '"">');
             // Doc: https://docs.mathjax.org/en/v1.0/configuration.html#the-tex-setup
             ptln(DOKU_TAB . '<script type="text/x-mathjax-config">
                 MathJax.Hub.Config({
@@ -73,8 +74,12 @@ class action_plugin_webcomponent_math extends DokuWiki_Action_Plugin
                 });
             </script>');
             ptln(DOKU_TAB . '<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js" async></script>');
-            ptln('</div>');
+        } else {
+
+            ptln("<!--No Math expression on the page found");
+
         }
+        ptln('</div>');
 
     }
 
