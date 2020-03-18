@@ -55,7 +55,7 @@ class action_plugin_webcomponent_math extends DokuWiki_Action_Plugin
 
         // Node Id
         $math_div_id = webcomponent::PLUGIN_NAME . '_' . syntax_plugin_webcomponent_math::getComponentName();
-        ptln('<div id="' . $math_div_id . '"">');
+        ptln('<div id="' . $math_div_id . '">');
         if ($isMathExpression) {
 
             // Doc: https://docs.mathjax.org/en/v1.0/configuration.html#the-tex-setup
@@ -76,7 +76,7 @@ class action_plugin_webcomponent_math extends DokuWiki_Action_Plugin
             ptln(DOKU_TAB . '<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js" async></script>');
         } else {
 
-            ptln("<!--No Math expression on the page found");
+            ptln("<!--No Math expression on the page found-->");
 
         }
         ptln('</div>');

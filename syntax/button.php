@@ -135,7 +135,8 @@ class syntax_plugin_webcomponent_button extends DokuWiki_Syntax_Plugin
             case DOKU_LEXER_ENTER:
 
                 // Suppress the tag name
-                $match = utf8_substr($match, strlen(self::getTag()) + 1, -1);
+                $tag = self::getTagInString($match);
+                $match = utf8_substr($match, strlen($tag) + 1, -1);
                 $parameters = webcomponent::parseMatch($match);
                 return array($state, $parameters);
 
@@ -200,6 +201,13 @@ class syntax_plugin_webcomponent_button extends DokuWiki_Syntax_Plugin
                 switch ($state) {
 
                     case DOKU_LEXER_ENTER :
+                        if (array_key_exists("class", $parameters)) {
+                            $class = $parameters["class"];
+                        }
+                        if ($class != "") {
+                            $class = " " . $class;
+                        }
+                        $renderer->doc .= '<a class="btn btn-primary' . $class . '"';
                         break;
 
                     case DOKU_LEXER_UNMATCHED :
@@ -219,12 +227,11 @@ class syntax_plugin_webcomponent_button extends DokuWiki_Syntax_Plugin
                             } else {
                                 $href=wl($pageid);
                             }
-                            $renderer->doc .= '<a href="' . $href . '" class="btn btn-primary">' . $renderer->_xmlEntities($content) . '</a>';
-
+                            $renderer->doc .= ' href="' . $href . '">' . $renderer->_xmlEntities($content);
                         }
                         break;
                     case DOKU_LEXER_EXIT :
-
+                        $renderer->doc .= '</a>';
                         break;
                 }
                 return true;
@@ -263,6 +270,17 @@ class syntax_plugin_webcomponent_button extends DokuWiki_Syntax_Plugin
         $elements[] = self::getTag();
         $elements[] = 'btn';
         return $elements;
+    }
+
+    public static function getTagInString($string)
+    {
+        foreach (self::getTags() as $tag){
+            if (strpos($string, $tag) !== false){
+                return $tag;
+            }
+        }
+        throw new Exception('Not tag was found in the string ('.$string.')');
+
     }
 
 

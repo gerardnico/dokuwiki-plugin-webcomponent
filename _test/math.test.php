@@ -11,6 +11,21 @@ require_once(__DIR__ . '/../webcomponent.php');
 class plugin_webcomponent_math_test extends DokuWikiTest
 {
 
+    public static function getTextFromNode($Node, $Text = "") {
+        if ($Node->tagName == null)
+            return $Text.$Node->textContent;
+
+        $Node = $Node->firstChild;
+        if ($Node != null)
+            $Text = getTextFromNode($Node, $Text);
+
+        while($Node->nextSibling != null) {
+            $Text = getTextFromNode($Node->nextSibling, $Text);
+            $Node = $Node->nextSibling;
+        }
+        return $Text;
+    }
+
     protected $pluginsEnabled = [webcomponent::PLUGIN_NAME];
 
 
@@ -63,9 +78,11 @@ class plugin_webcomponent_math_test extends DokuWikiTest
         $testRequest = new TestRequest();
         $testResponse = $testRequest->get(array('id' => $pageId));
         $divId = webcomponent::PLUGIN_NAME . '_' . syntax_plugin_webcomponent_math::getComponentName();
-        $mathJaxDiv = $testResponse->queryHTML('#' . $divId)->elements;
-        $expected = 0;
-        $this->assertEquals($expected, sizeof($mathJaxDiv));
+        $mathJaxDiv = $testResponse->queryHTML('#' . $divId)->text();
+        // The comments are not returned
+        // therefore we don't see "<!--No Math expression on the page found-->"
+        $expected = "\n\n";
+        $this->assertEquals($expected, $mathJaxDiv);
 
 
     }
@@ -92,6 +109,8 @@ class plugin_webcomponent_math_test extends DokuWikiTest
 
 
     }
+
+
 
 
 }

@@ -29,10 +29,30 @@ class plugin_webcomponent_button_test extends DokuWikiTest
         // https://getbootstrap.com/docs/4.3/components/card/#using-custom-css
         $elements = syntax_plugin_webcomponent_button::getTags();
         $link_content = 'Go Somewhere';
-        $expected = '<a href="/./doku.php?id=:namespace:page%23section" class="btn btn-primary">' . $link_content . '</a>';
+        $expected = '<a class="btn btn-primary" href="/./doku.php?id=:namespace:page%23section">' . $link_content . '</a>';
         $info = array();
         foreach ($elements as $element) {
             $doku_text = '<' . $element . '>' . '[[:namespace:page#section|' . $link_content . ']]' . '</' . $element . '>';
+            $instructions = p_get_instructions($doku_text);
+            $xhtml = p_render('xhtml', $instructions, $info);
+            $this->assertEquals($expected, $xhtml);
+        }
+
+    }
+
+    /**
+     * We add a class
+     */
+    public function test_class()
+    {
+
+        // https://getbootstrap.com/docs/4.3/components/card/#using-custom-css
+        $elements = syntax_plugin_webcomponent_button::getTags();
+        $link_content = 'Go Somewhere';
+        $expected = '<a class="btn btn-primary mbt-3" href="/./doku.php?id=:namespace:page%23section">' . $link_content . '</a>';
+        $info = array();
+        foreach ($elements as $element) {
+            $doku_text = '<' . $element . ' class="mbt-3" >' . '[[:namespace:page#section|' . $link_content . ']]' . '</' . $element . '>';
             $instructions = p_get_instructions($doku_text);
             $xhtml = p_render('xhtml', $instructions, $info);
             $this->assertEquals($expected, $xhtml);
@@ -47,7 +67,7 @@ class plugin_webcomponent_button_test extends DokuWikiTest
         $elements = syntax_plugin_webcomponent_button::getTags();
         $link_content = 'Go Somewhere';
         $external = 'https://gerardnico.com';
-        $expected = '<a href="'.$external.'" class="btn btn-primary">' . $link_content . '</a>';
+        $expected = '<a class="btn btn-primary" href="'.$external.'">' . $link_content . '</a>';
         $info = array();
         foreach ($elements as $element) {
             $doku_text = '<' . $element . '>' . '[['.$external.'|' . $link_content . ']]' . '</' . $element . '>';
