@@ -43,7 +43,9 @@ class plugin_webcomponent_cardcolumns_test extends DokuWikiTest
             '<div class="card" style="width: 18rem;">'.DOKU_LF.
             DOKU_TAB.'<div class="card-body">'.DOKU_LF.
             DOKU_TAB.DOKU_TAB.'<h2 class="card-title">Title</h2>'.DOKU_LF.
-            DOKU_TAB.DOKU_TAB.'<p class="card-text">Teaser Text</p>'.DOKU_LF.
+            '<p>'.DOKU_LF.
+            'Teaser Text'.DOKU_LF.
+            '</p>'.DOKU_LF.
             DOKU_TAB.'</div>'.DOKU_LF.
             '</div>'.DOKU_LF.
             '</div>'.DOKU_LF;

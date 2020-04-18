@@ -24,8 +24,6 @@ require_once(__DIR__ . '/../webcomponent.php');
 class syntax_plugin_webcomponent_card extends DokuWiki_Syntax_Plugin
 {
 
-    // Header pattern that we expect in a card (teaser) ie  ==== Hello =====
-    const HEADER_PATTERN = '[ \t]*={2,}[^\n]+={2,}[ \t]*(?=\n)';
 
     // The > in the pattern below is to be able to handle pluggin
     // that uses a pattern such as {{changes>.}} from the change plugin
@@ -39,6 +37,7 @@ class syntax_plugin_webcomponent_card extends DokuWiki_Syntax_Plugin
     private $text;
     private $header;
     private $image;
+    const body_html = DOKU_TAB . '<div class="card-body">';
 
 
     /**
@@ -49,7 +48,7 @@ class syntax_plugin_webcomponent_card extends DokuWiki_Syntax_Plugin
      */
     function getType()
     {
-        return 'protected';
+        return 'container';
     }
 
     /**
@@ -61,7 +60,7 @@ class syntax_plugin_webcomponent_card extends DokuWiki_Syntax_Plugin
      */
     public function getAllowedTypes()
     {
-        return array();
+        return array('container', 'formatting', 'substition', 'protected', 'disabled', 'paragraphs');
     }
 
     /**
@@ -104,7 +103,6 @@ class syntax_plugin_webcomponent_card extends DokuWiki_Syntax_Plugin
         }
 
 
-
     }
 
     public function postConnect()
@@ -113,9 +111,6 @@ class syntax_plugin_webcomponent_card extends DokuWiki_Syntax_Plugin
         foreach (self::getTags() as $tag) {
             $this->Lexer->addExitPattern('</' . $tag . '>', 'plugin_' . webcomponent::PLUGIN_NAME . '_' . $this->getPluginComponent());
         }
-
-        // Header
-        $this->Lexer->addPattern(self::HEADER_PATTERN, 'plugin_' . webcomponent::PLUGIN_NAME . '_' . $this->getPluginComponent());
 
         // Image
         $this->Lexer->addPattern(self::IMAGE_PATTERN, 'plugin_' . webcomponent::PLUGIN_NAME . '_' . $this->getPluginComponent());
@@ -147,7 +142,7 @@ class syntax_plugin_webcomponent_card extends DokuWiki_Syntax_Plugin
                 $match = utf8_substr($match, 1, -1);
                 // Suppress the tag name
                 foreach (self::getTags() as $tag) {
-                    $match = str_replace( $tag, "",$match);
+                    $match = str_replace($tag, "", $match);
                 }
                 $parameters = webcomponent::parseMatch($match);
                 return array($state, $parameters);
@@ -159,16 +154,6 @@ class syntax_plugin_webcomponent_card extends DokuWiki_Syntax_Plugin
             case DOKU_LEXER_MATCHED :
 
                 $parameters = array();
-                if (preg_match('/' . self::HEADER_PATTERN . '/msSi', $match . DOKU_LF)) {
-                    // We have a header
-                    $title = trim($match);
-                    $level = 7 - strspn($title, '=');
-                    if ($level < 1) $level = 1;
-                    $title = trim($title, '=');
-                    $title = trim($title);
-                    $parameters['header']['title'] = $title;
-                    $parameters['header']['level'] = $level;
-                }
 
                 if (preg_match('/' . self::IMAGE_PATTERN . '/msSi', $match . DOKU_LF)) {
                     // We have an image, we parse it (Doku_Handler_Parse_Media in handler.php)
@@ -207,80 +192,42 @@ class syntax_plugin_webcomponent_card extends DokuWiki_Syntax_Plugin
             switch ($state) {
 
                 case DOKU_LEXER_ENTER :
-                    $this->startElement .= '<div class="card"';
+
+                    $renderer->doc .= '<div class="card"';
                     foreach ($parameters as $key => $value) {
-                        $this->startElement .= ' ' . $key . '="' . $value . '"';
+                        $renderer->doc .= ' ' . $key . '="' . $value . '"';
                     }
-                    $this->startElement .= '>';
+                    $renderer->doc .= '>'. DOKU_LF ;
+                    $renderer->doc .= self::body_html.DOKU_LF;
                     break;
 
                 case DOKU_LEXER_UNMATCHED :
-                    $instructions = p_get_instructions($parameters);
-                    $lastPBlockPosition = sizeof($instructions) - 2;
-                    if ($instructions[1][0] == 'p_open') {
-                        unset($instructions[1]);
-                    }
-                    if ($instructions[$lastPBlockPosition][0] == 'p_close') {
-                        unset($instructions[$lastPBlockPosition]);
-                    }
-                    $this->text .= p_render('xhtml', $instructions, $info);
+
+                    $renderer->doc .= $renderer->_xmlEntities($parameters);
+
                     break;
 
                 case DOKU_LEXER_MATCHED:
 
-                    if (array_key_exists('header', $parameters)) {
-                        $title = $parameters['header']['title'];
-                        $level = $parameters['header']['level'];
-                        $this->header .= '<h' . $level . ' class="card-title">';
-                        $this->header .= $renderer->_xmlEntities($title);
-                        $this->header .= "</h$level>";
-                    }
 
                     if (array_key_exists('image', $parameters)) {
 
-                        $this->image = $parameters['image'];
-
+                        $renderer->doc = substr ($renderer->doc, 0, strlen($renderer->doc)-strlen(self::body_html)-strlen(DOKU_LF));
+                        $src = $parameters['image']['src'];
+                        $width = $parameters['image']['width'];
+                        $height = $parameters['image']['height'];
+                        $title = $parameters['image']['title'];
+                        //Snippet taken from $renderer->doc .= $renderer->internalmedia($src, $linking = 'nolink');
+                        $renderer->doc .= DOKU_TAB . '<img class="card-img-top" src="' . ml($src, array('w' => $width, 'h' => $height, 'cache' => true)) . '" alt="' . $title . '" width="' . $width . '">' .DOKU_LF;
+                        $renderer->doc .= self::body_html;
                     }
                     break;
 
                 case DOKU_LEXER_EXIT :
 
-                    $renderer->doc .= $this->startElement . DOKU_LF;
-
-                    if ($this->header == "" and $this->text == "" and $this->image != ""){
-                        // An image card without any content
-                        $src = $this->image['src'];
-                        $width = $this->image['width'];
-                        $height = $this->image['height'];
-                        $title = $this->image['title'];
-                        //Snippet taken from $renderer->doc .= $renderer->internalmedia($src, $linking = 'nolink');
-                        $renderer->doc .= '<img class="card-img" src="' . ml($src, array('w' => $width, 'h' => $height, 'cache' => true)) . '" alt="' . $title . '" width="' . $width . '">';
-                    } else {
-                        // A real teaser
-                        if ($this->image != "") {
-                            $src = $this->image['src'];
-                            $width = $this->image['width'];
-                            $height = $this->image['height'];
-                            $title = $this->image['title'];
-                            //Snippet taken from $renderer->doc .= $renderer->internalmedia($src, $linking = 'nolink');
-                            $renderer->doc .= DOKU_TAB . '<img class="card-img-top" src="' . ml($src, array('w' => $width, 'h' => $height, 'cache' => true)) . '" alt="' . $title . '" width="' . $width . '">' .DOKU_LF;
-                        }
-                        $renderer->doc .= DOKU_TAB . '<div class="card-body">' . DOKU_LF;
-                        if ($this->header != "") {
-                            $renderer->doc .= DOKU_TAB . DOKU_TAB . $this->header . DOKU_LF;
-                        }
-                        if ($this->text != "") {
-                            $renderer->doc .= DOKU_TAB . DOKU_TAB . '<p class="card-text">' . $this->text . '</p>' . DOKU_LF;
-                        }
-                        $renderer->doc .= DOKU_TAB . '</div>' . DOKU_LF;
-                    }
-
+                    $renderer->doc .= DOKU_TAB . '</div>' . DOKU_LF;
                     $renderer->doc .= "</div>" . DOKU_LF;
 
-                    $this->startElement = "";
-                    $this->image = "";
-                    $this->header = "";
-                    $this->text = "";
                     break;
             }
             return true;

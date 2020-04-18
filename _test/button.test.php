@@ -29,7 +29,7 @@ class plugin_webcomponent_button_test extends DokuWikiTest
         // https://getbootstrap.com/docs/4.3/components/card/#using-custom-css
         $elements = syntax_plugin_webcomponent_button::getTags();
         $link_content = 'Go Somewhere';
-        $expected = '<a class="btn btn-primary" href="/./doku.php?id=:namespace:page%23section">' . $link_content . '</a>';
+        $expected = '<button type="button" class="btn btn-primary"><a href="/./doku.php?id=namespace:page#section" class="wikilink2" title="namespace:page" rel="nofollow">' . $link_content . '</a></button>';
         $info = array();
         foreach ($elements as $element) {
             $doku_text = '<' . $element . '>' . '[[:namespace:page#section|' . $link_content . ']]' . '</' . $element . '>';
@@ -49,7 +49,7 @@ class plugin_webcomponent_button_test extends DokuWikiTest
         // https://getbootstrap.com/docs/4.3/components/card/#using-custom-css
         $elements = syntax_plugin_webcomponent_button::getTags();
         $link_content = 'Go Somewhere';
-        $expected = '<a class="btn btn-primary mbt-3" href="/./doku.php?id=:namespace:page%23section">' . $link_content . '</a>';
+        $expected = '<button type="button" class="btn btn-primary mbt-3"><a href="/./doku.php?id=namespace:page#section" class="wikilink2" title="namespace:page" rel="nofollow">' . $link_content . '</a></button>';
         $info = array();
         foreach ($elements as $element) {
             $doku_text = '<' . $element . ' class="mbt-3" >' . '[[:namespace:page#section|' . $link_content . ']]' . '</' . $element . '>';
@@ -67,7 +67,7 @@ class plugin_webcomponent_button_test extends DokuWikiTest
         $elements = syntax_plugin_webcomponent_button::getTags();
         $link_content = 'Go Somewhere';
         $external = 'https://gerardnico.com';
-        $expected = '<a class="btn btn-primary" href="'.$external.'">' . $link_content . '</a>';
+        $expected = '<button type="button" class="btn btn-primary"><a href="https://gerardnico.com" class="urlextern" title="https://gerardnico.com" rel="nofollow">' . $link_content . '</a></button>';
         $info = array();
         foreach ($elements as $element) {
             $doku_text = '<' . $element . '>' . '[['.$external.'|' . $link_content . ']]' . '</' . $element . '>';

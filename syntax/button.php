@@ -42,7 +42,7 @@ class syntax_plugin_webcomponent_button extends DokuWiki_Syntax_Plugin
      */
     function getType()
     {
-        return 'protected';
+        return 'formatting';
     }
 
     /**
@@ -54,7 +54,7 @@ class syntax_plugin_webcomponent_button extends DokuWiki_Syntax_Plugin
      */
     public function getAllowedTypes()
     {
-        return array();
+        return array('container', 'formatting', 'substition', 'protected', 'disabled', 'paragraphs');
     }
 
     /**
@@ -108,9 +108,6 @@ class syntax_plugin_webcomponent_button extends DokuWiki_Syntax_Plugin
             $this->Lexer->addExitPattern('</' . $tag . '>', 'plugin_' . webcomponent::PLUGIN_NAME . '_' . $this->getPluginComponent());
         }
 
-        // Link
-        $this->Lexer->addPattern(self::INTERNAL_LINK_PATTERN, 'plugin_' . webcomponent::PLUGIN_NAME . '_' . $this->getPluginComponent());
-
 
     }
 
@@ -144,29 +141,6 @@ class syntax_plugin_webcomponent_button extends DokuWiki_Syntax_Plugin
 
                 return array($state, $match);
 
-            case DOKU_LEXER_MATCHED :
-
-                $parameters = array();
-
-                if (preg_match('/' . self::INTERNAL_LINK_PATTERN . '/msSi', $match . DOKU_LF)) {
-                    // We have a internal link, we parse it (code form the function internallink in handler.php)
-                    //
-                    // Strip the opening and closing markup
-                    $link = preg_replace(array('/^\[\[/', '/\]\]$/u'), '', $match);
-
-                    // Split title from URL
-                    $link = explode('|', $link, 2);
-                    if (!isset($link[1])) {
-                        $link[1] = null;
-                    }
-                    $link[0] = trim($link[0]);
-                    // we expect only a local link
-                    $parameters['locallink']['pageid'] = $link[0];
-                    $parameters['locallink']['content'] = $link[1];
-
-                }
-
-                return array($state, $parameters);
 
             case DOKU_LEXER_EXIT :
 
@@ -207,7 +181,7 @@ class syntax_plugin_webcomponent_button extends DokuWiki_Syntax_Plugin
                         if ($class != "") {
                             $class = " " . $class;
                         }
-                        $renderer->doc .= '<a class="btn btn-primary' . $class . '"';
+                        $renderer->doc .= '<button type="button" class="btn btn-primary' . $class . '">';
                         break;
 
                     case DOKU_LEXER_UNMATCHED :
@@ -215,46 +189,14 @@ class syntax_plugin_webcomponent_button extends DokuWiki_Syntax_Plugin
                         $renderer->doc .= $renderer->_xmlEntities($parameters);
                         break;
 
-                    case DOKU_LEXER_MATCHED:
 
-                        if (array_key_exists('locallink', $parameters)) {
-
-                            $pageid = $parameters['locallink']['pageid'];
-                            $content = $parameters['locallink']['content'];
-
-                            if (strpos($pageid, 'http') === 0) {
-                                $href=$pageid;
-                            } else {
-                                $href=wl($pageid);
-                            }
-                            $renderer->doc .= ' href="' . $href . '">' . $renderer->_xmlEntities($content);
-                        }
-                        break;
                     case DOKU_LEXER_EXIT :
-                        $renderer->doc .= '</a>';
+                        $renderer->doc .= '</button>';
                         break;
                 }
                 return true;
             }
 
-            case 'metadata':
-
-                /** @var Doku_Renderer_metadata $renderer */
-
-                list($state, $parameters) = $data;
-                switch ($state) {
-
-                    case DOKU_LEXER_MATCHED:
-
-                        if (array_key_exists('locallink', $parameters)) {
-
-                            // To add the link in the backlinks
-                            // See: https://www.dokuwiki.org/devel:syntax_plugins#metadata_renderer
-                            $pageIdToLinkTo = $parameters['locallink']['pageid'];
-                            $renderer->internallink($pageIdToLinkTo);
-
-                        }
-                }
         }
         return false;
     }

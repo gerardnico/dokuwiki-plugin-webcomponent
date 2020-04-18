@@ -13,6 +13,8 @@ class syntax_plugin_webcomponent_math extends DokuWiki_Syntax_Plugin
     public const MATH_EXPRESSION = 'math_expression';
 
 
+
+
     /**
      * Syntax Type
      *
@@ -77,6 +79,7 @@ class syntax_plugin_webcomponent_math extends DokuWiki_Syntax_Plugin
         }
 
 
+
     }
 
     public function postConnect()
@@ -98,10 +101,17 @@ class syntax_plugin_webcomponent_math extends DokuWiki_Syntax_Plugin
      */
     public function handle($match, $state, $pos, Doku_Handler $handler)
     {
+
         // A metadata to tell if the page has a math expression or not
         // Use in the action plugin to add or not the library
-        global $ID;
-        p_set_metadata($ID,array(syntax_plugin_webcomponent_math::MATH_EXPRESSION =>false));
+        // Reset a math tag was not found
+//        global $ID;
+//        p_set_metadata(
+//            $ID,
+//            array(syntax_plugin_webcomponent_math::MATH_EXPRESSION => false),
+//            $render = false,
+//            $persistent = true
+//        );
 
         // The element is also needed by mathjax
         // pass the whole thing
@@ -142,11 +152,12 @@ class syntax_plugin_webcomponent_math extends DokuWiki_Syntax_Plugin
                 // Adding a meta to say that there is a math expression
                 global $ID;
                 /** @var Doku_Renderer_metadata $renderer */
-                $renderer->meta[self::MATH_EXPRESSION]=true;
-                $renderer->persistent[self::MATH_EXPRESSION]=true;
+                // No persistence, only for the run
+                if (isset($renderer->persistent[self::MATH_EXPRESSION])) {
+                    unset($renderer->persistent[self::MATH_EXPRESSION]);
+                }
+                $renderer->meta[self::MATH_EXPRESSION] = true;
 
-                // TODO: What if the page is changed and that there is no math syntax anymore
-                // Add a syntax to suppress the expression
                 break;
 
             default:

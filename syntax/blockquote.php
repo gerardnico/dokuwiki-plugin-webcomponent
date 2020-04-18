@@ -29,11 +29,11 @@ class syntax_plugin_webcomponent_blockquote extends DokuWiki_Syntax_Plugin
      * Syntax Type.
      *
      * Needs to return one of the mode types defined in $PARSER_MODES in parser.php
-     * @see DokuWiki_Syntax_Plugin::getType()
+     * @see https://www.dokuwiki.org/devel:syntax_plugins#syntax_types
      */
     function getType()
     {
-        return 'protected';
+        return 'container';
     }
 
     /**
@@ -45,8 +45,9 @@ class syntax_plugin_webcomponent_blockquote extends DokuWiki_Syntax_Plugin
      */
     public function getAllowedTypes()
     {
-        return array();
+        return array('container', 'formatting', 'substition', 'protected', 'disabled', 'paragraphs');
     }
+
 
     /**
      * How Dokuwiki will add P element
@@ -72,6 +73,7 @@ class syntax_plugin_webcomponent_blockquote extends DokuWiki_Syntax_Plugin
         return 200;
     }
 
+
     /**
      * Create a pattern that will called this plugin
      *
@@ -90,11 +92,6 @@ class syntax_plugin_webcomponent_blockquote extends DokuWiki_Syntax_Plugin
     {
 
         $this->Lexer->addExitPattern('</' . self::getTagName() . '>', 'plugin_' . webcomponent::PLUGIN_NAME . '_' . $this->getPluginComponent());
-        // Lookahead
-
-        // Receive the cite
-        $lookaheadPattern = webcomponent::getIncludeTagPattern(syntax_plugin_webcomponent_cite::getTag());
-        $this->Lexer->addPattern($lookaheadPattern, 'plugin_' . webcomponent::PLUGIN_NAME . '_' . $this->getPluginComponent());
 
         // Receive the image
         $this->Lexer->addPattern(self::IMAGE_PATTERN, 'plugin_' . webcomponent::PLUGIN_NAME . '_' . $this->getPluginComponent());
@@ -190,7 +187,7 @@ class syntax_plugin_webcomponent_blockquote extends DokuWiki_Syntax_Plugin
 
                 case DOKU_LEXER_UNMATCHED :
 
-                    $renderer->doc .= DOKU_TAB . DOKU_TAB . webcomponent::render($parameters) . DOKU_LF;
+                    $renderer->doc .= DOKU_TAB . DOKU_TAB . $parameters . DOKU_LF;
                     break;
 
                 case DOKU_LEXER_MATCHED:
@@ -198,7 +195,7 @@ class syntax_plugin_webcomponent_blockquote extends DokuWiki_Syntax_Plugin
                     if (array_key_exists('cite', $parameters)) {
                         $content = $parameters['cite']['content'];
                         $renderer->doc .= DOKU_TAB . DOKU_TAB . '<footer class="blockquote-footer text-right"><cite>';
-                        $renderer->doc .= webcomponent::render($content);
+                        $renderer->doc .= $content ; //webcomponent::render($content);
                         $renderer->doc .= "</cite></footer>" . DOKU_LF;
                     }
 
