@@ -25,7 +25,7 @@ This is the implement of the [[https://getbootstrap.com/docs/4.3/components/card
 {{dokuwiki:webcomponent:teaser_image_1.png?30|}}
 === Teaser Title  ===
 A example taken from [[https://getbootstrap.com/docs/4.3/components/card/#example|the bootstrap quick example]] on how to build a card title in order to make up the bulk of the teaser content. 
-<btn>[[dokuwiki:webcomponent:start|Go to this page !]]</btn>
+<btn>[[dokuwiki:webcomponent:webcomponent|Go to this page !]]</btn>
 </card>
 </code>
 
@@ -38,7 +38,7 @@ A example taken from [[https://getbootstrap.com/docs/4.3/components/card/#exampl
 {{dokuwiki:webcomponent:teaser_image_2.jpg?25|}}
 === Teaser Title  ===
 A example taken from [[https://getbootstrap.com/docs/4.3/components/card/#example|the bootstrap quick example]] on how to build a card title in order to make up the bulk of the teaser content.
-<btn>[[dokuwiki:webcomponent:start|Go to this page !]]</btn>
+<btn>[[dokuwiki:webcomponent:webcomponent|Go to this page !]]</btn>
 </teaser>
 </code>
 </webcode>
