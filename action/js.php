@@ -12,10 +12,12 @@ if (!defined('DOKU_INC')) die();
 class action_plugin_webcomponent_js extends DokuWiki_Action_Plugin
 {
 
-    // Wcact Web Component Access
-    const ACCESS = 'wcacc';
+    // Because the javascript is a second request call
+    // we don't known if we are in the admin or public interface
+    // we add them to the js href the below query key
+    const ACCESS_PROPERTY_KEY = 'wcacc';
     // For the public (no user, no admin)
-    const PUBLIC = 'public';
+    const ACCESS_PROPERTY_VALUE_PUBLIC = 'public';
 
     /**
      * Registers our handler for the MANIFEST_SEND event
@@ -47,7 +49,7 @@ class action_plugin_webcomponent_js extends DokuWiki_Action_Plugin
             foreach ($scripts as &$script) {
                 $pos = strpos($script['src'], 'js.php');
                 if ($pos !== false) {
-                    $script['src'] = $script['src'] . '&'.self::ACCESS.'='.self::PUBLIC.'';
+                    $script['src'] = $script['src'] . '&'.self::ACCESS_PROPERTY_KEY.'='.self::ACCESS_PROPERTY_VALUE_PUBLIC.'';
                 }
             }
         }
@@ -56,6 +58,8 @@ class action_plugin_webcomponent_js extends DokuWiki_Action_Plugin
     }
 
     /**
+     * This is to handle the HTTP call
+     * /lib/exe/js.php?t=bootie&tseed=2eb19bd2d8991a9bb11366d787d4225e&wcacc=public
      * @param Doku_Event $event
      * @param            $param
      */
@@ -63,8 +67,8 @@ class action_plugin_webcomponent_js extends DokuWiki_Action_Plugin
     {
 
         // It was added by the TPL_METAHEADER_OUTPUT handler (ie function handle_header)
-        $access = $_GET[self::ACCESS];
-        if ($access == self::PUBLIC) {
+        $access = $_GET[self::ACCESS_PROPERTY_KEY];
+        if ($access == self::ACCESS_PROPERTY_VALUE_PUBLIC) {
 
             // The directory path for the internal dokuwiki script
             $dokuScriptPath = DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR . 'scripts' . DIRECTORY_SEPARATOR;

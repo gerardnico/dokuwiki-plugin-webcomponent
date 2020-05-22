@@ -134,10 +134,6 @@ class syntax_plugin_webcomponent_math extends DokuWiki_Syntax_Plugin
         $content = $data[0];
         switch ($mode) {
             case 'xhtml':
-                /** @var Doku_Renderer_xhtml $renderer */
-                $renderer->doc .= $renderer->_xmlEntities($content);
-                break;
-
             case 'odt':
                 /** @var Doku_Renderer_xhtml $renderer */
                 $renderer->doc .= $renderer->_xmlEntities($content);

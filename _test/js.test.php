@@ -51,7 +51,7 @@ class plugin_webcomponent_js_test extends DokuWikiTest
         $testRequest = new TestRequest();
         $testResponse = $testRequest->get(array('id' => $pageId));
         $jsSrcAttribute = $testResponse->queryHTML('script[src*="js.php"]' )->attr('src');
-        $pos = strpos($jsSrcAttribute,action_plugin_webcomponent_js::ACCESS.'=public');
+        $pos = strpos($jsSrcAttribute,action_plugin_webcomponent_js::ACCESS_PROPERTY_KEY.'=public');
         $this->assertEquals(true, $pos > 0);
 
 
