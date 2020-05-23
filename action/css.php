@@ -6,6 +6,9 @@ if (!defined('DOKU_INC')) die();
 /**
  * Class action_plugin_webcomponent_css
  * Delete Backend CSS for front-end
+ *
+ * Bug:
+ *   * https://gerardnico.com/web/browser/lighthouse - no interwiki
  */
 class action_plugin_webcomponent_css extends DokuWiki_Action_Plugin
 {
@@ -19,27 +22,9 @@ class action_plugin_webcomponent_css extends DokuWiki_Action_Plugin
     public function register(Doku_Event_Handler $controller)
     {
         $controller->register_hook('CSS_STYLES_INCLUDED', 'BEFORE', $this, 'handle_css_styles');
-        $controller->register_hook('CSS_CACHE_USE', 'BEFORE', $this, 'handle_use_cache');
-    }
-
-
-    /**
-     * This function serves debugging purposes and has to be enabled in the register phase
-     *
-     * @param Doku_Event $event event object by reference
-     * @param mixed $param [the parameters passed as fifth argument to register_hook() when this
-     *                           handler was registered]
-     * @return void
-     */
-    public function handle_use_cache(Doku_Event &$event, $param)
-    {
-        global $INPUT;
-
-        // We need different keys for each style sheet.
-        $event->data->key .= $INPUT->str('f', 'style');
-        $event->data->cache = getCacheName($event->data->key, $event->data->ext);
 
     }
+
 
     /**
      * Finally, handle the JS script list. The script would be fit to do even more stuff / types
@@ -62,8 +47,10 @@ class action_plugin_webcomponent_css extends DokuWiki_Action_Plugin
                 $filteredDataFiles = array();
                 $files = $event->data['files'];
                 foreach ($files as $fileKey => $file) {
-                    // No Css from lib styles
+                    // lib styles
                     if (strpos($file, 'lib/styles')) {
+                        // Geshi (syntax highlighting) and basic style of doku, we keep.
+                        $filteredDataFiles[$fileKey] = $file;
                         continue;
                     }
                     // No Css from lib scripts
@@ -88,9 +75,12 @@ class action_plugin_webcomponent_css extends DokuWiki_Action_Plugin
                 break;
 
             case 'speech':
-            case 'DW_DEFAULT':
                 $event->preventDefault();
                 break;
+            case 'DW_DEFAULT':
+                // Interwiki styles are here, we keep
+                break;
+
         }
     }
 }
