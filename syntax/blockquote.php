@@ -158,11 +158,10 @@ class syntax_plugin_webcomponent_blockquote extends DokuWiki_Syntax_Plugin
      * @param string $mode
      * @param Doku_Renderer $renderer
      * @param array $data - what the function handle() return'ed
-     * @return bool
+     * @return bool - rendered correctly (not used)
      */
     function render($mode, Doku_Renderer $renderer, $data)
     {
-
         if ($mode == 'xhtml') {
 
             /** @var Doku_Renderer_xhtml $renderer */
@@ -226,7 +225,7 @@ class syntax_plugin_webcomponent_blockquote extends DokuWiki_Syntax_Plugin
             }
             return true;
         }
-        return false;
+        return true;
     }
 
 

@@ -34,7 +34,8 @@ class action_plugin_webcomponent_metadescription extends DokuWiki_Action_Plugin
 
         // Get the description of the meta
         // https://www.dokuwiki.org/devel:metadata
-        $description = p_get_metadata($ID, 'description');
+
+            $description = p_get_metadata($ID, 'description');
         if (empty($description)) return;
 
         // Get the abstract and suppress the carriage return
