@@ -39,3 +39,12 @@ button.btn-primary a.wikilink1 {
 button.btn-primary a.urlextern {
     color: #fff;
 }
+
+/**
+	MathJax becomes mobile and will not overflow
+**/
+.MJXc-display, .mjx-chtml {
+    overflow-y: hidden;
+    max-width: 100%;
+    overflow-x: auto;
+}

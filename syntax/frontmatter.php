@@ -31,12 +31,11 @@ class syntax_plugin_webcomponent_frontmatter extends DokuWiki_Syntax_Plugin
      * Needs to return one of the mode types defined in $PARSER_MODES in parser.php
      * @see https://www.dokuwiki.org/devel:syntax_plugins#syntax_types
      *
-     * susbtition means that they cannot contain other mode
-     * which is the case
+     * baseonly
      */
     function getType()
     {
-        return 'substition';
+        return 'baseonly';
     }
 
     /**
@@ -113,6 +112,12 @@ class syntax_plugin_webcomponent_frontmatter extends DokuWiki_Syntax_Plugin
      */
     function render($mode, Doku_Renderer $renderer, $data)
     {
+        // TODO: https://developers.google.com/search/docs/data-types/breadcrumb#breadcrumb-list
+        // News article: https://developers.google.com/search/docs/data-types/article
+        // News article: https://developers.google.com/search/docs/data-types/paywalled-content
+        // What is ?: https://developers.google.com/search/docs/data-types/qapage
+        // How to ?: https://developers.google.com/search/docs/data-types/how-to
+
         if ($mode == 'metadata') {
 
             list($json) = $data;

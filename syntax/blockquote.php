@@ -40,12 +40,12 @@ class syntax_plugin_webcomponent_blockquote extends DokuWiki_Syntax_Plugin
      * @return array
      * Allow which kind of plugin inside
      *
-     * No one of array('container', 'formatting', 'substition', 'protected', 'disabled', 'paragraphs')
+     * No one of array('container', 'baseonly', 'formatting', 'substition', 'protected', 'disabled', 'paragraphs')
      * because we manage self the content and we call self the parser
      */
     public function getAllowedTypes()
     {
-        return array('container', 'formatting', 'substition', 'protected', 'disabled', 'paragraphs');
+        return array('container', 'baseonly','formatting', 'substition', 'protected', 'disabled', 'paragraphs');
     }
 
 

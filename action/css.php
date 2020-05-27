@@ -78,7 +78,7 @@ class action_plugin_webcomponent_css extends DokuWiki_Action_Plugin
                 $event->preventDefault();
                 break;
             case 'DW_DEFAULT':
-                // Interwiki styles are here, we keep
+                // Interwiki styles are here, we keep (in the lib/css.php file)
                 break;
 
         }
