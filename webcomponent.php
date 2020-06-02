@@ -47,7 +47,6 @@ class webcomponent
 
         $parameters = array();
 
-
         // /i not case sensitive
         $attributePattern = "\\s*(\w+)\\s*=\\s*[\'\"]{1}([^\`\"]*)[\'\"]{1}\\s*";
         $result = preg_match_all('/' . $attributePattern . '/i', $match, $matches);

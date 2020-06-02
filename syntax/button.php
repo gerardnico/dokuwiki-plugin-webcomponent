@@ -116,13 +116,14 @@ class syntax_plugin_webcomponent_button extends DokuWiki_Syntax_Plugin
      * The handle function goal is to parse the matched syntax through the pattern function
      * and to return the result for use in the renderer
      * This result is always cached until the page is modified.
-     * @see DokuWiki_Syntax_Plugin::handle()
-     *
      * @param string $match
      * @param int $state
      * @param int $pos
      * @param Doku_Handler $handler
      * @return array|bool
+     * @throws Exception
+     * @see DokuWiki_Syntax_Plugin::handle()
+     *
      */
     function handle($match, $state, $pos, Doku_Handler $handler)
     {
@@ -175,6 +176,7 @@ class syntax_plugin_webcomponent_button extends DokuWiki_Syntax_Plugin
                 switch ($state) {
 
                     case DOKU_LEXER_ENTER :
+                        $class = "";
                         if (array_key_exists("class", $parameters)) {
                             $class = $parameters["class"];
                         }
@@ -214,6 +216,11 @@ class syntax_plugin_webcomponent_button extends DokuWiki_Syntax_Plugin
         return $elements;
     }
 
+    /**
+     * @param $string
+     * @return mixed
+     * @throws Exception
+     */
     public static function getTagInString($string)
     {
         foreach (self::getTags() as $tag){
@@ -221,7 +228,7 @@ class syntax_plugin_webcomponent_button extends DokuWiki_Syntax_Plugin
                 return $tag;
             }
         }
-        throw new Exception('Not tag was found in the string ('.$string.')');
+        throw new Exception('No tag was found in the string ('.$string.')');
 
     }
 
