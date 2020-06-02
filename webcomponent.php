@@ -11,6 +11,15 @@ if (!defined('DOKU_PLUGIN')) {
     define('DOKU_PLUGIN', DOKU_INC . 'lib/plugins/');
 }
 
+/**
+ * Are used everywhere in the plugin and the last upgrade just kill them
+ * I just add them here
+ */
+define("DOKU_LEXER_ENTER", 1);
+define("DOKU_LEXER_MATCHED", 2);
+define("DOKU_LEXER_UNMATCHED", 3);
+define("DOKU_LEXER_EXIT", 4);
+define("DOKU_LEXER_SPECIAL", 5);
 
 /**
  * Static Utility class
