@@ -110,22 +110,23 @@ class syntax_plugin_webcomponent_related extends DokuWiki_Syntax_Plugin
             // but I leave it for better understanding of the process flow
             case DOKU_LEXER_SPECIAL :
 
-                // Parse the parameters
-                $match = utf8_substr($match, strlen(self::getElementName()), -1);
-
-                // /i not case sensitive
-                $attributePattern = "\\s*(\w+)\\s*=\\s*[\'\"]?([\w\d\s-_\|\*\.\(\)\?\/\\\\]+)[\'\"]?\\s*";
-                $result = preg_match_all('/' . $attributePattern . '/i', $match, $matches);
-                if ($result != 0) {
-                    foreach ($matches[1] as $key => $parameterKey) {
-                        $parameters[strtolower($parameterKey)] = $matches[2][$key];
-                    }
-                }
+                // Not used (bug in the pattern)
+                //                // Parse the parameters
+                //                $match = utf8_substr($match, strlen(self::getElementName()), -1);
+                //
+                //                // /i not case sensitive
+                //                $attributePattern = "\\s*(\w+)\\s*=\\s*[\'\"]?([\w\d\s-_\|\*\.\(\)\?\/\\\\]+)[\'\"]?\\s*";
+                //                $result = preg_match_all('/' . $attributePattern . '/i', $match, $matches);
+                //                if ($result != 0) {
+                //                    foreach ($matches[1] as $key => $parameterKey) {
+                //                        $parameters[strtolower($parameterKey)] = $matches[2][$key];
+                //                    }
+                //                }
 
         }
 
         // Cache the values
-        return array($state, $parameters);
+        return array($state);
     }
 
     /**
