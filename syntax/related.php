@@ -37,7 +37,7 @@ class syntax_plugin_webcomponent_related extends DokuWiki_Syntax_Plugin
 
     public static function getElementId()
     {
-        return webcomponent::PLUGIN_NAME."_".self::getElementName();
+        return webcomponent::PLUGIN_NAME . "_" . self::getElementName();
     }
 
 
@@ -71,17 +71,17 @@ class syntax_plugin_webcomponent_related extends DokuWiki_Syntax_Plugin
     /**
      * Create a pattern that will called this plugin
      *
-     * @see Doku_Parser_Mode::connectTo()
      * @param string $mode
+     * @see Doku_Parser_Mode::connectTo()
      */
     function connectTo($mode)
     {
         // The basic
-        $this->Lexer->addSpecialPattern('<' . self::getElementName(). '[^>]*>', $mode, 'plugin_' . webcomponent::PLUGIN_NAME . '_' . $this->getPluginComponent());
+        $this->Lexer->addSpecialPattern('<' . self::getElementName() . '[^>]*>', $mode, 'plugin_' . webcomponent::PLUGIN_NAME . '_' . $this->getPluginComponent());
 
         // To replace backlinks, you may add it in the configuration
         $extraPattern = $this->getConf(self::EXTRA_PATTERN_CONF);
-        if ($extraPattern != ""){
+        if ($extraPattern != "") {
             $this->Lexer->addSpecialPattern($extraPattern, $mode, 'plugin_' . webcomponent::PLUGIN_NAME . '_' . $this->getPluginComponent());
         }
 
@@ -92,13 +92,13 @@ class syntax_plugin_webcomponent_related extends DokuWiki_Syntax_Plugin
      * The handle function goal is to parse the matched syntax through the pattern function
      * and to return the result for use in the renderer
      * This result is always cached until the page is modified.
-     * @see DokuWiki_Syntax_Plugin::handle()
-     *
      * @param string $match
      * @param int $state
      * @param int $pos
      * @param Doku_Handler $handler
      * @return array|bool
+     * @see DokuWiki_Syntax_Plugin::handle()
+     *
      */
     function handle($match, $state, $pos, Doku_Handler $handler)
     {
@@ -110,18 +110,25 @@ class syntax_plugin_webcomponent_related extends DokuWiki_Syntax_Plugin
             // but I leave it for better understanding of the process flow
             case DOKU_LEXER_SPECIAL :
 
-                // Not used (bug in the pattern)
-                //                // Parse the parameters
-                //                $match = utf8_substr($match, strlen(self::getElementName()), -1);
-                //
-                //                // /i not case sensitive
-                //                $attributePattern = "\\s*(\w+)\\s*=\\s*[\'\"]?([\w\d\s-_\|\*\.\(\)\?\/\\\\]+)[\'\"]?\\s*";
-                //                $result = preg_match_all('/' . $attributePattern . '/i', $match, $matches);
-                //                if ($result != 0) {
-                //                    foreach ($matches[1] as $key => $parameterKey) {
-                //                        $parameters[strtolower($parameterKey)] = $matches[2][$key];
-                //                    }
-                //                }
+                // Parse the parameters
+                $match = utf8_substr($match, strlen(self::getElementName()), -1);
+                $parameters=array();
+
+                // /i not case sensitive
+                $attributePattern = "\\s*(\w+)\\s*=\\s*[\'\"]{1}([^\`\"]*)[\'\"]{1}\\s*";
+                $result = preg_match_all('/' . $attributePattern . '/i', $match, $matches);
+                if ($result != 0) {
+                    foreach ($matches[1] as $key => $parameterKey) {
+                        $parameter = strtolower($parameterKey);
+                        $value = $matches[2][$key];
+                        if (in_array($parameter, [self::SHOW_HEADER, self::INCLUDE_DIRECTORY_PARAMETERS])) {
+                            $value = filter_var($value, FILTER_VALIDATE_BOOLEAN);
+                        }
+                        $parameters[$parameter] = $value;
+                    }
+                }
+                // Cache the values
+                return array($state, $parameters);
 
         }
 
@@ -131,12 +138,12 @@ class syntax_plugin_webcomponent_related extends DokuWiki_Syntax_Plugin
 
     /**
      * Render the output
-     * @see DokuWiki_Syntax_Plugin::render()
-     *
      * @param string $mode
      * @param Doku_Renderer $renderer
      * @param array $data
      * @return bool
+     * @see DokuWiki_Syntax_Plugin::render()
+     *
      */
     function render($mode, Doku_Renderer $renderer, $data)
     {
@@ -154,18 +161,18 @@ class syntax_plugin_webcomponent_related extends DokuWiki_Syntax_Plugin
 
             $relatedPages = $this->related($id);
 
-            $renderer->doc .= '<div id="'.self::getElementId().'" class="'.self::getElementName().'-container">' . DOKU_LF;
+            $renderer->doc .= '<div id="' . self::getElementId() . '" class="' . self::getElementName() . '-container">' . DOKU_LF;
 
             if (empty($relatedPages)) {
 
                 // Dokuwiki debug
                 dbglog("No Backlinks", "Related plugins: all backlinks for page: $id");
-                $renderer->doc .= "<strong>Plugin ".webcomponent::PLUGIN_NAME." - Component ".self::getElementName().": " . $lang['nothingfound'] . "</strong>" . DOKU_LF;
+                $renderer->doc .= "<strong>Plugin " . webcomponent::PLUGIN_NAME . " - Component " . self::getElementName() . ": " . $lang['nothingfound'] . "</strong>" . DOKU_LF;
 
             } else {
 
                 // Dokuwiki debug
-                dbglog($relatedPages, self::getElementName()." plugins: all backlinks for page: $id");
+                dbglog($relatedPages, self::getElementName() . " plugins: all backlinks for page: $id");
 
                 $renderer->doc .= '<ul>' . DOKU_LF;
 
@@ -181,10 +188,10 @@ class syntax_plugin_webcomponent_related extends DokuWiki_Syntax_Plugin
                     } else {
                         $renderer->doc .=
                             tpl_link(
-                            wl($id).'?do=backlink',
-                            "More ...",
-                            'class="" rel="nofollow" title="More..."',
-                            $return = true
+                                wl($id) . '?do=backlink',
+                                "More ...",
+                                'class="" rel="nofollow" title="More..."',
+                                $return = true
                             );
                     }
                     $renderer->doc .= '</li>' . DOKU_LF;
@@ -208,7 +215,7 @@ class syntax_plugin_webcomponent_related extends DokuWiki_Syntax_Plugin
      */
     public function related($id, $max = NULL): array
     {
-        if ($max == NULL){
+        if ($max == NULL) {
             $max = $this->getConf(self::MAX_LINKS_CONF);
         }
         // Call the dokuwiki backlinks function
@@ -219,23 +226,23 @@ class syntax_plugin_webcomponent_related extends DokuWiki_Syntax_Plugin
 
         // To minimize the pressure on the index
         // as we asks then the backlinks of the backlinks on the next step
-        if (sizeof($backlinks) > 50){
+        if (sizeof($backlinks) > 50) {
             $backlinks = array_slice($backlinks, 0, 50);
         }
 
         $related = array();
-        foreach ($backlinks as $backlink){
+        foreach ($backlinks as $backlink) {
             $page = array();
-            $page[self::RELATED_PAGE_ID_PROP]=$backlink;
-            $page[self::RELATED_BACKLINKS_COUNT_PROP]=sizeof(ft_backlinks($backlink, $ignore_perms = false));
-            $related[]=$page;
+            $page[self::RELATED_PAGE_ID_PROP] = $backlink;
+            $page[self::RELATED_BACKLINKS_COUNT_PROP] = sizeof(ft_backlinks($backlink, $ignore_perms = false));
+            $related[] = $page;
         }
 
-        usort($related, function($a, $b) {
-            return $b[self::RELATED_BACKLINKS_COUNT_PROP] - $a[self::RELATED_BACKLINKS_COUNT_PROP] ;
+        usort($related, function ($a, $b) {
+            return $b[self::RELATED_BACKLINKS_COUNT_PROP] - $a[self::RELATED_BACKLINKS_COUNT_PROP];
         });
 
-        if (sizeof($related)> $max){
+        if (sizeof($related) > $max) {
             $related = array_slice($related, 0, $max);
             $page = array();
             $page[self::RELATED_PAGE_ID_PROP] = self::MORE_PAGE_ID;
