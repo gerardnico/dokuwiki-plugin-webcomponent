@@ -29,10 +29,11 @@ class plugin_webcomponent_button_test extends DokuWikiTest
         // https://getbootstrap.com/docs/4.3/components/card/#using-custom-css
         $elements = syntax_plugin_webcomponent_button::getTags();
         $link_content = 'Go Somewhere';
-        $expected = '<button type="button" class="btn btn-primary"><a href="/./doku.php?id=namespace:page#section" class="wikilink2" title="namespace:page" rel="nofollow">' . $link_content . '</a></button>';
+        $id = 'namespace:page';
+        $expected = '<button type="button" class="btn btn-primary"><a href="/./doku.php?id='.$id.'#section" class="wikilink2" title="namespace:page" rel="nofollow" data-wiki-id="'.$id.'">' . $link_content . '</a></button>';
         $info = array();
         foreach ($elements as $element) {
-            $doku_text = '<' . $element . '>' . '[[:namespace:page#section|' . $link_content . ']]' . '</' . $element . '>';
+            $doku_text = '<' . $element . '>' . '[['.$id.'#section|' . $link_content . ']]' . '</' . $element . '>';
             $instructions = p_get_instructions($doku_text);
             $xhtml = p_render('xhtml', $instructions, $info);
             $this->assertEquals($expected, $xhtml);
@@ -49,10 +50,11 @@ class plugin_webcomponent_button_test extends DokuWikiTest
         // https://getbootstrap.com/docs/4.3/components/card/#using-custom-css
         $elements = syntax_plugin_webcomponent_button::getTags();
         $link_content = 'Go Somewhere';
-        $expected = '<button type="button" class="btn btn-primary mbt-3"><a href="/./doku.php?id=namespace:page#section" class="wikilink2" title="namespace:page" rel="nofollow">' . $link_content . '</a></button>';
+        $id = "namespace:page";
+        $expected = '<button type="button" class="btn btn-primary mbt-3"><a href="/./doku.php?id='.$id.'#section" class="wikilink2" title="namespace:page" rel="nofollow" data-wiki-id="'.$id.'">' . $link_content . '</a></button>';
         $info = array();
         foreach ($elements as $element) {
-            $doku_text = '<' . $element . ' class="mbt-3" >' . '[[:namespace:page#section|' . $link_content . ']]' . '</' . $element . '>';
+            $doku_text = '<' . $element . ' class="mbt-3" >' . '[['.$id.'#section|' . $link_content . ']]' . '</' . $element . '>';
             $instructions = p_get_instructions($doku_text);
             $xhtml = p_render('xhtml', $instructions, $info);
             $this->assertEquals($expected, $xhtml);
@@ -67,7 +69,7 @@ class plugin_webcomponent_button_test extends DokuWikiTest
         $elements = syntax_plugin_webcomponent_button::getTags();
         $link_content = 'Go Somewhere';
         $external = 'https://gerardnico.com';
-        $expected = '<button type="button" class="btn btn-primary"><a href="https://gerardnico.com" class="urlextern" title="https://gerardnico.com" rel="nofollow">' . $link_content . '</a></button>';
+        $expected = '<button type="button" class="btn btn-primary"><a href="https://gerardnico.com" class="urlextern" title="https://gerardnico.com" rel="ugc nofollow">' . $link_content . '</a></button>';
         $info = array();
         foreach ($elements as $element) {
             $doku_text = '<' . $element . '>' . '[['.$external.'|' . $link_content . ']]' . '</' . $element . '>';

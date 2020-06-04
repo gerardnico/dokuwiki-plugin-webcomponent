@@ -13,6 +13,11 @@
  * Inspiration
  * https://github.com/dokufreaks/plugin-meta/blob/master/syntax.php
  * https://www.dokuwiki.org/plugin:semantic
+ *
+ * See also structured plugin
+ * https://www.dokuwiki.org/plugin:data
+ * https://www.dokuwiki.org/plugin:struct
+ *
  */
 if (!defined('DOKU_INC')) {
     die();

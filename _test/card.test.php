@@ -43,7 +43,7 @@ class plugin_webcomponent_teaser_test extends DokuWikiTest
             DOKU_TAB . '<div class="card-body">' . DOKU_LF .
             DOKU_TAB . DOKU_TAB . '<h4 class="card-title">Teaser Title</h4>' . DOKU_LF .
             '<p>' . DOKU_LF .
-            'A example taken from <a href="https://getbootstrap.com/docs/4.3/components/card/#example" class="urlextern" title="https://getbootstrap.com/docs/4.3/components/card/#example" rel="nofollow">the bootstrap quick example</a> on how to build a card title in order to make up the bulk of the teaser content.' . DOKU_LF .
+            'A example taken from <a href="https://getbootstrap.com/docs/4.3/components/card/#example" class="urlextern" title="https://getbootstrap.com/docs/4.3/components/card/#example" rel="ugc nofollow">the bootstrap quick example</a> on how to build a card title in order to make up the bulk of the teaser content.' . DOKU_LF .
             '</p>' . DOKU_LF .
             DOKU_TAB . '</div>' . DOKU_LF .
             '</div>' . DOKU_LF;
@@ -69,7 +69,7 @@ class plugin_webcomponent_teaser_test extends DokuWikiTest
             DOKU_TAB . '<div class="card-body">' . DOKU_LF .
             DOKU_TAB . DOKU_TAB . '<h4 class="card-title">Teaser Title</h4>' . DOKU_LF .
             '<p>'.DOKU_LF.
-            'A example taken from <a href="https://getbootstrap.com/docs/4.3/components/card/#example" class="urlextern" title="https://getbootstrap.com/docs/4.3/components/card/#example" rel="nofollow">the bootstrap quick example</a> on how to build a card title in order to make up the bulk of the teaser content.' . DOKU_LF .
+            'A example taken from <a href="https://getbootstrap.com/docs/4.3/components/card/#example" class="urlextern" title="https://getbootstrap.com/docs/4.3/components/card/#example" rel="ugc nofollow">the bootstrap quick example</a> on how to build a card title in order to make up the bulk of the teaser content.' . DOKU_LF .
             '</p>'.DOKU_LF.
             DOKU_TAB . '</div>' . DOKU_LF .
             '</div>' . DOKU_LF;

@@ -28,8 +28,9 @@ class plugin_webcomponent_cite_test extends DokuWikiTest
 
         // https://getbootstrap.com/docs/4.3/components/card/#using-custom-css
         $element = syntax_plugin_webcomponent_cite::getTag();
-        $doku_text = '<' . $element . '>[[:namespace:page#section|bla]]</' . $element . '>';
-        $expected = '<cite><a href="/./doku.php?id=namespace:page#section" class="wikilink2" title="namespace:page" rel="nofollow">bla</a></cite>';
+        $id = 'namespace:page';
+        $doku_text = '<' . $element . '>[['.$id.'#section|bla]]</' . $element . '>';
+        $expected = '<cite><a href="/./doku.php?id='.$id.'#section" class="wikilink2" title="namespace:page" rel="nofollow" data-wiki-id="'.$id.'">bla</a></cite>';
         $instructions = p_get_instructions($doku_text);
         $xhtml = p_render('xhtml', $instructions, $info);
         $this->assertEquals($expected, $xhtml);
