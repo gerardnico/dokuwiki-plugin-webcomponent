@@ -90,12 +90,15 @@ class syntax_plugin_webcomponent_brand extends DokuWiki_Syntax_Plugin {
                     $title .='"';
                     $renderer->doc .= $title;
 
-                    $class = ' class="navbar-brand';
+                    $renderer->doc .= ' class="navbar-brand';
                     if (array_key_exists("class", $parameters)) {
-                        $class .= ' '.$parameters["class"];
+                        $renderer->doc .= ' '.$parameters["class"];
                     }
-                    $class .='"';
-                    $renderer->doc .= $class.'>';
+                    $renderer->doc .= '"';
+                    if (array_key_exists("style", $parameters)) {
+                        $renderer->doc .= ' style="'.$parameters["style"].'"';
+                    }
+                    $renderer->doc .= '>';
                     break;
 
                 case DOKU_LEXER_UNMATCHED :

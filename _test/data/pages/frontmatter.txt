@@ -1,0 +1,50 @@
+
+---json
+{
+    "layout": "post",
+    "title": "Blogging Like a Hacker",
+    "description":"Would you like to hack all the way down the hole, this article will tell you"
+}
+---
+
+====== Front Matter ======
+
+===== About =====
+[[https://gerardnico.com/markup/front-matter|front matter]] implementation with the Yaml language
+
+To take control over how your content appears on web engine such as Google, Twitter, Facebook
+
+https://www.dublincore.org/specifications/dublin-core/dces/
+
+Amp Google:
+  * https://ogp.me/
+  * Schema.org
+
+Social:
+  * https://developer.twitter.com/en/docs/tweets/optimize-with-cards/guides/getting-started (To render in twitter as a card)
+  * https://developers.facebook.com/docs/sharing/webmasters
+
+Build, test:
+  * [[https://developers.google.com/search/docs/guides/prototype|Build, Test, and Release Your Structured Data]]
+  * [[https://support.google.com/webmasters/answer/7552505|Rich result status report]]
+
+Online test: 
+  * https://search.google.com/test/rich-results
+  * https://search.google.com/structured-data/testing-tool/u/0/
+
+===== Type =====
+  * https://schema.org/TechArticle
+
+
+
+
+===== Example =====
+  * Javascript
+<code javascript>
+---json
+{
+layout: post,
+title: Blogging Like a Hacker
+}
+---
+</code>

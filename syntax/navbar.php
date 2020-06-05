@@ -109,7 +109,7 @@ class syntax_plugin_webcomponent_navbar extends DokuWiki_Syntax_Plugin
             case DOKU_LEXER_ENTER:
 
                 // Suppress the component name
-                $match = utf8_substr($match, strlen(self::getElementName()) + 1, -1);
+                $match = substr($match, strlen(self::getElementName()) + 1, -1);
                 $parameters = webcomponent::parseMatch($match);
                 return array($state, $parameters);
 
@@ -151,6 +151,10 @@ class syntax_plugin_webcomponent_navbar extends DokuWiki_Syntax_Plugin
                     $renderer->doc .= ' class="navbar';
                     if (array_key_exists("class", $parameters)) {
                         $renderer->doc .= ' '.$parameters["class"];
+                    }
+                    $renderer->doc .= '"';
+                    if (array_key_exists("style", $parameters)) {
+                        $renderer->doc .= ' style="'.$parameters["style"];
                     }
                     $renderer->doc .= '">' . DOKU_LF;
                     break;
