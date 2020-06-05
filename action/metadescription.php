@@ -35,7 +35,7 @@ class action_plugin_webcomponent_metadescription extends DokuWiki_Action_Plugin
         // Get the description of the meta
         // https://www.dokuwiki.org/devel:metadata
 
-            $description = p_get_metadata($ID, 'description');
+        $description = p_get_metadata($ID, 'description');
         if (empty($description)) return;
 
         // Get the abstract and suppress the carriage return
@@ -44,11 +44,11 @@ class action_plugin_webcomponent_metadescription extends DokuWiki_Action_Plugin
 
         // Suppress the title
         $title = p_get_metadata($ID, 'title');
-        $meta = preg_replace('/'.$title.'/i',"",$abstract);
+        $meta = str_replace($title, "", $abstract);
         // Suppress the star, the tab, About
-        $meta = preg_replace('/(\*|\t|About)/im',"",$meta);
+        $meta = preg_replace('/(\*|\t|About)/im', "", $meta);
         // Suppress all double space and trim
-        $meta = trim(preg_replace('/  /m'," ",$meta));
+        $meta = trim(preg_replace('/  /m', " ", $meta));
 
         // Add it to the meta
         $event->data['meta'][] = array("name" => "description", "content" => $meta);
