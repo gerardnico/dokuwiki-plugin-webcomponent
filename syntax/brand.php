@@ -17,8 +17,15 @@ class syntax_plugin_webcomponent_brand extends DokuWiki_Syntax_Plugin {
         return 'block';
     }
 
+    /**
+     * @return array
+     * Allow which kind of plugin inside
+     *
+     * array('container', 'baseonly', 'formatting', 'substition', 'protected', 'disabled', 'paragraphs')
+     *
+     */
     function getAllowedTypes() {
-        return array ('substition','formatting','disabled');
+        return array('container', 'baseonly', 'formatting', 'substition', 'protected', 'disabled', 'paragraphs');
     }
 
     function getSort() {

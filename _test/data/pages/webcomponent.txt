@@ -16,7 +16,6 @@ This is the demo website of the [[https://www.dokuwiki.org/plugin:webcomponent|W
       * [[search|search]]
       * [[group|group]]
       * [[dropdown|dropdown]]
-  * [[heading|heading (Markdown Atx)]]
   * [[blockquote|blockquote]]
   * [[doku>wiki:syntax#code_blocks|code block]] extension
       * [[console|console]]
