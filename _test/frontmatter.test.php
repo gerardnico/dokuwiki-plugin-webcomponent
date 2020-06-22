@@ -93,8 +93,17 @@ class plugin_webcomponent_frontmatter_test extends DokuWikiTest
         // Do we have the description in the meta
         $request = new TestRequest(); // initialize the request
         $response = $request->get(array('id' =>$pageId), '/doku.php');
-        $canonicalHref = $response->queryHTML('meta[rel="'.$metaKey.'"]')->attr('href');
-        $this->assertEquals($canonicalValue, $canonicalHref,"The meta should be good");
+        $canonicalHref = $response->queryHTML('link[rel="'.$metaKey.'"]')->attr('href');
+
+        /**
+         * The domain for the test is set in the variable {@link $default_server_vars}
+         * see the property SERVER_NAME (in the file _test/bootstrap.php)
+         */
+        $domain = "http://wiki.example.com/";
+        $canonicalPath = strtr($canonicalValue, ":", "/");
+        $expectedCanonicalValue= $domain . $canonicalPath;
+        $this->assertEquals($expectedCanonicalValue, $canonicalHref,"The meta should be good");
+
     }
 
     /**
