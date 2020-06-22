@@ -33,8 +33,6 @@ class plugin_webcomponent_frontmatter_test extends DokuWikiTest
             . 'Content';
         saveWikiText($pageId, $text, 'Created');
 
-        saveWikiText($pageId, $text, 'Added meta');
-
         $descriptionMeta = p_get_metadata($pageId, 'description', METADATA_RENDER_UNLIMITED);
         self::assertEquals($description, $descriptionMeta['abstract']);
 
@@ -73,8 +71,6 @@ class plugin_webcomponent_frontmatter_test extends DokuWikiTest
             . 'Content';
         saveWikiText($pageId, $text, 'Created');
 
-        saveWikiText($pageId, $text, 'Added meta');
-
         $canonicalMeta = p_get_metadata($pageId, $metaKey, METADATA_RENDER_UNLIMITED);
         self::assertEquals($canonicalValue, $canonicalMeta);
 
@@ -93,7 +89,6 @@ class plugin_webcomponent_frontmatter_test extends DokuWikiTest
         // Do we have the description in the meta
         $request = new TestRequest(); // initialize the request
         $response = $request->get(array('id' =>$pageId), '/doku.php');
-        $canonicalHref = $response->queryHTML('link[rel="'.$metaKey.'"]')->attr('href');
 
         /**
          * The domain for the test is set in the variable {@link $default_server_vars}
@@ -102,7 +97,13 @@ class plugin_webcomponent_frontmatter_test extends DokuWikiTest
         $domain = "http://wiki.example.com/";
         $canonicalPath = strtr($canonicalValue, ":", "/");
         $expectedCanonicalValue= $domain . $canonicalPath;
-        $this->assertEquals($expectedCanonicalValue, $canonicalHref,"The meta should be good");
+
+        // Query
+        $canonicalHrefLink = $response->queryHTML('link[rel="'.$metaKey.'"]')->attr('href');
+        $this->assertEquals($expectedCanonicalValue, $canonicalHrefLink,"The link canonical meta should be good");
+        // Facbook: https://developers.facebook.com/docs/sharing/webmasters/getting-started/versioned-link/
+        $canonicalHrefMetaOg = $response->queryHTML('meta[property="og:url"]')->attr('content');
+        $this->assertEquals($expectedCanonicalValue, $canonicalHrefMetaOg,"The meta canonical property should be good");
 
     }
 

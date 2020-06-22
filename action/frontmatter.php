@@ -64,6 +64,7 @@ class action_plugin_webcomponent_frontmatter extends DokuWiki_Action_Plugin
         $canonicalHref = getBaseURL(true) . strtr($canonical, ':', '/');
         // Search the key
         $canonicalKey = "";
+        $canonicalRelArray = array("rel" => "canonical", "href" => $canonicalHref);
         foreach ($event->data['link'] as $key => $link) {
             if ($link["rel"]=="canonical"){
                 $canonicalKey = $key;
@@ -71,12 +72,31 @@ class action_plugin_webcomponent_frontmatter extends DokuWiki_Action_Plugin
         }
         if ($canonicalKey!=""){
             // Update
-            $event->data['link'][$canonicalKey] = array("rel" => "canonical", "href" => $canonicalHref);
+            $event->data['link'][$canonicalKey] = $canonicalRelArray;
         } else {
             // Add
-            $event->data['link'][] = array("rel" => "canonical", "href" => $canonicalHref);
+            $event->data['link'][] = $canonicalRelArray;
         }
 
+        /**
+         * Add the Og canonical meta
+         * https://developers.facebook.com/docs/sharing/webmasters/getting-started/versioned-link/
+         */
+        $canonicalOgKeyKey = "";
+        $canonicalPropertyKey = "og:url";
+        $canonicalOgArray = array("property" => $canonicalPropertyKey, "content" => $canonicalHref);
+        foreach ($event->data['meta'] as $key => $meta) {
+            if ($meta["property"]== $canonicalPropertyKey){
+                $canonicalOgKeyKey = $key;
+            }
+        }
+        if ($canonicalOgKeyKey!=""){
+            // Update
+            $event->data['meta'][$canonicalOgKeyKey] = $canonicalOgArray;
+        } else {
+            // Add
+            $event->data['meta'][] = $canonicalOgArray;
+        }
 
     }
 }
