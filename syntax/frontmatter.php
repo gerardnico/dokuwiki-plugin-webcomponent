@@ -29,6 +29,7 @@ if (!defined('DOKU_INC')) {
  */
 class syntax_plugin_webcomponent_frontmatter extends DokuWiki_Syntax_Plugin
 {
+    const CANONICAL_PROPERTY = 'canonical';
 
     /**
      * Syntax Type.
@@ -61,7 +62,6 @@ class syntax_plugin_webcomponent_frontmatter extends DokuWiki_Syntax_Plugin
      */
     function connectTo($mode)
     {
-        //'~~META:.*?~~'
         if ($mode == "base") {
             // only from the top
             $this->Lexer->addSpecialPattern('---json.*?---', $mode, 'plugin_' . webcomponent::PLUGIN_NAME . '_' . $this->getPluginComponent());
@@ -90,14 +90,25 @@ class syntax_plugin_webcomponent_frontmatter extends DokuWiki_Syntax_Plugin
             //   from end   `---` + eol = 4
             $match = substr($match, 8, -4);
 
+            // Otherwise you get an object ie $arrayFormat-> syntax
             $arrayFormat = true;
             $json = json_decode($match, $arrayFormat);
 
+            // Trim it
+            $jsonKey = array_map('trim', array_keys($json));
+            $jsonValues = array_map('trim', $json);
+            $json = array_combine($jsonKey, $jsonValues);
+
+            // Process
             if (array_key_exists('description', $json)) {
                 global $ID;
                 $description = p_get_metadata($ID, 'description');
                 $description['abstract'] = $json['description'];
                 p_set_metadata($ID, array('description' => $description));
+            }
+            if (array_key_exists(self::CANONICAL_PROPERTY, $json)) {
+                global $ID;
+                p_set_metadata($ID, array(self::CANONICAL_PROPERTY => $json[self::CANONICAL_PROPERTY]));
             }
 
             return array($json);

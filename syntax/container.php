@@ -76,7 +76,7 @@ class syntax_plugin_webcomponent_container extends DokuWiki_Syntax_Plugin
     function connectTo($mode)
     {
 
-        $pattern = webcomponent::getLookAheadPattern(self::getElementName());
+        $pattern = webcomponent::getContainerTagPattern(self::getElementName());
         $this->Lexer->addEntryPattern($pattern, $mode, 'plugin_' . webcomponent::PLUGIN_NAME . '_' . $this->getPluginComponent());
 
     }

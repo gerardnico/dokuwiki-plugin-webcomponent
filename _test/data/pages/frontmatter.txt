@@ -10,9 +10,67 @@
 ====== Front Matter ======
 
 ===== About =====
-[[https://gerardnico.com/markup/front-matter|front matter]] implementation with the Yaml language
+''Front Matter'' is a dokuwiki plugin that:
+  * permits to add dokuwiki metadata in a json format.
+  * add metadata into the HTML page:
+      * SEO
+          * description
+          * canonical
+      * Twitter (todo)
+      * Facebook (todo)
 
-To take control over how your content appears on web engine such as Google, Twitter, Facebook
+It borrows its name from the [[https://datacadamia.com/markup/front-matter|front matter book]]
+
+
+
+
+
+===== Example =====
+Just add a block of code that:
+  * starts with ''%%---json%%''
+  * contains a json document
+  * end with ''%%---%%''
+
+Example:
+<code javascript>
+---json
+{
+    "canonical":"my:id",
+    "description":"That's the article that you want to read!"
+}
+---
+</code>
+
+===== Built-in Properties =====
+''Front Matter'' takes into account the below properties
+==== canonical ====
+''canonical'' is an [[data:modeling:identifier|identifier]] for a dokuwiki page that will be used to define the [[web:html:canonical|canonical link]].
+
+The ''canonical link'' identifies uniquely a page in a domain.
+
+The ''canonical'' value:
+  * should never change (theoretically)
+  * does not need to be the [[doku>pagename]]
+
+Example:
+  * if the canonical value is ''cat:post1''
+  * on a page hosted at ''example.com''
+  * the canonical meta would be:
+<code html>
+<link rel="canonical" href="https://example.com/cat/post1" />
+</code>
+==== description ====
+''description'' is the [[https://developer.mozilla.org/en-US/docs/Learn/HTML/Introduction_to_HTML/The_head_metadata_in_HTML#Active_learning_The_descriptions_use_in_search_engines|meta description]].
+
+
+
+
+<code html>
+<meta name="description" content="The best page on the universe">
+</code>
+
+
+===== Note =====
 
 https://www.dublincore.org/specifications/dublin-core/dces/
 
@@ -32,19 +90,5 @@ Online test:
   * https://search.google.com/test/rich-results
   * https://search.google.com/structured-data/testing-tool/u/0/
 
-===== Type =====
-  * https://schema.org/TechArticle
 
 
-
-
-===== Example =====
-  * Javascript
-<code javascript>
----json
-{
-layout: post,
-title: Blogging Like a Hacker
-}
----
-</code>

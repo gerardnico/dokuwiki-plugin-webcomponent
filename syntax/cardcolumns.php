@@ -111,7 +111,7 @@ class syntax_plugin_webcomponent_cardcolumns extends DokuWiki_Syntax_Plugin
             case DOKU_LEXER_ENTER:
 
                 // Suppress the <>
-                $match = utf8_substr($match, 1, -1);
+                $match = substr($match, 1, -1);
                 // Suppress the tag name
                 foreach (self::getTags() as $tag) {
                     $match = str_replace( $tag, "",$match);

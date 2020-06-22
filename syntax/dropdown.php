@@ -85,7 +85,7 @@ class syntax_plugin_webcomponent_dropdown extends DokuWiki_Syntax_Plugin
     {
 
 
-        $pattern = webcomponent::getLookAheadPattern(self::getTag());
+        $pattern = webcomponent::getContainerTagPattern(self::getTag());
         $this->Lexer->addEntryPattern($pattern, $mode, 'plugin_' . webcomponent::PLUGIN_NAME . '_' . $this->getPluginComponent());
 
         // Link

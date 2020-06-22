@@ -91,17 +91,25 @@ class webcomponent
     /**
      * @param $tag
      * @return string
-     * Create a lookahead pattern used to enter in a mode
+     *
+     * Create a lookahead pattern for a container tag used to enter in a mode
      */
-    public static function getLookAheadPattern($tag)
+    public static function getContainerTagPattern($tag)
     {
         return '<' . $tag . '.*?>(?=.*?</' . $tag . '>)';
     }
 
-    public static function getIncludeTagPattern($tag)
+    /**
+     * @param $tag
+     * @return string
+     * Create a pattern used where the tag is not a container.
+     *
+     */
+    public static function getInlineTagPattern($tag)
     {
-        return '<' . $tag . '*?>.*?</' . $tag . '>';
+        return '<' . $tag . '.*?/>';
     }
+
 
     public static function render($doku_text)
     {

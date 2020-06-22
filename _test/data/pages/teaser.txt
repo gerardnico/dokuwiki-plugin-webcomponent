@@ -5,6 +5,3 @@ A teaser is just an alias for [[card|card]]. A teaser in essence is just a card 
 
 See [[card]]
 
-===== Articles Related =====
-{{backlinks>.}}
-

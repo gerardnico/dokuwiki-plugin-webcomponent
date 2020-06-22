@@ -73,7 +73,7 @@ class syntax_plugin_webcomponent_math extends DokuWiki_Syntax_Plugin
         // Add the entry patterns
         foreach (self::getElements() as $element) {
 
-            $pattern = webcomponent::getLookAheadPattern($element);
+            $pattern = webcomponent::getContainerTagPattern($element);
             $this->Lexer->addEntryPattern($pattern, $mode, 'plugin_' . webcomponent::PLUGIN_NAME . '_' . $this->getPluginComponent());
 
         }

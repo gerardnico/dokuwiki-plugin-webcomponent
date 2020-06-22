@@ -98,7 +98,7 @@ class syntax_plugin_webcomponent_card extends DokuWiki_Syntax_Plugin
 
         foreach (self::getTags() as $tag) {
 
-            $pattern = webcomponent::getLookAheadPattern($tag);
+            $pattern = webcomponent::getContainerTagPattern($tag);
             $this->Lexer->addEntryPattern($pattern, $mode, 'plugin_' . webcomponent::PLUGIN_NAME . '_' . $this->getPluginComponent());
         }
 

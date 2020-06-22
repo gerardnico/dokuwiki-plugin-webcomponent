@@ -34,7 +34,7 @@ The list of component can be found [here](https://gerardnico.com/dokuwiki/webcom
 
 Php:
 
-  * To reload the page when a file has changed - [brow](browser-sync-start.bat)
+  * To reload the page when a file has changed - [brow](./browser-sync-start.bat)
   
 ```bash
 browser-sync-start.bat

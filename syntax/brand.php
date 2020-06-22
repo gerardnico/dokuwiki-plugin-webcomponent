@@ -9,6 +9,12 @@ if(!defined('DOKU_INC')) die();
 
 class syntax_plugin_webcomponent_brand extends DokuWiki_Syntax_Plugin {
 
+    /**
+     * Syntax Type.
+     *
+     * Needs to return one of the mode types defined in $PARSER_MODES in parser.php
+     * @see DokuWiki_Syntax_Plugin::getType()
+     */
     function getType() {
         return 'formatting';
     }
@@ -33,10 +39,15 @@ class syntax_plugin_webcomponent_brand extends DokuWiki_Syntax_Plugin {
     }
 
 
-
+    /**
+     * Create a pattern that will called this plugin
+     *
+     * @see Doku_Parser_Mode::connectTo()
+     * @param string $mode
+     */
     function connectTo($mode) {
 
-        $pattern = webcomponent::getLookAheadPattern(self::getTag());
+        $pattern = webcomponent::getContainerTagPattern(self::getTag());
         $this->Lexer->addEntryPattern($pattern, $mode, 'plugin_' . webcomponent::PLUGIN_NAME . '_' . $this->getPluginComponent());
 
     }
@@ -70,6 +81,15 @@ class syntax_plugin_webcomponent_brand extends DokuWiki_Syntax_Plugin {
 
     }
 
+    /**
+     * Render the output
+     * @see DokuWiki_Syntax_Plugin::render()
+     *
+     * @param string $mode
+     * @param Doku_Renderer $renderer
+     * @param array $data - what the function handle() return'ed
+     * @return bool
+     */
     function render($mode, Doku_Renderer $renderer, $data) {
 
         if ($mode == 'xhtml') {

@@ -83,7 +83,7 @@ class syntax_plugin_webcomponent_blockquote extends DokuWiki_Syntax_Plugin
     function connectTo($mode)
     {
 
-        $pattern = webcomponent::getLookAheadPattern($this->getPluginComponent());
+        $pattern = webcomponent::getContainerTagPattern($this->getPluginComponent());
         $this->Lexer->addEntryPattern($pattern, $mode, 'plugin_' . webcomponent::PLUGIN_NAME . '_' . $this->getPluginComponent());
 
     }

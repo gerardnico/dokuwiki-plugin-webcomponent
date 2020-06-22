@@ -64,7 +64,7 @@ class syntax_plugin_webcomponent_console extends DokuWiki_Syntax_Plugin
     public function connectTo($mode)
     {
         // This define the DOKU_LEXER_ENTER state
-        $pattern = webcomponent::getLookAheadPattern(self::getElementName());
+        $pattern = webcomponent::getContainerTagPattern(self::getElementName());
         $this->Lexer->addEntryPattern($pattern, $mode, 'plugin_' . webcomponent::PLUGIN_NAME . '_' . $this->getPluginComponent());
 
     }
