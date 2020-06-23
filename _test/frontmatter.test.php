@@ -11,11 +11,24 @@ require_once(__DIR__ . '/../webcomponent.php');
 class plugin_webcomponent_frontmatter_test extends DokuWikiTest
 {
 
+
     public function setUp()
     {
+
         $this->pluginsEnabled[] = webcomponent::PLUGIN_NAME;
+        global $conf;
+
         parent::setUp();
+
+        // To get nice url
+        // https://www.dokuwiki.org/config:userewrite
+        $conf['userewrite']= 1;
+        // https://www.dokuwiki.org/config:useslash
+        $conf['useslash']= 1;
+
     }
+
+
 
     /**
      * Test the description
@@ -56,12 +69,16 @@ class plugin_webcomponent_frontmatter_test extends DokuWikiTest
 
     /**
      * Test the canonical
+     * Actually it just add the og
+     * When the rendering of the canonical value will be supported by
+     * 404 manager, we can switch
+     * TODO: move this to 404 manager ?
      */
     public function test_frontmatter_canonical()
     {
 
         $metaKey = syntax_plugin_webcomponent_frontmatter::CANONICAL_PROPERTY;
-        $pageId = 'description_test';
+        $pageId = 'description:test';
         $canonicalValue = "javascript:variable";
         $text = DOKU_LF . '---json' . DOKU_LF
             . '{' . DOKU_LF
@@ -95,13 +112,15 @@ class plugin_webcomponent_frontmatter_test extends DokuWikiTest
          * see the property SERVER_NAME (in the file _test/bootstrap.php)
          */
         $domain = "http://wiki.example.com/";
-        $canonicalPath = strtr($canonicalValue, ":", "/");
-        $expectedCanonicalValue= $domain . $canonicalPath;
+        $dokuCanonicalValue = $pageId; // Actually
+        $canonicalPath = strtr($dokuCanonicalValue, ":", "/");
+        $baseDir = "./"; # There is no way to change this configuration before
+        $expectedCanonicalValue = $domain . $baseDir . $canonicalPath;
 
         // Query
         $canonicalHrefLink = $response->queryHTML('link[rel="'.$metaKey.'"]')->attr('href');
         $this->assertEquals($expectedCanonicalValue, $canonicalHrefLink,"The link canonical meta should be good");
-        // Facbook: https://developers.facebook.com/docs/sharing/webmasters/getting-started/versioned-link/
+        // Facebook: https://developers.facebook.com/docs/sharing/webmasters/getting-started/versioned-link/
         $canonicalHrefMetaOg = $response->queryHTML('meta[property="og:url"]')->attr('content');
         $this->assertEquals($expectedCanonicalValue, $canonicalHrefMetaOg,"The meta canonical property should be good");
 
