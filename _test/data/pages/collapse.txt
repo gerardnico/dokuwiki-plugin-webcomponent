@@ -1,9 +1,0 @@
-====== WebComponent - Collapse ======
-
-===== About =====
-''collapse'' is a component that can be used only in a [[navbar|navbar]]
-
-All the element that are inside a collapse will be collapsed when the width of the page becomes a mobile size.
-
-===== Articles Related =====
-{{backlinks>.}}

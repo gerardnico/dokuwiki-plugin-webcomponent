@@ -1,7 +1,0 @@
-====== Teaser ======
-
-===== About =====
-A teaser is just an alias for [[card|card]]. A teaser in essence is just a card that calls to click on an link/[[button|button]]
-
-See [[card]]
-
