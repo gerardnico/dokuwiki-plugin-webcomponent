@@ -106,16 +106,22 @@ class syntax_plugin_webcomponent_console extends DokuWiki_Syntax_Plugin
     }
 
     /**
-     * Create output
-     * The rendering process
+     * Render the output
+     * @param string $format
+     * @param Doku_Renderer $renderer
+     * @param array $data - what the function handle() return'ed
+     * @return boolean - rendered correctly? (however, returned value is not used at the moment)
+     * @see DokuWiki_Syntax_Plugin::render()
+     *
+     *
      */
-    public function render($mode, Doku_Renderer $renderer, $data)
+    function render($format, Doku_Renderer $renderer, $data)
     {
         // The $data variable comes from the handle() function
         //
         // $mode = 'xhtml' means that we output html
         // There is other mode such as metadata, odt 
-        if ($mode == 'xhtml') {
+        if ($format == 'xhtml') {
 
             $state = $data[0];
             // No Unmatched because it's handled in the handle function

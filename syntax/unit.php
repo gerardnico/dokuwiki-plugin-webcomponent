@@ -132,20 +132,22 @@ class syntax_plugin_webcomponent_unit extends DokuWiki_Syntax_Plugin
     }
 
     /**
-     * Create output
-     * The rendering process
-     * @param string $mode
+     * Render the output
+     * @param string $format
      * @param Doku_Renderer $renderer
-     * @param array $data
-     * @return bool
+     * @param array $data - what the function handle() return'ed
+     * @return boolean - rendered correctly? (however, returned value is not used at the moment)
+     * @see DokuWiki_Syntax_Plugin::render()
+     *
+     *
      */
-    public function render($mode, Doku_Renderer $renderer, $data)
+    function render($format, Doku_Renderer $renderer, $data)
     {
         // The $data variable comes from the handle() function
         //
         // $mode = 'xhtml' means that we output html
         // There is other mode such as metadata, odt 
-        if ($mode == 'xhtml') {
+        if ($format == 'xhtml') {
 
             /**
              * To help the parser recognize that _xmlEntities is a function of Doku_Renderer_xhtml

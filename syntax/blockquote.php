@@ -45,7 +45,7 @@ class syntax_plugin_webcomponent_blockquote extends DokuWiki_Syntax_Plugin
      */
     public function getAllowedTypes()
     {
-        return array('container', 'baseonly','formatting', 'substition', 'protected', 'disabled', 'paragraphs');
+        return array('container', 'baseonly', 'formatting', 'substition', 'protected', 'disabled', 'paragraphs');
     }
 
 
@@ -77,8 +77,8 @@ class syntax_plugin_webcomponent_blockquote extends DokuWiki_Syntax_Plugin
     /**
      * Create a pattern that will called this plugin
      *
-     * @see Doku_Parser_Mode::connectTo()
      * @param string $mode
+     * @see Doku_Parser_Mode::connectTo()
      */
     function connectTo($mode)
     {
@@ -103,13 +103,13 @@ class syntax_plugin_webcomponent_blockquote extends DokuWiki_Syntax_Plugin
      * The handle function goal is to parse the matched syntax through the pattern function
      * and to return the result for use in the renderer
      * This result is always cached until the page is modified.
-     * @see DokuWiki_Syntax_Plugin::handle()
-     *
      * @param string $match
      * @param int $state
      * @param int $pos
      * @param Doku_Handler $handler
      * @return array|bool
+     * @see DokuWiki_Syntax_Plugin::handle()
+     *
      */
     function handle($match, $state, $pos, Doku_Handler $handler)
     {
@@ -153,16 +153,17 @@ class syntax_plugin_webcomponent_blockquote extends DokuWiki_Syntax_Plugin
 
     /**
      * Render the output
-     * @see DokuWiki_Syntax_Plugin::render()
-     *
-     * @param string $mode
+     * @param string $format
      * @param Doku_Renderer $renderer
      * @param array $data - what the function handle() return'ed
-     * @return bool - rendered correctly (not used)
+     * @return boolean - rendered correctly? (however, returned value is not used at the moment)
+     * @see DokuWiki_Syntax_Plugin::render()
+     *
+     *
      */
-    function render($mode, Doku_Renderer $renderer, $data)
+    function render($format, Doku_Renderer $renderer, $data)
     {
-        if ($mode == 'xhtml') {
+        if ($format == 'xhtml') {
 
             /** @var Doku_Renderer_xhtml $renderer */
             list($state, $parameters) = $data;
@@ -194,7 +195,7 @@ class syntax_plugin_webcomponent_blockquote extends DokuWiki_Syntax_Plugin
                     if (array_key_exists('cite', $parameters)) {
                         $content = $parameters['cite']['content'];
                         $renderer->doc .= DOKU_TAB . DOKU_TAB . '<footer class="blockquote-footer text-right"><cite>';
-                        $renderer->doc .= $content ; //webcomponent::render($content);
+                        $renderer->doc .= $content; //webcomponent::render($content);
                         $renderer->doc .= "</cite></footer>" . DOKU_LF;
                     }
 

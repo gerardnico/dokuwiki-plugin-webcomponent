@@ -121,18 +121,20 @@ class syntax_plugin_webcomponent_math extends DokuWiki_Syntax_Plugin
     }
 
     /**
-     * Handles the actual output creation.
+     * Render the output
+     * @param string $format
+     * @param Doku_Renderer $renderer
+     * @param array $data - what the function handle() return'ed
+     * @return boolean - rendered correctly? (however, returned value is not used at the moment)
+     * @see DokuWiki_Syntax_Plugin::render()
      *
-     * @param   $mode     string        output format being rendered
-     * @param   $renderer Doku_Renderer the current renderer object
-     * @param   $data     array         data created by handler()
-     * @return  boolean                 rendered correctly?
+     *
      */
-    public function render($mode, Doku_Renderer $renderer, $data)
+    function render($format, Doku_Renderer $renderer, $data)
     {
 
         $content = $data[0];
-        switch ($mode) {
+        switch ($format) {
             case 'xhtml':
             case 'odt':
                 /** @var Doku_Renderer_xhtml $renderer */

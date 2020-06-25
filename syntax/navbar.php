@@ -126,17 +126,18 @@ class syntax_plugin_webcomponent_navbar extends DokuWiki_Syntax_Plugin
 
     /**
      * Render the output
-     * @see DokuWiki_Syntax_Plugin::render()
-     *
-     * @param string $mode
+     * @param string $format
      * @param Doku_Renderer $renderer
      * @param array $data - what the function handle() return'ed
-     * @return bool
+     * @return boolean - rendered correctly? (however, returned value is not used at the moment)
+     * @see DokuWiki_Syntax_Plugin::render()
+     *
+     *
      */
-    function render($mode, Doku_Renderer $renderer, $data)
+    function render($format, Doku_Renderer $renderer, $data)
     {
 
-        if ($mode == 'xhtml') {
+        if ($format == 'xhtml') {
 
             /** @var Doku_Renderer_xhtml $renderer */
             list($state, $parameters) = $data;

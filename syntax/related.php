@@ -135,14 +135,15 @@ class syntax_plugin_webcomponent_related extends DokuWiki_Syntax_Plugin
 
     /**
      * Render the output
-     * @param string $mode
+     * @param string $format
      * @param Doku_Renderer $renderer
-     * @param array $data
-     * @return bool
+     * @param array $data - what the function handle() return'ed
+     * @return boolean - rendered correctly? (however, returned value is not used at the moment)
      * @see DokuWiki_Syntax_Plugin::render()
      *
+     *
      */
-    function render($mode, Doku_Renderer $renderer, $data)
+    function render($format, Doku_Renderer $renderer, $data)
     {
         global $lang;
         global $INFO;
@@ -154,7 +155,7 @@ class syntax_plugin_webcomponent_related extends DokuWiki_Syntax_Plugin
             $id = $INFO['id'];
         }
 
-        if ($mode == 'xhtml') {
+        if ($format == 'xhtml') {
 
             $relatedPages = $this->related($id);
 

@@ -51,9 +51,20 @@ class syntax_plugin_webcomponent_search extends DokuWiki_Syntax_Plugin {
 
     }
 
-    function render($mode, Doku_Renderer $renderer, $data) {
+    /**
+     * Render the output
+     * @param string $format
+     * @param Doku_Renderer $renderer
+     * @param array $data - what the function handle() return'ed
+     * @return boolean - rendered correctly? (however, returned value is not used at the moment)
+     * @see DokuWiki_Syntax_Plugin::render()
+     *
+     *
+     */
+    function render($format, Doku_Renderer $renderer, $data)
+    {
 
-        if ($mode == 'xhtml') {
+        if ($format == 'xhtml') {
 
             /** @var Doku_Renderer_xhtml $renderer */
             list($state,$parameters)=$data;

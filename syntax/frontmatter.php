@@ -119,14 +119,15 @@ class syntax_plugin_webcomponent_frontmatter extends DokuWiki_Syntax_Plugin
 
     /**
      * Render the output
-     * @param string $mode
+     * @param string $format
      * @param Doku_Renderer $renderer
      * @param array $data - what the function handle() return'ed
-     * @return bool - rendered correctly (not used at the moment)
+     * @return boolean - rendered correctly? (however, returned value is not used at the moment)
      * @see DokuWiki_Syntax_Plugin::render()
      *
+     *
      */
-    function render($mode, Doku_Renderer $renderer, $data)
+    function render($format, Doku_Renderer $renderer, $data)
     {
         // TODO: https://developers.google.com/search/docs/data-types/breadcrumb#breadcrumb-list
         // News article: https://developers.google.com/search/docs/data-types/article
@@ -134,7 +135,7 @@ class syntax_plugin_webcomponent_frontmatter extends DokuWiki_Syntax_Plugin
         // What is ?: https://developers.google.com/search/docs/data-types/qapage
         // How to ?: https://developers.google.com/search/docs/data-types/how-to
 
-        if ($mode == 'metadata') {
+        if ($format == 'metadata') {
 
             list($json) = $data;
 
