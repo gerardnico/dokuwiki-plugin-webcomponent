@@ -1,0 +1,29 @@
+====== Web Component - Redirection ======
+
+
+
+===== About =====
+The 404 Manager plugin is a plugin that I have created to change the behavior of this website when a page:
+  * doesn't exist 
+  * of has been moved
+  * of has been deleted
+
+On a normal website, when a page doesn't exist, you get an [[wp>HTTP_404|hard HTTP 404 response]] as [[datacadamia>http:status|HTTP Status]], hence the name of the plugin.
+
+The plugin can:
+  * redirect to the edit mode
+  * redirect to a internal page
+  * redirect to an external page
+  * redirect to the search engine
+  * show you the pages with the same name
+
+===== More =====
+
+  * The plugin is available for free here: See [[doku>plugin:404manager]]
+  * More.... Specifications, Usage and Installation can be found on the [[github>gerardnico/dokuwiki-plugin-404manager|Readme file of the github repository]]
+
+
+===== Illustration =====
+
+
+{{ https://raw.githubusercontent.com/gerardnico/dokuwiki-plugin-404manager/master/images/dokuwiki_404manager_conf.jpg }}
