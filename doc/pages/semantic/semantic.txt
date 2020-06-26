@@ -1,1 +1,1 @@
-====== Semantic / Web Structure ======
+====== Web Data Structure (Semantic) ======

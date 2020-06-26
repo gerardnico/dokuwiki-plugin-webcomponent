@@ -11,11 +11,11 @@ The ''UI'' components changes the rendering of a page
 
 ==== Block ====
 
-  * [[card]]: Do you want to put a text in a box with optionally an image and a button, that's a card
+  * [[card|Card]]: Do you want to put a text in a box with optionally an image and a button, that's a card
       * [[teaser]]: A card with a call to action
   * [[blockquote|Blockquote]]: A blockquote is a card with a citation.
-  * [[button|button (btn)]]: A button
-  * [[related|related]]: A component showing the backlinks
+  * [[button|Button (btn)]]: A button
+  * [[related|Related]]: A component showing the backlinks
   * [[math]]: Writing math formulas 
 
 ==== Navbar ====
@@ -30,5 +30,5 @@ The ''UI'' components changes the rendering of a page
 
   * [[card_column|Card column]] - A card column is a column layout for cards and blockquote.
 
-==== Integration ====
+==== Forum ====
   * [[disqus]]

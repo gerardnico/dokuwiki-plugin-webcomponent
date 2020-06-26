@@ -3,7 +3,7 @@
     "canonical":"canonical:url"
 }
 ---
-====== Canonical URL ======
+====== Web Components Plugin - Data Structure - Canonical URL ======
 
 
 ===== About =====
@@ -21,6 +21,8 @@ The ''canonical'' component is a part of the [[:seo|SEO]] module.
 
 ===== How to set the canonical value ? =====
 
+==== Manually ====
+
 To set the canonical value, uses the [[frontmatter|frontmatter component]] and add the ''canonical'' property in the JSON document.
 
 <code javascript>
@@ -30,13 +32,17 @@ To set the canonical value, uses the [[frontmatter|frontmatter component]] and a
 }
 ---
 </code>
-===== HTML meta =====
-By setting a ''canonical'' value, you will get two ''head'' property.
+
+==== Automatically ====
+
+This plugin can create a canonical value based on the last part of a page ''ID''. See [[canonical_automatic]]
+===== HTML HEAD properties =====
+By setting a ''canonical'' value, you will get two ''head'' properties in your HTML page.
 
 For instance:
   * if the canonical value is ''cat:post1''
   * on a page hosted at ''example.com''
-the canonical meta would become
+the canonical head properties would become
 
   * for [[https://support.google.com/webmasters/answer/139066?hl=en|Google]]
 <code html>
@@ -47,5 +53,16 @@ the canonical meta would become
 <meta property="og:url" content="https://example.com/cat/post1" />
 </code>
 
-===== Example =====
-This page has the canonical value set to "canonical:url" and therefore is also available at this URL: [[canonical:url]]
+===== Demo =====
+This page has the canonical value set to ''canonical:url'' and therefore is also available at this Canonical URL.
+
+<wrap tip>In [[doku>|dokuwiki]], a red hyperlink means that the file does not exist but with the ''canonical'' feature, the page exists.</wrap>
+
+Try it your self !
+<btn>
+[[canonical:url#demo|Navigate to this page via its canonical URL]] !
+</btn>
+or 
+<btn>
+[[semantic:canonical#demo|Navigate to this page via its dokuwiki URL]] !
+</btn>

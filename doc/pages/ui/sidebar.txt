@@ -1,3 +1,3 @@
 ~~NOCACHE~~
 
-<minimap suppress="(Web Component|WebComponent|UI Web Component) - ">
+<minimap suppress="(Web Components Plugin - UI|Web Component|WebComponent|UI Web Component) - ">

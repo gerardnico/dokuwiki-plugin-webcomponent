@@ -1,9 +1,9 @@
 ~~NOTOC~~
 
-====== Web Component ======
+====== Web Components ======
 
 ===== About =====
-The ''Web Components Dokuwiki Plugin'' is a [[doku>plugin|dokuwiki plugin]] that enhance the Dokuwiki functionalities.
+The ''Web Components Dokuwiki Plugin'' is a [[doku>plugin|dokuwiki plugin]] package that enhance the Dokuwiki functionalities.
 
 
 ===== Components =====
@@ -12,8 +12,10 @@ The ''Web Components Dokuwiki Plugin'' is a [[doku>plugin|dokuwiki plugin]] that
 [[ui:ui|UI components]] that change the rendering of a page
 
 
-
-==== Semantic ====
+==== Navigation ====
+  * [[ui:navbar]]
+  * [[ui:button]]
+==== Data Structure (Semantic) ====
 This elements will add metadata into the page.
   * [[semantic:frontmatter]]: A metadata engine to structure your page
   * [[semantic:canonical]]: Give your page an identifier.

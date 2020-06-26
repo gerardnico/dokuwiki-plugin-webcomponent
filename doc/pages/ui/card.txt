@@ -1,61 +1,63 @@
-====== Card ======
+====== Web Components Plugin - UI - Card ======
 
 ===== About =====
-A card is some content in a square.
+A ''card'' is some content in a square.
 
 
-This is the implement of the [[https://getbootstrap.com/docs/4.3/components/card/|Bootstrap card]]
+This UI component follows the same implementation that the [[https://getbootstrap.com/docs/4.3/components/card/|Bootstrap card]]
 
 
 ===== Articles Related =====
 {{backlinks>.}}
 ===== Features =====
-  * Acknowledge the ''style'' attribute
-  * Can be formatted in columns with the [[..:card_column|card-columns]] component
-  * A [[ui:blockquote|blockquote]] is also a card.
+  * Permits all kind of styling with the ''style'' attribute
+  * Can be formatted in columns with the [[card_column|card-columns]] component
+  * Allows third party dokuwiki syntax
+
+<wrap info>A [[ui:blockquote|blockquote]] is also a card</wrap>
 
 
 ===== Visual =====
 
-==== Card, Image, button ====
+==== A Card with an image and a button with style ====
 
 <webcode name="Card1" frameborder=0 width=100% scrolling=yes externalResources="," renderingMode=story >
 <code dw>
 <card style="width: 18rem;">
-{{dokuwiki:webcomponent:teaser_image_1.png?30|}}
+{{teaser_image_1.png?30|}}
 === Teaser Title  ===
 A example taken from [[https://getbootstrap.com/docs/4.3/components/card/#example|the bootstrap quick example]] on how to build a card title in order to make up the bulk of the teaser content. 
-<btn>[[dokuwiki:webcomponent:webcomponent|Go to this page !]]</btn>
+<btn>[[:start|Go to the best plugin on the universe !]]</btn>
 </card>
 </code>
 
 </webcode>
 
-==== Card 2 with teaser alias ====
+==== Teaser is an alias for card. ====
+At first, ''teaser'' was the first name of card and you may still use it.
 <webcode name="Card2" frameborder=0 width=100% scrolling=yes externalResources="," renderingMode=story >
 <code dw>
 <teaser style="width: 18rem;">
-{{dokuwiki:webcomponent:teaser_image_2.jpg?25|}}
+{{teaser_image_2.jpg?25|}}
 === Teaser Title  ===
 A example taken from [[https://getbootstrap.com/docs/4.3/components/card/#example|the bootstrap quick example]] on how to build a card title in order to make up the bulk of the teaser content.
-<btn>[[dokuwiki:webcomponent:webcomponent|Go to this page !]]</btn>
+<btn>[[card|Go to this page !]]</btn>
 </teaser>
 </code>
 </webcode>
 
 
-==== Card 2 with Changes Plugin ====
-The [[https://github.com/cosmocode/changes/blob/master/syntax.php|change plugin]] has a similar pattern
-''%%{{changes>.}}%%''.
+==== A card may include other dokuwiki syntax ====
 
-This test tests that we can include it in a teaser.
+''Card'' may include other syntax.
+
 
 <webcode name="Card2" frameborder=0 width=100% scrolling=yes externalResources="," renderingMode=story >
 <code dw>
 <teaser style="width: 18rem;">
-=== Changes in Teaser  ===
-Can we see the recent changes ?
-{{changes>.}}
+=== Backlinks in Card ===
+This pages are talking about this subject:
+<related/>
 </teaser>
 </code>
 </webcode>
