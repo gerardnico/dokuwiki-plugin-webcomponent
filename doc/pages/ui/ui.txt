@@ -1,4 +1,4 @@
-====== Web Components - UI ======
+====== Dokuwiki - Web Components Plugin - UI Components ======
 
 ===== About =====
 The ''UI'' components changes the rendering of a page

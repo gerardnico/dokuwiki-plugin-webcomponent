@@ -15,7 +15,7 @@ class PluginStatic
 {
 
     /**
-     * @var the plugin name
+     * @var string - the plugin name
      */
     static $PLUGIN_BASE_NAME;
 

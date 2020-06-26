@@ -8,11 +8,17 @@
  */
 
 require_once(__DIR__ . '/../class/UrlCanonical.php');
+
 class plugin_404manager_canonical_test extends DokuWikiTest
 {
 
     // Needed otherwise the plugin is not enabled
-    protected $pluginsEnabled = array('404manager', 'sqlite', 'webcomponent');
+    public function setUp()
+    {
+        $this->pluginsEnabled[] = PluginStatic::$PLUGIN_BASE_NAME;
+        $this->pluginsEnabled[] = 'sqlite';
+        parent::setUp();
+    }
 
 
     /**
@@ -40,7 +46,7 @@ class plugin_404manager_canonical_test extends DokuWikiTest
         }
 
         /** @noinspection PhpUndefinedMethodInspection */
-        $this->assertEquals(0,$urlCanonicalManager->pageExist($pageId), "The page was deleted");
+        $this->assertEquals(0, $urlCanonicalManager->pageExist($pageId), "The page was deleted");
 
         // Save a page
         $text = DOKU_LF . '---json' . DOKU_LF
@@ -75,8 +81,6 @@ class plugin_404manager_canonical_test extends DokuWikiTest
         $pageRow = $urlCanonicalManager->getPage($newPageId);
         /** @noinspection PhpUndefinedMethodInspection */
         $this->assertEquals($pageCanonical, $pageRow['CANONICAL'], "The canonical is the same");
-
-
 
 
     }
@@ -124,7 +128,6 @@ class plugin_404manager_canonical_test extends DokuWikiTest
         $response = $request->get(array('id' => $pageId), '/doku.php');
 
 
-
         // Query
         $canonicalHrefLink = $response->queryHTML('link[rel="' . $metaKey . '"]')->attr('href');
         $canonicalId = UrlCanonical::toDokuWikiId($canonicalHrefLink);
@@ -135,6 +138,75 @@ class plugin_404manager_canonical_test extends DokuWikiTest
         /** @noinspection PhpUndefinedMethodInspection */
         $this->assertEquals($canonicalHrefLink, $canonicalHrefMetaOg, "The meta canonical property should be good");
 
+
+    }
+
+    /**
+     * Test the automatic canonical function
+     *
+     */
+    public function test_canonical_meta_auto()
+    {
+
+        $canonicalKey = action_plugin_webcomponent_metacanonical::CANONICAL_PROPERTY;
+        $canonicalValue = 'without:canonical';
+        $pageId = 'page:' . $canonicalValue . '';
+        saveWikiText($pageId, "Non empty", 'Created');
+
+        $canonicalMeta = p_get_metadata($pageId, $canonicalKey, METADATA_RENDER_UNLIMITED);
+        /** @noinspection PhpUndefinedMethodInspection */
+        $this->assertEquals("", $canonicalMeta);
+
+        /**
+         * By default no automatic canonical
+         */
+        $request = new TestRequest(); // initialize the request
+        $request->get(array('id' => $pageId), '/doku.php');
+        $canonicalMeta = p_get_metadata($pageId, $canonicalKey, METADATA_RENDER_UNLIMITED);
+        $this->assertEquals("", $canonicalMeta,"No canonical in the meta when automatic canonical is off");
+        $urlCanonical = new UrlCanonical(PluginStatic::getSqlite());
+        $page = $urlCanonical->getPage($pageId);
+        $this->assertEquals("", $page[$canonicalKey],"No canonical value in the database either");
+
+        /**
+         * Set it on, a canonical should have been created
+         */
+        global $conf;
+        $conf['plugin'][PluginStatic::$PLUGIN_BASE_NAME][action_plugin_webcomponent_metacanonical::CANONICAL_LAST_NAMES_COUNT_CONF] = 2;
+        $request = new TestRequest(); // initialize the request
+        $request->get(array('id' => $pageId), '/doku.php');
+        $canonicalMeta = p_get_metadata($pageId, $canonicalKey, METADATA_RENDER_UNLIMITED);
+        $this->assertEquals($canonicalValue, $canonicalMeta,"With auto canonical, a canonical is set");
+
+        /**
+         * If the last name is a start page ie
+         * web:start
+         * the canonical should be
+         * web
+         */
+        $conf['start'] = 'start';
+        $startPageCanonical = "web";
+        $startPageId = $startPageCanonical . ':start';
+        saveWikiText($startPageId, "Non empty", 'Created');
+        $conf['plugin'][PluginStatic::$PLUGIN_BASE_NAME][action_plugin_webcomponent_metacanonical::CANONICAL_LAST_NAMES_COUNT_CONF] = 2;
+        $request = new TestRequest(); // initialize the request
+        $request->get(array('id' => $startPageId), '/doku.php');
+        $canonicalMeta = p_get_metadata($startPageId, $canonicalKey, METADATA_RENDER_UNLIMITED);
+        $this->assertEquals($startPageCanonical, $canonicalMeta,"A home page of a namespace does not include the start page in its name");
+
+        /**
+         * If the page has already a canonical don't change it
+         */
+        $conf['start'] = 'start';
+        $pageIdWithCanonical = "data:modeling:identifier";
+        $canonical = "acanonical";
+        p_set_metadata($pageIdWithCanonical, array($canonicalKey => $canonical));
+        saveWikiText($pageIdWithCanonical, "Non empty", 'Created');
+        $conf['plugin'][PluginStatic::$PLUGIN_BASE_NAME][action_plugin_webcomponent_metacanonical::CANONICAL_LAST_NAMES_COUNT_CONF] = 2;
+        $request = new TestRequest(); // initialize the request
+        $request->get(array('id' => $pageIdWithCanonical), '/doku.php');
+        $canonicalMeta = p_get_metadata($pageIdWithCanonical, $canonicalKey, METADATA_RENDER_UNLIMITED);
+        $this->assertEquals($canonical, $canonicalMeta,"A page with a canonical does not see its canonical change");
 
     }
 

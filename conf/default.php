@@ -27,6 +27,6 @@ $conf['WeightFactorForStartPage'] = 3;
 $conf['WeightFactorForSameNamespace'] = 5;
 
 /*
- * Does canonical processing is on
+ * Does automatic canonical processing is on
  */
-$conf[action_plugin_webcomponent_metacanonical::CANONICAL_LAST_NAMES_COUNT_CONF] = 2;
+$conf[action_plugin_webcomponent_metacanonical::CANONICAL_LAST_NAMES_COUNT_CONF] = 0;

@@ -1,14 +1,14 @@
-====== Web Component - URL manager  ======
+====== Dokuwiki - Web Components Plugin - URL Manager  ======
 
 
 
 ===== About =====
-The 404 Manager plugin is a plugin that I have created to change the behavior of this website when a page:
+The URL manager is a plugin that change the behavior of [[doku>|Dokuwiki]] when a page:
   * doesn't exist 
   * of has been moved
   * of has been deleted
 
-On a normal website, when a page doesn't exist, you get an [[wp>HTTP_404|hard HTTP 404 response]] as [[kb>http/status|HTTP Status]], hence the name of the plugin.
+On a normal website, when a page doesn't exist, you get an [[wp>HTTP_404|hard HTTP 404 response]] as [[kb>http/status|HTTP Status]].
 
 The plugin can:
   * redirect to the edit mode
@@ -19,7 +19,6 @@ The plugin can:
 
 ===== More =====
 
-  * The plugin is available for free here: See [[doku>plugin:404manager]]
   * More.... Specifications, Usage and Installation can be found on the [[github>gerardnico/dokuwiki-plugin-404manager|Readme file of the github repository]]
 
 ===== URL Processing =====

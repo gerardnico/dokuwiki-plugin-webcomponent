@@ -63,8 +63,8 @@ class action_plugin_webcomponent_metacanonical extends DokuWiki_Action_Plugin
          * The last part of the id as canonical
          */
         // How many last parts are taken into account in the canonical processing (2 by default)
-        $canonicalLastNamesCount = $this->getConf(self::CANONICAL_LAST_NAMES_COUNT_CONF);
-        if ($canonical == "" && $canonicalLastNamesCount > 0) {
+        $canonicalLastNamesCount = $this->getConf(self::CANONICAL_LAST_NAMES_COUNT_CONF,0);
+        if ($canonical == null && $canonicalLastNamesCount > 0) {
             /**
              * Split the id by :
              */
@@ -74,14 +74,14 @@ class action_plugin_webcomponent_metacanonical extends DokuWiki_Action_Plugin
              */
             $namesLength = sizeOf($names);
             if ($namesLength > $canonicalLastNamesCount) {
-                array_slice($names, $namesLength - 1 - $canonicalLastNamesCount);
+                $names = array_slice($names, $namesLength - $canonicalLastNamesCount);
             }
             /**
              * If this is a start page, delete the name
              * ie javascript:start will become javascript
              */
             if ($names[$namesLength - 1] == $conf['start']) {
-                array_slice($names, $namesLength - 1);
+                $names = array_slice($names, 0, $namesLength -1);
             }
             $canonical = implode(":", $names);
             p_set_metadata($ID, array(self::CANONICAL_PROPERTY => $canonical));

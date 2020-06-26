@@ -3,28 +3,33 @@
 ====== Web Component ======
 
 ===== About =====
-The ''Web Component dokuwiki plugin'' is bundle of dokuwiki plugins used among other on this site.
+The ''Web Components Dokuwiki Plugin'' is a [[doku>plugin|dokuwiki plugin]] that enhance the Dokuwiki functionalities.
 
 
 ===== Components =====
 
-==== HTML ====
-[[ui:ui|Render component]] that change the display of a page
+==== UI ====
+[[ui:ui|UI components]] that change the rendering of a page
 
+
+
+==== Semantic ====
+This elements will add metadata into the page.
+  * [[semantic:frontmatter]]: A metadata engine to structure your page
+  * [[semantic:canonical]]: Give your page an identifier.
+  * Unit testing: A [[doku>wiki:syntax#code_blocks|code block]] extension to define unit test in the documentation. (An engine must parse them)
+      * [[semantic:unit|unit]]: defines an unit test
+      * [[ui:console|console]]: defines the console output
+
+==== URL Management ====
+[[url:url]]
+
+==== SEO ====
+[[Seo]]
 
 ==== Integration ====
 This components integrates third party library:
   * [[ui:math]] - write maths with mathjax
   * [[ui:disqus]] -  add a disqus forum
-==== Semantic ====
-This elements will add metadata into the page.
-  * [[semantic:frontmatter]]: A metadata engine to structure your page
-  * Unit testing: A [[doku>wiki:syntax#code_blocks|code block]] extension to define unit test in the documentation. (An engine must parse them)
-      * [[semantic:unit|unit]]: defines an unit test
-      * [[ui:console|console]]: defines the console output
-
-==== URL Redirect and rewrite ====
-[[url:url]]
-
 ===== Installation =====
 See Dokuwiki Plugin Page: [[doku>plugin:webcomponent]]

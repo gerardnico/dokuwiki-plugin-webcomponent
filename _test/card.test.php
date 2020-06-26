@@ -11,7 +11,11 @@ require_once(__DIR__ . '/../webcomponent.php');
 class plugin_webcomponent_teaser_test extends DokuWikiTest
 {
 
-    protected $pluginsEnabled = [webcomponent::PLUGIN_NAME];
+    public function setUp()
+    {
+        $this->pluginsEnabled[] = PluginStatic::$PLUGIN_BASE_NAME;
+        parent::setUp();
+    }
 
 
     public function test_component_name()

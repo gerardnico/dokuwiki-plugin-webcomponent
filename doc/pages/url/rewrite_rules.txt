@@ -1,4 +1,4 @@
-====== URL management - Rewrite Rules ======
+====== URL manager - Rewrite Rules ======
 
 
 ===== Articles Related =====
