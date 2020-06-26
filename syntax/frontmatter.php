@@ -29,7 +29,6 @@ if (!defined('DOKU_INC')) {
  */
 class syntax_plugin_webcomponent_frontmatter extends DokuWiki_Syntax_Plugin
 {
-    const CANONICAL_PROPERTY = 'canonical';
 
     /**
      * Syntax Type.
@@ -106,9 +105,11 @@ class syntax_plugin_webcomponent_frontmatter extends DokuWiki_Syntax_Plugin
                 $description['abstract'] = $json['description'];
                 p_set_metadata($ID, array('description' => $description));
             }
-            if (array_key_exists(self::CANONICAL_PROPERTY, $json)) {
+
+            // Processing should not be defined by key
+            if (array_key_exists(action_plugin_webcomponent_metacanonical::CANONICAL_PROPERTY, $json)) {
                 global $ID;
-                p_set_metadata($ID, array(self::CANONICAL_PROPERTY => $json[self::CANONICAL_PROPERTY]));
+                p_set_metadata($ID, array(action_plugin_webcomponent_metacanonical::CANONICAL_PROPERTY => $json[action_plugin_webcomponent_metacanonical::CANONICAL_PROPERTY]));
             }
 
             return array($json);

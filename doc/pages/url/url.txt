@@ -1,4 +1,4 @@
-====== Web Component - Redirection ======
+====== Web Component - URL manager  ======
 
 
 
@@ -8,7 +8,7 @@ The 404 Manager plugin is a plugin that I have created to change the behavior of
   * of has been moved
   * of has been deleted
 
-On a normal website, when a page doesn't exist, you get an [[wp>HTTP_404|hard HTTP 404 response]] as [[datacadamia>http:status|HTTP Status]], hence the name of the plugin.
+On a normal website, when a page doesn't exist, you get an [[wp>HTTP_404|hard HTTP 404 response]] as [[kb>http/status|HTTP Status]], hence the name of the plugin.
 
 The plugin can:
   * redirect to the edit mode
@@ -22,7 +22,17 @@ The plugin can:
   * The plugin is available for free here: See [[doku>plugin:404manager]]
   * More.... Specifications, Usage and Installation can be found on the [[github>gerardnico/dokuwiki-plugin-404manager|Readme file of the github repository]]
 
+===== URL Processing =====
 
+If a page does not exist
+  * if the page has a [[:semantic:canonical|canonical]], rewrite the ID to the [[:semantic:canonical|canonical]] one
+  * if the page has a redirect, redirect with a permanent redirection (301)
+  * if the user has a write permission, redirect the action to edit
+  * if the user has only read permission, follow the redirect actions in order of the configurations
+
+
+===== Message =====
+  * There is no message for a [[rewrite|rewrite]] by default.
 ===== Illustration =====
 
 

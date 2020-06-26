@@ -42,28 +42,6 @@ Example:
 
 ===== Built-in Properties =====
 ''Front Matter'' takes into account the below properties
-==== canonical ====
-''canonical'' is an [[data:modeling:identifier|identifier]] for a dokuwiki page that will be used to define the [[web:html:canonical|canonical link]].
-
-The ''canonical link'' identifies uniquely a page in a domain.
-
-The ''canonical'' value:
-  * should never change (theoretically)
-  * does not need to be the [[doku>pagename]]
-
-Example:
-  * if the canonical value is ''cat:post1''
-  * on a page hosted at ''example.com''
-the canonical meta would become
-
-  * for [[https://support.google.com/webmasters/answer/139066?hl=en|Google]]
-<code html>
-<link rel="canonical" href="https://example.com/cat/post1" />
-</code>
-  * for [[https://developers.facebook.com/docs/sharing/webmasters/getting-started/versioned-link/|Facebook]]
-<code html>
-<meta property="og:url" content="https://example.com/cat/post1" />
-</code>
 
 ==== description ====
 ''description'' is the [[https://developer.mozilla.org/en-US/docs/Learn/HTML/Introduction_to_HTML/The_head_metadata_in_HTML#Active_learning_The_descriptions_use_in_search_engines|meta description]].

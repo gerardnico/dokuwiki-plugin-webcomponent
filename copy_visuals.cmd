@@ -1,7 +1,7 @@
 @echo off
 
 SET SCRIPT_PATH=%~dp0
-SET WEB_COMPO_VISUAL_BACKUP=%SCRIPT_PATH%_test\data
+SET WEB_COMPO_VISUAL_BACKUP=%SCRIPT_PATH%doc
 echo .
 echo Backup of the dokuwiki pages that serves as visual into the directory %WEB_COMPO_VISUAL_BACKUP%
 echo .

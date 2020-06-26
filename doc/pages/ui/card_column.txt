@@ -3,7 +3,7 @@
 
 
 ===== About =====
-With the ''card-columns'' components, you can put any type [[card|card]] ([[blockquote|blockquote]] included) in a column format.
+With the ''card-columns'' components, you can put any type [[card|card]] ([[ui:blockquote|blockquote]] included) in a column format.
 
 
 ===== Articles Related =====

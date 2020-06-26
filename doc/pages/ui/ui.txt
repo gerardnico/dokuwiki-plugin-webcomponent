@@ -1,7 +1,7 @@
-====== Web Components - Render ======
+====== Web Components - UI ======
 
 ===== About =====
-The ''render'' components changes the layout of a page
+The ''UI'' components changes the rendering of a page
 
 ===== Articles Related =====
 {{backlinks>.}}

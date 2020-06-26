@@ -12,7 +12,7 @@ This is the implement of the [[https://getbootstrap.com/docs/4.3/components/card
 ===== Features =====
   * Acknowledge the ''style'' attribute
   * Can be formatted in columns with the [[..:card_column|card-columns]] component
-  * A [[blockquote|blockquote]] is also a card.
+  * A [[ui:blockquote|blockquote]] is also a card.
 
 
 ===== Visual =====

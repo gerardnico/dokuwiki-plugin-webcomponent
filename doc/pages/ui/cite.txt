@@ -4,7 +4,7 @@
 ===== About ===== 
 The ''cite'' element
 
-It can go anywhere but you should find it most often in a [[blockquote|blockquote]].
+It can go anywhere but you should find it most often in a [[ui:blockquote|blockquote]].
 
 ===== Articles Related =====
 {{backlinks>.}}

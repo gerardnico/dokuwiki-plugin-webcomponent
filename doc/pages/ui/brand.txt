@@ -1,7 +1,7 @@
 ====== Brand ======
 
 ===== About =====
-''brand'' is a component that must go in a [[render:navbar|navbar]]
+''brand'' is a component that must go in a [[ui:navbar|navbar]]
 
 It highlights the  brand.
 

@@ -1,0 +1,36 @@
+---json
+{
+    "canonical":"canonical:url"
+}
+---
+====== Canonical URL ======
+
+
+===== About =====
+A ''canonical URL'' is an [[data:modeling:identifier|identifier]] for a web page that is defined though a the [[web:html:canonical|canonical meta property]].
+
+It identifies uniquely a page in a domain.
+
+The ''canonical'' value:
+  * should never change (theoretically)
+  * does not need to be the [[doku>pagename]]
+
+===== Articles Related =====
+{{backlinks>.}}
+===== Syntax =====
+
+  * if the canonical value is ''cat:post1''
+  * on a page hosted at ''example.com''
+the canonical meta would become
+
+  * for [[https://support.google.com/webmasters/answer/139066?hl=en|Google]]
+<code html>
+<link rel="canonical" href="https://example.com/cat/post1" />
+</code>
+  * for [[https://developers.facebook.com/docs/sharing/webmasters/getting-started/versioned-link/|Facebook]]
+<code html>
+<meta property="og:url" content="https://example.com/cat/post1" />
+</code>
+
+===== Example =====
+This page has the canonical value set to "canonical:url" and therefore is also available at this URL: [[canonical:url]]

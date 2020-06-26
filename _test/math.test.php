@@ -11,6 +11,13 @@ require_once(__DIR__ . '/../webcomponent.php');
 class plugin_webcomponent_math_test extends DokuWikiTest
 {
 
+    public function setUp()
+    {
+        $this->pluginsEnabled[] = PluginStatic::$PLUGIN_BASE_NAME;
+        $this->pluginsEnabled[] = 'sqlite';
+        parent::setUp();
+    }
+
     public static function getTextFromNode($Node, $Text = "") {
         if ($Node->tagName == null)
             return $Text.$Node->textContent;
@@ -26,7 +33,7 @@ class plugin_webcomponent_math_test extends DokuWikiTest
         return $Text;
     }
 
-    protected $pluginsEnabled = [webcomponent::PLUGIN_NAME];
+
 
 
     public function test_component_name()

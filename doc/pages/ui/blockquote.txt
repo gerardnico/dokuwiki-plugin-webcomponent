@@ -3,11 +3,11 @@
 
 
 ===== About =====
-A ''blockquote'' component is a type of [[card|card]]
+A ''blockquote'' component is a type of [[ui:card|card]]
 
 A blockquote has always:
   * the text at the left side
-  * the [[..:cite|citation]] at the right side
+  * the [[cite|citation]] at the right side
   * a margin of [[https://getbootstrap.com/docs/4.0/utilities/spacing/|m-3]]
 
 ===== Articles Related =====

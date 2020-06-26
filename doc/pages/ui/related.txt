@@ -1,8 +1,11 @@
-====== WebComponent - Related ======
+====== UI Web Component - Related ======
 
 
 ===== About =====
-''related'' is a [[render|render webcomponent]] that shows the backlinks of a page ordered by pages importance where the page that has the more links toward it is the more important.
+''related'' is a [[ui|ui webcomponent]] that shows the [[kb>backlink|backlinks]] of a page ordered by their importance.
+
+
+The more backlinks has a page, the more important it is.
 
 ===== Articles Related =====
 {{backlinks>.}}

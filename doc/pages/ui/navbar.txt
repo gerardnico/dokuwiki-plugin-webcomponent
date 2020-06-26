@@ -4,11 +4,11 @@
 The ''navbar'' component is the implementation of the top element of [[https://getbootstrap.com/docs/4.0/components/navbar/|bootstrap navbar]]. 
 
 Inside a ''navnar'' component, you can add:
-  * a [[render:container|container]]  to limit the horizontal width and center the navbar
-  * a [[render:search|search form]]
-  * a [[render:group|group]] to group [[render:dropdown|dropdown menu]]
-  * a [[render:dropdown|dropdown menu]]
-  * a [[render:collapse|collapse container]] to group the element that will collapse
+  * a [[ui:container|container]]  to limit the horizontal width and center the navbar
+  * a [[ui:search|search form]]
+  * a [[ui:group|group]] to group [[ui:dropdown|dropdown menu]]
+  * a [[ui:dropdown|dropdown menu]]
+  * a [[ui:collapse|collapse container]] to group the element that will collapse
 ===== Articles Related =====
 {{backlinks>.}}
 

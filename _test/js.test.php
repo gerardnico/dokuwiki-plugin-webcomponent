@@ -13,7 +13,7 @@ require_once(__DIR__ . '/../webcomponent.php');
 class plugin_webcomponent_js_test extends DokuWikiTest
 {
 
-    protected $pluginsEnabled = [webcomponent::PLUGIN_NAME];
+    protected $pluginsEnabled = [webcomponent::PLUGIN_NAME,'sqlite'];
 
 
     /**
