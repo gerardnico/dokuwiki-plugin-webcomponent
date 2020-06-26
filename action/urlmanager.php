@@ -97,8 +97,12 @@ class action_plugin_webcomponent_urlmanager extends DokuWiki_Action_Plugin
         // because dokuwiki instantiate all action class first
         if ($this->sqlite == null) {
             $this->sqlite = PluginStatic::getSqlite();
-            $this->canonicalManager = new UrlCanonical($this->sqlite);
-            $this->urlRewrite = new UrlRewrite($this->sqlite);
+            if ($this->sqlite==null){
+                return false;
+            } else {
+                $this->canonicalManager = new UrlCanonical($this->sqlite);
+                $this->urlRewrite = new UrlRewrite($this->sqlite);
+            }
         }
 
         global $INFO;

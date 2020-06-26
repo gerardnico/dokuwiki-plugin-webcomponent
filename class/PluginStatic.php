@@ -59,9 +59,9 @@ class PluginStatic
         $sqlite = plugin_load('helper', 'sqlite');
         if ($sqlite == null) {
             # TODO: Man we cannot get the message anymore ['SqliteMandatory'];
-            $sqliteMandatoryMessage = "The Sqlite Plugin is mandatory";
+            $sqliteMandatoryMessage = "The Sqlite Plugin is mandatory. Some functionalities of the Web Components Plugin may not work.";
             msg($sqliteMandatoryMessage, MANAGER404_MSG_INFO, $allow = MSG_MANAGERS_ONLY);
-            self::throwRuntimeException($sqliteMandatoryMessage);
+            return null;
         }
 
         $init = $sqlite->init(self::$PLUGIN_BASE_NAME, DOKU_PLUGIN . self::$PLUGIN_BASE_NAME . '/db/');
