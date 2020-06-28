@@ -393,12 +393,13 @@ class action_plugin_webcomponent_urlmanager extends DokuWiki_Action_Plugin
         // Change the id
         global $ID;
         global $INFO;
+        $sourceId = $ID;
         $ID = $targetPage;
         // Change the info id for the sidebar
         $INFO['id'] = $targetPage;
 
         // Redirection
-        $this->logRedirection($ID, $targetPage, $redirectSource);
+        $this->logRedirection($sourceId, $targetPage, $redirectSource);
 
 
     }
@@ -417,7 +418,7 @@ class action_plugin_webcomponent_urlmanager extends DokuWiki_Action_Plugin
 
         // No message can be shown because this is an external URL
 
-        // Update the redirections
+        // Log the redirections
         $this->logRedirection($ID, $target, $targetOrigin);
 
         // Notify
