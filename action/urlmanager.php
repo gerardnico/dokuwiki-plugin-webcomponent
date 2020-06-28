@@ -7,7 +7,7 @@ if (!defined('DOKU_PLUGIN')) define('DOKU_PLUGIN', DOKU_INC . 'lib/plugins/');
 // Needed to get the redirection manager
 // require_once(DOKU_PLUGIN . 'action.php');
 
-require_once(__DIR__ . '/../class/UrlRewrite.php');
+require_once(__DIR__ . '/../class/PageRules.php');
 require_once(__DIR__ . '/../class/UrlCanonical.php');
 require_once(__DIR__ . '/urlmessage.php');
 
@@ -54,7 +54,7 @@ class action_plugin_webcomponent_urlmanager extends DokuWiki_Action_Plugin
      */
     private $canonicalManager;
     /**
-     * @var UrlRewrite
+     * @var PageRules
      */
     private $urlRewrite;
 
@@ -101,7 +101,7 @@ class action_plugin_webcomponent_urlmanager extends DokuWiki_Action_Plugin
                 return false;
             } else {
                 $this->canonicalManager = new UrlCanonical($this->sqlite);
-                $this->urlRewrite = new UrlRewrite($this->sqlite);
+                $this->urlRewrite = new PageRules($this->sqlite);
             }
         }
 
@@ -637,7 +637,7 @@ class action_plugin_webcomponent_urlmanager extends DokuWiki_Action_Plugin
         $badTarget = $subName2 . $pathSeparator . $name; // score of 4: same page name score of 4
 
 
-        $redirectManager = UrlRewrite::get();
+        $redirectManager = PageRules::get();
         if ($redirectManager->isRedirectionPresent($sourceId)) {
             $redirectManager->deleteRedirection($sourceId);
         }

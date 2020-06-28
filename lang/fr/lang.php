@@ -5,12 +5,12 @@
  * @license    GPL 2 (http://www.gnu.org/licenses/gpl.html)
  * @author     Vincent Lecomte <vincent.lecomte@outlook.be>
  */
- 
+
 // ##################################
 // #          Page Admin            #
 // ##################################
 
-$lang['AdminPageName'] = 'Extension 404Manager';
+$lang['PageRules'] = 'Extension 404Manager';
 
 //Error Message
 $lang['SameSourceAndTargetAndPage'] = 'Les pages cible et source sont les mêmes.';

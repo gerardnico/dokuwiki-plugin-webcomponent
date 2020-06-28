@@ -3,15 +3,15 @@
  * This tests are testing the function that uses the redirect tables
  * that describes rewrite rules
  *
- * ie the {@link UrlRewrite} class
+ * ie the {@link PageRules} class
  *
- * @group plugin_404manager
+ * @group plugin_webcomponent
  * @group plugins
  *
  */
-require_once(__DIR__ . '/../class/UrlRewrite.php');
+require_once(__DIR__ . '/../class/PageRules.php');
 require_once(__DIR__ . '/../action/urlmanager.php');
-class plugin_404manager_url_rewrite_test extends DokuWikiTest
+class plugin_webcomponent_url_rewrite_test extends DokuWikiTest
 {
 
     public function setUp()
@@ -30,16 +30,16 @@ class plugin_404manager_url_rewrite_test extends DokuWikiTest
     public function test_externalRedirect()
     {
 
-        $redirectManager = (new UrlRewrite(PluginStatic::getSqlite()));
+        $redirectManager = (new PageRules(PluginStatic::getSqlite()));
 
         $pageIdRedirected = "ToBeRedirected";
         $externalURL = 'http://gerardnico.com';
 
         // The redirection should not be present because the test framework create a new database each time
         if ($redirectManager->isRedirectionPresent($pageIdRedirected)) {
-            $redirectManager->deleteRedirection($pageIdRedirected);
+            $redirectManager->deleteRule($pageIdRedirected);
         }
-        $redirectManager->addRedirection($pageIdRedirected, $externalURL);
+        $redirectManager->addRule($pageIdRedirected, $externalURL);
 
         $isRedirectionPresent = $redirectManager->isRedirectionPresent($pageIdRedirected);
         /** @noinspection PhpUndefinedMethodInspection */
@@ -75,7 +75,7 @@ class plugin_404manager_url_rewrite_test extends DokuWikiTest
     public function test_internalRedirectToExistingPage()
     {
 
-        $redirectManager = new UrlRewrite(PluginStatic::getSqlite());
+        $redirectManager = new PageRules(PluginStatic::getSqlite());
 
         // in the $ID value, the first : is suppressed
         $sourcePageId = "an:page:that:does:not:exist";
@@ -86,9 +86,9 @@ class plugin_404manager_url_rewrite_test extends DokuWikiTest
 
         // Clean test state
         if ($redirectManager->isRedirectionPresent($sourcePageId)) {
-            $redirectManager->deleteRedirection($sourcePageId);
+            $redirectManager->deleteRule($sourcePageId);
         }
-        $redirectManager->addRedirection($sourcePageId, $targetPage);
+        $redirectManager->addRule($sourcePageId, $targetPage);
 
 
         // Set to search engine first but because of order of precedence, this should not happens
@@ -130,14 +130,14 @@ class plugin_404manager_url_rewrite_test extends DokuWikiTest
         saveWikiText($targetPage, 'Test ', 'but without any common name (namespace) in the path');
         idx_addPage($targetPage);
 
-        $redirectManager = new UrlRewrite(PluginStatic::getSqlite());
+        $redirectManager = new PageRules(PluginStatic::getSqlite());
 
 
         $redirectManager->deleteAllRedirections();
         $count = $redirectManager->countRedirections();
         $this->assertEquals(0, $count, "The number of redirection is zero");
         $sourcePageId = "source";
-        $redirectManager->addRedirection($sourcePageId, $targetPage);
+        $redirectManager->addRule($sourcePageId, $targetPage);
         $count = $redirectManager->countRedirections();
         $this->assertEquals(1, $count, "The number of redirection is one");
         $bool = $redirectManager->isRedirectionPresent($sourcePageId);
@@ -156,19 +156,19 @@ class plugin_404manager_url_rewrite_test extends DokuWikiTest
 
         // Not an expression
         $inputExpression = "Hallo";
-        $isRegularExpression = UrlRewrite::isRegularExpression($inputExpression);
+        $isRegularExpression = PageRules::isRegularExpression($inputExpression);
         /** @noinspection PhpUndefinedMethodInspection */
         $this->assertEquals(0,$isRegularExpression,"The term (".$inputExpression.") is not a regular expression");
 
         // A basic expression
         $inputExpression = "/Hallo/";
-        $isRegularExpression = UrlRewrite::isRegularExpression($inputExpression);
+        $isRegularExpression = PageRules::isRegularExpression($inputExpression);
         /** @noinspection PhpUndefinedMethodInspection */
         $this->assertEquals(true,$isRegularExpression,"The term (".$inputExpression.") is a regular expression");
 
         // A complicated expression
         $inputExpression = "/(/path1/path2/)(.*)/";
-        $isRegularExpression = UrlRewrite::isRegularExpression($inputExpression);
+        $isRegularExpression = PageRules::isRegularExpression($inputExpression);
         /** @noinspection PhpUndefinedMethodInspection */
         $this->assertEquals(true,$isRegularExpression,"The term (" . $inputExpression . ") is a regular expression");
 

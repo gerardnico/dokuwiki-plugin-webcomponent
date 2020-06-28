@@ -3,11 +3,11 @@
 
 /**
  * The manager that handles the redirection metadata
- * @deprecated
+ *
  */
 require_once(__DIR__ . '/PluginStatic.php');
 
-class UrlRewrite
+class PageRules
 {
 
     // Use to pass parameter between the handle and the html function to keep the form data
@@ -34,7 +34,7 @@ class UrlRewrite
      * Delete Redirection
      * @param string $sourcePageId
      */
-    function deleteRedirection($sourcePageId)
+    function deleteRule($sourcePageId)
     {
 
         $res = $this->sqlite->query('delete from redirections where source = ?', $sourcePageId);
@@ -74,7 +74,7 @@ class UrlRewrite
      * @param $sourcePageId
      * @param $targetPageId
      */
-    function addRedirection($sourcePageId, $targetPageId)
+    function addRule($sourcePageId, $targetPageId)
     {
         $this->addRedirectionWithDate($sourcePageId, $targetPageId, $this->currentDate);
     }
@@ -125,7 +125,7 @@ class UrlRewrite
      * Validate a Redirection
      * @param string $sourcePageId
      */
-    function validateRedirection($sourcePageId)
+    function validateRules($sourcePageId)
     {
         $sourcePageId = strtolower($sourcePageId);
 

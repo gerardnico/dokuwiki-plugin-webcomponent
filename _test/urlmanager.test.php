@@ -87,9 +87,9 @@ class plugin_webcomponent_url_manager_test extends DokuWikiTest
         // A page in another branch on the same level
         $badTarget = "otherBranch" . $pathSeparator . $firstLevelName . $pathSeparator . $name;
 
-        $redirectManager = new UrlRewrite(PluginStatic::getSqlite());
+        $redirectManager = new PageRules(PluginStatic::getSqlite());
         if ($redirectManager->isRedirectionPresent($sourceId)) {
-            $redirectManager->deleteRedirection($sourceId);
+            $redirectManager->deleteRule($sourceId);
         }
 
 
@@ -164,9 +164,9 @@ class plugin_webcomponent_url_manager_test extends DokuWikiTest
         idx_addPage($goodTargetId);
 
         // Delete any redirections
-        $redirectManager = new UrlRewrite(PluginStatic::getSqlite());
+        $redirectManager = new PageRules(PluginStatic::getSqlite());
         if ($redirectManager->isRedirectionPresent($sourceId)) {
-            $redirectManager->deleteRedirection($sourceId);
+            $redirectManager->deleteRule($sourceId);
         }
 
         // Read only otherwise, you go in edit mode

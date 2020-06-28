@@ -10,7 +10,7 @@
 // ############ Admin Page ##########
 // ##################################
 
-$lang['AdminPageName'] = '404Manager Plugin';
+$lang['PageRules'] = 'Page Rules';
 
 //Error Message
 $lang['SameSourceAndTargetAndPage'] = 'The target page and the source page are the same.';

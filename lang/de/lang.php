@@ -6,12 +6,12 @@
  * @author       Nicolas GERARD <gerardnico@gmail.com>
  * @translation	 Dominik Reichardt <dominik@reichardt-online.it>
  */
- 
+
 // ##################################
 // ############ Admin Page ##########
 // ##################################
 
-$lang['AdminPageName'] = '404Manager Plugin';
+$lang['AdminPageName'] = 'Page Rules';
 
 //Error Message
 $lang['SameSourceAndTargetAndPage'] = 'Die Quell und die Zielseite sind identisch.';
