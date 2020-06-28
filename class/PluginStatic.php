@@ -60,7 +60,7 @@ class PluginStatic
         if ($sqlite == null) {
             # TODO: Man we cannot get the message anymore ['SqliteMandatory'];
             $sqliteMandatoryMessage = "The Sqlite Plugin is mandatory. Some functionalities of the Web Components Plugin may not work.";
-            msg($sqliteMandatoryMessage, MANAGER404_MSG_INFO, $allow = MSG_MANAGERS_ONLY);
+            msg($sqliteMandatoryMessage, MANAGER404_MSG_ERROR, $allow = MSG_MANAGERS_ONLY);
             return null;
         }
 
