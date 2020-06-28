@@ -10,8 +10,6 @@ require_once(__DIR__ . '/PluginStatic.php');
 class PageRules
 {
 
-    // Use to pass parameter between the handle and the html function to keep the form data
-    var $currentDate = '';
 
 
     /** @var helper_plugin_sqlite $sqlite */
@@ -78,7 +76,8 @@ class PageRules
      */
     function addRule($sourcePageId, $targetPageId, $priority)
     {
-        $this->addRedirectionWithDate($sourcePageId, $targetPageId, $priority, $this->currentDate);
+        $currentDate = date("c");
+        $this->addRedirectionWithDate($sourcePageId, $targetPageId, $priority, $currentDate);
     }
 
     /**

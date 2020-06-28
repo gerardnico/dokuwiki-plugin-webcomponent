@@ -169,7 +169,15 @@ class admin_plugin_webcomponent_pagerules extends DokuWiki_Admin_Plugin
         echo $this->locale_xhtml($relativePath);
 
         // Forms
-        if ($_POST['create']) {
+        if ($_POST['upsert']) {
+
+            $id = $_POST[self::ID_NAME];
+            $matcher = $_POST[self::MATCHER_NAME];
+            $target = $_POST[self::TARGET_NAME];
+            $priority = $_POST[self::PRIORITY_NAME];
+            if ($priority == null) {
+                $priority = 1;
+            }
 
             // Add a redirection
             // ptln('<h2><a name="add_redirection" id="add_redirection">' . $this->lang['AddModifyRedirection'] . '</a></h2>');
@@ -182,12 +190,15 @@ class admin_plugin_webcomponent_pagerules extends DokuWiki_Admin_Plugin
             ptln('</thead>');
 
             ptln('<tbody>');
-            ptln('		<tr><td class="p-2"><label for="add_sourcepage" >' . 'Matcher' . ': </label></td><td class="p-2"><input type="text" id="add_sourcepage" name="' . self::MATCHER_NAME . '" value="' . $this->matcher . '" class="edit" /></td><td class="p-2">' . '' . '</td></td></tr>');
-            ptln('		<tr><td class="p-2"><label for="add_targetpage" >' . $this->lang['target_page'] . ': </label></td><td class="p-2"><input type="text" id="add_targetpage" name="' . self::TARGET_NAME . '" value="' . $this->redirectionTarget . '" class="edit" /></td><td class="p-2">' . $this->lang['target_page_info'] . '</td></tr>');
-            ptln('		<tr><td class="p-2"><label for="priority" >' . 'priority' . ': </label></td><td class="p-2"><input type="id" id="priority" name="' . self::PRIORITY_NAME . '" value="1" class="edit" /></td><td class="p-2">' . 'The priority in which the rules are applied' . '</td></tr>');
+            ptln('		<tr><td class="p-2"><label for="add_sourcepage" >' . 'Matcher' . ': </label></td><td class="p-2"><input type="text" id="add_sourcepage" name="' . self::MATCHER_NAME . '" value="' . $matcher . '" class="edit" /></td><td class="p-2">' . '' . '</td></td></tr>');
+            ptln('		<tr><td class="p-2"><label for="add_targetpage" >' . $this->lang['target_page'] . ': </label></td><td class="p-2"><input type="text" id="add_targetpage" name="' . self::TARGET_NAME . '" value="' . $target . '" class="edit" /></td><td class="p-2">' . $this->lang['target_page_info'] . '</td></tr>');
+            ptln('		<tr><td class="p-2"><label for="priority" >' . 'priority' . ': </label></td><td class="p-2"><input type="id" id="priority" name="' . self::PRIORITY_NAME . '" value="' . $priority . '" class="edit" /></td><td class="p-2">' . 'The priority in which the rules are applied' . '</td></tr>');
             ptln('</tbody>');
             ptln('</table>');
             ptln('<input type="hidden" name="do"    value="admin" />');
+            if ($id != null) {
+                ptln('<input type="hidden" name="' . self::ID_NAME . '" value="' . $id . '" />');
+            }
             ptln('<input type="hidden" name="page"  value="' . $this->getPluginName() . '_' . $this->getPluginComponent() . '" />');
             ptln('<a class="btn btn-light" href="?do=admin&page=webcomponent_pagerules" > ' . 'Cancel' . ' <a/>');
             ptln('<input class="btn btn-primary" type="submit" name="save" class="button" value="' . 'Save' . '" />');
@@ -202,7 +213,7 @@ class admin_plugin_webcomponent_pagerules extends DokuWiki_Admin_Plugin
             ptln('<form action="" method="post">');
             ptln('    <input type="hidden" name="do"    value="admin" />');
             ptln('	<input type="hidden" name="page"  value="' . $this->getPluginName() . '_' . $this->getPluginComponent() . '" />');
-            ptln('	<input type="submit" name="create" name="Create a page rule" class="button" value="' . 'Create a rule' . '" />');
+            ptln('	<input type="submit" name="upsert" name="Create a page rule" class="button" value="' . 'Create a rule' . '" />');
             ptln('</form>');
 
             //      List of redirection
@@ -232,12 +243,6 @@ class admin_plugin_webcomponent_pagerules extends DokuWiki_Admin_Plugin
                 $timestamp = $row[self::TIMESTAMP_NAME];
                 $priority = $row[self::PRIORITY_NAME];
 
-                $title = false;
-                if ($conf['useheading']) {
-                    $title = p_get_first_heading($target);
-                }
-                if (!$title) $title = $target;
-
 
                 ptln('	  <tr class="redirect_info">');
                 ptln('		<td>');
@@ -263,21 +268,6 @@ class admin_plugin_webcomponent_pagerules extends DokuWiki_Admin_Plugin
         }
 
 
-    }
-
-    /**
-     * Generate a text with a max length of $length
-     * and add ... if above
-     * @param $myString
-     * @param $length
-     * @return string
-     */
-    function truncateString($myString, $length)
-    {
-        if (strlen($myString) > $length) {
-            $myString = substr($myString, 0, $length) . ' ...';
-        }
-        return $myString;
     }
 
 

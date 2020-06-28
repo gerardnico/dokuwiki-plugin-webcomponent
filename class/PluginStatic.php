@@ -128,6 +128,21 @@ class PluginStatic
 
     }
 
+    /**
+     * Generate a text with a max length of $length
+     * and add ... if above
+     * @param $myString
+     * @param $length
+     * @return string
+     */
+    function truncateString($myString, $length)
+    {
+        if (strlen($myString) > $length) {
+            $myString = substr($myString, 0, $length) . ' ...';
+        }
+        return $myString;
+    }
+
 }
 
 PluginStatic::init();
