@@ -1,0 +1,13 @@
+
+===== Introduction =====
+
+This page permits you to create [[https://combostrap.com/page/rules|page rules]].
+
+They are rules that are used to redirect an URL to:
+
+   * a [[doku>pagename|Dokuwiki Id]]
+   * or to another URL
+
+
+
+

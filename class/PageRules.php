@@ -314,7 +314,7 @@ class PageRules
     /**
      * @return array
      */
-    function getRedirections()
+    function getRules()
     {
 
         $res = $this->sqlite->query("select * from redirections");
