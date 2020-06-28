@@ -36,12 +36,12 @@ class plugin_webcomponent_url_rewrite_test extends DokuWikiTest
         $externalURL = 'http://gerardnico.com';
 
         // The redirection should not be present because the test framework create a new database each time
-        if ($redirectManager->isRedirectionPresent($pageIdRedirected)) {
+        if ($redirectManager->isPageRulePresent($pageIdRedirected)) {
             $redirectManager->deleteRule($pageIdRedirected);
         }
         $redirectManager->addRule($pageIdRedirected, $externalURL);
 
-        $isRedirectionPresent = $redirectManager->isRedirectionPresent($pageIdRedirected);
+        $isRedirectionPresent = $redirectManager->isPageRulePresent($pageIdRedirected);
         /** @noinspection PhpUndefinedMethodInspection */
         $this->assertEquals(true, $isRedirectionPresent,"The redirection is present");
         $redirectionTarget = $redirectManager->getRedirectionTarget($pageIdRedirected);
@@ -85,7 +85,7 @@ class plugin_webcomponent_url_rewrite_test extends DokuWikiTest
 
 
         // Clean test state
-        if ($redirectManager->isRedirectionPresent($sourcePageId)) {
+        if ($redirectManager->isPageRulePresent($sourcePageId)) {
             $redirectManager->deleteRule($sourcePageId);
         }
         $redirectManager->addRule($sourcePageId, $targetPage);
@@ -133,14 +133,14 @@ class plugin_webcomponent_url_rewrite_test extends DokuWikiTest
         $redirectManager = new PageRules(PluginStatic::getSqlite());
 
 
-        $redirectManager->deleteAllRedirections();
-        $count = $redirectManager->countRedirections();
+        $redirectManager->deleteAll();
+        $count = $redirectManager->count();
         $this->assertEquals(0, $count, "The number of redirection is zero");
         $sourcePageId = "source";
         $redirectManager->addRule($sourcePageId, $targetPage);
-        $count = $redirectManager->countRedirections();
+        $count = $redirectManager->count();
         $this->assertEquals(1, $count, "The number of redirection is one");
-        $bool = $redirectManager->isRedirectionPresent($sourcePageId);
+        $bool = $redirectManager->isPageRulePresent($sourcePageId);
         $this->assertEquals(true, $bool, "The redirection is present");
 
 

@@ -88,7 +88,7 @@ class plugin_webcomponent_url_manager_test extends DokuWikiTest
         $badTarget = "otherBranch" . $pathSeparator . $firstLevelName . $pathSeparator . $name;
 
         $redirectManager = new PageRules(PluginStatic::getSqlite());
-        if ($redirectManager->isRedirectionPresent($sourceId)) {
+        if ($redirectManager->isPageRulePresent($sourceId)) {
             $redirectManager->deleteRule($sourceId);
         }
 
@@ -165,7 +165,7 @@ class plugin_webcomponent_url_manager_test extends DokuWikiTest
 
         // Delete any redirections
         $redirectManager = new PageRules(PluginStatic::getSqlite());
-        if ($redirectManager->isRedirectionPresent($sourceId)) {
+        if ($redirectManager->isPageRulePresent($sourceId)) {
             $redirectManager->deleteRule($sourceId);
         }
 

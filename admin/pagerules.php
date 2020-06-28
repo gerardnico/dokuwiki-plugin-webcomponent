@@ -7,31 +7,28 @@ if (!defined('DOKU_PLUGIN')) define('DOKU_PLUGIN', DOKU_INC . 'lib/plugins/');
 require_once(DOKU_PLUGIN . 'admin.php');
 require_once(DOKU_INC . 'inc/parser/xhtml.php');
 require_once(__DIR__ . '/../class/PageRules.php');
+require_once(__DIR__ . '/../class/PluginStatic.php');
 
 /**
  * The admin pages
  * need to inherit from this class
  *
+ *
+ * ! important !
+ * The suffix of the class name should:
+ *   * be equal to the name of the file
+ *   * and have only letters
  */
 class admin_plugin_webcomponent_pagerules extends DokuWiki_Admin_Plugin
 {
 
 
-    // Use to pass parameter between the handle and the html function to keep the form data
-    var $redirectionSource = '';
-    var $redirectionTarget = '';
-    var $currentDate = '';
-    // Deprecated
-    private $redirectionType;
-    // Deprecated
-    var $isValidate = '';
-    // Deprecated
-    var $targetResourceType = 'Default';
-
-
-    // Name of the variable in the HTML form
-    const FORM_NAME_SOURCE_PAGE = 'SourcePage';
-    const FORM_NAME_TARGET_PAGE = 'TargetPage';
+    // Name of the column and of the variable in the HTML form
+    const ID_NAME = 'ID';
+    const MATCHER_NAME = 'MATCHER';
+    const TARGET_NAME = 'TARGET';
+    const PRIORITY_NAME = 'PRIORITY';
+    const TIMESTAMP_NAME = 'TIMESTAMP';
 
     /**
      * @var array|string[]
@@ -39,9 +36,9 @@ class admin_plugin_webcomponent_pagerules extends DokuWiki_Admin_Plugin
     private $infoPlugin;
 
     /**
-     * @var PageRules|null
+     * @var PageRules
      */
-    private $pageRules;
+    private $pageRuleManager;
 
 
     /**
@@ -100,81 +97,62 @@ class admin_plugin_webcomponent_pagerules extends DokuWiki_Admin_Plugin
     function handle()
     {
 
-        // Handle here to not make
-        if ($this->pageRules == null) {
+        /**
+         * Handle Sqlite instantiation  here and not in the constructore
+         * to not make sqlite mandatory everywhere
+         */
+        if ($this->pageRuleManager == null) {
             $sqlite = PluginStatic::getSqlite();
             if ($sqlite == null) {
                 // A message should have already been send by the getSqlite function
                 return;
             }
-            $this->pageRules = new PageRules($sqlite);
+            $this->pageRuleManager = new PageRules($sqlite);
+
         }
 
-        if ($_POST['Add']) {
+        /**
+         * If one of the form submit has the add key
+         */
+        if ($_POST['save']) {
 
-            $this->redirectionSource = $_POST[self::FORM_NAME_SOURCE_PAGE];
-            $this->redirectionTarget = $_POST[self::FORM_NAME_TARGET_PAGE];
+            $id = $_POST[self::ID_NAME];
+            $matcher = $_POST[self::MATCHER_NAME];
+            $target = $_POST[self::TARGET_NAME];
+            $priority = $_POST[self::PRIORITY_NAME];
 
-            if ($this->redirectionSource == $this->redirectionTarget) {
-                msg($this->lang['SameSourceAndTargetAndPage'] . ': ' . $this->redirectionSource . '', -1);
+            if ($matcher == null) {
+                msg('Matcher can not be null', PluginStatic::LVL_MSG_ERROR);
+                return;
+            }
+            if ($target == null) {
+                msg('Target can not be null', PluginStatic::LVL_MSG_ERROR);
                 return;
             }
 
-
-            // This a direct redirection
-            // If the source page exist, do nothing
-            if (page_exists($this->redirectionSource)) {
-
-                $title = false;
-                global $conf;
-                if ($conf['useheading']) {
-                    $title = p_get_first_heading($this->redirectionSource);
-                }
-                if (!$title) $title = $this->redirectionSource;
-                msg($this->lang['SourcePageExist'] . ' : <a href="' . wl($this->redirectionSource) . '">' . hsc($title) . '</a>', -1);
+            if ($matcher == $target) {
+                msg($this->lang['SameSourceAndTargetAndPage'] . ': ' . $matcher . '', PluginStatic::LVL_MSG_ERROR);
                 return;
+            }
 
+            if ($id == null) {
+                $this->pageRuleManager->addRule($matcher, $target, $priority);
             } else {
-
-                // Is this a direct redirection to a valid target page
-                if (!page_exists($this->redirectionTarget)) {
-
-                    if (PluginStatic::isValidURL($this->redirectionTarget)) {
-
-                        $this->targetResourceType = 'Url';
-
-                    } else {
-
-                        msg($this->lang['NotInternalOrUrlPage'] . ': ' . $this->redirectionTarget . '', -1);
-                        return;
-
-                    }
-
-                } else {
-
-                    $this->targetResourceType = 'Internal Page';
-
-                }
-                $this->pageRules->addRule($this->redirectionSource, $this->redirectionTarget);
-                msg($this->lang['Saved'], 1);
-
+                $this->pageRuleManager->updateRule($id, $matcher, $target, $priority);
             }
+            msg($this->lang['Saved'], PluginStatic::LVL_MSG_INFO);
 
 
         }
 
         if ($_POST['Delete']) {
 
-            $ruleId = $_POST['SourcePage'];
-            $this->pageRules->deleteRule($ruleId);
-            msg($this->lang['Deleted'], 1);
+            $ruleId = $_POST[self::ID_NAME];
+            $this->pageRuleManager->deleteRule($ruleId);
+            msg($this->lang['Deleted'], PluginStatic::LVL_MSG_INFO);
 
         }
-        if ($_POST['Validate']) {
-            $ruleId = $_POST['SourcePage'];
-            $this->pageRules->validateRules($ruleId);
-            msg($this->lang['Validated'], 1);
-        }
+
     }
 
     /**
@@ -192,6 +170,7 @@ class admin_plugin_webcomponent_pagerules extends DokuWiki_Admin_Plugin
 
         // Forms
         if ($_POST['create']) {
+
             // Add a redirection
             // ptln('<h2><a name="add_redirection" id="add_redirection">' . $this->lang['AddModifyRedirection'] . '</a></h2>');
             ptln('<div class="level2">');
@@ -203,8 +182,9 @@ class admin_plugin_webcomponent_pagerules extends DokuWiki_Admin_Plugin
             ptln('</thead>');
 
             ptln('<tbody>');
-            ptln('		<tr><td class="p-2"><label for="add_sourcepage" >' . 'Matcher' . ': </label></td><td class="p-2"><input type="text" id="add_sourcepage" name="' . self::FORM_NAME_SOURCE_PAGE . '" value="' . $this->redirectionSource . '" class="edit" /></td><td class="p-2">' . '' . '</td></td></tr>');
-            ptln('		<tr><td class="p-2"><label for="add_targetpage" >' . $this->lang['target_page'] . ': </label></td><td class="p-2"><input type="text" id="add_targetpage" name="' . self::FORM_NAME_TARGET_PAGE . '" value="' . $this->redirectionTarget . '" class="edit" /></td><td class="p-2">' . $this->lang['target_page_info'] . '</td></tr>');
+            ptln('		<tr><td class="p-2"><label for="add_sourcepage" >' . 'Matcher' . ': </label></td><td class="p-2"><input type="text" id="add_sourcepage" name="' . self::MATCHER_NAME . '" value="' . $this->matcher . '" class="edit" /></td><td class="p-2">' . '' . '</td></td></tr>');
+            ptln('		<tr><td class="p-2"><label for="add_targetpage" >' . $this->lang['target_page'] . ': </label></td><td class="p-2"><input type="text" id="add_targetpage" name="' . self::TARGET_NAME . '" value="' . $this->redirectionTarget . '" class="edit" /></td><td class="p-2">' . $this->lang['target_page_info'] . '</td></tr>');
+            ptln('		<tr><td class="p-2"><label for="priority" >' . 'priority' . ': </label></td><td class="p-2"><input type="id" id="priority" name="' . self::PRIORITY_NAME . '" value="1" class="edit" /></td><td class="p-2">' . 'The priority in which the rules are applied' . '</td></tr>');
             ptln('</tbody>');
             ptln('</table>');
             ptln('<input type="hidden" name="do"    value="admin" />');
@@ -216,7 +196,9 @@ class admin_plugin_webcomponent_pagerules extends DokuWiki_Admin_Plugin
             // Add the file add from the lang directory
             echo $this->locale_xhtml('admin/' . $this->getPluginComponent() . '_add');
             ptln('</div>');
+
         } else {
+
             ptln('<form action="" method="post">');
             ptln('    <input type="hidden" name="do"    value="admin" />');
             ptln('	<input type="hidden" name="page"  value="' . $this->getPluginName() . '_' . $this->getPluginComponent() . '" />');
@@ -233,26 +215,28 @@ class admin_plugin_webcomponent_pagerules extends DokuWiki_Admin_Plugin
             ptln('	<thead>');
             ptln('		<tr>');
             ptln('			<th>&nbsp;</th>');
+            ptln('			<th>' . 'Priority' . '</th>');
             ptln('			<th>' . $this->lang['SourcePage'] . '</th>');
             ptln('			<th>' . $this->lang['TargetPage'] . '</th>');
             ptln('			<th>' . $this->lang['CreationDate'] . '</th>');
             ptln('	    </tr>');
             ptln('	</thead>');
-
             ptln('	<tbody>');
 
 
-            foreach ($this->pageRules->getRules() as $key => $row) {
+            foreach ($this->pageRuleManager->getRules() as $key => $row) {
 
-                $sourcePageId = $row['SOURCE'];
-                $targetPageId = $row['TARGET'];
-                $creationDate = $row['CREATION_TIMESTAMP'];
+                $id = $row[self::ID_NAME];
+                $matcher = $row[self::MATCHER_NAME];
+                $target = $row[self::TARGET_NAME];
+                $timestamp = $row[self::TIMESTAMP_NAME];
+                $priority = $row[self::PRIORITY_NAME];
 
                 $title = false;
                 if ($conf['useheading']) {
-                    $title = p_get_first_heading($targetPageId);
+                    $title = p_get_first_heading($target);
                 }
-                if (!$title) $title = $targetPageId;
+                if (!$title) $title = $target;
 
 
                 ptln('	  <tr class="redirect_info">');
@@ -260,17 +244,14 @@ class admin_plugin_webcomponent_pagerules extends DokuWiki_Admin_Plugin
                 ptln('			<form action="" method="post">');
                 ptln('				<input type="image" src="' . DOKU_BASE . 'lib/plugins/' . $this->getPluginName() . '/images/delete.jpg" name="Delete" title="Delete" alt="Delete" value="Submit" />');
                 ptln('				<input type="hidden" name="Delete"  value="Yes" />');
-                ptln('				<input type="hidden" name="SourcePage"  value="' . $sourcePageId . '" />');
+                ptln('				<input type="hidden" name="' . self::ID_NAME . '"  value="' . $id . '" />');
                 ptln('			</form>');
 
                 ptln('		</td>');
-                print('	<td>');
-                tpl_link(wl($sourcePageId), $this->truncateString($sourcePageId, 30), 'title="' . $sourcePageId . '" class="wikilink2" rel="nofollow"');
-                ptln('		</td>');
-                print '		<td>';
-                tpl_link(wl($targetPageId), $this->truncateString($targetPageId, 30), 'title="' . hsc($title) . ' (' . $targetPageId . ')"');
-                ptln('		</td>');
-                ptln('		<td>' . $creationDate . '</td>');
+                ptln('		<td>' . $priority . '</td>');
+                ptln('	    <td>' . $matcher . '</td>');
+                ptln('		<td>' . $target . '</td>');
+                ptln('		<td>' . $timestamp . '</td>');
                 ptln('    </tr>');
             }
             ptln('  </tbody>');

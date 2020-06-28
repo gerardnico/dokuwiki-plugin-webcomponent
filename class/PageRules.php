@@ -32,15 +32,16 @@ class PageRules
 
     /**
      * Delete Redirection
-     * @param string $sourcePageId
+     * @param string $ruleId
      */
-    function deleteRule($sourcePageId)
+    function deleteRule($ruleId)
     {
 
-        $res = $this->sqlite->query('delete from redirections where source = ?', $sourcePageId);
+        $res = $this->sqlite->query('delete from PAGE_RULES where id = ?', $ruleId);
         if (!$res) {
             PluginStatic::throwRuntimeException("Something went wrong when deleting the redirections");
         }
+        $this->sqlite->res_close($res);
 
 
     }
@@ -48,15 +49,15 @@ class PageRules
 
     /**
      * Is Redirection of a page Id Present
-     * @param string $sourcePageId
+     * @param integer $id
      * @return boolean
      */
-    function isRedirectionPresent($sourcePageId)
+    function exists($id)
     {
-        $sourcePageId = strtolower($sourcePageId);
+        $id = strtolower($id);
 
 
-        $res = $this->sqlite->query("SELECT count(*) FROM redirections where SOURCE = ?", $sourcePageId);
+        $res = $this->sqlite->query("SELECT count(*) FROM PAGE_RULES where ID = ?", $id);
         $exists = null;
         if ($this->sqlite->res2single($res) == 1) {
             $exists = true;
@@ -73,234 +74,85 @@ class PageRules
     /**
      * @param $sourcePageId
      * @param $targetPageId
+     * @param $priority
      */
-    function addRule($sourcePageId, $targetPageId)
+    function addRule($sourcePageId, $targetPageId, $priority)
     {
-        $this->addRedirectionWithDate($sourcePageId, $targetPageId, $this->currentDate);
+        $this->addRedirectionWithDate($sourcePageId, $targetPageId, $priority, $this->currentDate);
     }
 
     /**
      * Add Redirection
      * This function was needed to migrate the date of the file conf store
      * You would use normally the function addRedirection
-     * @param string $sourcePageId
-     * @param string $targetPageId
+     * @param string $matcher
+     * @param string $target
+     * @param $priority
      * @param $creationDate
      */
-    function addRedirectionWithDate($sourcePageId, $targetPageId, $creationDate)
+    function addRedirectionWithDate($matcher, $target, $priority, $creationDate)
     {
 
-        // Lower page name is the dokuwiki Id
-        $sourcePageId = strtolower($sourcePageId);
-
-        // Note the order is important
-        // because it's used in the bin of the update statement
         $entry = array(
-            'target' => $targetPageId,
-            'creation_timestamp' => $creationDate,
-            'source' => $sourcePageId
+            'target' => $target,
+            'timestamp' => $creationDate,
+            'matcher' => $matcher,
+            'priority' => $priority
         );
 
-        $res = $this->sqlite->query('select count(*) from redirections where source = ?', $sourcePageId);
-        $count = $this->sqlite->res2single($res);
-        $this->sqlite->res_close($res);
-        if ($count <> 1) {
-            $res = $this->sqlite->storeEntry('redirections', $entry);
-            if (!$res) {
-                PluginStatic::throwRuntimeException("There was a problem during insertion");
-            }
-        } else {
-            // Primary key constraint, the storeEntry function does not use an UPSERT
-            $statement = 'update redirections set target = ?, creation_timestamp = ? where source = ?';
-            $res = $this->sqlite->query($statement, $entry);
-            if (!$res) {
-                PluginStatic::throwRuntimeException("There was a problem during the update");
-            }
-        }
-
-
-    }
-
-    /**
-     * Validate a Redirection
-     * @param string $sourcePageId
-     */
-    function validateRules($sourcePageId)
-    {
-        $sourcePageId = strtolower($sourcePageId);
-
-        if ($this->dataStoreType == null) {
-            $this->initDataStore();
-        }
-
-        if ($this->dataStoreType == self::DATA_STORE_TYPE_CONF_FILE) {
-
-            $this->pageRedirections[$sourcePageId]['IsValidate'] = 'Y';
-            $this->savePageRedirections();
-        } else {
-
-            PluginStatic::throwRuntimeException('Not implemented for a SQLite data store');
-
-        }
-    }
-
-    /**
-     * Get IsValidate Redirection
-     * @param string $sourcePageId
-     * @return string
-     */
-    function getIsValidate($sourcePageId)
-    {
-        $sourcePageId = strtolower($sourcePageId);
-
-        if ($this->dataStoreType == null) {
-            $this->initDataStore();
-        }
-
-        if ($this->dataStoreType == self::DATA_STORE_TYPE_CONF_FILE) {
-
-            if ($this->pageRedirections[$sourcePageId]['IsValidate'] == null) {
-                return 'N';
-            } else {
-                return $this->pageRedirections[$sourcePageId]['IsValidate'];
-            }
-        }
-
-        PluginStatic::throwRuntimeException("Not Yet implemented");
-
-    }
-
-    /**
-     * Get TargetPageType
-     * @param string $sourcePageId
-     * @return
-     * @throws Exception
-     */
-    function getTargetPageType($sourcePageId)
-    {
-        if ($this->dataStoreType == null) {
-            $this->initDataStore();
-        }
-
-        if ($this->dataStoreType == self::DATA_STORE_TYPE_CONF_FILE) {
-
-            $sourcePageId = strtolower($sourcePageId);
-            return $this->pageRedirections[$sourcePageId]['TargetPageType'];
-
-        } else {
-
-            throw new Exception('Not Yet implemented');
-
-        }
-
-    }
-
-
-    /**
-     * Get TargetResource (It can be an external URL as an intern page id
-     * @param string $sourcePageId
-     * @return string|boolean - can be false if no data
-     * @throws Exception
-     */
-    function getRedirectionTarget($sourcePageId)
-    {
-
-        $sourcePageId = strtolower($sourcePageId);
-
-        $res = $this->sqlite->query("select target from redirections where source = ?", $sourcePageId);
+        $res = $this->sqlite->storeEntry('PAGE_RULES', $entry);
         if (!$res) {
-            throw new RuntimeException("An exception has occurred with the query");
+            PluginStatic::throwRuntimeException("There was a problem during insertion");
         }
-        $target = $this->sqlite->res2single($res);
         $this->sqlite->res_close($res);
-        return $target;
-
 
     }
 
-
-    /**
-     * Serialize and save the redirection data file
-     *
-     * ie Flush
-     *
-     */
-    function savePageRedirections()
+    function updateRule($id, $matcher, $target, $priority)
     {
+        $updateDate = date("c");
 
-        if ($this->dataStoreType == null) {
-            $this->initDataStore();
+        $entry = array(
+            'matcher' => $matcher,
+            'target' => $target,
+            'priority' => $priority,
+            'timestamp' => $updateDate,
+            'íd' => $id
+        );
+
+        $statement = 'update PAGE_RULES set matcher = ?, target = ?, priority = ?, timestamp = ? where id = ?';
+        $res = $this->sqlite->query($statement, $entry);
+        if (!$res) {
+            PluginStatic::throwRuntimeException("There was a problem during the update");
         }
+        $this->sqlite->res_close($res);
 
-        if ($this->dataStoreType == self::DATA_STORE_TYPE_CONF_FILE) {
-
-            io_saveFile(self::DATA_STORE_CONF_FILE_PATH, serialize($this->pageRedirections));
-
-        } else {
-
-            $this->throwRuntimeException('SavePageRedirections must no be called for a SQLite data store');
-
-        }
     }
 
 
     /**
-     * @param $inputExpression
-     * @return false|int 1|0
-     * returns:
-     *    - 1 if the input expression is a pattern,
-     *    - 0 if not,
-     *    - FALSE if an error occurred.
-     */
-    static function isRegularExpression($inputExpression)
-    {
-
-        $regularExpressionPattern = "/(\\/.*\\/[gmixXsuUAJ]?)/";
-        return preg_match($regularExpressionPattern, $inputExpression);
-
-    }
-
-    /**
-     *
-     * Set the data store type. The value must be one of the constants
-     *   * DATA_STORE_TYPE_CONF_FILE
-     *   * DATA_STORE_TYPE_SQLITE
-     *
-     * @param $dataStoreType
-     * @return $this
-     *
-     */
-    public function setDataStoreType($dataStoreType)
-    {
-        $this->dataStoreType = $dataStoreType;
-        $this->initDataStore();
-        return $this;
-    }
-
-
-    /**
-     * Delete all redirections
+     * Delete all rules
      * Use with caution
      */
-    function deleteAllRedirections()
+    function deleteAll()
     {
 
-
-        $res = $this->sqlite->query("delete from redirections");
+        $res = $this->sqlite->query("delete from PAGE_RULES");
         if (!$res) {
             PluginStatic::throwRuntimeException('Errors during delete of all redirections');
         }
+        $this->sqlite->res_close($res);
 
     }
 
     /**
-     * Return the number of redirections
+     * Return the number of page rules
      * @return integer
      */
-    function countRedirections()
+    function count()
     {
 
-        $res = $this->sqlite->query("select count(1) from redirections");
+        $res = $this->sqlite->query("select count(1) from PAGE_RULES");
         if (!$res) {
             PluginStatic::throwRuntimeException('Errors during delete of all redirections');
         }
@@ -317,7 +169,7 @@ class PageRules
     function getRules()
     {
 
-        $res = $this->sqlite->query("select * from redirections");
+        $res = $this->sqlite->query("select * from PAGE_RULES order by PRIORITY asc");
         if (!$res) {
             throw new RuntimeException('Errors during select of all redirections');
         }

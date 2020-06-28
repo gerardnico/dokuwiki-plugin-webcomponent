@@ -1,10 +1,7 @@
 <?php
 
-// Surprisingly there is no constant for the info level
-if (!defined('MANAGER404_MSG_ERROR')) define('MANAGER404_MSG_ERROR', -1);
-if (!defined('MANAGER404_MSG_INFO')) define('MANAGER404_MSG_INFO', 0);
-if (!defined('MANAGER404_MSG_SUCCESS')) define('MANAGER404_MSG_SUCCESS', 1);
-if (!defined('MANAGER404_MSG_NOTIFY')) define('MANAGER404_MSG_NOTIFY', 2);
+
+
 
 
 /**
@@ -13,6 +10,14 @@ if (!defined('MANAGER404_MSG_NOTIFY')) define('MANAGER404_MSG_NOTIFY', 2);
  */
 class PluginStatic
 {
+
+    /**
+     * Constant for the function {@link msg()}
+     */
+    const LVL_MSG_ERROR = -1;
+    const LVL_MSG_INFO = 0;
+    const LVL_MSG_SUCCESS = - 1;
+    const LVL_MSG_NOTIFY = 2;
 
     /**
      * @var string - the plugin name
@@ -107,6 +112,21 @@ class PluginStatic
 
     }
 
+    /**
+     * @param $inputExpression
+     * @return false|int 1|0
+     * returns:
+     *    - 1 if the input expression is a pattern,
+     *    - 0 if not,
+     *    - FALSE if an error occurred.
+     */
+    static function isRegularExpression($inputExpression)
+    {
+
+        $regularExpressionPattern = "/(\\/.*\\/[gmixXsuUAJ]?)/";
+        return preg_match($regularExpressionPattern, $inputExpression);
+
+    }
 
 }
 
