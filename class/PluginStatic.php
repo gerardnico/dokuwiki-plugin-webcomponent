@@ -122,7 +122,7 @@ class PluginStatic
      */
     public static function msg(string $message, int $level=self::LVL_MSG_ERROR)
     {
-        $msg = "self::PLUGIN_BASE_NAME - $message";
+        $msg = self::$PLUGIN_BASE_NAME." - $message";
         msg($msg,$level,$allow=MSG_MANAGERS_ONLY);
         dbg($msg);
         if (defined('DOKU_UNITTEST')) {
