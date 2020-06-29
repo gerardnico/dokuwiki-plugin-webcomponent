@@ -24,39 +24,44 @@ class plugin_webcomponent_url_rewrite_test extends DokuWikiTest
 
     /**
      * Test a redirect to an external Web Site
-     *
-
+     * without pattern
      */
-    public function test_externalRedirect()
+    public function test_externalRedirect_without_pattern()
     {
 
-        $redirectManager = (new PageRules(PluginStatic::getSqlite()));
+        $pageRules = (new PageRules(PluginStatic::getSqlite()));
+        $pageRules->deleteAll();
 
-        $pageIdRedirected = "ToBeRedirected";
+        $pattern = "ToBeRedirected";
         $externalURL = 'http://gerardnico.com';
 
-        // The redirection should not be present because the test framework create a new database each time
-        if ($redirectManager->isPageRulePresent($pageIdRedirected)) {
-            $redirectManager->deleteRule($pageIdRedirected);
-        }
-        $redirectManager->addRule($pageIdRedirected, $externalURL);
+        /**
+         * Test the database manipulation
+         */
+        $pageRuleId = $pageRules->addRule($pattern, $externalURL,0);
 
-        $isRedirectionPresent = $redirectManager->isPageRulePresent($pageIdRedirected);
+        $patternExist = $pageRules->patternExists($pattern);
         /** @noinspection PhpUndefinedMethodInspection */
-        $this->assertEquals(true, $isRedirectionPresent,"The redirection is present");
-        $redirectionTarget = $redirectManager->getRedirectionTarget($pageIdRedirected);
+        $this->assertEquals(true, $patternExist,"The redirection is present");
+        $ruleExists = $pageRules->ruleExists($pageRuleId);
         /** @noinspection PhpUndefinedMethodInspection */
-        $this->assertNotEquals(false, $redirectionTarget,"The redirection is present - not false");
-        /** @noinspection PhpUndefinedMethodInspection */
-        $this->assertEquals($externalURL, $redirectionTarget,"The redirection is present");
+        $this->assertEquals(true, $ruleExists,"The rule is present");
 
+        $rule = $pageRules->getRule($pageRuleId);
+        /** @noinspection PhpUndefinedMethodInspection */
+        $actualTarget = $rule['TARGET'];
+        $this->assertEquals($externalURL, $actualTarget,"The target is the good one");
+
+        /**
+         * Test the URL navigation
+         */
         // Read only otherwise you are redirected to the Edit Mode
         global $AUTH_ACL;
         $aclReadOnlyFile = PluginStatic::$DIR_RESOURCES . '/acl.auth.read_only.php';
         $AUTH_ACL = file($aclReadOnlyFile);
 
         $request = new TestRequest();
-        $response = $request->get(array('id' => $pageIdRedirected), '/doku.php');
+        $response = $request->get(array('id' => $pattern), '/doku.php');
 
         $locationHeader = $response->getHeader("Location");
 

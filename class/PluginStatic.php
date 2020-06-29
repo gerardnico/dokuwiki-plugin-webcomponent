@@ -56,19 +56,20 @@ class PluginStatic
      *
      * You need to store the variable in your plugin
      *
-     * @return helper_plugin_sqlite $sqlite
+     * @return helper_plugin_sqlite_adapter $sqlite
      */
     static function getSqlite()
     {
 
+        /** @var helper_plugin_sqlite $sqlite */
         $sqlite = plugin_load('helper', 'sqlite');
         if ($sqlite == null) {
             # TODO: Man we cannot get the message anymore ['SqliteMandatory'];
             $sqliteMandatoryMessage = "The Sqlite Plugin is mandatory. Some functionalities of the Web Components Plugin may not work.";
-            msg($sqliteMandatoryMessage, MANAGER404_MSG_ERROR, $allow = MSG_MANAGERS_ONLY);
+            msg($sqliteMandatoryMessage, self::LVL_MSG_ERROR, $allow = MSG_MANAGERS_ONLY);
             return null;
         }
-
+        $sqlite->getAdapter()->setUseNativeAlter(true);
         $init = $sqlite->init(self::$PLUGIN_BASE_NAME, DOKU_PLUGIN . self::$PLUGIN_BASE_NAME . '/db/');
         if (!$init) {
             # TODO: Message 'SqliteUnableToInitialize'

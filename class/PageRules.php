@@ -50,7 +50,7 @@ class PageRules
      * @param integer $id
      * @return boolean
      */
-    function exists($id)
+    function ruleExists($id)
     {
         $id = strtolower($id);
 
@@ -68,16 +68,39 @@ class PageRules
 
     }
 
+    /**
+     * Is Redirection of a page Id Present
+     * @param integer $pattern
+     * @return boolean
+     */
+    function patternExists($pattern)
+    {
+
+
+        $res = $this->sqlite->query("SELECT count(*) FROM PAGE_RULES where MATCHER = ?", $pattern);
+        $exists = null;
+        if ($this->sqlite->res2single($res) == 1) {
+            $exists = true;
+        } else {
+            $exists = false;
+        }
+        $this->sqlite->res_close($res);
+        return $exists;
+
+
+    }
+
 
     /**
      * @param $sourcePageId
      * @param $targetPageId
      * @param $priority
+     * @return int - the rule id
      */
     function addRule($sourcePageId, $targetPageId, $priority)
     {
         $currentDate = date("c");
-        $this->addRedirectionWithDate($sourcePageId, $targetPageId, $priority, $currentDate);
+        return $this->addRuleWithDate($sourcePageId, $targetPageId, $priority, $currentDate);
     }
 
     /**
@@ -88,8 +111,9 @@ class PageRules
      * @param string $target
      * @param $priority
      * @param $creationDate
+     * @return int - the last id
      */
-    function addRedirectionWithDate($matcher, $target, $priority, $creationDate)
+    function addRuleWithDate($matcher, $target, $priority, $creationDate)
     {
 
         $entry = array(
@@ -103,7 +127,9 @@ class PageRules
         if (!$res) {
             PluginStatic::throwRuntimeException("There was a problem during insertion");
         }
+        $lastInsertId = $this->sqlite->getAdapter()->getDb()->lastInsertId();
         $this->sqlite->res_close($res);
+        return $lastInsertId;
 
     }
 
@@ -186,6 +212,8 @@ class PageRules
         return $array;
 
     }
+
+
 
 
 }
