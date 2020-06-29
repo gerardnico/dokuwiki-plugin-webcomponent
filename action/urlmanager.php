@@ -547,9 +547,10 @@ class action_plugin_webcomponent_urlmanager extends DokuWiki_Action_Plugin
      *
      * @param string $sourcePageId
      * @param $targetPageId
-     * @param $targetOrigin
+     * @param $algorithmic
+     * @param $method - http or rewrite
      */
-    function logRedirection($sourcePageId, $targetPageId, $targetOrigin)
+    function logRedirection($sourcePageId, $targetPageId, $algorithmic, $method)
     {
 
         $row = array(
@@ -557,12 +558,13 @@ class action_plugin_webcomponent_urlmanager extends DokuWiki_Action_Plugin
             "SOURCE" => $sourcePageId,
             "TARGET" => $targetPageId,
             "REFERRER" => $_SERVER['HTTP_REFERER'],
-            "TYPE" => $targetOrigin
+            "TYPE" => $algorithmic,
+            "METHOD" => $method
         );
         $res = $this->sqlite->storeEntry('redirections_log', $row);
 
         if (!$res) {
-            throw new RuntimeException("An error occurred");
+            PluginStatic::msg("An error occurred");
         }
 
     }

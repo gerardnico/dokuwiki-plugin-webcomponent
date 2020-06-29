@@ -1,8 +1,5 @@
 -- Add the type (ie http or id)
-alter table REDIRECTIONS_LOG
-    rename column TYPE to METHOD;
-alter table REDIRECTIONS_LOG
-    add column TYPE TEXT;
+alter table REDIRECTIONS_LOG add column METHOD TEXT;
 
 -- Rename redirection to page rules
 create table PAGE_RULES_tmp
@@ -15,10 +12,9 @@ create table PAGE_RULES_tmp
 );
 
 insert into PAGE_RULES_tmp(ID, MATCHER, TARGET, PRIORITY, TIMESTAMP)
-select NULL, SOURCE, TARGET, ROW_NUMBER() over (), CREATION_TIMESTAMP
+select NULL, SOURCE, TARGET, 1, CREATION_TIMESTAMP
 from REDIRECTIONS;
 drop table REDIRECTIONS;
-alter table PAGE_RULES_tmp
-    rename to PAGE_RULES;
+alter table PAGE_RULES_tmp rename to PAGE_RULES;
 
 
