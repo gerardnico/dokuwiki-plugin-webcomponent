@@ -301,7 +301,7 @@ class action_plugin_webcomponent_urlmessage extends DokuWiki_Action_Plugin
         // Close the session
         $result = session_write_close();
         if (!$result) {
-            PluginStatic::throwRuntimeException("Failure to write the session");
+            PluginStatic::msg("Failure to write the session");
         }
 
     }

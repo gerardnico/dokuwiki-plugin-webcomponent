@@ -56,7 +56,7 @@ class PluginStatic
      *
      * You need to store the variable in your plugin
      *
-     * @return helper_plugin_sqlite_adapter $sqlite
+     * @return helper_plugin_sqlite $sqlite
      */
     static function getSqlite()
     {
@@ -74,8 +74,7 @@ class PluginStatic
         if (!$init) {
             # TODO: Message 'SqliteUnableToInitialize'
             $message = "Unable to initialize Sqlite";
-            msg($message, MSG_MANAGERS_ONLY);
-            self::throwRuntimeException($message);
+            self::msg($message, MSG_MANAGERS_ONLY);
         }
         return $sqlite;
 
@@ -121,7 +120,7 @@ class PluginStatic
      * @param string $message
      * @param int $level - the level see LVL constant
      */
-    public static function msg(string $message, int $level)
+    public static function msg(string $message, int $level=self::LVL_MSG_ERROR)
     {
         $msg = "self::PLUGIN_BASE_NAME - $message";
         msg($msg,$level,$allow=MSG_MANAGERS_ONLY);
