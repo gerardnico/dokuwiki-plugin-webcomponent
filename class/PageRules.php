@@ -177,5 +177,15 @@ class PageRules
 
     }
 
+    public function getRule($id)
+    {
+        $res = $this->sqlite->query("SELECT * FROM PAGE_RULES where ID = ?", $id);
+
+        $array = $this->sqlite->res2row($res);
+        $this->sqlite->res_close($res);
+        return $array;
+
+    }
+
 
 }

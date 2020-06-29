@@ -87,7 +87,7 @@ class admin_plugin_webcomponent_pagerules extends DokuWiki_Admin_Plugin
 
     public function getMenuIcon()
     {
-        return DOKU_PLUGIN . $this->getPluginName() . '/admin/' . $this->getPluginComponent() . '.svg';
+        return DOKU_PLUGIN . $this->getPluginName() . '/images/page-next.svg';
     }
 
 
@@ -171,103 +171,139 @@ class admin_plugin_webcomponent_pagerules extends DokuWiki_Admin_Plugin
         // Forms
         if ($_POST['upsert']) {
 
+            $matcher = null;
+            $target = null;
+            $priority = 1;
+
+            // Update ?
             $id = $_POST[self::ID_NAME];
-            $matcher = $_POST[self::MATCHER_NAME];
-            $target = $_POST[self::TARGET_NAME];
-            $priority = $_POST[self::PRIORITY_NAME];
-            if ($priority == null) {
-                $priority = 1;
+            if ($id != null){
+                $rule = $this->pageRuleManager->getRule($id);
+                $matcher = $rule[self::MATCHER_NAME];
+                $target = $rule[self::TARGET_NAME];
+                $priority = $rule[self::PRIORITY_NAME];
             }
 
-            // Add a redirection
-            // ptln('<h2><a name="add_redirection" id="add_redirection">' . $this->lang['AddModifyRedirection'] . '</a></h2>');
-            ptln('<div class="level2">');
+
+            // Forms
+            ptln('<div class="level2" >');
+            ptln('<div id="form_container" style="max-width: 600px;">');
             ptln('<form action="" method="post">');
-            ptln('<table class="m-3">');
-
-            ptln('<thead>');
-            ptln('		<tr><th class="p-2">' . $this->lang['Field'] . '</th><th class="p-2">' . $this->lang['Value'] . '</th> <th class="p-2">' . $this->lang['Information'] . '</th></tr>');
-            ptln('</thead>');
-
-            ptln('<tbody>');
-            ptln('		<tr><td class="p-2"><label for="add_sourcepage" >' . 'Matcher' . ': </label></td><td class="p-2"><input type="text" id="add_sourcepage" name="' . self::MATCHER_NAME . '" value="' . $matcher . '" class="edit" /></td><td class="p-2">' . '' . '</td></td></tr>');
-            ptln('		<tr><td class="p-2"><label for="add_targetpage" >' . $this->lang['target_page'] . ': </label></td><td class="p-2"><input type="text" id="add_targetpage" name="' . self::TARGET_NAME . '" value="' . $target . '" class="edit" /></td><td class="p-2">' . $this->lang['target_page_info'] . '</td></tr>');
-            ptln('		<tr><td class="p-2"><label for="priority" >' . 'priority' . ': </label></td><td class="p-2"><input type="id" id="priority" name="' . self::PRIORITY_NAME . '" value="' . $priority . '" class="edit" /></td><td class="p-2">' . 'The priority in which the rules are applied' . '</td></tr>');
-            ptln('</tbody>');
-            ptln('</table>');
+            ptln('<p><b>If the Dokuwiki ID matches the following pattern:</b></p>');
+            $matcherDefault = "";
+            if ($matcher != null) {
+                $matcherDefault = 'value="' . $matcher . '"';
+            }
+            ptln('<label for="' . self::MATCHER_NAME . '">(You can use the asterisk (*) character)</label>');
+            ptln('<p><input type="text"  style="width: 100%;" id="' . self::MATCHER_NAME . '" required="required" name="' . self::MATCHER_NAME . '" ' . $matcherDefault . ' class="edit" placeholder="pattern"/> </p>');
+            ptln('<p><b>Then applies this redirect settings:</b></p>');
+            $targetDefault = "";
+            if ($matcher != null) {
+                $targetDefault = 'value="' . $target . '"';
+            }
+            ptln('<label for="' . self::TARGET_NAME . '">Target: (A DokuWiki Id or an URL where you can use the ($) group character)</label>');
+            ptln('<p><input type="text" style="width: 100%;" required="required" id="' . self::TARGET_NAME . '" name="' . self::TARGET_NAME . '" ' . $targetDefault . ' class="edit" placeholder="target" /></p>');
+            ptln('<label for="' . self::PRIORITY_NAME . '">Priority: (The order in which rules are applied)</label>');
+            ptln('<p><input type="id" id="' . self::PRIORITY_NAME . '." style="width: 100%;" required="required" placeholder="priority" name="' . self::PRIORITY_NAME . '" value="' . $priority . '" class="edit" /></p>');
             ptln('<input type="hidden" name="do"    value="admin" />');
             if ($id != null) {
                 ptln('<input type="hidden" name="' . self::ID_NAME . '" value="' . $id . '" />');
             }
             ptln('<input type="hidden" name="page"  value="' . $this->getPluginName() . '_' . $this->getPluginComponent() . '" />');
+            ptln('<p>');
             ptln('<a class="btn btn-light" href="?do=admin&page=webcomponent_pagerules" > ' . 'Cancel' . ' <a/>');
             ptln('<input class="btn btn-primary" type="submit" name="save" class="button" value="' . 'Save' . '" />');
+            ptln('</p>');
             ptln('</form>');
-
-            // Add the file add from the lang directory
-            echo $this->locale_xhtml('admin/' . $this->getPluginComponent() . '_add');
             ptln('</div>');
+
+            ptln('</div>');
+
 
         } else {
 
-            ptln('<form action="" method="post">');
+            ptln('<h2><a name="list_redirection" id="list_redirection">' . 'Rules' . '</a></h2>');
+            ptln('<div class="level2">');
+
+            ptln('<form class="pt-3 pb-3" action="" method="post">');
             ptln('    <input type="hidden" name="do"    value="admin" />');
             ptln('	<input type="hidden" name="page"  value="' . $this->getPluginName() . '_' . $this->getPluginComponent() . '" />');
-            ptln('	<input type="submit" name="upsert" name="Create a page rule" class="button" value="' . 'Create a rule' . '" />');
+            ptln('	<input type="submit" name="upsert" name="Create a page rule" class="button" value="' . $this->getLangOrDefault('AddNewRule','Add a new rule') . '" />');
             ptln('</form>');
 
             //      List of redirection
-            ptln('<h2><a name="list_redirection" id="list_redirection">' . $this->lang['ListOfRedirection'] . '</a></h2>');
-            ptln('<div class="level2">');
-
-            ptln('<div class="table-responsive">');
-
-            ptln('<table class="table table-hover">');
-            ptln('	<thead>');
-            ptln('		<tr>');
-            ptln('			<th>&nbsp;</th>');
-            ptln('			<th>' . 'Priority' . '</th>');
-            ptln('			<th>' . $this->lang['SourcePage'] . '</th>');
-            ptln('			<th>' . $this->lang['TargetPage'] . '</th>');
-            ptln('			<th>' . $this->lang['CreationDate'] . '</th>');
-            ptln('	    </tr>');
-            ptln('	</thead>');
-            ptln('	<tbody>');
 
 
-            foreach ($this->pageRuleManager->getRules() as $key => $row) {
+            $rules = $this->pageRuleManager->getRules();
 
-                $id = $row[self::ID_NAME];
-                $matcher = $row[self::MATCHER_NAME];
-                $target = $row[self::TARGET_NAME];
-                $timestamp = $row[self::TIMESTAMP_NAME];
-                $priority = $row[self::PRIORITY_NAME];
+            if (sizeof($rules)==0){
+                ptln('<p>No Rules found</p>');
+            } else {
+                ptln('<div class="table-responsive">');
+
+                ptln('<table class="table table-hover">');
+                ptln('	<thead>');
+                ptln('		<tr>');
+                ptln('			<th>&nbsp;</th>');
+                ptln('			<th>' . $this->getLangOrDefault('Priority', 'Priority') . '</th>');
+                ptln('			<th>' . $this->getLangOrDefault('Matcher', 'Matcher') . '</th>');
+                ptln('			<th>' . $this->getLangOrDefault('Target', 'Target') . '</th>');
+                ptln('			<th>' . $this->getLangOrDefault('NDate', 'Date') . '</th>');
+                ptln('	    </tr>');
+                ptln('	</thead>');
+                ptln('	<tbody>');
 
 
-                ptln('	  <tr class="redirect_info">');
-                ptln('		<td>');
-                ptln('			<form action="" method="post">');
-                ptln('				<input type="image" src="' . DOKU_BASE . 'lib/plugins/' . $this->getPluginName() . '/images/delete.jpg" name="Delete" title="Delete" alt="Delete" value="Submit" />');
-                ptln('				<input type="hidden" name="Delete"  value="Yes" />');
-                ptln('				<input type="hidden" name="' . self::ID_NAME . '"  value="' . $id . '" />');
-                ptln('			</form>');
+                foreach ($rules as $key => $row) {
 
-                ptln('		</td>');
-                ptln('		<td>' . $priority . '</td>');
-                ptln('	    <td>' . $matcher . '</td>');
-                ptln('		<td>' . $target . '</td>');
-                ptln('		<td>' . $timestamp . '</td>');
-                ptln('    </tr>');
+                    $id = $row[self::ID_NAME];
+                    $matcher = $row[self::MATCHER_NAME];
+                    $target = $row[self::TARGET_NAME];
+                    $timestamp = $row[self::TIMESTAMP_NAME];
+                    $priority = $row[self::PRIORITY_NAME];
+
+
+                    ptln('	  <tr class="redirect_info">');
+                    ptln('		<td>');
+                    ptln('			<form action="" method="post" style="display: inline-block">');
+                    ptln('<button style="background: none;border: 0;">');
+                    ptln(inlineSVG(DOKU_PLUGIN . $this->getPluginName() . '/images/delete.svg'));
+                    ptln('</button>');
+                    ptln('				<input type="hidden" name="Delete"  value="Yes" />');
+                    ptln('				<input type="hidden" name="' . self::ID_NAME . '"  value="' . $id . '" />');
+                    ptln('			</form>');
+                    ptln('			<form action="" method="post" style="display: inline-block">');
+                    ptln('<button style="background: none;border: 0;">');
+                    ptln(inlineSVG(DOKU_PLUGIN . $this->getPluginName() . '/images/file-document-edit-outline.svg'));
+                    ptln('</button>');
+                    ptln('				<input type="hidden" name="upsert"  value="Yes" />');
+                    ptln('				<input type="hidden" name="' . self::ID_NAME . '"  value="' . $id . '" />');
+                    ptln('			</form>');
+
+                    ptln('		</td>');
+                    ptln('		<td>' . $priority . '</td>');
+                    ptln('	    <td>' . $matcher . '</td>');
+                    ptln('		<td>' . $target . '</td>');
+                    ptln('		<td>' . $timestamp . '</td>');
+                    ptln('    </tr>');
+                }
+                ptln('  </tbody>');
+                ptln('</table>');
+                ptln('</div>'); //End Table responsive
             }
-            ptln('  </tbody>');
-            ptln('</table>');
-            ptln('</div>'); //End Table responsive
+
             ptln('</div>'); // End level 2
 
 
         }
 
 
+    }
+
+    private function getLangOrDefault(string $id, string $default)
+    {
+        $lang = $this->getLang($id);
+        return $lang !='' ? $lang : $default;
     }
 
 
