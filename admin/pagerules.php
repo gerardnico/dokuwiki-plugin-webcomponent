@@ -23,12 +23,6 @@ class admin_plugin_webcomponent_pagerules extends DokuWiki_Admin_Plugin
 {
 
 
-    // Name of the column and of the variable in the HTML form
-    const ID_NAME = 'ID';
-    const MATCHER_NAME = 'MATCHER';
-    const TARGET_NAME = 'TARGET';
-    const PRIORITY_NAME = 'PRIORITY';
-    const TIMESTAMP_NAME = 'TIMESTAMP';
 
     /**
      * @var array|string[]
@@ -116,10 +110,10 @@ class admin_plugin_webcomponent_pagerules extends DokuWiki_Admin_Plugin
          */
         if ($_POST['save']) {
 
-            $id = $_POST[self::ID_NAME];
-            $matcher = $_POST[self::MATCHER_NAME];
-            $target = $_POST[self::TARGET_NAME];
-            $priority = $_POST[self::PRIORITY_NAME];
+            $id = $_POST[PageRules::ID_NAME];
+            $matcher = $_POST[PageRules::MATCHER_NAME];
+            $target = $_POST[PageRules::TARGET_NAME];
+            $priority = $_POST[PageRules::PRIORITY_NAME];
 
             if ($matcher == null) {
                 msg('Matcher can not be null', PluginStatic::LVL_MSG_ERROR);
@@ -147,7 +141,7 @@ class admin_plugin_webcomponent_pagerules extends DokuWiki_Admin_Plugin
 
         if ($_POST['Delete']) {
 
-            $ruleId = $_POST[self::ID_NAME];
+            $ruleId = $_POST[PageRules::ID_NAME];
             $this->pageRuleManager->deleteRule($ruleId);
             msg($this->lang['Deleted'], PluginStatic::LVL_MSG_INFO);
 
@@ -176,12 +170,12 @@ class admin_plugin_webcomponent_pagerules extends DokuWiki_Admin_Plugin
             $priority = 1;
 
             // Update ?
-            $id = $_POST[self::ID_NAME];
+            $id = $_POST[PageRules::ID_NAME];
             if ($id != null){
                 $rule = $this->pageRuleManager->getRule($id);
-                $matcher = $rule[self::MATCHER_NAME];
-                $target = $rule[self::TARGET_NAME];
-                $priority = $rule[self::PRIORITY_NAME];
+                $matcher = $rule[PageRules::MATCHER_NAME];
+                $target = $rule[PageRules::TARGET_NAME];
+                $priority = $rule[PageRules::PRIORITY_NAME];
             }
 
 
@@ -194,20 +188,20 @@ class admin_plugin_webcomponent_pagerules extends DokuWiki_Admin_Plugin
             if ($matcher != null) {
                 $matcherDefault = 'value="' . $matcher . '"';
             }
-            ptln('<label for="' . self::MATCHER_NAME . '">(You can use the asterisk (*) character)</label>');
-            ptln('<p><input type="text"  style="width: 100%;" id="' . self::MATCHER_NAME . '" required="required" name="' . self::MATCHER_NAME . '" ' . $matcherDefault . ' class="edit" placeholder="pattern"/> </p>');
+            ptln('<label for="' . PageRules::MATCHER_NAME . '">(You can use the asterisk (*) character)</label>');
+            ptln('<p><input type="text"  style="width: 100%;" id="' . PageRules::MATCHER_NAME . '" required="required" name="' . PageRules::MATCHER_NAME . '" ' . $matcherDefault . ' class="edit" placeholder="pattern"/> </p>');
             ptln('<p><b>Then applies this redirect settings:</b></p>');
             $targetDefault = "";
             if ($matcher != null) {
                 $targetDefault = 'value="' . $target . '"';
             }
-            ptln('<label for="' . self::TARGET_NAME . '">Target: (A DokuWiki Id or an URL where you can use the ($) group character)</label>');
-            ptln('<p><input type="text" style="width: 100%;" required="required" id="' . self::TARGET_NAME . '" name="' . self::TARGET_NAME . '" ' . $targetDefault . ' class="edit" placeholder="target" /></p>');
-            ptln('<label for="' . self::PRIORITY_NAME . '">Priority: (The order in which rules are applied)</label>');
-            ptln('<p><input type="id" id="' . self::PRIORITY_NAME . '." style="width: 100%;" required="required" placeholder="priority" name="' . self::PRIORITY_NAME . '" value="' . $priority . '" class="edit" /></p>');
+            ptln('<label for="' . PageRules::TARGET_NAME . '">Target: (A DokuWiki Id or an URL where you can use the ($) group character)</label>');
+            ptln('<p><input type="text" style="width: 100%;" required="required" id="' . PageRules::TARGET_NAME . '" name="' . PageRules::TARGET_NAME . '" ' . $targetDefault . ' class="edit" placeholder="target" /></p>');
+            ptln('<label for="' . PageRules::PRIORITY_NAME . '">Priority: (The order in which rules are applied)</label>');
+            ptln('<p><input type="id" id="' . PageRules::PRIORITY_NAME . '." style="width: 100%;" required="required" placeholder="priority" name="' . PageRules::PRIORITY_NAME . '" value="' . $priority . '" class="edit" /></p>');
             ptln('<input type="hidden" name="do"    value="admin" />');
             if ($id != null) {
-                ptln('<input type="hidden" name="' . self::ID_NAME . '" value="' . $id . '" />');
+                ptln('<input type="hidden" name="' . PageRules::ID_NAME . '" value="' . $id . '" />');
             }
             ptln('<input type="hidden" name="page"  value="' . $this->getPluginName() . '_' . $this->getPluginComponent() . '" />');
             ptln('<p>');
@@ -256,11 +250,11 @@ class admin_plugin_webcomponent_pagerules extends DokuWiki_Admin_Plugin
 
                 foreach ($rules as $key => $row) {
 
-                    $id = $row[self::ID_NAME];
-                    $matcher = $row[self::MATCHER_NAME];
-                    $target = $row[self::TARGET_NAME];
-                    $timestamp = $row[self::TIMESTAMP_NAME];
-                    $priority = $row[self::PRIORITY_NAME];
+                    $id = $row[PageRules::ID_NAME];
+                    $matcher = $row[PageRules::MATCHER_NAME];
+                    $target = $row[PageRules::TARGET_NAME];
+                    $timestamp = $row[PageRules::TIMESTAMP_NAME];
+                    $priority = $row[PageRules::PRIORITY_NAME];
 
 
                     ptln('	  <tr class="redirect_info">');
@@ -270,14 +264,14 @@ class admin_plugin_webcomponent_pagerules extends DokuWiki_Admin_Plugin
                     ptln(inlineSVG(DOKU_PLUGIN . $this->getPluginName() . '/images/delete.svg'));
                     ptln('</button>');
                     ptln('				<input type="hidden" name="Delete"  value="Yes" />');
-                    ptln('				<input type="hidden" name="' . self::ID_NAME . '"  value="' . $id . '" />');
+                    ptln('				<input type="hidden" name="' . PageRules::ID_NAME . '"  value="' . $id . '" />');
                     ptln('			</form>');
                     ptln('			<form action="" method="post" style="display: inline-block">');
                     ptln('<button style="background: none;border: 0;">');
                     ptln(inlineSVG(DOKU_PLUGIN . $this->getPluginName() . '/images/file-document-edit-outline.svg'));
                     ptln('</button>');
                     ptln('				<input type="hidden" name="upsert"  value="Yes" />');
-                    ptln('				<input type="hidden" name="' . self::ID_NAME . '"  value="' . $id . '" />');
+                    ptln('				<input type="hidden" name="' . PageRules::ID_NAME . '"  value="' . $id . '" />');
                     ptln('			</form>');
 
                     ptln('		</td>');

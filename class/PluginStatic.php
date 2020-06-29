@@ -130,6 +130,18 @@ class PluginStatic
     }
 
     /**
+     * Send a message to a manager and log it
+     * @param string $message
+     * @param int $level - the level see LVL constant
+     */
+    public static function msg(string $message, int $level)
+    {
+        $msg = "self::PLUGIN_BASE_NAME - $message";
+        msg($msg,$level,$allow=MSG_MANAGERS_ONLY);
+        dbg($msg);
+    }
+
+    /**
      * Generate a text with a max length of $length
      * and add ... if above
      * @param $myString

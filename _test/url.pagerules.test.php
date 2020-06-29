@@ -80,7 +80,8 @@ class plugin_webcomponent_url_rewrite_test extends DokuWikiTest
     public function test_internalRedirectToExistingPage()
     {
 
-        $redirectManager = new PageRules(PluginStatic::getSqlite());
+        $pageRules = new PageRules(PluginStatic::getSqlite());
+        $pageRules->deleteAll();
 
         // in the $ID value, the first : is suppressed
         $sourcePageId = "an:page:that:does:not:exist";
@@ -89,11 +90,7 @@ class plugin_webcomponent_url_rewrite_test extends DokuWikiTest
         saveWikiText($targetPage, 'EXPLICIT_REDIRECT_PAGE_TARGET', 'Test initialization');
 
 
-        // Clean test state
-        if ($redirectManager->isPageRulePresent($sourcePageId)) {
-            $redirectManager->deleteRule($sourcePageId);
-        }
-        $redirectManager->addRule($sourcePageId, $targetPage);
+        $pageRules->addRule($sourcePageId, $targetPage,0);
 
 
         // Set to search engine first but because of order of precedence, this should not happens
@@ -135,48 +132,23 @@ class plugin_webcomponent_url_rewrite_test extends DokuWikiTest
         saveWikiText($targetPage, 'Test ', 'but without any common name (namespace) in the path');
         idx_addPage($targetPage);
 
-        $redirectManager = new PageRules(PluginStatic::getSqlite());
+        $pageRules = new PageRules(PluginStatic::getSqlite());
 
 
-        $redirectManager->deleteAll();
-        $count = $redirectManager->count();
-        $this->assertEquals(0, $count, "The number of redirection is zero");
+        $pageRules->deleteAll();
+        $count = $pageRules->count();
+        $this->assertEquals(0, $count, "The number of page rules is zero");
         $sourcePageId = "source";
-        $redirectManager->addRule($sourcePageId, $targetPage);
-        $count = $redirectManager->count();
-        $this->assertEquals(1, $count, "The number of redirection is one");
-        $bool = $redirectManager->isPageRulePresent($sourcePageId);
-        $this->assertEquals(true, $bool, "The redirection is present");
+        $ruleId = $pageRules->addRule($sourcePageId, $targetPage,0);
+        $count = $pageRules->count();
+        $this->assertEquals(1, $count, "The number of page rules is one");
+        $bool = $pageRules->ruleExists($ruleId);
+        $this->assertEquals(true, $bool, "The page rule is present");
 
 
     }
 
 
 
-    /**
-     * Test if an expression is a regular expression pattern
-     */
-    public function test_expressionIsRegular()
-    {
-
-        // Not an expression
-        $inputExpression = "Hallo";
-        $isRegularExpression = PageRules::isRegularExpression($inputExpression);
-        /** @noinspection PhpUndefinedMethodInspection */
-        $this->assertEquals(0,$isRegularExpression,"The term (".$inputExpression.") is not a regular expression");
-
-        // A basic expression
-        $inputExpression = "/Hallo/";
-        $isRegularExpression = PageRules::isRegularExpression($inputExpression);
-        /** @noinspection PhpUndefinedMethodInspection */
-        $this->assertEquals(true,$isRegularExpression,"The term (".$inputExpression.") is a regular expression");
-
-        // A complicated expression
-        $inputExpression = "/(/path1/path2/)(.*)/";
-        $isRegularExpression = PageRules::isRegularExpression($inputExpression);
-        /** @noinspection PhpUndefinedMethodInspection */
-        $this->assertEquals(true,$isRegularExpression,"The term (" . $inputExpression . ") is a regular expression");
-
-    }
 
 }

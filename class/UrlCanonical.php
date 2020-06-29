@@ -232,7 +232,18 @@ class UrlCanonical
     static function toDokuWikiId($url)
     {
         // Replace / by : and suppress the first : because the global $ID does not have it
-        return substr(str_replace("/", ":", parse_url($url, PHP_URL_PATH)), 1);
+        $parsedQuery = parse_url($url,PHP_URL_QUERY);
+        $parsedQueryArray = [];
+        parse_str($parsedQuery,$parsedQueryArray);
+        $queryId = 'id';
+        if (array_key_exists($queryId,$parsedQueryArray)){
+            // Doku form (ie doku.php?id=)
+            return $parsedQueryArray[$queryId];
+        } else {
+            // Slash form ie (/my/id)
+            $urlPath = parse_url($url, PHP_URL_PATH);
+            return substr(str_replace("/", ":", $urlPath), 1);
+        }
     }
 
 

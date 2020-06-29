@@ -87,10 +87,8 @@ class plugin_webcomponent_url_manager_test extends DokuWikiTest
         // A page in another branch on the same level
         $badTarget = "otherBranch" . $pathSeparator . $firstLevelName . $pathSeparator . $name;
 
-        $redirectManager = new PageRules(PluginStatic::getSqlite());
-        if ($redirectManager->isPageRulePresent($sourceId)) {
-            $redirectManager->deleteRule($sourceId);
-        }
+        $pageRules = new PageRules(PluginStatic::getSqlite());
+        $pageRules->deleteAll();
 
 
         // Create the target Pages and add the pages to the index, otherwise, they will not be find by the ft_lookup
@@ -164,10 +162,8 @@ class plugin_webcomponent_url_manager_test extends DokuWikiTest
         idx_addPage($goodTargetId);
 
         // Delete any redirections
-        $redirectManager = new PageRules(PluginStatic::getSqlite());
-        if ($redirectManager->isPageRulePresent($sourceId)) {
-            $redirectManager->deleteRule($sourceId);
-        }
+        $pageRules = new PageRules(PluginStatic::getSqlite());
+        $pageRules->deleteAll();
 
         // Read only otherwise, you go in edit mode
         global $AUTH_ACL;

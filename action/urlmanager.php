@@ -28,7 +28,7 @@ class action_plugin_webcomponent_urlmanager extends DokuWiki_Action_Plugin
     const REDIRECT_REWRITE = 'Rewrite';
 
     // Where the target id value comes from
-    const TARGET_ORIGIN_DATA_STORE = 'dataStore';
+    const TARGET_ORIGIN_PAGE_RULES = 'pageRules';
     const TARGET_ORIGIN_CANONICAL = 'canonical';
     const TARGET_ORIGIN_START_PAGE = 'startPage';
     const TARGET_ORIGIN_BEST_PAGE_NAME = 'bestPageName';
@@ -56,7 +56,7 @@ class action_plugin_webcomponent_urlmanager extends DokuWiki_Action_Plugin
     /**
      * @var PageRules
      */
-    private $urlRewrite;
+    private $pageRules;
 
 
     function __construct()
@@ -97,11 +97,11 @@ class action_plugin_webcomponent_urlmanager extends DokuWiki_Action_Plugin
         // because dokuwiki instantiate all action class first
         if ($this->sqlite == null) {
             $this->sqlite = PluginStatic::getSqlite();
-            if ($this->sqlite==null){
+            if ($this->sqlite == null) {
                 return false;
             } else {
                 $this->canonicalManager = new UrlCanonical($this->sqlite);
-                $this->urlRewrite = new PageRules($this->sqlite);
+                $this->pageRules = new PageRules($this->sqlite);
             }
         }
 
@@ -136,7 +136,7 @@ class action_plugin_webcomponent_urlmanager extends DokuWiki_Action_Plugin
         }
 
         // If there is a redirection defined in the redirection table
-        $result = $this->processingTableRedirection();
+        $result = $this->processingPageRules();
         if ($result) {
             // A redirection has occurred
             // finish the process
@@ -379,7 +379,6 @@ class action_plugin_webcomponent_urlmanager extends DokuWiki_Action_Plugin
     {
 
 
-
         //If the user have right to see the target page
         if ($_SERVER['REMOTE_USER']) {
             $perm = auth_quickaclcheck($targetPage);
@@ -574,38 +573,56 @@ class action_plugin_webcomponent_urlmanager extends DokuWiki_Action_Plugin
      * @return bool - true if a rewrite or redirection occurs
      * @throws Exception
      */
-    private function processingTableRedirection()
+    private function processingPageRules()
     {
         global $ID;
 
+        $calculatedTarget = null;
+        $ruleMatcher = null; // Used in a warning message if the target page does not exist
         // Known redirection in the table
         // Get the page from redirection data
-        $targetPage = $this->urlRewrite->getRedirectionTarget($ID);
+        $rules = $this->pageRules->getRules();
+        foreach ($rules as $rule) {
 
-        // No data in the database
-        if ($targetPage == false) {
+            $ruleMatcher = strtolower($rule[PageRules::MATCHER_NAME]);
+            $ruleTarget = $rule[PageRules::TARGET_NAME];
+
+            // Glob to Rexgexp
+            $regexpPattern = '/' . str_replace("*", "(.*)", $ruleMatcher) . '/';
+
+            // Match ?
+            // https://www.php.net/manual/en/function.preg-match.php
+            if (preg_match($regexpPattern, $ID, $matches)) {
+                $calculatedTarget = $ruleTarget;
+                break;
+            }
+        }
+
+        if ($calculatedTarget==null){
             return false;
         }
 
         // If this is an external redirect (other domain)
-        if (PluginStatic::isValidURL($targetPage) && $targetPage) {
+        if (PluginStatic::isValidURL($calculatedTarget)) {
 
-            $this->httpRedirect($targetPage, self::TARGET_ORIGIN_DATA_STORE, true);
+            $this->httpRedirect($calculatedTarget, self::TARGET_ORIGIN_PAGE_RULES, true);
             return true;
 
         }
 
         // If the page exist
-        if (page_exists($targetPage)) {
+        if (page_exists($calculatedTarget)) {
 
-            $this->rewriteRedirect($targetPage, self::TARGET_ORIGIN_DATA_STORE);
+            $this->rewriteRedirect($calculatedTarget, self::TARGET_ORIGIN_PAGE_RULES);
             return true;
 
         } else {
 
-            // TODO: log the warning
+            PluginStatic::msg("The calculated target page ($calculatedTarget) (for the non-existent page `$ID` with the matcher `$ruleMatcher`) does not exist",PluginStatic::LVL_MSG_ERROR);
+            return false;
 
         }
+
     }
 
     /**

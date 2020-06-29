@@ -76,7 +76,7 @@ class action_plugin_webcomponent_urlmessage extends DokuWiki_Action_Plugin
 
             switch ($redirectSource) {
 
-                case action_plugin_webcomponent_urlmanager::TARGET_ORIGIN_DATA_STORE:
+                case action_plugin_webcomponent_urlmanager::TARGET_ORIGIN_PAGE_RULES:
                     $message->addContent(sprintf($this->getLang('message_redirected_by_redirect'), hsc($pageIdOrigin)));
                     $message->setType(Message404::TYPE_CLASSIC);
                     break;
@@ -110,7 +110,7 @@ class action_plugin_webcomponent_urlmessage extends DokuWiki_Action_Plugin
 
             // Add a list of page with the same name to the message
             // if the redirections is not planned
-            if ($redirectSource != action_plugin_webcomponent_urlmanager::TARGET_ORIGIN_DATA_STORE) {
+            if ($redirectSource != action_plugin_webcomponent_urlmanager::TARGET_ORIGIN_PAGE_RULES) {
                 $this->addToMessagePagesWithSameName($message, $pageIdOrigin);
             }
 
