@@ -23,9 +23,8 @@ class action_plugin_webcomponent_urlmanager extends DokuWiki_Action_Plugin
 
 
     // The redirect type
-    const REDIRECT_HTTP_EXTERNAL = 'External';
-    const REDIRECT_HTTP_INTERNAL = 'HttpInternal';
-    const REDIRECT_REWRITE = 'Rewrite';
+    const REDIRECT_HTTP = 'Http';
+    const REDIRECT_ID = 'Id';
 
     // Where the target id value comes from
     const TARGET_ORIGIN_PAGE_RULES = 'pageRules';
@@ -127,7 +126,7 @@ class action_plugin_webcomponent_urlmanager extends DokuWiki_Action_Plugin
         if ($targetPage) {
 
             if (page_exists($targetPage)) {
-                $this->rewriteRedirect($targetPage, self::TARGET_ORIGIN_CANONICAL);
+                $this->IdRedirect($targetPage, self::TARGET_ORIGIN_CANONICAL);
                 return true;
             } else {
                 //TODO: log warning
@@ -375,7 +374,7 @@ class action_plugin_webcomponent_urlmanager extends DokuWiki_Action_Plugin
      * @throws Exception
      */
     private
-    function rewriteRedirect($targetPage, $redirectSource = 'Not Known')
+    function IdRedirect($targetPage, $redirectSource = 'Not Known')
     {
 
 
@@ -398,7 +397,7 @@ class action_plugin_webcomponent_urlmanager extends DokuWiki_Action_Plugin
         $INFO['id'] = $targetPage;
 
         // Redirection
-        $this->logRedirection($sourceId, $targetPage, $redirectSource);
+        $this->logRedirection($sourceId, $targetPage, $redirectSource, self::REDIRECT_ID);
 
 
     }
@@ -418,7 +417,7 @@ class action_plugin_webcomponent_urlmanager extends DokuWiki_Action_Plugin
         // No message can be shown because this is an external URL
 
         // Log the redirections
-        $this->logRedirection($ID, $target, $targetOrigin);
+        $this->logRedirection($ID, $target, $targetOrigin,self::REDIRECT_HTTP);
 
         // Notify
         action_plugin_webcomponent_urlmessage::notify($ID, $targetOrigin);
@@ -625,7 +624,7 @@ class action_plugin_webcomponent_urlmanager extends DokuWiki_Action_Plugin
             // This is DokuWiki Id and should always be lowercase
             // The page rule may have change that
             $calculatedTarget = strtolower($calculatedTarget);
-            $this->rewriteRedirect($calculatedTarget, self::TARGET_ORIGIN_PAGE_RULES);
+            $this->IdRedirect($calculatedTarget, self::TARGET_ORIGIN_PAGE_RULES);
             return true;
 
         } else {
