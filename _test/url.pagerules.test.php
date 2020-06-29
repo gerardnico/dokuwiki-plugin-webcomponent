@@ -115,6 +115,98 @@ class plugin_webcomponent_url_rewrite_test extends DokuWikiTest
     }
 
 
+    /**
+     * Test a pattern redirect
+     *
+     * The namespace database was renamed to db
+     */
+    public function test_internalRedirectWithSimplePattern()
+    {
+
+        $pageRules = new PageRules(PluginStatic::getSqlite());
+        $pageRules->deleteAll();
+
+        // in the $ID value, the first : is suppressed
+        $oldNameSpace = "database";
+        $sourcePageId = "{$oldNameSpace}:sqlite:table";
+        saveWikiText($sourcePageId, "", 'Without content the page is deleted');
+        $newNameSpaceName = "db";
+        $targetPage = "{$newNameSpaceName}:sqlite:table";
+        saveWikiText($targetPage, 'EXPLICIT_REDIRECT_PAGE_TARGET', 'Test initialization');
+
+        // Create the rules
+        $matcher = "{$oldNameSpace}:*";
+        $target = "$newNameSpaceName:$1";
+        $pageRules->addRule($matcher, $target,0);
+
+
+        // Set to search engine first but because of order of precedence, this should not happens
+        $conf ['plugin'][PluginStatic::$PLUGIN_BASE_NAME]['ActionReaderFirst'] = action_plugin_webcomponent_urlmanager::GO_TO_SEARCH_ENGINE;
+
+        // Read only otherwise, you go in edit mode
+        global $AUTH_ACL;
+        $aclReadOnlyFile = PluginStatic::$DIR_RESOURCES . '/acl.auth.read_only.php';
+        $AUTH_ACL = file($aclReadOnlyFile);
+
+
+        $request = new TestRequest();
+        $response = $request->get(array('id' => $sourcePageId), '/doku.php');
+
+        // Check the canonical value
+        $canonical = $response->queryHTML('link[rel="canonical"]')->attr('href');
+        $canonicalPageId = UrlCanonical::toDokuWikiId($canonical);
+        $this->assertEquals($targetPage, $canonicalPageId, "The page was redirected");
+
+
+
+    }
+
+    /**
+     * Test a complex pattern redirect
+     *
+     * The namespace database was renamed to db and we just want to move the page starting with the prefix ta
+     */
+    public function test_internalRedirectWithComplexPattern()
+    {
+
+        $pageRules = new PageRules(PluginStatic::getSqlite());
+        $pageRules->deleteAll();
+
+        // in the $ID value, the first : is suppressed
+        $oldNameSpace = "aVeryOldNamespace";
+        $sourcePageId = "{$oldNameSpace}:subNamespace:table";
+        saveWikiText($sourcePageId, "", 'Without content the page is deleted');
+        $newNameSpaceName = "aNewNameSpace";
+        $targetPage = "{$newNameSpaceName}:subNamespace:table";
+        saveWikiText($targetPage, 'EXPLICIT_REDIRECT_PAGE_TARGET', 'Test initialization');
+
+        // Create the rules
+        $matcher = "{$oldNameSpace}:*:ta*";
+        $target = "$newNameSpaceName:$1:ta$2";
+        $pageRules->addRule($matcher, $target,0);
+
+
+        // Set to search engine first but because of order of precedence, this should not happens
+        $conf ['plugin'][PluginStatic::$PLUGIN_BASE_NAME]['ActionReaderFirst'] = action_plugin_webcomponent_urlmanager::GO_TO_SEARCH_ENGINE;
+
+        // Read only otherwise, you go in edit mode
+        global $AUTH_ACL;
+        $aclReadOnlyFile = PluginStatic::$DIR_RESOURCES . '/acl.auth.read_only.php';
+        $AUTH_ACL = file($aclReadOnlyFile);
+
+
+        $request = new TestRequest();
+        $response = $request->get(array('id' => $sourcePageId), '/doku.php');
+
+        // Check the canonical value
+        $canonical = $response->queryHTML('link[rel="canonical"]')->attr('href');
+        $canonicalPageId = UrlCanonical::toDokuWikiId($canonical);
+        $this->assertEquals(strtolower($targetPage), $canonicalPageId, "The page was redirected");
+
+
+
+    }
+
 
 
 
@@ -126,7 +218,7 @@ class plugin_webcomponent_url_rewrite_test extends DokuWikiTest
      * Test basic redirections operations
      *
      */
-    public function testRedirectionsOperations()
+    public function testPageRuleDbOperations()
     {
         $targetPage = 'testRedirectionsOperations:test';
         saveWikiText($targetPage, 'Test ', 'but without any common name (namespace) in the path');

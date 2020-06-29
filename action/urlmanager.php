@@ -594,6 +594,13 @@ class action_plugin_webcomponent_urlmanager extends DokuWiki_Action_Plugin
             // https://www.php.net/manual/en/function.preg-match.php
             if (preg_match($regexpPattern, $ID, $matches)) {
                 $calculatedTarget = $ruleTarget;
+                foreach ($matches as $key => $match) {
+                    if ($key == 0){
+                        continue;
+                    } else {
+                        $calculatedTarget = str_replace('$'.$key, $match, $calculatedTarget);
+                    }
+                }
                 break;
             }
         }
@@ -613,6 +620,9 @@ class action_plugin_webcomponent_urlmanager extends DokuWiki_Action_Plugin
         // If the page exist
         if (page_exists($calculatedTarget)) {
 
+            // This is DokuWiki Id and should always be lowercase
+            // The page rule may have change that
+            $calculatedTarget = strtolower($calculatedTarget);
             $this->rewriteRedirect($calculatedTarget, self::TARGET_ORIGIN_PAGE_RULES);
             return true;
 

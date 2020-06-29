@@ -81,21 +81,7 @@ class PluginStatic
 
     }
 
-    /**
-     * Dokuwiki will show a pink message when throwing an exception
-     * and it's difficult to see from where it comes
-     *
-     * This utility function will add the plugin name to it
-     *
-     * @param $message
-     * @throws RuntimeException
-     */
-    static function throwRuntimeException($message): void
-    {
-        if (defined('DOKU_UNITTEST')) {
-            throw new RuntimeException(self::$PLUGIN_BASE_NAME . ' - ' . $message);
-        }
-    }
+
 
     /**
      * Initiate the static variable
@@ -131,6 +117,7 @@ class PluginStatic
 
     /**
      * Send a message to a manager and log it
+     * Fail if in test
      * @param string $message
      * @param int $level - the level see LVL constant
      */
@@ -139,6 +126,9 @@ class PluginStatic
         $msg = "self::PLUGIN_BASE_NAME - $message";
         msg($msg,$level,$allow=MSG_MANAGERS_ONLY);
         dbg($msg);
+        if (defined('DOKU_UNITTEST')) {
+            throw new RuntimeException($msg);
+        }
     }
 
     /**
