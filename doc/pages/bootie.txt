@@ -1,0 +1,18 @@
+---json
+{
+   "canonical":"bootie"
+}
+---
+
+====== Bootie - Template ======
+
+
+
+===== Steps =====
+==== Configuration ====
+This website uses the following configuration:
+  * [[doku>config:useheading]]: 'Always'
+  * ''Target window for external links'': ''_blank''
+  * [[doku>config:sitemap]]: 10 days
+  * [[doku>config:userewrite]] - ''.htaccess'' (for nice URL)
+  * [[doku>config:useslash]] - Yes (for nice URL)

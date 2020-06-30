@@ -12,7 +12,7 @@ require_once(__DIR__ . '/../class/UrlCanonical.php');
 require_once(__DIR__ . '/urlmessage.php');
 
 /**
- * Class action_plugin_404manager_url
+ * Class action_plugin_webcomponent_url
  *
  * The actual URL manager
  *
@@ -38,15 +38,16 @@ class action_plugin_webcomponent_urlmanager extends DokuWiki_Action_Plugin
     // The constant parameters
     const GO_TO_SEARCH_ENGINE = 'GoToSearchEngine';
     const GO_TO_BEST_NAMESPACE = 'GoToBestNamespace';
-    const GO_TO_BEST_END_PAGE_NAME = 'GoToBestEndPageName';
     const GO_TO_BEST_PAGE_NAME = 'GoToBestPageName';
+    const GO_TO_BEST_END_PAGE_NAME = 'GoToBestEndPageName';
     const GO_TO_NS_START_PAGE = 'GoToNsStartPage';
     const GO_TO_EDIT_MODE = 'GoToEditMode';
     const NOTHING = 'Nothing';
 
     /** @var string - a name used in log and other places */
     const NAME = 'Url Manager';
-    const URL = PluginStatic::URL_BASE.'/url/manager';
+    const CANONICAL = 'url/manager';
+
 
     /**
      * @var
@@ -409,7 +410,7 @@ class action_plugin_webcomponent_urlmanager extends DokuWiki_Action_Plugin
     /**
      * An HTTP Redirect to an internal page, no external resources
      * @param string $target - a dokuwiki id or an url
-     * @param $targetOrigin - the origin of the target
+     * @param $targetOrigin - the origin of the target (the algorithm used to get the target origin)
      * @param bool $permanent - true for a permanent redirection otherwise false
      */
     private
@@ -436,7 +437,13 @@ class action_plugin_webcomponent_urlmanager extends DokuWiki_Action_Plugin
             // Explode the page ID and the anchor (#)
             $link = explode('#', $target, 2);
 
-            $targetUrl = wl($link[0], array(), true, '&');
+            // Query String to pass the message
+            $urlParams = array(
+                action_plugin_webcomponent_urlmessage::ORIGIN_PAGE => $ID,
+                action_plugin_webcomponent_urlmessage::ORIGIN_TYPE => $targetOrigin
+            );
+
+            $targetUrl = wl($link[0], $urlParams, true, '&');
             if ($link[1]) {
                 $targetUrl .= '#' . rawurlencode($link[1]);
             }
@@ -651,7 +658,7 @@ class action_plugin_webcomponent_urlmanager extends DokuWiki_Action_Plugin
 
         global $conf;
         $pathSeparator = ':';
-        $conf['plugin'][PluginStatic::$PLUGIN_BASE_NAME]['ActionReaderFirst'] = action_plugin_404manager_urlmanager::GO_TO_BEST_PAGE_NAME;
+        $conf['plugin'][PluginStatic::$PLUGIN_BASE_NAME]['ActionReaderFirst'] = action_plugin_webcomponent_urlmanager::GO_TO_BEST_PAGE_NAME;
         $conf['plugin'][PluginStatic::$PLUGIN_BASE_NAME]['WeightFactorForSamePageName'] = 4;
         $conf['plugin'][PluginStatic::$PLUGIN_BASE_NAME]['WeightFactorForStartPage'] = 3;
         $conf['plugin'][PluginStatic::$PLUGIN_BASE_NAME]['WeightFactorForSameNamespace'] = 5;

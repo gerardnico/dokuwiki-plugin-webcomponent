@@ -1,7 +1,7 @@
 # Sqlite Database
 
 ## About
-The database can be found at meta/404manager.sqlite3
+The database can be found at meta/webcomponent.sqlite3
 
 ## Migration
 

@@ -21,18 +21,41 @@ require_once(__DIR__ . '/../class/message.model.php');
 class action_plugin_webcomponent_urlmessage extends DokuWiki_Action_Plugin
 {
 
-    // a class can not start with a number then 404manager is not a valid class name
+    // a class can not start with a number then webcomponent is not a valid class name
     const REDIRECT_MANAGER_BOX_CLASS = "redirect-manager";
 
     // Property key
-    const ORIGIN_PAGE = '404id';
-    const ORIGIN_TYPE = '404type';
+    const ORIGIN_PAGE = 'redirectId';
+    const ORIGIN_TYPE = 'redirectOrigin';
 
     function __construct()
     {
         // enable direct access to language strings
         // ie $this->lang
         $this->setupLocale();
+    }
+
+    /**
+     *
+     * Return the message properties from a query string
+     *
+     * An internal HTTP redirect pass them via query string
+     */
+    private static function getMessageQueryStringProperties()
+    {
+
+        $returnValues = array();
+
+        global $INPUT;
+        $origin = $INPUT->str(self::ORIGIN_PAGE, null);
+        if ($origin != null) {
+            $returnValues = array(
+                $origin,
+                $INPUT->str(self::ORIGIN_TYPE,null)
+            );
+        }
+        return $returnValues;
+
     }
 
 
@@ -63,12 +86,15 @@ class action_plugin_webcomponent_urlmessage extends DokuWiki_Action_Plugin
         // Message
         $message = new Message404();
 
-        list($pageIdOrigin, $redirectSource) = self::getNotification();
+        list($pageIdOrigin, $redirectSource) = self::getMessageSessionProperties();
+        if ($pageIdOrigin == null) {
+            list($pageIdOrigin, $redirectSource) = self::getMessageQueryStringProperties();
+        }
 
         // Are we a test call
-        // The redirection does not exit the process otherwise the test fails
+        // The redirection does not exist the process otherwise the test fails
         global $ID;
-        if ($ID == $pageIdOrigin && action_plugin_webcomponent_urlmanager::GO_TO_EDIT_MODE!=$redirectSource) {
+        if ($ID == $pageIdOrigin && action_plugin_webcomponent_urlmanager::GO_TO_EDIT_MODE != $redirectSource) {
             return;
         }
 
@@ -201,7 +227,7 @@ class action_plugin_webcomponent_urlmessage extends DokuWiki_Action_Plugin
 
             print $message->getContent();
 
-            print '<div class="managerreference">' . $this->lang['message_come_from'] . ' <a href="' . $pluginInfo['url'] . '/url/" class="urlextern" title="' . $pluginInfo['desc'] . '"  rel="nofollow">Url Manager</a>.</div>';
+            print '<div class="managerreference">' . $this->lang['message_come_from'] . ' <a href="' . $pluginInfo['url'] . '/'.action_plugin_webcomponent_urlmanager::CANONICAL.'" class="urlextern" title="' . $pluginInfo['desc'] . '" >Url Manager</a>.</div>';
             print('</div>');
 
         }
@@ -252,7 +278,7 @@ class action_plugin_webcomponent_urlmessage extends DokuWiki_Action_Plugin
      * Return notification data or an empty array
      * @return array - of the source id and of the type of redirect if a redirect has occurs otherwise an empty array
      */
-    static function getNotification()
+    static function getMessageSessionProperties()
     {
         $returnArray = array();
         if (!defined('NOSESSION')) {

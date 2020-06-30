@@ -36,7 +36,7 @@ class admin_plugin_webcomponent_pagerules extends DokuWiki_Admin_Plugin
 
 
     /**
-     * admin_plugin_404manager constructor.
+     * admin_plugin_webcomponent constructor.
      *
      * Use the get function instead
      */

@@ -1,13 +1,13 @@
 <?php
 /**
- * Tests over DokuWiki function for the 404manager plugin
+ * Tests over DokuWiki function for the webcomponent plugin
  *
- * @group plugin_404manager
+ * @group plugin_webcomponent
  * @group plugins
  */
 
 
-class plugin_404manager_dokuwiki_test extends DokuWikiTest
+class plugin_webcomponent_dokuwiki_test extends DokuWikiTest
 {
 
 

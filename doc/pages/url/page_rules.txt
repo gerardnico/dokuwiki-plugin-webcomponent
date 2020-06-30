@@ -1,0 +1,11 @@
+---json
+{
+   "canonical":"page:rules"
+}
+---
+
+====== URL manager - Rewrite Rules ======
+
+
+===== Articles Related =====
+{{backlinks>.}}

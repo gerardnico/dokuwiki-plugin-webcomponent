@@ -4,4 +4,4 @@ email   nico@bytle.net
 date    2019-06-14
 name    Web Components Plugin
 desc    A collection of Dokuwiki Plugins from UI to SEO and Url management
-url     https://webcomponent.bytle.net
+url     https://combostrap.com

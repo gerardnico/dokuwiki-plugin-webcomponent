@@ -22,7 +22,7 @@ class PluginStatic
     /**
      * The URL base of the documentation
      */
-    const URL_BASE = "https://combostrap.com";
+    static $URL_BASE;
 
     /**
      * @var string - the plugin name
@@ -100,6 +100,7 @@ class PluginStatic
         global $lang;
         self::$lang = $lang[self::$PLUGIN_BASE_NAME];
         self::$DIR_RESOURCES = __DIR__ . '/../_testResources';
+        self::$URL_BASE = self::$INFO_PLUGIN['url'];
 
     }
 

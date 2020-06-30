@@ -3,7 +3,7 @@
  *
  * Test the re
  *
- * @group plugin_404manager
+ * @group plugin_webcomponent
  * @group plugins
  *
  */
@@ -118,11 +118,10 @@ class plugin_webcomponent_url_manager_test extends DokuWikiTest
         /** @noinspection PhpUndefinedMethodInspection */
         $this->assertEquals($goodTarget, $queryKeys['id'], "The Id of the source page is the asked page");
 
-        /**
-         * Session parameters were the redirection is kept to show a message
-         * cannot be tested automatically because the test request just don't keep them
-         * Test need a headless browser
-         */
+        /** @noinspection PhpUndefinedMethodInspection */
+        $this->assertEquals($sourceId, $queryKeys[action_plugin_webcomponent_urlmessage::ORIGIN_PAGE],"The 404 id must be present");
+        /** @noinspection PhpUndefinedMethodInspection */
+        $this->assertEquals(action_plugin_webcomponent_urlmanager::TARGET_ORIGIN_BEST_PAGE_NAME, $queryKeys[action_plugin_webcomponent_urlmessage::ORIGIN_TYPE], "The redirect type is known");
 
 
     }
@@ -183,11 +182,11 @@ class plugin_webcomponent_url_manager_test extends DokuWikiTest
         /** @noinspection PhpUndefinedMethodInspection */
         $this->assertEquals($goodTargetId, $queryKeys['id'], "The Id of the source page is the asked page");
 
-        /**
-         * Session parameters were the redirection is kept to show a message
-         * cannot be tested automatically because the test request just don't keep them
-         * Test need a headless browser
-         */
+        /** @noinspection PhpUndefinedMethodInspection */
+        $this->assertEquals($sourceId, $queryKeys[action_plugin_webcomponent_urlmessage::ORIGIN_PAGE],"The 404 id must be present");
+        /** @noinspection PhpUndefinedMethodInspection */
+        $this->assertEquals(action_plugin_webcomponent_urlmanager::TARGET_ORIGIN_BEST_NAMESPACE, $queryKeys[action_plugin_webcomponent_urlmessage::ORIGIN_TYPE], "The redirect type is known");
+
 
 
     }

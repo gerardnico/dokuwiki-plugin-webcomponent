@@ -10,7 +10,7 @@
 // #          Page Admin            #
 // ##################################
 
-$lang['PageRules'] = 'Extension 404Manager';
+$lang['PageRules'] = 'Extension webcomponent';
 
 //Error Message
 $lang['SameSourceAndTargetAndPage'] = 'Les pages cible et source sont les mêmes.';

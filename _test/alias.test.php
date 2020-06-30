@@ -2,14 +2,14 @@
 /**
  * Integration Tests for the handling of the canonical
  *
- * plugin_404manager
+ * plugin_webcomponent
  * @group plugins
  *
  */
 
 require_once(__DIR__ . '/../class/UrlCanonical.php');
 
-class plugin_404manager_alias_test extends DokuWikiTest
+class plugin_webcomponent_alias_test extends DokuWikiTest
 {
 
     public function setUp()
