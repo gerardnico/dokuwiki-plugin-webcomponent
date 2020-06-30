@@ -1,5 +1,0 @@
-====== URL manager - Rewrite Rules ======
-
-
-===== Articles Related =====
-{{backlinks>.}}

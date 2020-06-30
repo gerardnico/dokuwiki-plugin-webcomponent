@@ -20,6 +20,11 @@ class PluginStatic
     const LVL_MSG_NOTIFY = 2;
 
     /**
+     * The URL base of the documentation
+     */
+    const URL_BASE = "https://combostrap.com";
+
+    /**
      * @var string - the plugin name
      */
     static $PLUGIN_BASE_NAME;

@@ -1,5 +1,7 @@
 <?php
 
+include_once (__DIR__.'/../syntax/related.php');
+
 $meta['UnitShortCutKey'] = array('string');
 
 // https://www.dokuwiki.org/devel:configuration
@@ -9,12 +11,14 @@ $meta[syntax_plugin_webcomponent_related::EXTRA_PATTERN_CONF] = array('string');
 /**
  * Disqus
  */
+include_once (__DIR__.'/../syntax/disqus.php');
 $meta[syntax_plugin_webcomponent_disqus::FORUM_SHORT_NAME] = array('string');
 
 
 /**
  * Url Manager
  */
+include_once (__DIR__.'/../action/urlmanager.php');
 $actionChoices = array('multichoice', '_choices' => array(
     action_plugin_webcomponent_urlmanager::NOTHING,
     action_plugin_webcomponent_urlmanager::GO_TO_BEST_END_PAGE_NAME,

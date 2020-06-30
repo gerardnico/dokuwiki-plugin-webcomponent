@@ -44,6 +44,10 @@ class action_plugin_webcomponent_urlmanager extends DokuWiki_Action_Plugin
     const GO_TO_EDIT_MODE = 'GoToEditMode';
     const NOTHING = 'Nothing';
 
+    /** @var string - a name used in log and other places */
+    const NAME = 'Url Manager';
+    const URL = PluginStatic::URL_BASE.'/url/manager';
+
     /**
      * @var
      */

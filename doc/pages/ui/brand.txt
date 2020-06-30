@@ -21,7 +21,7 @@ Nico
 </webcode>
 
 ==== Icon ====
-Embbedded
+Embbedded [[icon|icon]]
 <webcode name="Default" frameborder=0 width=100% scrolling=yes externalResources="," renderingMode=story >
 <code dw>
 <brand style="color:#dc3545">

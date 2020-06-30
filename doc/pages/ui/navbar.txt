@@ -1,3 +1,9 @@
+---json
+{
+   "canonical":"navbar"
+}
+---
+
 ====== Web Component - Navbar ======
 
 ===== About =====
@@ -24,76 +30,57 @@ This syntax will output as HTML
 
 ===== Example =====
 
+==== A navbar with two dropdown menu and the search box at the right ====
+
+  * No cache when developing the bar to be sure.
 <code>
 ~~NOCACHE~~ 
-
+</code>
+  * The start of the navbar and we put the content in a [[container|container]]
+<code xml>
 <navbar class="navbar-expand-md">
 <container>
-<brand class="pt-0" title="Nico's Home">
+</code>
+  * The [[brand|brand]]. You can also put a [[icon|icon]]
+<code xml>
+<brand class="pt-0" title="Brand">
 Hôme
 </brand>
-
+</code>
+  * Collapse to indicate all elements that will collapse when browsing the web site on a mobile phone
+<code xml>
 <collapse>
-
+</code>
+  * A group with ''mr-auto'' to push the element that are not in the group at the right side of the page
+<code xml>
 <group class="mr-auto">
-<dropdown name="Data (State)" >
-[[data:processing:|Data Processing]]
-[[data:modeling:|Data Modeling]]
-[[data:quality:|Data Quality]]
-[[data:type:|Data Structure]]
-[[data:type:|Data Type]]
-[[:data:warehouse:|Data Warehouse]]
-[[data:viz:|Data Visualization]]
-[[data:partition:|Data Partition]]
-[[data:persistence:|Data Persistence]]
-[[data:concurrency:|Data Concurrency]]
+</code>
+  * Two drop down menu
+<code xml>
+<dropdown name="First Menu" >
+[[myfirst:page|First Page]]
+[[mysecond:page|First Page]]
 </dropdown>
 
-<dropdown name="Data Type">
-[[data:type:number:|Number]]
-[[data:type:time:|Time]]
-[[data:type:text:|Text]]
-[[data:type:collection:|Collection]]
-[[:data:type:relation:|Relation (Table)]]
-[[data:type:tree:|Tree]]
-[[data:type:key_value:|Key/Value]]
-[[data:type:graph:|Graph]]
-[[:data:type:spatial:|Spatial]]
-[[data:type:color:|Color]]
+<dropdown name="Second">
+[[myfirst:page|First Page]]
+[[mysecond:page|First Page]]
 </dropdown>
-
-<dropdown name="Measure Levels">
-[[data:sort:order|Order]]
-[[data:type:nominal:nominal|Nominal]]
-[[data:type:nominal:nominal|Discrete]]
-[[data_mining:distance|Distance]]
-[[data_mining:ratio|Ratio]]
-[[data:sort:order|Order]]
-[[data:type:nominal:nominal|Nominal]]
-[[data:type:nominal:nominal|Discrete]]
-[[data_mining:distance|Distance]]
-[[data_mining:ratio|Ratio]]
-</dropdown>
-
-<dropdown name="Code">
-[[code:compiler:|Compiler]]
-[[:code:compiler:parser|Lexical Parser]]
-[[code:grammar:|Grammar]]
-[[code:function:|Function]]
-[[:code:test:|Testing]]
-[[code:shipping:|Shipping]]
-[[code:type:|Data Type]]
-[[:code:version:|Versioning]]
-</dropdown>
-
-<dropdown name="System">
-[[:os:|Operating System]]
-[[security:|Security]]
-[[:file:|File System]]
-</dropdown>
+</code>
+  * The end of the group
+<code xml>
 </group>
+</code>
+  * The [[search|search bar]]
+<code xml>
 <search class="mr-0 pr-0">
+</code>
+  * The end of the element to collapse (ie we collapse all [[dropdown|drop down]] and the [[search|search bar]]
+<code xml>
 </collapse>
+</code>
+  * The end of the [[container|container]] and of the ''navbar''
+<code xml>
 </container>
 </navbar>
 </code>
