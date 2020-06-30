@@ -1,6 +1,6 @@
 <?php
 /**
- * DokuWiki Syntax Plugin Web Component.
+ * DokuWiki Syntax Plugin Combostrap.
  * Implementatiojn of https://getbootstrap.com/docs/4.1/content/typography/#blockquotes
  *
  */

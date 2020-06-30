@@ -3,7 +3,7 @@
    "canonical":"url:manager"
 }
 ---
-====== Dokuwiki - Web Components Plugin - URL Manager  (formerly 404manager) ======
+====== Dokuwiki - Combostrap Plugin - URL Manager  (formerly 404manager) ======
 
 
 
@@ -13,7 +13,7 @@ The ''URL manager'' (known formerly as the ''404manager'') manages the behavior 
 ===== The problem =====
 
 A [[doku>pagename|DokuWiki page]] may become unavailable if it has been:
-  * moved 
+  * moved
   * deleted
   * or renamed
 In this case, the webserver should return a ''404 web page'' along with a [[wp>HTTP_404|hard HTTP 404 response]] (meaning that the ''Page Was Not Found'')
@@ -40,7 +40,7 @@ When your page does not exist and returns a ''404 response'', this backlinks are
 
 ===== Features =====
 
- 
+
 
 The plugin can:
   * redirect to the edit mode
@@ -55,11 +55,7 @@ The plugin can:
 
 ===== URL Processing =====
 
-If a page does not exist
-  * if the page has a [[:semantic:canonical|canonical]], rewrite the [[doku>Pagename|Dokuwiki ID]] to the [[:semantic:canonical|canonical]] one
-  * if the page has a redirect, redirect with a permanent redirection (301)
-  * if the user has a write permission, redirect the action to edit
-  * if the user has only read permission, follow the redirect actions in order of the configurations
+See [[redirection]]
 
 
 ===== Message =====

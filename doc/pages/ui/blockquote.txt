@@ -1,4 +1,4 @@
-====== WebComponent - blockquote ======
+====== Combostrap - blockquote ======
 
 
 
@@ -21,13 +21,13 @@ A blockquote has always:
 
 <blockquote>
 A Blockquote is a [[card|card]]
-{{:dokuwiki:webcomponent:teaser_image_1.png?400}}
+{{::teaser_image_1.png?400}}
 <cite>Say the [[card|card]]</cite>
 </blockquote>
 
 <blockquote>
 My Blockquote Without Cite
-{{:dokuwiki:webcomponent:teaser_image_2.jpg}}
+{{::teaser_image_2.jpg}}
 </blockquote>
 
 <blockquote>
@@ -48,7 +48,7 @@ Welcome !
 <MATH>
 \begin{array}{lrl}
 \text{errors} & =&  (\text{more code})^2 \\
-e & = & mc^2 
+e & = & mc^2
 \end{array}
 </MATH>
 <cite>[[twitter>ypriverol/status/603134562399559680/photo/1|Brilliant]]</cite>

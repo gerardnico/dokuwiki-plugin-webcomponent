@@ -4,10 +4,10 @@
 }
 ---
 
-====== Web Component - Navbar ======
+====== Combostrap - Navbar ======
 
 ===== About =====
-The ''navbar'' component is the implementation of the top element of [[https://getbootstrap.com/docs/4.0/components/navbar/|bootstrap navbar]]. 
+The ''navbar'' component is the implementation of the top element of [[https://getbootstrap.com/docs/4.0/components/navbar/|bootstrap navbar]].
 
 Inside a ''navnar'' component, you can add:
   * a [[ui:container|container]]  to limit the horizontal width and center the navbar
@@ -34,7 +34,7 @@ This syntax will output as HTML
 
   * No cache when developing the bar to be sure.
 <code>
-~~NOCACHE~~ 
+~~NOCACHE~~
 </code>
   * The start of the navbar and we put the content in a [[container|container]]
 <code xml>

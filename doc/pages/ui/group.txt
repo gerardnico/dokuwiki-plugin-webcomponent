@@ -1,4 +1,4 @@
-====== WebComponent - Group ======
+====== Combostrap - Group ======
 
 
 ===== About =====
@@ -16,9 +16,9 @@ The first group will be at the left and the search form at the right
 <navbar>
 <group class="mr-auto">
 <dropdown name="Nav Menu">
-[[dokuwiki:webcomponent:navbar|Navbar]]
-[[dokuwiki:webcomponent:dropdown|DropDown]]
-[[dokuwiki:webcomponent:search|Search]]
+[[:navbar|Navbar]]
+[[:dropdown|DropDown]]
+[[:search|Search]]
 </dropdown>
 </group>
 <search>

@@ -1,7 +1,7 @@
 <?php
 /**
  *
- * Test the re
+ * Test the algorithm
  *
  * @group plugin_webcomponent
  * @group plugins
@@ -190,6 +190,28 @@ class plugin_webcomponent_url_manager_test extends DokuWikiTest
 
 
     }
+
+    /**
+     * Test a redirect to the best from last names
+     */
+    public function test_HttpRedirectToBestEndPageName()
+    {
+
+
+        global $conf;
+        $conf['plugin'][PluginStatic::$PLUGIN_BASE_NAME]['ActionReaderFirst'] = action_plugin_webcomponent_urlmanager::GO_TO_BEST_END_PAGE_NAME;
+
+        global $AUTH_ACL;
+        $aclReadOnlyFile = PluginStatic::$DIR_RESOURCES . '/acl.auth.read_only.php';
+        $AUTH_ACL = file($aclReadOnlyFile);
+
+        $request = new TestRequest();
+        $sourceId = "ns:ns2:cat:best_end_page_name";
+        $response = $request->get(array('id' => $sourceId), '/doku.php');
+
+        $this->assertEquals(1,1);
+    }
+
 
 
 }

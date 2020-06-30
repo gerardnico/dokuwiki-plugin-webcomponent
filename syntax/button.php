@@ -1,6 +1,6 @@
 <?php
 /**
- * DokuWiki Syntax Plugin Web Component.
+ * DokuWiki Syntax Plugin Combostrap.
  *
  */
 if (!defined('DOKU_INC')) {
@@ -14,6 +14,7 @@ if (!defined('DOKU_PLUGIN')) {
 
 require_once(DOKU_PLUGIN . 'syntax.php');
 require_once(DOKU_INC . 'inc/parserutils.php');
+require_once(__DIR__ . '/../webcomponent.php');
 
 /**
  * All DokuWiki plugins to extend the parser/rendering mechanism

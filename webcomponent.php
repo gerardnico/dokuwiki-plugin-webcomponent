@@ -1,6 +1,6 @@
 <?php
 /**
- * DokuWiki Syntax Plugin Web Component.
+ * DokuWiki Syntax Plugin Combostrap.
  *
  */
 if (!defined('DOKU_INC')) {

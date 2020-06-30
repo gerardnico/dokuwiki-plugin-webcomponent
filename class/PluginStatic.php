@@ -17,7 +17,7 @@ class PluginStatic
     const LVL_MSG_ERROR = -1;
     const LVL_MSG_INFO = 0;
     const LVL_MSG_SUCCESS = - 1;
-    const LVL_MSG_NOTIFY = 2;
+    const LVL_MSG_WARNING = 2;
 
     /**
      * The URL base of the documentation
@@ -25,7 +25,7 @@ class PluginStatic
     static $URL_BASE;
 
     /**
-     * @var string - the plugin name
+     * @var string - the plugin base name (ie the directory)
      */
     static $PLUGIN_BASE_NAME;
 
@@ -40,6 +40,12 @@ class PluginStatic
      * @var string
      */
     static $DIR_RESOURCES;
+
+    /**
+     * The plugin name (not the same than the base as it's not related to the directory
+     * @var string
+     */
+    public static $PLUGIN_NAME;
 
     /**
      * Validate URL
@@ -70,12 +76,24 @@ class PluginStatic
         $sqlite = plugin_load('helper', 'sqlite');
         if ($sqlite == null) {
             # TODO: Man we cannot get the message anymore ['SqliteMandatory'];
-            $sqliteMandatoryMessage = "The Sqlite Plugin is mandatory. Some functionalities of the Web Components Plugin may not work.";
+            $sqliteMandatoryMessage = "The Sqlite Plugin is mandatory. Some functionalities of the Combostraps Plugin may not work.";
             msg($sqliteMandatoryMessage, self::LVL_MSG_ERROR, $allow = MSG_MANAGERS_ONLY);
             return null;
         }
         $sqlite->getAdapter()->setUseNativeAlter(true);
-        $init = $sqlite->init(self::$PLUGIN_BASE_NAME, DOKU_PLUGIN . self::$PLUGIN_BASE_NAME . '/db/');
+
+        // The name of the database (on windows, it should be
+        $dbname = strtolower(self::$PLUGIN_BASE_NAME);
+        global $conf;
+
+        $oldDbName = '404manager';
+        $oldDbFile = $conf['metadir']."/{$oldDbName}.sqlite";
+        $oldDbFileSqlite3 = $conf['metadir']."/{$oldDbName}.sqlite3";
+        if (file_exists($oldDbFile) || file_exists($oldDbFileSqlite3)){
+            $dbname = $oldDbName;
+        }
+
+        $init = $sqlite->init($dbname, DOKU_PLUGIN . PluginStatic::$PLUGIN_BASE_NAME . '/db/');
         if (!$init) {
             # TODO: Message 'SqliteUnableToInitialize'
             $message = "Unable to initialize Sqlite";
@@ -96,7 +114,9 @@ class PluginStatic
         $pluginInfoFile = __DIR__ . '/../plugin.info.txt';
 
         self::$INFO_PLUGIN = confToHash($pluginInfoFile);
+
         self::$PLUGIN_BASE_NAME = self::$INFO_PLUGIN['base'];
+        self::$PLUGIN_NAME = 'ComboStrap';
         global $lang;
         self::$lang = $lang[self::$PLUGIN_BASE_NAME];
         self::$DIR_RESOURCES = __DIR__ . '/../_testResources';

@@ -21,16 +21,16 @@ With the ''card-columns'' components, you can put any type [[card|card]] ([[ui:b
 <code>
 <card-columns>
 <card>
-{{dokuwiki:webcomponent:teaser_image_1.png?30|}}
+{{combostrap:teaser_image_1.png?30|}}
 === Teaser Title  ===
-A example taken from [[https://getbootstrap.com/docs/4.3/components/card/#example|the bootstrap quick example]] on how to build a card title in order to make up the bulk of the teaser content. 
-<btn>[[dokuwiki:webcomponent:start|Go to this page !]]</btn>
+A example taken from [[https://getbootstrap.com/docs/4.3/components/card/#example|the bootstrap quick example]] on how to build a card title in order to make up the bulk of the teaser content.
+<btn>[[:start|Go to this page !]]</btn>
 </card>
 
 
 <blockquote class="" >
-Lorem ipsum [[dokuwiki:webcomponent:start|dolor]] sit amet, consectetur adipiscing elit. Integer posuere erat a ante.
-<cite>Someone famous in [[dokuwiki:webcomponent:start|Source Title]]</cite>
+Lorem ipsum [[:start|dolor]] sit amet, consectetur adipiscing elit. Integer posuere erat a ante.
+<cite>Someone famous in [[:start|Source Title]]</cite>
 </blockquote>
 
 
@@ -40,16 +40,16 @@ Lorem ipsum [[dokuwiki:webcomponent:start|dolor]] sit amet, consectetur adipisci
 Result:
 <teaser-columns>
 <card>
-{{dokuwiki:webcomponent:teaser_image_1.png?30|}}
+{{:teaser_image_1.png?30|}}
 === Teaser Title  ===
-A example taken from [[https://getbootstrap.com/docs/4.3/components/card/#example|the bootstrap quick example]] on how to build a card title in order to make up the bulk of the teaser content. 
-<btn>[[dokuwiki:webcomponent:start|Go to this page !]]</btn>
+A example taken from [[https://getbootstrap.com/docs/4.3/components/card/#example|the bootstrap quick example]] on how to build a card title in order to make up the bulk of the teaser content.
+<btn>[[:start|Go to this page !]]</btn>
 </card>
 
 
 <blockquote class="" >
-Lorem ipsum [[dokuwiki:webcomponent:start|dolor]] sit amet, consectetur adipiscing elit. Integer posuere erat a ante.
-<cite>Someone famous in [[dokuwiki:webcomponent:start|Source Title]]</cite>
+Lorem ipsum [[:start|dolor]] sit amet, consectetur adipiscing elit. Integer posuere erat a ante.
+<cite>Someone famous in [[:start|Source Title]]</cite>
 </blockquote>
 
 

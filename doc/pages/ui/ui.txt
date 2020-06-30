@@ -1,7 +1,7 @@
-====== Dokuwiki - Web Components Plugin - UI Components ======
+====== Dokuwiki - Combostrap Plugin - UI Components ======
 
 ===== About =====
-The ''UI'' components changes the rendering of a page 
+The ''UI'' components changes the rendering of a page
 
 ===== Articles Related =====
 {{backlinks>.}}
@@ -9,7 +9,7 @@ The ''UI'' components changes the rendering of a page
 ===== Features =====
 ==== Superset of HTML ====
 They are all a superset of HTML which means that for every component, you can use:
-  * the ''class'' 
+  * the ''class''
   * and the ''style'' attribute
 to refine how you want them to be.
 ===== List =====
@@ -22,7 +22,7 @@ to refine how you want them to be.
   * [[blockquote|Blockquote]]: A blockquote is a card with a citation.
   * [[button|Button (btn)]]: A button
   * [[related|Related]]: A component showing the backlinks
-  * [[math]]: Writing math formulas 
+  * [[math]]: Writing math formulas
 
 ==== Navbar ====
 

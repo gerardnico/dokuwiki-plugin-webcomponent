@@ -11,7 +11,7 @@
  */
 require_once(__DIR__ . '/../class/PageRules.php');
 require_once(__DIR__ . '/../action/urlmanager.php');
-class plugin_webcomponent_url_rewrite_test extends DokuWikiTest
+class plugin_webcomponent_url_manager_page_rules_test extends DokuWikiTest
 {
 
     public function setUp()

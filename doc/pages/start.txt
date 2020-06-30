@@ -1,9 +1,9 @@
 ~~NOTOC~~
 
-====== Web Components ======
+====== Combostrap ======
 
 ===== About =====
-The ''Web Components Dokuwiki Plugin'' is a [[doku>plugin|dokuwiki plugin]] package that enhance the Dokuwiki functionalities.
+The ''Combostrap Dokuwiki Plugin'' is a [[doku>plugin|dokuwiki plugin]] package that enhance the Dokuwiki functionalities.
 
 
 ===== Components =====
@@ -34,4 +34,4 @@ This components integrates third party library:
   * [[ui:math]] - write maths with mathjax
   * [[ui:disqus]] -  add a disqus forum
 ===== Installation =====
-See Dokuwiki Plugin Page: [[doku>plugin:webcomponent]]
+[[getting_started]]

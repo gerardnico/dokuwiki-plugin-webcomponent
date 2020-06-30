@@ -9,6 +9,7 @@ if (!defined('DOKU_PLUGIN')) define('DOKU_PLUGIN', DOKU_INC . 'lib/plugins/');
 
 require_once(__DIR__ . '/../class/PageRules.php');
 require_once(__DIR__ . '/../class/UrlCanonical.php');
+require_once(__DIR__ . '/../class/UrlManagerBestEndPage.php');
 require_once(__DIR__ . '/urlmessage.php');
 
 /**
@@ -33,6 +34,7 @@ class action_plugin_webcomponent_urlmanager extends DokuWiki_Action_Plugin
     const TARGET_ORIGIN_BEST_PAGE_NAME = 'bestPageName';
     const TARGET_ORIGIN_BEST_NAMESPACE = 'bestNamespace';
     const TARGET_ORIGIN_SEARCH_ENGINE = 'searchEngine';
+    const TARGET_ORIGIN_BEST_END_PAGE_NAME = 'bestEndPageName';
 
 
     // The constant parameters
@@ -134,12 +136,12 @@ class action_plugin_webcomponent_urlmanager extends DokuWiki_Action_Plugin
                 $this->IdRedirect($targetPage, self::TARGET_ORIGIN_CANONICAL);
                 return true;
             } else {
-                //TODO: log warning
+                PluginStatic::msg("The canonical page ({$targetPage}) from the ID ({$ID}) does not exist",PluginStatic::LVL_MSG_WARNING);
             }
 
         }
 
-        // If there is a redirection defined in the redirection table
+        // If there is a redirection defined in the page rules
         $result = $this->processingPageRules();
         if ($result) {
             // A redirection has occurred
@@ -184,6 +186,14 @@ class action_plugin_webcomponent_urlmanager extends DokuWiki_Action_Plugin
 
                 case self::GO_TO_BEST_END_PAGE_NAME:
 
+                    list($page,$method) = UrlManagerBestEndPage::process($ID);
+                    if ($page !=null){
+                        if ($method==self::REDIRECT_HTTP){
+                            $this->httpRedirect($page, self::TARGET_ORIGIN_BEST_END_PAGE_NAME);
+                        } else {
+                            $this->IdRedirect($targetPage, self::TARGET_ORIGIN_BEST_END_PAGE_NAME);
+                        }
+                    }
                     break;
 
                 case self::GO_TO_NS_START_PAGE:
@@ -375,13 +385,13 @@ class action_plugin_webcomponent_urlmanager extends DokuWiki_Action_Plugin
      *   * no HTTP redirect
      *   * id rewrite
      * @param string $targetPage - target page id or an URL
-     * @param string $redirectSource the source of the redirect
+     * @param string $targetOrigin - the source of the target (redirect)
+     * @return bool - return true if the user has the permission and that the redirect was done
      * @throws Exception
      */
     private
-    function IdRedirect($targetPage, $redirectSource = 'Not Known')
+    function IdRedirect($targetPage, $targetOrigin)
     {
-
 
         //If the user have right to see the target page
         if ($_SERVER['REMOTE_USER']) {
@@ -390,7 +400,7 @@ class action_plugin_webcomponent_urlmanager extends DokuWiki_Action_Plugin
             $perm = auth_aclcheck($targetPage, '', null);
         }
         if ($perm <= AUTH_NONE) {
-            return;
+            return false;
         }
 
         // Change the id
@@ -402,8 +412,9 @@ class action_plugin_webcomponent_urlmanager extends DokuWiki_Action_Plugin
         $INFO['id'] = $targetPage;
 
         // Redirection
-        $this->logRedirection($sourceId, $targetPage, $redirectSource, self::REDIRECT_ID);
+        $this->logRedirection($sourceId, $targetPage, $targetOrigin, self::REDIRECT_ID);
 
+        return true;
 
     }
 

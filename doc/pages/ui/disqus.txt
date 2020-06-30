@@ -1,4 +1,4 @@
-====== WebComponent - Disqus Forum / Discussion ======
+====== Combostrap - Disqus Forum / Discussion ======
 
 
 ===== About =====

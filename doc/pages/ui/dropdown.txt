@@ -13,9 +13,9 @@
 <navbar>
 <group>
 <dropdown name="Navbar component">
-[[dokuwiki:webcomponent:dropdown|dropdown]]
-[[dokuwiki:webcomponent:group|group]]
-[[dokuwiki:webcomponent:search|search]]
+[[:dropdown|dropdown]]
+[[:group|group]]
+[[:search|search]]
 </dropdown>
 </group>
 </navbar>

@@ -76,7 +76,7 @@ class admin_plugin_webcomponent_pagerules extends DokuWiki_Admin_Plugin
      */
     function getMenuText($language)
     {
-        return $this->getPluginName() . " - " . $this->lang['PageRules'];
+        return ucfirst(PluginStatic::$PLUGIN_NAME) . " - " . $this->lang['PageRules'];
     }
 
     public function getMenuIcon()
