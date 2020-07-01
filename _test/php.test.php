@@ -16,7 +16,7 @@ final class PhpTest extends TestCase
      * error_reporting(DOKU_E_LEVEL);
      *
      */
-    public function testErrorLevel(): void
+    public function testErrorLevel()
     {
 
         $value = E_ALL ^ E_NOTICE;

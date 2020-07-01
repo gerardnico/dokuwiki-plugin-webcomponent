@@ -18,6 +18,10 @@ $meta[syntax_plugin_webcomponent_disqus::FORUM_SHORT_NAME] = array('string');
 /**
  * Url Manager
  */
+$meta['GoToEditMode'] = array('onoff');
+$meta['ShowPageNameIsNotUnique'] = array('onoff');
+$meta['ShowMessageClassic'] = array('onoff');
+
 include_once (__DIR__.'/../action/urlmanager.php');
 $actionChoices = array('multichoice', '_choices' => array(
     action_plugin_webcomponent_urlmanager::NOTHING,
@@ -31,12 +35,10 @@ $actionChoices = array('multichoice', '_choices' => array(
 $meta['ActionReaderFirst']  = $actionChoices;
 $meta['ActionReaderSecond'] = $actionChoices;
 $meta['ActionReaderThird']  = $actionChoices;
-$meta['GoToEditMode'] = array('onoff');
-$meta['ShowPageNameIsNotUnique'] = array('onoff');
-$meta['ShowMessageClassic'] = array('onoff');
 $meta['WeightFactorForSamePageName'] = array('string');
 $meta['WeightFactorForStartPage'] = array('string');
 $meta['WeightFactorForSameNamespace'] = array('string');
-
+require_once(__DIR__ . '/../class/UrlManagerBestEndPage.php');
+$meta[UrlManagerBestEndPage::CONF_MINIMAL_SCORE_FOR_REDIRECT] = array('string');
 
 $meta[action_plugin_webcomponent_metacanonical::CANONICAL_LAST_NAMES_COUNT_CONF]= array('string');

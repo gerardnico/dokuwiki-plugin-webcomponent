@@ -1,32 +1,64 @@
 <?php
-// Default value in the configuration Manager
+/**
+ * The config manager is parsing this fucking file because they want
+ * to be able to use 60*60*24 ???? :(
+ *
+ * See {@link \dokuwiki\plugin\config\core\ConfigParser::parse()}
+ *
+ * Which means that only value can be given as:
+ *   * key
+ *   * and value
+ * The test test_plugin_default in plugin.test.php is checking that
+ *
+ * What fuck up is fucked up.
+ *
+ * The solution:
+ *   * The literal value is copied
+ *   * A link to the constant is placed before
+ */
+
+
+
 
 $conf['UnitShortCutKey'] = 'u';
 
-$conf[syntax_plugin_webcomponent_related::MAX_LINKS_CONF] = 10;
-$conf[syntax_plugin_webcomponent_related::EXTRA_PATTERN_CONF] = '{{backlinks>.}}';
+/**
+ * Related UI components
+ */
+$conf['maxLinks'] = 10;
+$conf['extra_pattern'] = '{{backlinks>.}}';
 
 /**
  * Disqus
  */
-$conf[syntax_plugin_webcomponent_disqus::FORUM_SHORT_NAME] = '';
+$conf['forumShortName'] = '';
 
 /**
- * Url Manager
+ * ie {@link action_plugin_webcomponent_urlmanager::GO_TO_BEST_END_PAGE_NAME}
  */
-require_once(__DIR__ . '/../action/urlmanager.php');
-$conf['ActionReaderFirst']  = action_plugin_webcomponent_urlmanager::GO_TO_BEST_END_PAGE_NAME;
-$conf['ActionReaderSecond'] = action_plugin_webcomponent_urlmanager::GO_TO_BEST_PAGE_NAME;
-$conf['ActionReaderThird']  = action_plugin_webcomponent_urlmanager::GO_TO_SEARCH_ENGINE;
+$conf['ActionReaderFirst']  = 'GoToBestEndPageName';
+
+/**
+ * ie {@link action_plugin_webcomponent_urlmanager::GO_TO_BEST_PAGE_NAME}
+ */
+$conf['ActionReaderSecond'] = 'GoToBestPageName';
+/**
+ * ie {@link action_plugin_webcomponent_urlmanager::GO_TO_SEARCH_ENGINE}
+ */
+$conf['ActionReaderThird']  = 'GoToSearchEngine';
 $conf['GoToEditMode'] = 1;
 $conf['ShowPageNameIsNotUnique'] = 1;
 $conf['ShowMessageClassic'] = 1;
 $conf['WeightFactorForSamePageName'] = 4;
 $conf['WeightFactorForStartPage'] = 3;
-// If the page has the same namespace in its path, it gets more weight
 $conf['WeightFactorForSameNamespace'] = 5;
 
-/*
+/**
+ * See {@link UrlManagerBestEndPage::CONF_MINIMAL_SCORE_FOR_REDIRECT_DEFAULT}
+ */
+$conf['BestEndPageMinimalScoreForIdRedirect'] = 0;
+
+/**
  * Does automatic canonical processing is on
  */
-$conf[action_plugin_webcomponent_metacanonical::CANONICAL_LAST_NAMES_COUNT_CONF] = 0;
+$conf['MinimalNamesCountForAutomaticCanonical'] = 0;

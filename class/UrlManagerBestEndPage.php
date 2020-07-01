@@ -10,12 +10,23 @@ include_once(__DIR__ . "/PagesIndex.php");
 class UrlManagerBestEndPage
 {
 
+    /**
+     * If the number of names part that match is greater or equal to
+     * this configuration, an Id Redirect is performed
+     * A value of 0 disable and send only HTTP redirect
+     */
+    const CONF_MINIMAL_SCORE_FOR_REDIRECT = 'BestEndPageMinimalScoreForIdRedirect';
+    const CONF_MINIMAL_SCORE_FOR_REDIRECT_DEFAULT = '0';
 
-    const PAGE_ID_ATTRIBUTE = "bestPageId";
-    const BEST_PAGE_SCORE = "bestPageScore";
 
+    /**
+     * @param $pageId
+     * @return array - the best poge id and its score
+     * The score is the number of name that matches
+     */
     public static function getBestEndPageId($pageId)
     {
+
         $result = array();
         $pageName = noNS($pageId);
 
@@ -23,7 +34,7 @@ class UrlManagerBestEndPage
         if (count($pagesWithSameName) > 0) {
 
             // Default value
-            $bestScore = 1;
+            $bestScore = 0;
             $bestPage = $pagesWithSameName[0];
 
             // The name of the dokuwiki id
@@ -43,6 +54,8 @@ class UrlManagerBestEndPage
                     $targetPageIdName = $targetPageIdNames[$indexTargetPage];
                     if ($targetPageIdName == $pageIdName) {
                         $targetPageIdScore++;
+                    } else {
+                        break;
                     }
 
                 }
@@ -54,8 +67,8 @@ class UrlManagerBestEndPage
             }
 
             $result = array(
-                self::PAGE_ID_ATTRIBUTE =>$bestPage,
-                self::BEST_PAGE_SCORE =>$bestScore
+                $bestPage,
+                $bestScore
             );
 
         }
@@ -63,8 +76,30 @@ class UrlManagerBestEndPage
 
     }
 
-    public static function process($pageId){
-        list($bestPageId,$bestScore) =  self::getBestEndPageId($pageId);
+
+    /**
+     * @param $pageId
+     * @return array with the best page and the type of redirect
+     */
+    public static function process($pageId)
+    {
+
+        $return = array();
+        global $conf;
+        $minimalScoreForARedirect = $conf['plugin'][PluginStatic::$PLUGIN_BASE_NAME][self::CONF_MINIMAL_SCORE_FOR_REDIRECT];
+
+        list($bestPageId, $bestScore) = self::getBestEndPageId($pageId);
+        if ($bestPageId != null) {
+            $redirectType = action_plugin_webcomponent_urlmanager::REDIRECT_HTTP;
+            if ($minimalScoreForARedirect != 0 && $bestScore >= $minimalScoreForARedirect) {
+                $redirectType = action_plugin_webcomponent_urlmanager::REDIRECT_ID;
+            }
+            $return = array(
+                $bestPageId,
+                $redirectType
+            );
+        }
+        return $return;
 
     }
 }

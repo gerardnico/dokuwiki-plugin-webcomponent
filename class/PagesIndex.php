@@ -10,7 +10,7 @@ class PagesIndex
 
     /**
      * @param string $actualId - the actual page id
-     * @param string $pageName
+     * @param string $pageName - the name (ie noNs($pageId))
      * @return string[]
      */
     public static function pagesWithSameName($pageName, $actualId)

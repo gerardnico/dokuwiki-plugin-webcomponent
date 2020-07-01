@@ -14,8 +14,8 @@ class action_plugin_webcomponent_metacanonical extends DokuWiki_Action_Plugin
     /**
      * The conf
      */
-    const CANONICAL_LAST_NAMES_COUNT_CONF = 'LastNamesCanonicalCount';
-    public const CANONICAL_PROPERTY = 'canonical';
+    const CANONICAL_LAST_NAMES_COUNT_CONF = 'MinimalNamesCountForAutomaticCanonical';
+    const CANONICAL_PROPERTY = 'canonical';
 
     static $CANONICAL_VALUE;
 

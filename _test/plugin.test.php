@@ -1,6 +1,10 @@
 <?php
 
+use dokuwiki\plugin\config\core\ConfigParser;
+use dokuwiki\plugin\config\core\Loader;
+
 require_once (__DIR__.'/../webcomponent.php');
+require_once (__DIR__.'/../class/PluginStatic.php');
 
 /**
  * Test the component plugin
@@ -12,7 +16,13 @@ class dokuwiki_plugin_webcomponent_plugin_test extends DokuWikiTest
 {
 
 
-    protected $pluginsEnabled = array(webcomponent::PLUGIN_NAME);
+    public function setUp()
+    {
+        $this->pluginsEnabled[] = PluginStatic::$PLUGIN_BASE_NAME;
+        $this->pluginsEnabled[] = 'config';
+        parent::setUp();
+    }
+
 
     /**
      * Control the plugin.info.txt
@@ -59,11 +69,13 @@ class dokuwiki_plugin_webcomponent_plugin_test extends DokuWikiTest
         );
     }
 
+
+
     /**
-     * Test to ensure that every conf['...'] entry in conf/default.php has a corresponding meta['...'] entry in
-     * conf/metadata.php.
+     * Test to ensure that every conf['...'] entry
+     * in conf/default.php has a corresponding meta['...'] entry in conf/metadata.php.
      */
-    public function test_plugin_conf()
+    public function test_plugin_default()
     {
         $conf = array();
         $conf_file = __DIR__ . '/../conf/default.php';
@@ -102,7 +114,31 @@ class dokuwiki_plugin_webcomponent_plugin_test extends DokuWikiTest
             }
         }
 
+        /**
+         * The default are read through parsing
+         * by the config plugin
+         * Yes that's fuck up but yeah
+         * This test check that we can read them
+         */
+        $parser = new ConfigParser();
+        $loader = new Loader($parser);
+        $defaultConf = $loader->loadDefaults();
+        $keyPrefix = "plugin____".PluginStatic::$PLUGIN_BASE_NAME."____";
+        $this->assertTrue(is_array($defaultConf));
+
+        // plugin defaults
+        foreach ($meta as $key => $value) {
+            $this->assertArrayHasKey(
+                $keyPrefix.$key,
+                $defaultConf,
+                'Key $conf[\'' . $key . '\'] could not be parsed in ' . DOKU_PLUGIN . 'syntax/conf/default.php. Be sure to give only values and not variable.'
+            );
+        }
+
+
     }
+
+
 
 
 }

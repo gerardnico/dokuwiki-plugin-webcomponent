@@ -1,4 +1,5 @@
 <?php
+require_once(__DIR__ . '/../../class/UrlManagerBestEndPage.php');
 
 /**
  * @var array
@@ -24,6 +25,8 @@ $lang['WeightFactorForStartPage'] = action_plugin_webcomponent_urlmanager::NAME.
 $lang['WeightFactorForSameNamespace'] = action_plugin_webcomponent_urlmanager::NAME.' - Weight factor for same namespace to calculate the score for the best page.';
 
 
-$lang[action_plugin_webcomponent_metacanonical::CANONICAL_LAST_NAMES_COUNT_CONF]='<a href="">Automatic Canonical</a> - The number of last part of a Dokuwiki Id to use as a canonical id (0 to disable)';
+$lang[action_plugin_webcomponent_metacanonical::CANONICAL_LAST_NAMES_COUNT_CONF]='<a href="'.PluginStatic::$URL_BASE.'/automatic/canonical">'.action_plugin_webcomponent_urlmanager::NAME.' - Automatic Canonical</a> - The number of last part of a Dokuwiki Id to create a <a href="'.PluginStatic::$URL_BASE.'/canonical">canonical</a> (0 to disable)';
+
+$lang[UrlManagerBestEndPage::CONF_MINIMAL_SCORE_FOR_REDIRECT]='<a href="'.PluginStatic::$URL_BASE.'/best/end/page/name">'.action_plugin_webcomponent_urlmanager::NAME.' - Best End Page Name</a> - The number of last part of a Dokuwiki Id to perform a <a href="'.PluginStatic::$URL_BASE.'/id/redirect">ID redirect</a> (0 to disable)';
 
 ?>
