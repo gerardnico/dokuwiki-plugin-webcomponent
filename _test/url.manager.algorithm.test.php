@@ -205,13 +205,91 @@ class plugin_webcomponent_url_manager_test extends DokuWikiTest
         $aclReadOnlyFile = PluginStatic::$DIR_RESOURCES . '/acl.auth.read_only.php';
         $AUTH_ACL = file($aclReadOnlyFile);
 
+        $name = "best_end_page_name";
+        $sourceId = "ns:ns2:cat:{$name}";
+        $targetId = "ns3:${name}";
+
+        saveWikiText($targetId, 'Page with the same name', '');
+        idx_addPage($targetId);
+
         $request = new TestRequest();
-        $sourceId = "ns:ns2:cat:best_end_page_name";
         $response = $request->get(array('id' => $sourceId), '/doku.php');
 
-        $this->assertEquals(1,1);
+        /// The page was redirected
+        $locationHeader = $response->getHeader("Location");
+        $components = parse_url($locationHeader);
+        parse_str($components['query'], $queryKeys);
+
+        $this->assertNull($queryKeys['do'], "The page was only shown");
+        $this->assertEquals($targetId, $queryKeys['id'], "The Id of the source page is the asked page");
+
+        $this->assertEquals($sourceId, $queryKeys[action_plugin_webcomponent_urlmessage::ORIGIN_PAGE],"The 404 id must be present");
+        $this->assertEquals(action_plugin_webcomponent_urlmanager::TARGET_ORIGIN_BEST_END_PAGE_NAME, $queryKeys[action_plugin_webcomponent_urlmessage::ORIGIN_TYPE], "The redirect type is known");
+
     }
 
+    /**
+     * Test a redirect to a namespace start page
+     * (ie the start page has the name of its parent, not start as in the conf['start'] parameters )
+     * It must happens when a page exists within another namespace that is completely not related to the old one.
+     *
+     */
+    public function test_HttpInternalRedirectToBestNameToStartPage()
+    {
 
+        global $conf;
+        $pathSeparator = ':';
+        $conf['plugin'][PluginStatic::$PLUGIN_BASE_NAME]['ActionReaderFirst'] = action_plugin_webcomponent_urlmanager::GO_TO_BEST_PAGE_NAME;
+        $conf['plugin'][PluginStatic::$PLUGIN_BASE_NAME]['WeightFactorForSamePageName'] = 4;
+        $conf['plugin'][PluginStatic::$PLUGIN_BASE_NAME]['WeightFactorForStartPage'] = 3;
+        $conf['plugin'][PluginStatic::$PLUGIN_BASE_NAME]['WeightFactorForSameNamespace'] = 5;
+        $conf['plugin'][PluginStatic::$PLUGIN_BASE_NAME]['WordsSeparator'] = $pathSeparator;
+        $conf['plugin'][PluginStatic::$PLUGIN_BASE_NAME]['ShowPageNameIsNotUnique'] = 1;
+
+
+        // Set of 3 pages, when a page has an homonym (same page name) but within another completly differents path (the name of the path have nothing in common)
+        // the 404 manager must redirect to the start page of the namespace.
+        $subName1 = "name1";
+        $subName2 = "name2";
+        $name = 'redirect_to_namespace_start_page';
+        $sourceId = $subName1 . $pathSeparator . $name;
+        $goodTarget = $subName1 . $pathSeparator . $conf['start']; // score of 8: same namespace 5 + start page 3
+        $badTarget = $subName2 . $pathSeparator . $name; // score of 4: same page name score of 4
+
+
+        $pageRules = new PageRules(PluginStatic::getSqlite());
+        $pageRules->deleteAll();
+
+
+        // Create the target Pages and add the pages to the index, otherwise, they will not be find by the ft_lookup
+        saveWikiText($badTarget, 'Page with the same name', 'but without any common name (namespace) in the path');
+        idx_addPage($badTarget);
+        saveWikiText($goodTarget, 'The start page that has the same name that it\'s parent', 'Test initialization');
+        idx_addPage($goodTarget);
+
+        // Read only otherwise, you go in edit mode
+        global $AUTH_ACL;
+        $aclReadOnlyFile = PluginStatic::$DIR_RESOURCES . '/acl.auth.read_only.php';
+        $AUTH_ACL = file($aclReadOnlyFile);
+
+
+        $request = new TestRequest();
+        $response = $request->get(array('id' => $sourceId), '/doku.php');
+
+        $locationHeader = $response->getHeader("Location");
+        $components = parse_url($locationHeader);
+        parse_str($components['query'], $queryKeys);
+        /** @noinspection PhpUndefinedMethodInspection */
+        $this->assertNull($queryKeys['do'], "The page is only shown");
+        /** @noinspection PhpUndefinedMethodInspection */
+        $this->assertEquals($goodTarget, $queryKeys['id'], "The Id is the target page");
+
+        /** @noinspection PhpUndefinedMethodInspection */
+        $this->assertEquals($sourceId, $queryKeys[action_plugin_webcomponent_urlmessage::ORIGIN_PAGE],"The 404 id must be present");
+        /** @noinspection PhpUndefinedMethodInspection */
+        $this->assertEquals(action_plugin_webcomponent_urlmanager::TARGET_ORIGIN_BEST_PAGE_NAME, $queryKeys[action_plugin_webcomponent_urlmessage::ORIGIN_TYPE], "The redirect type is known");
+
+
+    }
 
 }

@@ -162,7 +162,9 @@ class action_plugin_webcomponent_urlmessage extends DokuWiki_Action_Plugin
         if ($this->getConf('ShowPageNameIsNotUnique') == 1 ) {
 
             global $ID;
-            $pagesWithSameName = $this->pagesWithSameName($pageId, $ID);
+            // The page name
+            $pageName = noNS($pageId);
+            $pagesWithSameName = PagesIndex::pagesWithSameName($pageName, $ID);
 
             if (count($pagesWithSameName) > 0) {
 
@@ -326,37 +328,6 @@ class action_plugin_webcomponent_urlmessage extends DokuWiki_Action_Plugin
             PluginStatic::msg("Failure to write the session");
         }
 
-    }
-
-    /**
-     * @param string $actualId - the actual page id
-     * @param string $sourcePageId
-     * @return string[]
-     */
-    public function pagesWithSameName(string $sourcePageId, $actualId)
-    {
-        // The page name
-        $pageName = noNS($sourcePageId);
-
-        // The returned object
-        $pagesWithSameName = array();
-
-        // There is two much pages with the start name
-        global $conf;
-        if( $pageName == $conf['start']){
-            return $pagesWithSameName;
-        }
-
-        // Get them
-        $pagesWithSameName = ft_pageLookup($pageName);
-
-        // Don't add the actual ID
-        if (array_key_exists($actualId, $pagesWithSameName)){
-            unset($pagesWithSameName[$actualId]);
-        }
-
-        // Return
-        return $pagesWithSameName;
     }
 
 }

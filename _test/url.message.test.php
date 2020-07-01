@@ -74,7 +74,7 @@ class plugin_webcomponent_url_message_test extends DokuWikiTest
 
         $sourceId= "another:page:{$name}";
         $urlMessage = new action_plugin_webcomponent_urlmessage();
-        $pageWithSameName = $urlMessage->pagesWithSameName($sourceId,$targetPage);
+        $pageWithSameName = PagesIndex::pagesWithSameName($sourceId, $targetPage);
         $this->assertEquals(1, sizeof($pageWithSameName),"There is no page with the same name");
 
     }
