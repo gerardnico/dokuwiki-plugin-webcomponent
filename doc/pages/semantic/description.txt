@@ -1,5 +1,0 @@
-====== Semantic - Description ======
-
-
-===== About =====
-The ''description'' is used by [[kb>search/engine|Search engine]]

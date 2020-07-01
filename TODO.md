@@ -8,3 +8,13 @@ db:oracle:long_or_1_utl_inaddr.get_host_address_chr_33_chr_126_chr_33_chr_65_chr
 db:oracle:999999.9:union:all:select_null:from_dual
 db:oracle:999999.9:union:all:select_null:from_dual_and_0_0
 ```
+
+## Namespace
+
+```json
+{
+   "canonical": "jq",
+   "namespaces": ["[[markup:json:json]]","[[data:processing:shell:shell]]"]
+}
+```
+
