@@ -62,8 +62,8 @@ class syntax_plugin_webcomponent_disqus extends DokuWiki_Syntax_Plugin
      */
     function connectTo($mode)
     {
-        $pattern = webcomponent::getInlineTagPattern(self::getTag());
-        $this->Lexer->addEntryPattern($pattern, $mode, 'plugin_' . webcomponent::PLUGIN_NAME . '_' . $this->getPluginComponent());
+        $pattern = webcomponent::getLeafTagPattern(self::getTag());
+        $this->Lexer->addSpecialPattern($pattern, $mode, 'plugin_' . webcomponent::PLUGIN_NAME . '_' . $this->getPluginComponent());
     }
 
     /**
@@ -83,7 +83,7 @@ class syntax_plugin_webcomponent_disqus extends DokuWiki_Syntax_Plugin
     {
         switch ($state) {
 
-            case DOKU_LEXER_ENTER:
+            case DOKU_LEXER_SPECIAL:
 
                 // Suppress the </>
                 $match = substr($match, 1, -2);
@@ -92,10 +92,6 @@ class syntax_plugin_webcomponent_disqus extends DokuWiki_Syntax_Plugin
                 // Get the parameters
                 $parameters = webcomponent::parseMatch($match);
                 return array($state, $parameters);
-
-            case DOKU_LEXER_EXIT :
-
-                return array($state, '');
 
 
         }
@@ -143,18 +139,18 @@ class syntax_plugin_webcomponent_disqus extends DokuWiki_Syntax_Plugin
 <script charset="utf-8" type="text/javascript">
 
     // Configuration
-    
+
     // The disqus_config should be a var to give it the global scope
     // Otherwise, disqus will see no config
     // noinspection ES6ConvertVarToLetConst
-    var disqus_config = function () {    
-        this.page.identifier = "$disqusIdentifier"; 
-        this.callbacks.onNewComment = [function(comment) { 
+    var disqus_config = function () {
+        this.page.identifier = "$disqusIdentifier";
+        this.callbacks.onNewComment = [function(comment) {
               alert(comment.id);
               alert(comment.text);
         }];
     };
-    
+
     // Embed the library
     (function() {
         const d = document, s = d.createElement('script');
@@ -162,7 +158,7 @@ class syntax_plugin_webcomponent_disqus extends DokuWiki_Syntax_Plugin
         s.setAttribute('data-timestamp', (+new Date()).toString());
         (d.head || d.body).appendChild(s);
     })();
-    
+
 </script>
 <noscript><a href="https://disqus.com/home/discussion/$disqusForumShortName/$disqusIdentifier/">View the discussion thread.</a></noscript>
 EOD;

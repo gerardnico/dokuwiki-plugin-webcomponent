@@ -44,7 +44,7 @@ class webcomponent
      *
      * Parse the matched text and return the parameters
      */
-    public static function parseMatch($match): array
+    public static function parseMatch($match)
     {
 
         $parameters = array();
@@ -54,7 +54,7 @@ class webcomponent
         $result = preg_match_all('/' . $attributePattern . '/i', $match, $matches);
         if ($result != 0) {
             foreach ($matches[1] as $key => $parameterKey) {
-                $parameters[strtolower($parameterKey)] = $matches[2][$key];
+                $parameters[hsc(strtolower($parameterKey))] = hsc($matches[2][$key]);
             }
         }
         return $parameters;
@@ -105,9 +105,13 @@ class webcomponent
      * @param $tag
      * @return string
      * Create a pattern used where the tag is not a container.
-     *
+     * ie
+     * <br/>
+     * <icon/>
+     * This is generatlly used with a subtition plugin
+     * where the tag is just replaced
      */
-    public static function getInlineTagPattern($tag)
+    public static function getLeafTagPattern($tag)
     {
         return '<' . $tag . '.*?/>';
     }
@@ -149,5 +153,66 @@ class webcomponent
         if (!file_exists($conf['cachedir'])) {
             mkdir($conf['cachedir'], $mode = 0777, $recursive = true);
         }
+    }
+
+    /**
+     * Return the attribute of a tag
+     * Because they are users input, they are all escaped
+     * @param $match
+     * @return array
+     */
+    public static function getAttributes($match)
+    {
+        // Trim to start clean
+        $match = trim($match);
+
+        // Suppress the <
+        if ($match[0]=="<"){
+            $match = substr($match, 1);
+        }
+
+        // Suppress the >
+        if ($match[strlen($match)]==">"){
+            $match = substr($match, 0,strlen($match)-1);
+        }
+
+        // Suppress the / for a leaf tag
+        if ($match[strlen($match)]=="/"){
+            $match = substr($match, 0,strlen($match)-1);
+        }
+
+        // Suppress the tag name (ie until the first blank)
+        $match = substr($match, strpos($match," "));
+
+        // Parse the parameters
+        return self::parseMatch($match);
+
+    }
+
+    /**
+     * Take an array  where the key is the attribute name
+     * and return a HTML tag string
+     *
+     * The attribute name and value are escaped
+     *
+     * @param $attributes
+     * @return string
+     */
+    public static function array2HTMLAttributes($attributes)
+    {
+        $tagAttributeString = "";
+        foreach ($attributes as  $name => $value){
+            $tagAttributeString .= hsc($name).'="'.hsc($value).'" ';
+        }
+        return $tagAttributeString;
+    }
+
+    /**
+     * @param array $styleRules - an array of CSS rule (ie color:red)
+     * @return string - the value for the style attribute (ie all rules where joined with the comma)
+     */
+    public static function array2InlineStyle(array $styleRules)
+    {
+        return implode(";", $styleRules);
     }
 }

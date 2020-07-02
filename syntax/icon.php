@@ -27,12 +27,11 @@ require_once(__DIR__ . '/../webcomponent.php');
  * !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
  * !!!!!!!!!!! The component name must be the name of the php file !!!
  * !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+ *
  */
-class syntax_plugin_webcomponent_button extends DokuWiki_Syntax_Plugin
+class syntax_plugin_webcomponent_icon extends DokuWiki_Syntax_Plugin
 {
 
-
-    const INTERNAL_LINK_PATTERN = "\[\[.*?\]\](?!\])";
 
 
     /**
@@ -43,7 +42,7 @@ class syntax_plugin_webcomponent_button extends DokuWiki_Syntax_Plugin
      */
     function getType()
     {
-        return 'formatting';
+        return 'substition';
     }
 
     /**
@@ -55,7 +54,8 @@ class syntax_plugin_webcomponent_button extends DokuWiki_Syntax_Plugin
      */
     public function getAllowedTypes()
     {
-        return array('container', 'formatting', 'substition', 'protected', 'disabled', 'paragraphs');
+        // You can put anything in a icon
+        return array();
     }
 
     /**
@@ -93,24 +93,11 @@ class syntax_plugin_webcomponent_button extends DokuWiki_Syntax_Plugin
     function connectTo($mode)
     {
 
-        foreach (self::getTags() as $tag) {
-
-            $pattern = webcomponent::getContainerTagPattern($tag);
-            $this->Lexer->addEntryPattern($pattern, $mode, 'plugin_' . webcomponent::PLUGIN_NAME . '_' . $this->getPluginComponent());
-
-        }
+        $pattern = webcomponent::getLeafTagPattern(self::getTag());
+        $this->Lexer->addSpecialPattern($pattern, $mode, 'plugin_' . webcomponent::PLUGIN_NAME . '_' . $this->getPluginComponent());
 
     }
 
-    public function postConnect()
-    {
-
-        foreach (self::getTags() as $tag) {
-            $this->Lexer->addExitPattern('</' . $tag . '>', 'plugin_' . webcomponent::PLUGIN_NAME . '_' . $this->getPluginComponent());
-        }
-
-
-    }
 
     /**
      *
@@ -131,22 +118,11 @@ class syntax_plugin_webcomponent_button extends DokuWiki_Syntax_Plugin
 
         switch ($state) {
 
-            case DOKU_LEXER_ENTER:
+            case DOKU_LEXER_SPECIAL:
 
-                // Suppress the tag name
-                $tag = self::getTagInString($match);
-                $match = substr($match, strlen($tag) + 1, -1);
-                $parameters = webcomponent::parseMatch($match);
+                // Get the parameters
+                $parameters = webcomponent::getAttributes($match);
                 return array($state, $parameters);
-
-            case DOKU_LEXER_UNMATCHED :
-
-                return array($state, $match);
-
-
-            case DOKU_LEXER_EXIT :
-
-                return array($state, '');
 
 
         }
@@ -174,29 +150,58 @@ class syntax_plugin_webcomponent_button extends DokuWiki_Syntax_Plugin
 
                 /** @var Doku_Renderer_xhtml $renderer */
 
-                list($state, $parameters) = $data;
+                list($state, $attributes) = $data;
                 switch ($state) {
 
-                    case DOKU_LEXER_ENTER :
-                        $class = "";
-                        if (array_key_exists("class", $parameters)) {
-                            $class = hsc($parameters["class"]);
+                    case DOKU_LEXER_SPECIAL :
+
+                        $name = "name";
+                        if (array_key_exists($name, $attributes)) {
+                            $mediaId = $attributes[$name];
+                            $mediaFile = mediaFN($mediaId);
+                            if (file_exists($mediaFile)){
+
+                                // Unset the name attribute
+                                unset($attributes[$name]);
+                                $attributes["data-name"]=$mediaId;
+
+                                // Style
+                                $styleName = "style";
+                                $styleRules = array();
+                                if (array_key_exists($styleName, $attributes)){
+                                    $styleRules[] = $attributes[$styleName];
+                                }
+                                $colorName = "color";
+                                if (array_key_exists($colorName, $attributes)) {
+                                    $color = trim($attributes[$colorName]);
+                                    unset($attributes[$colorName]);
+                                    if ($color[0]=="#"){
+                                        $colorValue = $color;
+                                    } else {
+                                        $colorValue="var(--".$color.")";
+                                    }
+                                    $styleRules[] = "color:".$colorValue;
+                                }
+                                $withName = "width";
+                                if (array_key_exists($withName, $attributes)) {
+                                    $width = $attributes[$withName];
+                                    unset($attributes[$withName]);
+                                    $styleRules[] = "width:".$width."";
+                                } else {
+                                    $styleRules[] = "width:24px";
+                                }
+                                if (sizeof($styleRules)!=0){
+                                    $attributes[$styleName] = webcomponent::array2InlineStyle($styleRules);
+                                }
+                                $attributes = webcomponent::array2HTMLAttributes($attributes);
+                                $renderer->doc .= '<div '.$attributes.'>'.inlineSVG($mediaFile,$maxSize=99999999).'</div>';
+                            }
+                            return true;
+                        } else {
+                            return false;
                         }
-                        if ($class != "") {
-                            $class = " " . $class;
-                        }
-                        $renderer->doc .= '<button type="button" class="btn btn-primary' . $class . '">';
                         break;
 
-                    case DOKU_LEXER_UNMATCHED :
-
-                        $renderer->doc .= $renderer->_xmlEntities($parameters);
-                        break;
-
-
-                    case DOKU_LEXER_EXIT :
-                        $renderer->doc .= '</button>';
-                        break;
                 }
                 return true;
             }
@@ -209,29 +214,6 @@ class syntax_plugin_webcomponent_button extends DokuWiki_Syntax_Plugin
     public static function getTag()
     {
         return webcomponent::getTagName(get_called_class());
-    }
-
-    public static function getTags()
-    {
-        $elements[] = self::getTag();
-        $elements[] = 'btn';
-        return $elements;
-    }
-
-    /**
-     * @param $string
-     * @return mixed
-     * @throws Exception
-     */
-    public static function getTagInString($string)
-    {
-        foreach (self::getTags() as $tag){
-            if (strpos($string, $tag) !== false){
-                return $tag;
-            }
-        }
-        throw new Exception('No tag was found in the string ('.$string.')');
-
     }
 
 

@@ -30,4 +30,31 @@ class plugin_webcomponent_test extends DokuWikiTest
 
     }
 
+    public function test_get_attributes()
+    {
+
+        /**
+         * Leaf tag
+         */
+        $classes = "class1 class2";
+        $style = 'width:12rem; height:13rem';
+        $match = '<icon class="'.$classes. '" style="' . $style . '" whatever="yolo"/>';
+        $parameters = webcomponent::getAttributes($match);
+
+        $this->assertEquals($classes, $parameters["class"]);
+        $this->assertEquals($style, $parameters["style"]);
+        $this->assertEquals("yolo", $parameters["whatever"]);
+
+        /**
+         * Container tag
+         */
+        $match = '<icon class="'.$classes. '" style="' . $style . '" whatever="yolo">';
+        $parameters = webcomponent::getAttributes($match);
+
+        $this->assertEquals($classes, $parameters["class"]);
+        $this->assertEquals($style, $parameters["style"]);
+        $this->assertEquals("yolo", $parameters["whatever"]);
+
+    }
+
 }

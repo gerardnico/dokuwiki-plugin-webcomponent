@@ -118,7 +118,7 @@ class syntax_plugin_webcomponent_blockquote extends DokuWiki_Syntax_Plugin
 
             case DOKU_LEXER_ENTER:
                 // Suppress the component name
-                $match = utf8_substr($match, strlen($this->getPluginComponent()) + 1, -1);
+                $match = substr($match, strlen($this->getPluginComponent()) + 1, -1);
                 $parameters = webcomponent::parseMatch($match);
                 return array($state, $parameters);
 
@@ -173,7 +173,7 @@ class syntax_plugin_webcomponent_blockquote extends DokuWiki_Syntax_Plugin
                     // w-75 for width 75
                     $class = "m-3";
                     if (array_key_exists("class", $parameters)) {
-                        $class = $parameters["class"];
+                        $class = hsc($parameters["class"]);
                     }
                     if ($class != "") {
                         $class = " " . $class;
@@ -187,7 +187,7 @@ class syntax_plugin_webcomponent_blockquote extends DokuWiki_Syntax_Plugin
 
                 case DOKU_LEXER_UNMATCHED :
 
-                    $renderer->doc .= DOKU_TAB . DOKU_TAB . $parameters . DOKU_LF;
+                    $renderer->doc .= DOKU_TAB . DOKU_TAB . hsc($parameters) . DOKU_LF;
                     break;
 
                 case DOKU_LEXER_MATCHED:
@@ -195,7 +195,7 @@ class syntax_plugin_webcomponent_blockquote extends DokuWiki_Syntax_Plugin
                     if (array_key_exists('cite', $parameters)) {
                         $content = $parameters['cite']['content'];
                         $renderer->doc .= DOKU_TAB . DOKU_TAB . '<footer class="blockquote-footer text-right"><cite>';
-                        $renderer->doc .= $content; //webcomponent::render($content);
+                        $renderer->doc .= hsc($content); //webcomponent::render($content);
                         $renderer->doc .= "</cite></footer>" . DOKU_LF;
                     }
 
@@ -205,7 +205,7 @@ class syntax_plugin_webcomponent_blockquote extends DokuWiki_Syntax_Plugin
                         $height = $parameters['image']['height'];
                         $title = $parameters['image']['title'];
                         //Snippet taken from $renderer->doc .= $renderer->internalmedia($src, $linking = 'nolink');
-                        $renderer->doc .= '<img class="media my-3" src="' . ml($src, array('w' => $width, 'h' => $height, 'cache' => true)) . '" alt="' . $title . '" width="' . $width . '">';
+                        $renderer->doc .= '<img class="media my-3" src="' . ml($src, array('w' => $width, 'h' => $height, 'cache' => true)) . '" alt="' . hsc($title) . '" width="' . hsc($width) . '">';
                     }
                     break;
 

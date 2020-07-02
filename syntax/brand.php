@@ -63,7 +63,7 @@ class syntax_plugin_webcomponent_brand extends DokuWiki_Syntax_Plugin {
         switch ($state) {
 
             case DOKU_LEXER_ENTER :
-                $match = utf8_substr($match, strlen($this->getPluginComponent()) + 1, -1);
+                $match = substr($match, strlen($this->getPluginComponent()) + 1, -1);
                 $parameters = webcomponent::parseMatch($match);
                 return array($state, $parameters);
 
@@ -113,11 +113,11 @@ class syntax_plugin_webcomponent_brand extends DokuWiki_Syntax_Plugin {
 
                     $renderer->doc .= ' class="navbar-brand';
                     if (array_key_exists("class", $parameters)) {
-                        $renderer->doc .= ' '.$parameters["class"];
+                        $renderer->doc .= ' '.hsc($parameters["class"]);
                     }
                     $renderer->doc .= '"';
                     if (array_key_exists("style", $parameters)) {
-                        $renderer->doc .= ' style="'.$parameters["style"].'"';
+                        $renderer->doc .= ' style="'.hsc($parameters["style"]).'"';
                     }
                     $renderer->doc .= '>';
                     break;

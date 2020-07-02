@@ -108,7 +108,7 @@ class admin_plugin_webcomponent_pagerules extends DokuWiki_Admin_Plugin
         /**
          * If one of the form submit has the add key
          */
-        if ($_POST['save']) {
+        if ($_POST['save'] && checkSecurityToken()) {
 
             $id = $_POST[PageRules::ID_NAME];
             $matcher = $_POST[PageRules::MATCHER_NAME];
@@ -139,7 +139,7 @@ class admin_plugin_webcomponent_pagerules extends DokuWiki_Admin_Plugin
 
         }
 
-        if ($_POST['Delete']) {
+        if ($_POST['Delete'] && checkSecurityToken()) {
 
             $ruleId = $_POST[PageRules::ID_NAME];
             $this->pageRuleManager->deleteRule($ruleId);
@@ -183,6 +183,7 @@ class admin_plugin_webcomponent_pagerules extends DokuWiki_Admin_Plugin
             ptln('<div class="level2" >');
             ptln('<div id="form_container" style="max-width: 600px;">');
             ptln('<form action="" method="post">');
+            ptln('<input type="hidden" name="sectok" value="'.getSecurityToken().'" />');
             ptln('<p><b>If the Dokuwiki ID matches the following pattern:</b></p>');
             $matcherDefault = "";
             if ($matcher != null) {
@@ -220,6 +221,7 @@ class admin_plugin_webcomponent_pagerules extends DokuWiki_Admin_Plugin
             ptln('<div class="level2">');
 
             ptln('<form class="pt-3 pb-3" action="" method="post">');
+            ptln('<input type="hidden" name="sectok" value="'.getSecurityToken().'" />');
             ptln('    <input type="hidden" name="do"    value="admin" />');
             ptln('	<input type="hidden" name="page"  value="' . $this->getPluginName() . '_' . $this->getPluginComponent() . '" />');
             ptln('	<input type="submit" name="upsert" name="Create a page rule" class="button" value="' . $this->getLangOrDefault('AddNewRule','Add a new rule') . '" />');
@@ -260,6 +262,7 @@ class admin_plugin_webcomponent_pagerules extends DokuWiki_Admin_Plugin
                     ptln('	  <tr class="redirect_info">');
                     ptln('		<td>');
                     ptln('			<form action="" method="post" style="display: inline-block">');
+                    ptln('<input type="hidden" name="sectok" value="'.getSecurityToken().'" />');
                     ptln('<button style="background: none;border: 0;">');
                     ptln(inlineSVG(DOKU_PLUGIN . $this->getPluginName() . '/images/delete.svg'));
                     ptln('</button>');
@@ -267,6 +270,7 @@ class admin_plugin_webcomponent_pagerules extends DokuWiki_Admin_Plugin
                     ptln('				<input type="hidden" name="' . PageRules::ID_NAME . '"  value="' . $id . '" />');
                     ptln('			</form>');
                     ptln('			<form action="" method="post" style="display: inline-block">');
+                    ptln('<input type="hidden" name="sectok" value="'.getSecurityToken().'" />');
                     ptln('<button style="background: none;border: 0;">');
                     ptln(inlineSVG(DOKU_PLUGIN . $this->getPluginName() . '/images/file-document-edit-outline.svg'));
                     ptln('</button>');
@@ -294,7 +298,13 @@ class admin_plugin_webcomponent_pagerules extends DokuWiki_Admin_Plugin
 
     }
 
-    private function getLangOrDefault(string $id, string $default)
+    /**
+     * An utility function to return the plugin translation or a default value
+     * @param $id
+     * @param $default
+     * @return mixed|string
+     */
+    private function getLangOrDefault($id, $default)
     {
         $lang = $this->getLang($id);
         return $lang !='' ? $lang : $default;
