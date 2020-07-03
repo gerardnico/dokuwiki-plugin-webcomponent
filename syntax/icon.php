@@ -61,7 +61,7 @@ class syntax_plugin_webcomponent_icon extends DokuWiki_Syntax_Plugin
     /**
      * How Dokuwiki will add P element
      *
-     * * 'normal' - The plugin can be used inside paragraphs
+     *  * 'normal' - The plugin can be used inside paragraphs
      *  * 'block'  - Open paragraphs need to be closed before plugin output - block should not be inside paragraphs
      *  * 'stack'  - Special case. Plugin wraps other paragraphs. - Stacks can contain paragraphs
      *
@@ -69,7 +69,7 @@ class syntax_plugin_webcomponent_icon extends DokuWiki_Syntax_Plugin
      */
     function getPType()
     {
-        return 'block';
+        return 'normal';
     }
 
     /**
@@ -161,9 +161,12 @@ class syntax_plugin_webcomponent_icon extends DokuWiki_Syntax_Plugin
                             $mediaFile = mediaFN($mediaId);
                             if (file_exists($mediaFile)){
 
+                                // Build the svg Element
+                                $mediaXmlDoc = simplexml_load_file($mediaFile);
+
                                 // Unset the name attribute
                                 unset($attributes[$name]);
-                                $attributes["data-name"]=$mediaId;
+                                $mediaXmlDoc->addAttribute('data-name', $mediaId);
 
                                 // Style
                                 $styleName = "style";
@@ -184,17 +187,21 @@ class syntax_plugin_webcomponent_icon extends DokuWiki_Syntax_Plugin
                                 }
                                 $withName = "width";
                                 if (array_key_exists($withName, $attributes)) {
-                                    $width = $attributes[$withName];
+                                    $widthValue = $attributes[$withName];
                                     unset($attributes[$withName]);
-                                    $styleRules[] = "width:".$width."";
+                                    $mediaXmlDoc->addAttribute($withName,$widthValue);
                                 } else {
-                                    $styleRules[] = "width:24px";
+                                    $mediaXmlDoc->addAttribute($withName,"24px");
                                 }
                                 if (sizeof($styleRules)!=0){
                                     $attributes[$styleName] = webcomponent::array2InlineStyle($styleRules);
                                 }
-                                $attributes = webcomponent::array2HTMLAttributes($attributes);
-                                $renderer->doc .= '<div '.$attributes.'>'.inlineSVG($mediaFile,$maxSize=99999999).'</div>';
+                                foreach($attributes as $name => $value){
+                                    $mediaXmlDoc->addAttribute($name,$value);
+                                }
+
+                                // inlineSVG($mediaFile,$maxSize=99999999)
+                                $renderer->doc .= $mediaXmlDoc->asXML();
                             }
                             return true;
                         } else {
