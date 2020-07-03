@@ -42,3 +42,9 @@ require_once(__DIR__ . '/../class/UrlManagerBestEndPage.php');
 $meta[UrlManagerBestEndPage::CONF_MINIMAL_SCORE_FOR_REDIRECT] = array('string');
 
 $meta[action_plugin_webcomponent_metacanonical::CANONICAL_LAST_NAMES_COUNT_CONF]= array('string');
+
+/**
+ * Icon namespace where the downloaded icon are stored
+ */
+require_once(__DIR__ . '/../syntax/icon.php');
+$meta[syntax_plugin_webcomponent_icon::CONF_ICONS_MEDIA_NAMESPACE]=array('string');

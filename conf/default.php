@@ -62,3 +62,10 @@ $conf['BestEndPageMinimalScoreForIdRedirect'] = 0;
  * Does automatic canonical processing is on
  */
 $conf['MinimalNamesCountForAutomaticCanonical'] = 0;
+
+/**
+ * Icon Namespace
+ * See {@link syntax_plugin_webcomponent_icon::CONF_ICONS_MEDIA_NAMESPACE}
+ * See {@link syntax_plugin_webcomponent_icon::CONF_ICONS_MEDIA_NAMESPACE_DEFAULT}
+ */
+$conf['icons_namespace']=":combostrap:icons";

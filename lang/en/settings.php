@@ -29,4 +29,7 @@ $lang[action_plugin_webcomponent_metacanonical::CANONICAL_LAST_NAMES_COUNT_CONF]
 
 $lang[UrlManagerBestEndPage::CONF_MINIMAL_SCORE_FOR_REDIRECT]='<a href="'.PluginStatic::$URL_BASE.'/best/end/page/name">'.action_plugin_webcomponent_urlmanager::NAME.' - Best End Page Name</a> - The number of last part of a Dokuwiki Id to perform a <a href="'.PluginStatic::$URL_BASE.'/id/redirect">ID redirect</a> (0 to disable)';
 
+
+$lang[syntax_plugin_webcomponent_icon::CONF_ICONS_MEDIA_NAMESPACE]='<a href="'.PluginStatic::$URL_BASE.'/icon#configuration">UI Icon Component</a> - The media namespace where the downloaded icons will be search and saved';
+
 ?>
