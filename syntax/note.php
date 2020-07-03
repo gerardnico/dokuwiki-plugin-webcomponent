@@ -12,10 +12,27 @@ if(!defined('DOKU_INC')) die();
  */
 class syntax_plugin_webcomponent_note extends DokuWiki_Syntax_Plugin {
 
+    const NOTE_TAG = "note";
+
+    /**
+     * Syntax Type.
+     *
+     * Needs to return one of the mode types defined in $PARSER_MODES in parser.php
+     * @see DokuWiki_Syntax_Plugin::getType()
+     */
     function getType() {
-        return 'formatting';
+        return 'container';
     }
 
+    /**
+     * How Dokuwiki will add P element
+     *
+     * * 'normal' - The plugin can be used inside paragraphs
+     *  * 'block'  - Open paragraphs need to be closed before plugin output - block should not be inside paragraphs
+     *  * 'stack'  - Special case. Plugin wraps other paragraphs. - Stacks can contain paragraphs
+     *
+     * @see DokuWiki_Syntax_Plugin::getPType()
+     */
     function getPType() {
         return 'block';
     }
@@ -24,8 +41,10 @@ class syntax_plugin_webcomponent_note extends DokuWiki_Syntax_Plugin {
      * @return array
      * Allow which kind of plugin inside
      *
-     * No one of array('container', 'formatting', 'substition', 'protected', 'disabled', 'paragraphs')
+     * No one of array('baseonly','container', 'formatting', 'substition', 'protected', 'disabled', 'paragraphs')
      * because we manage self the content and we call self the parser
+     *
+     * Return an array of one or more of the mode types {@link $PARSER_MODES} in Parser.php
      */
     function getAllowedTypes() {
         return array('container', 'formatting', 'substition', 'protected', 'disabled', 'paragraphs');
@@ -35,20 +54,28 @@ class syntax_plugin_webcomponent_note extends DokuWiki_Syntax_Plugin {
         return 201;
     }
 
-    function getTag(){
-        return $this->getPluginComponent();
+    function getTags(){
+        return
+            array(
+                strtolower(self::NOTE_TAG),
+                strtoupper(self::NOTE_TAG)
+            );
     }
 
     function connectTo($mode) {
 
-        $pattern = webcomponent::getContainerTagPattern($this->getTag());
-        $this->Lexer->addEntryPattern($pattern, $mode, 'plugin_' . webcomponent::PLUGIN_NAME . '_' . $this->getPluginComponent());
+        foreach ($this->getTags() as $tag) {
+            $pattern = webcomponent::getContainerTagPattern($tag);
+            $this->Lexer->addEntryPattern($pattern, $mode, 'plugin_' . webcomponent::PLUGIN_NAME . '_' . $this->getPluginComponent());
+        }
 
     }
 
     function postConnect() {
 
-        $this->Lexer->addExitPattern('</' . $this->getTag() . '>', 'plugin_' . webcomponent::PLUGIN_NAME . '_' . $this->getPluginComponent());
+        foreach ($this->getTags() as $tag) {
+            $this->Lexer->addExitPattern('</' . $tag . '>', 'plugin_' . webcomponent::PLUGIN_NAME . '_' . $this->getPluginComponent());
+        }
 
     }
 
@@ -92,7 +119,7 @@ class syntax_plugin_webcomponent_note extends DokuWiki_Syntax_Plugin {
             list($state, $attributes) = $data;
             switch ($state) {
                 case DOKU_LEXER_ENTER :
-                    $renderer->doc .= '<div class="alert alert-primary" role="alert">';
+                    $renderer->doc .= '<div class="alert alert-info" role="note">';
                     break;
 
                 case DOKU_LEXER_UNMATCHED :

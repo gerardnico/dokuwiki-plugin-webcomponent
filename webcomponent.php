@@ -215,4 +215,13 @@ class webcomponent
     {
         return implode(";", $styleRules);
     }
+
+    /**
+     * @param $component
+     * @return string
+     */
+    public static function getModeForComponent($component)
+    {
+        return "plugin_".strtolower(PluginStatic::$PLUGIN_BASE_NAME)."_".$component;
+    }
 }

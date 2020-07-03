@@ -36,7 +36,9 @@ class syntax_plugin_webcomponent_frontmatter extends DokuWiki_Syntax_Plugin
      * Needs to return one of the mode types defined in $PARSER_MODES in parser.php
      * @see https://www.dokuwiki.org/devel:syntax_plugins#syntax_types
      *
-     * baseonly
+     * Return an array of one or more of the mode types {@link $PARSER_MODES} in Parser.php
+     *
+     * baseonly - run only in the base
      */
     function getType()
     {

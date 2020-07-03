@@ -55,8 +55,11 @@ class syntax_plugin_webcomponent_card extends DokuWiki_Syntax_Plugin
      * @return array
      * Allow which kind of plugin inside
      *
-     * No one of array('container', 'formatting', 'substition', 'protected', 'disabled', 'paragraphs')
+     * One of array('container', 'formatting', 'substition', 'protected', 'disabled', 'paragraphs')
+     * 'baseonly' will run only in the base mode
      * because we manage self the content and we call self the parser
+     *
+     * Return an array of one or more of the mode types {@link $PARSER_MODES} in Parser.php
      */
     public function getAllowedTypes()
     {
@@ -139,7 +142,7 @@ class syntax_plugin_webcomponent_card extends DokuWiki_Syntax_Plugin
 
                 // Suppress the component name
                 // Suppress the <>
-                $match = utf8_substr($match, 1, -1);
+                $match = substr($match, 1, -1);
                 // Suppress the tag name
                 foreach (self::getTags() as $tag) {
                     $match = str_replace($tag, "", $match);
