@@ -163,54 +163,70 @@ class syntax_plugin_webcomponent_icon extends DokuWiki_Syntax_Plugin
                         PluginStatic::msg("The name attribute is mandatory for an icon.", PluginStatic::LVL_MSG_ERROR);
                         return false;
                     }
-                    $mediaName = $attributes[$name];
+                    $iconName = $attributes[$name];
 
                     // Trying to find/download the icon file
                     // The name may be a media id directly
-                    $mediaFile = mediaFN($mediaName);
+                    $mediaFile = mediaFN($iconName);
                     if (!file_exists($mediaFile)) {
 
                         // It may be a icon name from material design
                         $iconNameSpace = $this->getConf(self::CONF_ICONS_MEDIA_NAMESPACE);
-                        $mediaName = $iconNameSpace . ":" . $mediaName . ".svg";
-                        $mediaFile = mediaFN($mediaName);
+                        $mediaId = $iconNameSpace . ":" . $iconName . ".svg";
+                        $mediaFile = mediaFN($mediaId);
                         if (!file_exists($mediaFile)) {
 
                             // The icon was may be not downloaded ?
 
-                            // Read the icon meta of
-                            // Meta Json file got all icons (See https://github.com/Templarian/MaterialDesign-Site/blob/master/src/content/api.md)
-                            $arrayFormat = true;
-                            $iconMetaJson = json_decode(file_get_contents(__DIR__ . '/icon-meta.json'), $arrayFormat);
-                            $iconId = null;
-                            foreach ($iconMetaJson as $key => $value) {
-                                if ($value['name'] == $attributes[$name]) {
-                                    $iconId = $value['id'];
-                                    break;
+                            // Create the target directory if it does not exist
+                            $iconDir = (pathinfo($mediaFile))['dirname'];
+                            if (!file_exists($iconDir)) {
+                                $return = mkdir($iconDir, $mode = 0770, $recursive = true);
+                                if ($return == false) {
+                                    PluginStatic::msg("The icon directory ($iconDir) could not be created.", PluginStatic::LVL_MSG_ERROR);
+                                    return false;
                                 }
                             }
-                            if ($iconId != null) {
 
-                                // Check that the icon directory exists otherwise create it
-                                $iconDir = (pathinfo($mediaFile))['dirname'];
-                                if (!file_exists($iconDir)) {
-                                    $return = mkdir($iconDir, $mode = 0770, $recursive = true);
-                                    if ($return == false) {
-                                        PluginStatic::msg("The icon directory ($iconDir) could not be created.", PluginStatic::LVL_MSG_ERROR);
-                                        return false;
+                            // First try on github
+                            $gitUrl = "https://raw.githubusercontent.com/Templarian/MaterialDesign/master/svg/$iconName.svg";
+                            $return = file_put_contents($mediaFile, fopen($gitUrl, 'r'));
+                            if ($return != false) {
+                                PluginStatic::msg("The material design icon ($attributes[$name]) was downloaded to ($mediaId)", PluginStatic::LVL_MSG_INFO);
+                            } else {
+
+                                PluginStatic::msg("The file ($gitUrl) could not be downloaded from ($mediaFile)", PluginStatic::LVL_MSG_INFO);
+
+                                // Try the official API
+                                // Read the icon meta of
+                                // Meta Json file got all icons
+                                //
+                                //   * Available at: https://raw.githubusercontent.com/Templarian/MaterialDesign/master/meta.json
+                                //   * See doc: https://github.com/Templarian/MaterialDesign-Site/blob/master/src/content/api.md)
+                                $arrayFormat = true;
+                                $iconMetaJson = json_decode(file_get_contents(__DIR__ . '/icon-meta.json'), $arrayFormat);
+                                $iconId = null;
+                                foreach ($iconMetaJson as $key => $value) {
+                                    if ($value['name'] == $iconName) {
+                                        $iconId = $value['id'];
+                                        break;
                                     }
                                 }
+                                if ($iconId != null) {
 
-                                // Download
-                                // Call to the API
-                                // https://dev.materialdesignicons.com/contribute/site/api
-                                $downloadUrl = "https://materialdesignicons.com/api/download/icon/svg/$iconId";
-                                $return = file_put_contents($mediaFile, fopen($downloadUrl, 'r'));
-                                if ($return == false) {
-                                    PluginStatic::msg("The file ($downloadUrl) could not be downloaded to ($mediaFile)", PluginStatic::LVL_MSG_ERROR);
-                                    return false;
-                                } else {
-                                    PluginStatic::msg("The material design icon ($attributes[$name]) was downloaded to ($mediaName)", PluginStatic::LVL_MSG_INFO);
+
+                                    // Download
+                                    // Call to the API
+                                    // https://dev.materialdesignicons.com/contribute/site/api
+                                    $downloadUrl = "https://materialdesignicons.com/api/download/icon/svg/$iconId";
+                                    $return = file_put_contents($mediaFile, fopen($downloadUrl, 'r'));
+                                    if ($return == false) {
+                                        PluginStatic::msg("The file ($downloadUrl) could not be downloaded to ($mediaFile)", PluginStatic::LVL_MSG_ERROR);
+                                        return false;
+                                    } else {
+                                        PluginStatic::msg("The material design icon ($attributes[$name]) was downloaded to ($mediaId)", PluginStatic::LVL_MSG_INFO);
+                                    }
+
                                 }
 
                             }
@@ -221,7 +237,7 @@ class syntax_plugin_webcomponent_icon extends DokuWiki_Syntax_Plugin
                     }
 
                     if (!file_exists($mediaFile)) {
-                        PluginStatic::msg("The icon ($mediaName) could not be found as media file or material design icon", PluginStatic::LVL_MSG_ERROR);
+                        PluginStatic::msg("The icon ($mediaId) could not be found as media file or material design icon", PluginStatic::LVL_MSG_ERROR);
                         return false;
                     }
 
@@ -235,9 +251,32 @@ class syntax_plugin_webcomponent_icon extends DokuWiki_Syntax_Plugin
 
                     // Unset the name attribute
                     unset($attributes[$name]);
-                    $mediaSvgXml->addAttribute('data-name', $mediaName);
+                    $mediaSvgXml->addAttribute('data-name', $iconName);
 
-                    // Style
+
+                    // Width
+                    $widthName = "width";
+                    $widthValue = "24px";
+                    if (array_key_exists($widthName, $attributes)) {
+                        $widthValue = $attributes[$widthName];
+                        unset($attributes[$widthName]);
+                    }
+                    $this->setXmlAttribute($widthName, $widthValue, $mediaSvgXml);
+
+                    // Height
+                    $heightName = "height";
+                    $heightValue = "24px";
+                    if (array_key_exists($heightName, $attributes)) {
+                        $heightValue = $attributes[$heightName];
+                        unset($attributes[$heightName]);
+                    }
+                    $this->setXmlAttribute($heightName, $heightValue, $mediaSvgXml);
+
+                    // Add fill="currentColor"
+                    $pathXml = $mediaSvgXml->{'path'};
+                    $this->setXmlAttribute("fill", "currentColor", $pathXml);
+
+                    // Style (color)
                     $styleName = "style";
                     $styleRules = array();
                     if (array_key_exists($styleName, $attributes)) {
@@ -254,35 +293,6 @@ class syntax_plugin_webcomponent_icon extends DokuWiki_Syntax_Plugin
                         }
                         $styleRules[] = "color:" . $colorValue;
                     }
-
-                    // Width
-                    $widthName = "width";
-                    $widthValue = "24px";
-                    if (array_key_exists($widthName, $attributes)) {
-                        $widthValue = $attributes[$widthName];
-                        unset($attributes[$widthName]);
-                    }
-                    $actualWidthValue = (string) $mediaSvgXml[$widthName];
-                    if ($actualWidthValue!="") {
-                        $mediaSvgXml[$widthName] = $widthValue;
-                    } else {
-                        $mediaSvgXml->addAttribute($widthName, $widthValue);
-                    }
-
-                    // Height
-                    $heightName = "height";
-                    $heightValue = "24px";
-                    if (array_key_exists($heightName, $attributes)) {
-                        $heightValue = $attributes[$heightName];
-                        unset($attributes[$heightName]);
-                    }
-                    $actualHeightValue = (string) $mediaSvgXml[$heightName];
-                    if ($actualHeightValue!="") {
-                        $mediaSvgXml[$heightName] = $heightValue;
-                    } else {
-                        $mediaSvgXml->addAttribute($heightName, $heightValue);
-                    }
-
                     if (sizeof($styleRules) != 0) {
                         $attributes[$styleName] = webcomponent::array2InlineStyle($styleRules);
                     }
@@ -290,7 +300,6 @@ class syntax_plugin_webcomponent_icon extends DokuWiki_Syntax_Plugin
                         $mediaSvgXml->addAttribute($name, $value);
                     }
 
-                    // inlineSVG($mediaFile,$maxSize=99999999)
                     $renderer->doc .= $mediaSvgXml->asXML();
 
                     return true;
@@ -306,6 +315,21 @@ class syntax_plugin_webcomponent_icon extends DokuWiki_Syntax_Plugin
     static function getTag()
     {
         return webcomponent::getTagName(get_called_class());
+    }
+
+    /**
+     * @param $attName
+     * @param $attValue
+     * @param SimpleXMLElement $mediaSvgXml
+     */
+    public function setXmlAttribute($attName, $attValue, SimpleXMLElement $mediaSvgXml)
+    {
+        $actualWidthValue = (string)$mediaSvgXml[$attName];
+        if ($actualWidthValue != "") {
+            $mediaSvgXml[$attName] = $attValue;
+        } else {
+            $mediaSvgXml->addAttribute($attName, $attValue);
+        }
     }
 
 

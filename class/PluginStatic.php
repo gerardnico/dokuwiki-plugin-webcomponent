@@ -13,10 +13,11 @@ class PluginStatic
 
     /**
      * Constant for the function {@link msg()}
+     * -1 = error, 0 = info, 1 = success, 2 = notify
      */
     const LVL_MSG_ERROR = -1;
     const LVL_MSG_INFO = 0;
-    const LVL_MSG_SUCCESS = - 1;
+    const LVL_MSG_SUCCESS = 1;
     const LVL_MSG_WARNING = 2;
 
     /**
@@ -146,12 +147,12 @@ class PluginStatic
      * @param string $message
      * @param int $level - the level see LVL constant
      */
-    public static function msg(string $message, int $level=self::LVL_MSG_ERROR)
+    public static function msg($message, $level=self::LVL_MSG_ERROR)
     {
         $msg = self::$PLUGIN_BASE_NAME." - $message";
         msg($msg,$level,$allow=MSG_MANAGERS_ONLY);
         dbg($msg);
-        if (defined('DOKU_UNITTEST')) {
+        if (defined('DOKU_UNITTEST') && $level != self::LVL_MSG_SUCCESS && $level != self::LVL_MSG_INFO) {
             throw new RuntimeException($msg);
         }
     }
