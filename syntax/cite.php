@@ -17,8 +17,15 @@ class syntax_plugin_webcomponent_cite extends DokuWiki_Syntax_Plugin {
         return 'block';
     }
 
+    /**
+     * @return array
+     * Allow which kind of plugin inside
+     *
+     * No one of array('container', 'formatting', 'substition', 'protected', 'disabled', 'paragraphs')
+     * because we manage self the content and we call self the parser
+     */
     function getAllowedTypes() {
-        return array ('substition','formatting','disabled');
+        return array('container', 'formatting', 'substition', 'protected', 'disabled', 'paragraphs');
     }
 
     function getSort() {
@@ -29,14 +36,16 @@ class syntax_plugin_webcomponent_cite extends DokuWiki_Syntax_Plugin {
 
     function connectTo($mode) {
 
-        $pattern = '<' . $this->getPluginComponent() . '.*?>(?=.*?</' . $this->getPluginComponent() . '>)';
+        $tag = $this->getPluginComponent();
+        $pattern = webcomponent::getContainerTagPattern($tag);
         $this->Lexer->addEntryPattern($pattern, $mode, 'plugin_' . webcomponent::PLUGIN_NAME . '_' . $this->getPluginComponent());
 
     }
 
     function postConnect() {
 
-        $this->Lexer->addExitPattern('</' . self::getTag() . '>', 'plugin_' . webcomponent::PLUGIN_NAME . '_' . $this->getPluginComponent());
+        $tag = $this->getPluginComponent();
+        $this->Lexer->addExitPattern('</' . $tag . '>', 'plugin_' . webcomponent::PLUGIN_NAME . '_' . $this->getPluginComponent());
 
     }
 
@@ -45,9 +54,9 @@ class syntax_plugin_webcomponent_cite extends DokuWiki_Syntax_Plugin {
         switch ($state) {
 
             case DOKU_LEXER_ENTER :
-                $match = utf8_substr($match, strlen($this->getPluginComponent()) + 1, -1);
-                $parameters = webcomponent::parseMatch($match);
-                return array($state, $parameters);
+
+                $attributes = webcomponent::getAttributes($match);
+                return array($state, $attributes);
 
             case DOKU_LEXER_UNMATCHED :
                 return array ($state, $match);
@@ -78,18 +87,20 @@ class syntax_plugin_webcomponent_cite extends DokuWiki_Syntax_Plugin {
         if ($format == 'xhtml') {
 
             /** @var Doku_Renderer_xhtml $renderer */
-            list($state, $parameters) = $data;
+            list($state, $data) = $data;
             switch ($state) {
                 case DOKU_LEXER_ENTER :
-                    $renderer->doc .= '<'.$this->getPluginComponent().'>';
+
+                    $inlineAttributes = webcomponent::array2HTMLAttributes($data);
+                    $renderer->doc .= "<cite $inlineAttributes>";
                     break;
 
                 case DOKU_LEXER_UNMATCHED :
-                    $renderer->doc .= $renderer->_xmlEntities($parameters);
+                    $renderer->doc .= $renderer->_xmlEntities($data);
                     break;
 
                 case DOKU_LEXER_EXIT :
-                    $renderer->doc .= '</'.$this->getPluginComponent().'>';
+                    $renderer->doc .= '</cite>';
                     break;
             }
             return true;
@@ -99,11 +110,7 @@ class syntax_plugin_webcomponent_cite extends DokuWiki_Syntax_Plugin {
         return false;
     }
 
-    public static function getTag()
-    {
-        list(/* $t */, /* $p */, /* $n */, $c) = explode('_', get_called_class(), 4);
-        return (isset($c) ? $c : '');
-    }
+
 
 }
 
