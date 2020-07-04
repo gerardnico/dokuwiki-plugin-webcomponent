@@ -81,7 +81,7 @@ class UrlCanonical
 
     }
 
-    private function persistPageAlias(string $canonical, string $alias)
+    private function persistPageAlias($canonical, $alias)
     {
 
         $row = array(

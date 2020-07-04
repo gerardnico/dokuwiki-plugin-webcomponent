@@ -98,7 +98,7 @@ class webcomponent
      */
     public static function getContainerTagPattern($tag)
     {
-        return '<' . $tag . '.*?>(?=.*?</' . $tag . '>)';
+        return '<' . $tag . '.*?>(?=.*?<\/' . $tag . '>)';
     }
 
     /**
@@ -204,7 +204,7 @@ class webcomponent
         foreach ($attributes as  $name => $value){
             $tagAttributeString .= hsc($name).'="'.hsc($value).'" ';
         }
-        return $tagAttributeString;
+        return trim($tagAttributeString);
     }
 
     /**

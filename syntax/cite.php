@@ -9,6 +9,8 @@ if(!defined('DOKU_INC')) die();
 
 class syntax_plugin_webcomponent_cite extends DokuWiki_Syntax_Plugin {
 
+    CONST TAG = "cite";
+
     function getType() {
         return 'formatting';
     }
@@ -36,19 +38,30 @@ class syntax_plugin_webcomponent_cite extends DokuWiki_Syntax_Plugin {
 
     function connectTo($mode) {
 
-        $tag = $this->getPluginComponent();
-        $pattern = webcomponent::getContainerTagPattern($tag);
-        $this->Lexer->addEntryPattern($pattern, $mode, 'plugin_' . webcomponent::PLUGIN_NAME . '_' . $this->getPluginComponent());
+        $pattern = webcomponent::getContainerTagPattern(self::TAG);
+        $this->Lexer->addEntryPattern($pattern, $mode, webcomponent::getModeForComponent($this->getPluginComponent()));
 
     }
 
     function postConnect() {
 
-        $tag = $this->getPluginComponent();
-        $this->Lexer->addExitPattern('</' . $tag . '>', 'plugin_' . webcomponent::PLUGIN_NAME . '_' . $this->getPluginComponent());
+        $this->Lexer->addExitPattern('</' . self::TAG . '>', webcomponent::getModeForComponent($this->getPluginComponent()));
 
     }
 
+    /**
+     *
+     * The handle function goal is to parse the matched syntax through the pattern function
+     * and to return the result for use in the renderer
+     * This result is always cached until the page is modified.
+     * @see DokuWiki_Syntax_Plugin::handle()
+     *
+     * @param string $match
+     * @param int $state
+     * @param int $pos
+     * @param Doku_Handler $handler
+     * @return array|bool
+     */
     function handle($match, $state, $pos, Doku_Handler $handler) {
 
         switch ($state) {
@@ -87,16 +100,20 @@ class syntax_plugin_webcomponent_cite extends DokuWiki_Syntax_Plugin {
         if ($format == 'xhtml') {
 
             /** @var Doku_Renderer_xhtml $renderer */
-            list($state, $data) = $data;
+            list($state, $payload) = $data;
             switch ($state) {
                 case DOKU_LEXER_ENTER :
 
-                    $inlineAttributes = webcomponent::array2HTMLAttributes($data);
-                    $renderer->doc .= "<cite $inlineAttributes>";
+                    $renderer->doc .= "<cite";
+                    if (sizeof($payload)>0) {
+                        $inlineAttributes = webcomponent::array2HTMLAttributes($payload);
+                        $renderer->doc .= " $inlineAttributes";
+                    }
+                    $renderer->doc .= ">";
                     break;
 
                 case DOKU_LEXER_UNMATCHED :
-                    $renderer->doc .= $renderer->_xmlEntities($data);
+                    $renderer->doc .= $renderer->_xmlEntities($payload);
                     break;
 
                 case DOKU_LEXER_EXIT :

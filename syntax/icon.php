@@ -170,6 +170,13 @@ class syntax_plugin_webcomponent_icon extends DokuWiki_Syntax_Plugin
                     $mediaFile = mediaFN($iconName);
                     if (!file_exists($mediaFile)) {
 
+                        // Is it a file ?
+                        $path =  pathinfo($mediaFile);
+                        if ($path['extension']!=""){
+                            PluginStatic::msg("The media file ($mediaFile) could not be found. If you want an icon from the material design icon library, indicate a name without extension.", PluginStatic::LVL_MSG_ERROR);
+                            return false;
+                        }
+
                         // It may be a icon name from material design
                         $iconNameSpace = $this->getConf(self::CONF_ICONS_MEDIA_NAMESPACE);
                         $mediaId = $iconNameSpace . ":" . $iconName . ".svg";
@@ -179,7 +186,8 @@ class syntax_plugin_webcomponent_icon extends DokuWiki_Syntax_Plugin
                             // The icon was may be not downloaded ?
 
                             // Create the target directory if it does not exist
-                            $iconDir = (pathinfo($mediaFile))['dirname'];
+                            $pathinfo = pathinfo($mediaFile);
+                            $iconDir = $pathinfo['dirname'];
                             if (!file_exists($iconDir)) {
                                 $return = mkdir($iconDir, $mode = 0770, $recursive = true);
                                 if ($return == false) {

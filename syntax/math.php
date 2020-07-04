@@ -10,7 +10,7 @@ require_once(__DIR__ . '/../webcomponent.php');
 class syntax_plugin_webcomponent_math extends DokuWiki_Syntax_Plugin
 {
 
-    public const MATH_EXPRESSION = 'math_expression';
+    const MATH_EXPRESSION = 'math_expression';
 
 
 

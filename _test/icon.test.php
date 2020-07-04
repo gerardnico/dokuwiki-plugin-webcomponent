@@ -90,12 +90,14 @@ final class plugin_webcomponent_icon_test extends DokuWikiTest
 
         // An other call should not download the file again
         // The cache was disable at setup
-        $expectedModificationTime = (stat($mediaFile))['mtime'];
+        $stat = stat($mediaFile);
+        $expectedModificationTime = $stat['mtime'];
         $request = new TestRequest();
         $response = $request->get(array('id' => $iconPage), '/doku.php');
         $svgElements = $response->queryHTML('svg[data-name="' . $name . '"]');
         $this->assertEquals(1,$svgElements->count(),"The icon is present");
-        $modificationTime = (stat($mediaFile))['mtime'];
+        $stat = stat($mediaFile);
+        $modificationTime = $stat['mtime'];
         $this->assertEquals($expectedModificationTime,$modificationTime,"The icon was not modified");
 
     }

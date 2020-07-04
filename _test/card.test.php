@@ -30,12 +30,12 @@ class plugin_webcomponent_teaser_test extends DokuWikiTest
     public function test_base()
     {
 
-        $componentName = syntax_plugin_webcomponent_card::getTag();
-        $doku_text = '<' . $componentName . ' style="width: 18rem;">' . DOKU_LF .
+        $tag = syntax_plugin_webcomponent_card::getTag();
+        $doku_text = '<' . $tag . ' style="width: 18rem;">' . DOKU_LF .
             '{{:allowclipboardhelper.jpg?30|}}' . DOKU_LF .
             '=== Teaser Title ===' . DOKU_LF .
             'A example taken from [[https://getbootstrap.com/docs/4.3/components/card/#example|the bootstrap quick example]] on how to build a card title in order to make up the bulk of the teaser content.' . DOKU_LF .
-            '</' . $componentName . '>';
+            '</' . $tag . '>';
 
         $info = array();
 

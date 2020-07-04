@@ -12,11 +12,11 @@ class PageRules
 
     // Name of the column
     // Used also in the HTML form as name
-    public const ID_NAME = 'ID';
-    public const PRIORITY_NAME = 'PRIORITY';
-    public const MATCHER_NAME = 'MATCHER';
-    public const TARGET_NAME = 'TARGET';
-    public const TIMESTAMP_NAME = 'TIMESTAMP';
+    const ID_NAME = 'ID';
+    const PRIORITY_NAME = 'PRIORITY';
+    const MATCHER_NAME = 'MATCHER';
+    const TARGET_NAME = 'TARGET';
+    const TIMESTAMP_NAME = 'TIMESTAMP';
 
 
     /** @var helper_plugin_sqlite $sqlite */

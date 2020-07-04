@@ -52,7 +52,7 @@ class dokuwiki_plugin_webcomponent_related_test extends DokuWikiTest
 
     // Create the pages
     // and configure
-    public static function setUpBeforeClass(): void
+    public static function setUpBeforeClass()
     {
         parent::setUpBeforeClass();
         // Config changes in function setUpBeforeClass() have no effect set setup
@@ -113,7 +113,7 @@ class dokuwiki_plugin_webcomponent_related_test extends DokuWikiTest
      * @param $referentPageId - The Full referrant page id
      * @return string
      */
-    public static function createReferrerPage($referentPageId): string
+    public static function createReferrerPage($referentPageId)
     {
         $referrerId = sizeof(self::$referrers) + 1;
         $referrerPageId = self::TEST_PAGE_NAMESPACE . 'referrer' . $referrerId;

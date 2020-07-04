@@ -211,7 +211,7 @@ class syntax_plugin_webcomponent_related extends DokuWiki_Syntax_Plugin
      * @param $max
      * @return array
      */
-    public function related($id, $max = NULL): array
+    public function related($id, $max = NULL)
     {
         if ($max == NULL) {
             $max = $this->getConf(self::MAX_LINKS_CONF);
