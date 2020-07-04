@@ -5,7 +5,7 @@ namespace ComboStrap;
  * The manager that handles the redirection metadata
  *
  */
-require_once(__DIR__ . '/PluginUtility.php');
+require_once(__DIR__ . '/../class/PluginUtility.php');
 
 class PageRules
 {

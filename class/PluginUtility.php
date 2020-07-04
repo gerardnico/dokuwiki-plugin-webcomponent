@@ -3,6 +3,8 @@
 
 namespace ComboStrap;
 
+use TestRequest;
+
 /**
  * Are used everywhere in the plugin and the last upgrade just kill them
  * I just add them here
@@ -102,9 +104,9 @@ class PluginUtility
         global $conf;
 
         $oldDbName = '404manager';
-        $oldDbFile = $conf['metadir']."/{$oldDbName}.sqlite";
-        $oldDbFileSqlite3 = $conf['metadir']."/{$oldDbName}.sqlite3";
-        if (file_exists($oldDbFile) || file_exists($oldDbFileSqlite3)){
+        $oldDbFile = $conf['metadir'] . "/{$oldDbName}.sqlite";
+        $oldDbFileSqlite3 = $conf['metadir'] . "/{$oldDbName}.sqlite3";
+        if (file_exists($oldDbFile) || file_exists($oldDbFileSqlite3)) {
             $dbname = $oldDbName;
         }
 
@@ -117,7 +119,6 @@ class PluginUtility
         return $sqlite;
 
     }
-
 
 
     /**
@@ -161,10 +162,10 @@ class PluginUtility
      * @param string $message
      * @param int $level - the level see LVL constant
      */
-    public static function msg($message, $level=self::LVL_MSG_ERROR)
+    public static function msg($message, $level = self::LVL_MSG_ERROR)
     {
-        $msg = self::$PLUGIN_BASE_NAME." - $message";
-        msg($msg,$level,$allow=MSG_MANAGERS_ONLY);
+        $msg = self::$PLUGIN_BASE_NAME . " - $message";
+        msg($msg, $level, $allow = MSG_MANAGERS_ONLY);
         dbg($msg);
         if (defined('DOKU_UNITTEST') && $level != self::LVL_MSG_SUCCESS && $level != self::LVL_MSG_INFO) {
             throw new RuntimeException($msg);
@@ -291,6 +292,11 @@ class PluginUtility
     }
 
     /**
+     * Just call this function from a class like that
+     *     getTageName(get_called_class())
+     * to get the tag name (ie the component plugin)
+     * of a syntax plugin
+     *
      * @param $get_called_class
      * @return string
      */
@@ -298,6 +304,21 @@ class PluginUtility
     {
         list(/* $t */, /* $p */, /* $n */, $c) = explode('_', $get_called_class, 4);
         return (isset($c) ? $c : '');
+    }
+
+    /**
+     * Just call this function from a class like that
+     *     getAdminPageName(get_called_class())
+     * to get the page name of a admin plugin
+     *
+     * @param $get_called_class
+     * @return string - the admin page name
+     */
+    public static function getAdminPageName($get_called_class)
+    {
+        $names = explode('_', $get_called_class);
+        $names = array_slice($names, -2);
+        return implode('_', $names);
     }
 
     public static function getNameSpace()
@@ -335,6 +356,30 @@ class PluginUtility
             unset($instructions[$lastPBlockPosition]);
         }
         return p_render('xhtml', $instructions, $info);
+    }
+
+    /**
+     * Set the environment to be able to
+     * run a {@link TestRequest} as admin
+     * @param TestRequest $request
+     */
+    public static function runAsAdmin($request)
+    {
+        global $conf;
+        $conf['useacl'] = 1;
+        $user = 'admin';
+        $conf['superuser'] = $user;
+
+        // $_SERVER[] = $user;
+        $request->setServer('REMOTE_USER', $user);
+
+
+        // global $USERINFO;
+        // $USERINFO['grps'] = array('admin', 'user');
+
+        // global $INFO;
+        // $INFO['ismanager'] = true;
+
     }
 
     /**

@@ -22,6 +22,15 @@ class plugin_combo_plugin_utility_test extends DokuWikiTest
 
     }
 
+    public function test_getAdminPage()
+    {
+        $expectedAdminPage = 'pluginname_page';
+        $class = 'admin_plugin_' . $expectedAdminPage . '';
+        $adminPageName = PluginUtility::getAdminPageName($class);
+        $this->assertEquals($expectedAdminPage, $adminPageName,"The admin page name from the class is the good one");
+
+    }
+
     public function test_parse_parameters_no_content()
     {
 

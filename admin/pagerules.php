@@ -1,5 +1,8 @@
 <?php
 // must be run within Dokuwiki
+use ComboStrap\PageRules;
+use ComboStrap\PluginUtility;
+
 if (!defined('DOKU_INC')) die();
 
 if (!defined('DOKU_PLUGIN')) define('DOKU_PLUGIN', DOKU_INC . 'lib/plugins/');
@@ -217,7 +220,7 @@ class admin_plugin_combo_pagerules extends DokuWiki_Admin_Plugin
 
         } else {
 
-            ptln('<h2><a name="list_redirection" id="list_redirection">' . 'Rules' . '</a></h2>');
+            ptln('<h2><a name="" id="pagerules_list">' . 'Rules' . '</a></h2>');
             ptln('<div class="level2">');
 
             ptln('<form class="pt-3 pb-3" action="" method="post">');
@@ -310,5 +313,9 @@ class admin_plugin_combo_pagerules extends DokuWiki_Admin_Plugin
         return $lang !='' ? $lang : $default;
     }
 
+
+    static function getAdminPageName(){
+        return PluginUtility::getAdminPageName(get_called_class());
+    }
 
 }
