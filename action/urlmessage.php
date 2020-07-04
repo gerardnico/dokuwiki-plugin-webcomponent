@@ -228,7 +228,7 @@ class action_plugin_combo_urlmessage extends DokuWiki_Action_Plugin
 
             print $message->getContent();
 
-            print '<div class="managerreference">' . $this->lang['message_come_from'] . ' <a href="' . $pluginInfo['domain'] . '/'.action_plugin_combo_urlmanager::CANONICAL.'" class="urlextern" title="' . $pluginInfo['desc'] . '" >Url Manager</a>.</div>';
+            print '<div class="managerreference">' . $this->lang['message_come_from'] . ' <a href="' . PluginUtility::$URL_BASE . '/'.action_plugin_combo_urlmanager::CANONICAL.'" class="urlextern" title="' . $pluginInfo['desc'] . '" >Url Manager</a>.</div>';
             print('</div>');
 
         }

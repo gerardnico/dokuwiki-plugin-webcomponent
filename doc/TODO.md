@@ -35,3 +35,11 @@ html:svg = svg:html
 ## Button
 
 Button in navbar
+
+## TODO
+
+  * Suppress in teaser - the card body if there is only a image
+  * Rename teaser-columns with card columns
+  * Implement: image bottom for card
+
+

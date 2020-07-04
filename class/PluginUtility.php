@@ -40,6 +40,7 @@ class PluginUtility
      */
     static $URL_BASE;
 
+
     /**
      * @var string - the plugin base name (ie the directory)
      */
@@ -50,7 +51,7 @@ class PluginUtility
      */
     static $INFO_PLUGIN;
 
-    static $lang;
+    static $PLUGIN_LANG;
 
     /**
      * @var string
@@ -127,16 +128,15 @@ class PluginUtility
      */
     static function init()
     {
+
         $pluginInfoFile = __DIR__ . '/../plugin.info.txt';
-
         self::$INFO_PLUGIN = confToHash($pluginInfoFile);
-
         self::$PLUGIN_BASE_NAME = self::$INFO_PLUGIN['base'];
         self::$PLUGIN_NAME = 'ComboStrap';
         global $lang;
-        self::$lang = $lang[self::$PLUGIN_BASE_NAME];
+        self::$PLUGIN_LANG = $lang[self::$PLUGIN_BASE_NAME];
         self::$DIR_RESOURCES = __DIR__ . '/../_testResources';
-        self::$URL_BASE = self::$INFO_PLUGIN['url'];
+        self::$URL_BASE = "https://".parse_url(self::$INFO_PLUGIN['url'],PHP_URL_HOST);
 
     }
 
