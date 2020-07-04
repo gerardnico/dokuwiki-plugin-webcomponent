@@ -32,3 +32,6 @@ html:svg = svg:html
 
   * Headerbar should not come back
 
+## Button
+
+Button in navbar

@@ -3,7 +3,7 @@
 use ComboStrap\PluginUtility;
 
 if (!defined('DOKU_INC')) die();
-require_once(__DIR__ . '/../class/PLuginUtility.php');
+require_once(__DIR__ . '/../class/PluginUtility.php');
 
 
 /**

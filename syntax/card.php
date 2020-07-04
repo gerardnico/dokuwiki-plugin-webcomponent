@@ -14,7 +14,7 @@ if (!defined('DOKU_PLUGIN')) {
     define('DOKU_PLUGIN', DOKU_INC . 'lib/plugins/');
 }
 
-require_once(__DIR__ . '/../class/PLuginUtility.php');
+require_once(__DIR__ . '/../class/PluginUtility.php');
 
 /**
  * All DokuWiki plugins to extend the parser/rendering mechanism

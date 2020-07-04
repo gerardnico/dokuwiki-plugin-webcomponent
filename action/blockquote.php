@@ -1,7 +1,7 @@
 <?php
 
 if (!defined('DOKU_INC')) die();
-require_once(__DIR__ . '/../class/PLuginUtility.php');
+require_once(__DIR__ . '/../class/PluginUtility.php');
 
 class action_plugin_combo_blockquote extends DokuWiki_Action_Plugin
 {
