@@ -3,11 +3,14 @@
  * DokuWiki Syntax Plugin Combostrap.
  *
  */
+
+use ComboStrap\PluginUtility;
+
 if (!defined('DOKU_INC')) {
     die();
 }
 
-require_once(__DIR__ . '/../webcomponent.php');
+require_once(__DIR__ . '/../class/PLuginUtility.php');
 
 /**
  * All DokuWiki plugins to extend the parser/rendering mechanism
@@ -17,7 +20,7 @@ require_once(__DIR__ . '/../webcomponent.php');
  * ie:
  *    syntax_plugin_PluginName_ComponentName
  */
-class syntax_plugin_webcomponent_collapse extends DokuWiki_Syntax_Plugin
+class syntax_plugin_combo_collapse extends DokuWiki_Syntax_Plugin
 {
 
 
@@ -76,15 +79,15 @@ class syntax_plugin_webcomponent_collapse extends DokuWiki_Syntax_Plugin
     function connectTo($mode)
     {
 
-        $pattern = webcomponent::getContainerTagPattern(self::getElementName());
-        $this->Lexer->addEntryPattern($pattern, $mode, 'plugin_' . webcomponent::PLUGIN_NAME . '_' . $this->getPluginComponent());
+        $pattern = PluginUtility::getContainerTagPattern(self::getElementName());
+        $this->Lexer->addEntryPattern($pattern, $mode, 'plugin_' . PluginUtility::$PLUGIN_BASE_NAME . '_' . $this->getPluginComponent());
 
     }
 
     public function postConnect()
     {
 
-        $this->Lexer->addExitPattern('</' . self::getElementName() . '>', 'plugin_' . webcomponent::PLUGIN_NAME . '_' . $this->getPluginComponent());
+        $this->Lexer->addExitPattern('</' . self::getElementName() . '>', 'plugin_' . PluginUtility::$PLUGIN_BASE_NAME . '_' . $this->getPluginComponent());
 
     }
 
@@ -110,7 +113,7 @@ class syntax_plugin_webcomponent_collapse extends DokuWiki_Syntax_Plugin
 
                 // Suppress the component name
                 $match = utf8_substr($match, strlen(self::getElementName()) + 1, -1);
-                $parameters = webcomponent::parseMatch($match);
+                $parameters = PluginUtility::parseMatch($match);
                 return array($state, $parameters);
 
             case DOKU_LEXER_EXIT :
@@ -169,7 +172,7 @@ class syntax_plugin_webcomponent_collapse extends DokuWiki_Syntax_Plugin
 
     public static function getElementName()
     {
-        return webcomponent::getTagName(get_called_class());
+        return PluginUtility::getTagName(get_called_class());
     }
 
 

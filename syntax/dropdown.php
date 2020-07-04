@@ -3,6 +3,9 @@
  * DokuWiki Syntax Plugin Combostrap.
  *
  */
+
+use ComboStrap\PluginUtility;
+
 if (!defined('DOKU_INC')) {
     die();
 }
@@ -11,7 +14,7 @@ if (!defined('DOKU_PLUGIN')) {
     define('DOKU_PLUGIN', DOKU_INC . 'lib/plugins/');
 }
 
-require_once(__DIR__ . '/../webcomponent.php');
+require_once(__DIR__ . '/../class/PLuginUtility.php');
 
 /**
  * All DokuWiki plugins to extend the parser/rendering mechanism
@@ -21,7 +24,7 @@ require_once(__DIR__ . '/../webcomponent.php');
  * ie:
  *    syntax_plugin_PluginName_ComponentName
  */
-class syntax_plugin_webcomponent_dropdown extends DokuWiki_Syntax_Plugin
+class syntax_plugin_combo_dropdown extends DokuWiki_Syntax_Plugin
 {
 
     const INTERNAL_LINK_PATTERN = "\[\[.*?\]\](?!\])";
@@ -85,11 +88,11 @@ class syntax_plugin_webcomponent_dropdown extends DokuWiki_Syntax_Plugin
     {
 
 
-        $pattern = webcomponent::getContainerTagPattern(self::getTag());
-        $this->Lexer->addEntryPattern($pattern, $mode, 'plugin_' . webcomponent::PLUGIN_NAME . '_' . $this->getPluginComponent());
+        $pattern = PluginUtility::getContainerTagPattern(self::getTag());
+        $this->Lexer->addEntryPattern($pattern, $mode, 'plugin_' . PluginUtility::$PLUGIN_BASE_NAME . '_' . $this->getPluginComponent());
 
         // Link
-        $this->Lexer->addPattern(self::INTERNAL_LINK_PATTERN, 'plugin_' . webcomponent::PLUGIN_NAME . '_' . $this->getPluginComponent());
+        $this->Lexer->addPattern(self::INTERNAL_LINK_PATTERN, 'plugin_' . PluginUtility::$PLUGIN_BASE_NAME . '_' . $this->getPluginComponent());
 
 
     }
@@ -98,10 +101,10 @@ class syntax_plugin_webcomponent_dropdown extends DokuWiki_Syntax_Plugin
     {
 
 
-        $this->Lexer->addExitPattern('</' . self::getTag() . '>', 'plugin_' . webcomponent::PLUGIN_NAME . '_' . $this->getPluginComponent());
+        $this->Lexer->addExitPattern('</' . self::getTag() . '>', 'plugin_' . PluginUtility::$PLUGIN_BASE_NAME . '_' . $this->getPluginComponent());
 
         // Link
-        $this->Lexer->addPattern(self::INTERNAL_LINK_PATTERN, 'plugin_' . webcomponent::PLUGIN_NAME . '_' . $this->getPluginComponent());
+        $this->Lexer->addPattern(self::INTERNAL_LINK_PATTERN, 'plugin_' . PluginUtility::$PLUGIN_BASE_NAME . '_' . $this->getPluginComponent());
 
     }
 
@@ -127,7 +130,7 @@ class syntax_plugin_webcomponent_dropdown extends DokuWiki_Syntax_Plugin
 
                 // Suppress the tag name
                 $match = utf8_substr($match, strlen(self::getTag()) + 1, -1);
-                $parameters = webcomponent::parseMatch($match);
+                $parameters = PluginUtility::parseMatch($match);
                 return array($state, $parameters);
 
             case DOKU_LEXER_UNMATCHED :

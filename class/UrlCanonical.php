@@ -1,9 +1,11 @@
 <?php
 
+namespace ComboStrap;
+
 /**
  * Class urlCanonical with all canonical methodology
  */
-require_once(__DIR__ . '/PluginStatic.php');
+require_once(__DIR__ . '/PluginUtility.php');
 
 class UrlCanonical
 {
@@ -61,7 +63,7 @@ class UrlCanonical
 
         $res = $this->sqlite->query('delete from pages where id = ?', $id);
         if (!$res) {
-            PluginStatic::msg("Something went wrong when deleting a page");
+            PluginUtility::msg("Something went wrong when deleting a page");
         }
 
     }
@@ -101,7 +103,7 @@ class UrlCanonical
 
             $res = $this->sqlite->storeEntry('pages_alias', $row);
             if (!$res) {
-                PluginStatic::msg("There was a problem during pages_alias insertion");
+                PluginUtility::msg("There was a problem during pages_alias insertion");
             }
         }
 
@@ -117,7 +119,7 @@ class UrlCanonical
         // Canonical
         $res = $this->sqlite->query("select * from pages where CANONICAL = ? ", $canonical);
         if (!$res) {
-            PluginStatic::msg("An exception has occurred with the pages selection query");
+            PluginUtility::msg("An exception has occurred with the pages selection query");
         }
         $res2arr = $this->sqlite->res2arr($res);
         $this->sqlite->res_close($res);
@@ -164,7 +166,7 @@ class UrlCanonical
             // Do we have a page attached to this canonical
             $res = $this->sqlite->query("select ID from pages where CANONICAL = ?", $canonical);
             if (!$res) {
-                PluginStatic::msg("An exception has occurred with the search id from canonical");
+                PluginUtility::msg("An exception has occurred with the search id from canonical");
             }
             $idInDb = $this->sqlite->res2single($res);
             $this->sqlite->res_close($res);
@@ -173,12 +175,12 @@ class UrlCanonical
                 if (!page_exists($idInDb)) {
                     $res = $this->sqlite->query("delete from pages where ID = ?", $idInDb);
                     if (!$res) {
-                        PluginStatic::msg("An exception has occurred during the deletion of the page");
+                        PluginUtility::msg("An exception has occurred during the deletion of the page");
                     }
                     $this->sqlite->res_close($res);
 
                 } else {
-                    PluginStatic::msg("The page (" . $ID . ") and the page (" . $idInDb . ") have the same canonical.");
+                    PluginUtility::msg("The page (" . $ID . ") and the page (" . $idInDb . ") have the same canonical.");
                 }
                 $this->persistPageAlias($canonical, $idInDb);
             }
@@ -186,7 +188,7 @@ class UrlCanonical
             // Do we have a canonical on this page
             $res = $this->sqlite->query("select canonical from pages where ID = ?", $ID);
             if (!$res) {
-                PluginStatic::msg("An exception has occurred with the query");
+                PluginUtility::msg("An exception has occurred with the query");
             }
             $canonicalInDb = $this->sqlite->res2single($res);
             $this->sqlite->res_close($res);
@@ -204,7 +206,7 @@ class UrlCanonical
                 $statement = 'update pages set canonical = ? where id = ?';
                 $res = $this->sqlite->query($statement, $row);
                 if (!$res) {
-                    PluginStatic::msg("There was a problem during page update");
+                    PluginUtility::msg("There was a problem during page update");
                 }
                 $this->sqlite->res_close($res);
 
@@ -213,7 +215,7 @@ class UrlCanonical
                 if ($canonicalInDb == false) {
                     $res = $this->sqlite->storeEntry('pages', $row);
                     if (!$res) {
-                        PluginStatic::msg("There was a problem during pages insertion");
+                        PluginUtility::msg("There was a problem during pages insertion");
                     }
                     $this->sqlite->res_close($res);
                 }

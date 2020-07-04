@@ -1,19 +1,21 @@
 <?php
 
-require_once(__DIR__ . '/../webcomponent.php');
+use ComboStrap\PluginUtility;
+
+require_once(__DIR__ . '/../class/PLuginUtility.php');
 
 /**
  * Test the component plugin
  *
- * @group plugin_webcomponent
+ * @group plugin_combo
  * @group plugins
  */
-class plugin_webcomponent_teaser_test extends DokuWikiTest
+class plugin_combo_teaser_test extends DokuWikiTest
 {
 
     public function setUp()
     {
-        $this->pluginsEnabled[] = PluginStatic::$PLUGIN_BASE_NAME;
+        $this->pluginsEnabled[] = PluginUtility::$PLUGIN_BASE_NAME;
         parent::setUp();
     }
 
@@ -21,7 +23,7 @@ class plugin_webcomponent_teaser_test extends DokuWikiTest
     public function test_component_name()
     {
 
-        $componentName = syntax_plugin_webcomponent_card::getTag();
+        $componentName = syntax_plugin_combo_card::getTag();
 
         $this->assertEquals('card', $componentName);
 
@@ -30,7 +32,7 @@ class plugin_webcomponent_teaser_test extends DokuWikiTest
     public function test_base()
     {
 
-        $tag = syntax_plugin_webcomponent_card::getTag();
+        $tag = syntax_plugin_combo_card::getTag();
         $doku_text = '<' . $tag . ' style="width: 18rem;">' . DOKU_LF .
             '{{:allowclipboardhelper.jpg?30|}}' . DOKU_LF .
             '=== Teaser Title ===' . DOKU_LF .
@@ -60,7 +62,7 @@ class plugin_webcomponent_teaser_test extends DokuWikiTest
     public function test_two_teaser()
     {
 
-        $componentName = syntax_plugin_webcomponent_card::getTag();
+        $componentName = syntax_plugin_combo_card::getTag();
         $doku_text = '<' . $componentName . ' style="width: 18rem;">' . DOKU_LF .
             '{{:allowclipboardhelper.jpg?30|}}' . DOKU_LF .
             '=== Teaser Title ===' . DOKU_LF .

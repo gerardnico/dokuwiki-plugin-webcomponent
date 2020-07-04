@@ -5,18 +5,23 @@
  *
  * ie the {@link PageRules} class
  *
- * @group plugin_webcomponent
+ * @group plugin_combo
  * @group plugins
  *
  */
+
+use ComboStrap\PageRules;
+use ComboStrap\PluginUtility;
+use ComboStrap\UrlCanonical;
+
 require_once(__DIR__ . '/../class/PageRules.php');
 require_once(__DIR__ . '/../action/urlmanager.php');
-class plugin_webcomponent_url_manager_page_rules_test extends DokuWikiTest
+class plugin_combo_url_manager_page_rules_test extends DokuWikiTest
 {
 
     public function setUp()
     {
-        $this->pluginsEnabled[] = PluginStatic::$PLUGIN_BASE_NAME;
+        $this->pluginsEnabled[] = PluginUtility::$PLUGIN_BASE_NAME;
         $this->pluginsEnabled[] = 'sqlite';
         parent::setUp();
     }
@@ -29,7 +34,7 @@ class plugin_webcomponent_url_manager_page_rules_test extends DokuWikiTest
     public function test_externalRedirect_without_pattern()
     {
 
-        $pageRules = (new PageRules(PluginStatic::getSqlite()));
+        $pageRules = (new PageRules(PluginUtility::getSqlite()));
         $pageRules->deleteAll();
 
         $pattern = "ToBeRedirected";
@@ -57,7 +62,7 @@ class plugin_webcomponent_url_manager_page_rules_test extends DokuWikiTest
          */
         // Read only otherwise you are redirected to the Edit Mode
         global $AUTH_ACL;
-        $aclReadOnlyFile = PluginStatic::$DIR_RESOURCES . '/acl.auth.read_only.php';
+        $aclReadOnlyFile = PluginUtility::$DIR_RESOURCES . '/acl.auth.read_only.php';
         $AUTH_ACL = file($aclReadOnlyFile);
 
         $request = new TestRequest();
@@ -80,7 +85,7 @@ class plugin_webcomponent_url_manager_page_rules_test extends DokuWikiTest
     public function test_internalRedirectToExistingPage()
     {
 
-        $pageRules = new PageRules(PluginStatic::getSqlite());
+        $pageRules = new PageRules(PluginUtility::getSqlite());
         $pageRules->deleteAll();
 
         // in the $ID value, the first : is suppressed
@@ -94,11 +99,11 @@ class plugin_webcomponent_url_manager_page_rules_test extends DokuWikiTest
 
 
         // Set to search engine first but because of order of precedence, this should not happens
-        $conf ['plugin'][PluginStatic::$PLUGIN_BASE_NAME]['ActionReaderFirst'] = action_plugin_webcomponent_urlmanager::GO_TO_SEARCH_ENGINE;
+        $conf ['plugin'][PluginUtility::$PLUGIN_BASE_NAME]['ActionReaderFirst'] = action_plugin_combo_urlmanager::GO_TO_SEARCH_ENGINE;
 
         // Read only otherwise, you go in edit mode
         global $AUTH_ACL;
-        $aclReadOnlyFile = PluginStatic::$DIR_RESOURCES . '/acl.auth.read_only.php';
+        $aclReadOnlyFile = PluginUtility::$DIR_RESOURCES . '/acl.auth.read_only.php';
         $AUTH_ACL = file($aclReadOnlyFile);
 
 
@@ -123,7 +128,7 @@ class plugin_webcomponent_url_manager_page_rules_test extends DokuWikiTest
     public function test_internalRedirectWithSimplePattern()
     {
 
-        $pageRules = new PageRules(PluginStatic::getSqlite());
+        $pageRules = new PageRules(PluginUtility::getSqlite());
         $pageRules->deleteAll();
 
         // in the $ID value, the first : is suppressed
@@ -141,11 +146,11 @@ class plugin_webcomponent_url_manager_page_rules_test extends DokuWikiTest
 
 
         // Set to search engine first but because of order of precedence, this should not happens
-        $conf ['plugin'][PluginStatic::$PLUGIN_BASE_NAME]['ActionReaderFirst'] = action_plugin_webcomponent_urlmanager::GO_TO_SEARCH_ENGINE;
+        $conf ['plugin'][PluginUtility::$PLUGIN_BASE_NAME]['ActionReaderFirst'] = action_plugin_combo_urlmanager::GO_TO_SEARCH_ENGINE;
 
         // Read only otherwise, you go in edit mode
         global $AUTH_ACL;
-        $aclReadOnlyFile = PluginStatic::$DIR_RESOURCES . '/acl.auth.read_only.php';
+        $aclReadOnlyFile = PluginUtility::$DIR_RESOURCES . '/acl.auth.read_only.php';
         $AUTH_ACL = file($aclReadOnlyFile);
 
 
@@ -169,7 +174,7 @@ class plugin_webcomponent_url_manager_page_rules_test extends DokuWikiTest
     public function test_internalRedirectWithComplexPattern()
     {
 
-        $pageRules = new PageRules(PluginStatic::getSqlite());
+        $pageRules = new PageRules(PluginUtility::getSqlite());
         $pageRules->deleteAll();
 
         // in the $ID value, the first : is suppressed
@@ -187,11 +192,11 @@ class plugin_webcomponent_url_manager_page_rules_test extends DokuWikiTest
 
 
         // Set to search engine first but because of order of precedence, this should not happens
-        $conf ['plugin'][PluginStatic::$PLUGIN_BASE_NAME]['ActionReaderFirst'] = action_plugin_webcomponent_urlmanager::GO_TO_SEARCH_ENGINE;
+        $conf ['plugin'][PluginUtility::$PLUGIN_BASE_NAME]['ActionReaderFirst'] = action_plugin_combo_urlmanager::GO_TO_SEARCH_ENGINE;
 
         // Read only otherwise, you go in edit mode
         global $AUTH_ACL;
-        $aclReadOnlyFile = PluginStatic::$DIR_RESOURCES . '/acl.auth.read_only.php';
+        $aclReadOnlyFile = PluginUtility::$DIR_RESOURCES . '/acl.auth.read_only.php';
         $AUTH_ACL = file($aclReadOnlyFile);
 
 
@@ -224,7 +229,7 @@ class plugin_webcomponent_url_manager_page_rules_test extends DokuWikiTest
         saveWikiText($targetPage, 'Test ', 'but without any common name (namespace) in the path');
         idx_addPage($targetPage);
 
-        $pageRules = new PageRules(PluginStatic::getSqlite());
+        $pageRules = new PageRules(PluginUtility::getSqlite());
 
 
         $pageRules->deleteAll();

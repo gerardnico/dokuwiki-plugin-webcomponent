@@ -1,19 +1,25 @@
 <?php
 
-require_once(__DIR__ . '/../webcomponent.php');
+use ComboStrap\PluginUtility;
+
+require_once(__DIR__ . '/../class/PLuginUtility.php');
 
 
 
 /**
  * Test the component plugin
  *
- * @group plugin_webcomponent
+ * @group plugin_combo
  * @group plugins
  */
-class plugin_webcomponent_js_test extends DokuWikiTest
+class plugin_combo_js_test extends DokuWikiTest
 {
 
-    protected $pluginsEnabled = [webcomponent::PLUGIN_NAME,'sqlite'];
+    public function setUp()
+    {
+        $this->pluginsEnabled[] = PluginUtility::$PLUGIN_BASE_NAME;
+        parent::setUp();
+    }
 
 
     /**
@@ -44,14 +50,14 @@ class plugin_webcomponent_js_test extends DokuWikiTest
     {
 
         $test_name = 'test_js_show_query_string';
-        $pageId = webcomponent::getNameSpace() . $test_name;
+        $pageId = PluginUtility::getNameSpace() . $test_name;
         $doku_text = 'whatever';
         saveWikiText($pageId, $doku_text, $test_name);
         idx_addPage($pageId);
         $testRequest = new TestRequest();
         $testResponse = $testRequest->get(array('id' => $pageId));
         $jsSrcAttribute = $testResponse->queryHTML('script[src*="js.php"]' )->attr('src');
-        $pos = strpos($jsSrcAttribute,action_plugin_webcomponent_js::ACCESS_PROPERTY_KEY.'=public');
+        $pos = strpos($jsSrcAttribute,action_plugin_combo_js::ACCESS_PROPERTY_KEY.'=public');
         $this->assertEquals(true, $pos > 0);
 
 

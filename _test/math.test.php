@@ -1,19 +1,21 @@
 <?php
 
-require_once(__DIR__ . '/../webcomponent.php');
+use ComboStrap\PluginUtility;
+
+require_once(__DIR__ . '/../class/PLuginUtility.php');
 
 /**
  * Test the component plugin
  *
- * @group plugin_webcomponent
+ * @group plugin_combo
  * @group plugins
  */
-class plugin_webcomponent_math_test extends DokuWikiTest
+class plugin_combo_math_test extends DokuWikiTest
 {
 
     public function setUp()
     {
-        $this->pluginsEnabled[] = PluginStatic::$PLUGIN_BASE_NAME;
+        $this->pluginsEnabled[] = PluginUtility::$PLUGIN_BASE_NAME;
         $this->pluginsEnabled[] = 'sqlite';
         parent::setUp();
     }
@@ -24,10 +26,10 @@ class plugin_webcomponent_math_test extends DokuWikiTest
 
         $Node = $Node->firstChild;
         if ($Node != null)
-            $Text = getTextFromNode($Node, $Text);
+            $Text = self::getTextFromNode($Node, $Text);
 
         while($Node->nextSibling != null) {
-            $Text = getTextFromNode($Node->nextSibling, $Text);
+            $Text = self::getTextFromNode($Node->nextSibling, $Text);
             $Node = $Node->nextSibling;
         }
         return $Text;
@@ -39,7 +41,7 @@ class plugin_webcomponent_math_test extends DokuWikiTest
     public function test_component_name()
     {
 
-        $componentName = syntax_plugin_webcomponent_math::getComponentName();
+        $componentName = syntax_plugin_combo_math::getComponentName();
 
         $this->assertEquals('math', $componentName);
 
@@ -51,7 +53,7 @@ class plugin_webcomponent_math_test extends DokuWikiTest
     public function test_syntax_base()
     {
 
-        $elements = syntax_plugin_webcomponent_math::getElements();
+        $elements = syntax_plugin_combo_math::getElements();
         // The element is protecting, therefore a dokuwiki link should not be converted to a <a> Html element
         $content = '[[link]]';
         $info = array();
@@ -81,7 +83,7 @@ class plugin_webcomponent_math_test extends DokuWikiTest
         global $conf;
         $conf['template'] = 'bootie';
 
-        $pageId = webcomponent::getNameSpace() . 'test_library_base';
+        $pageId = PluginUtility::getNameSpace() . 'test_library_base';
 
         // For the first run, there is no metadata ?
         $meta = p_get_metadata($pageId);
@@ -99,7 +101,7 @@ class plugin_webcomponent_math_test extends DokuWikiTest
         // The request shows that there is no Mathjax library
         $testRequest = new TestRequest();
         $testResponse = $testRequest->get(array('id' => $pageId));
-        $divId = webcomponent::PLUGIN_NAME . '_' . syntax_plugin_webcomponent_math::getComponentName();
+        $divId = PluginUtility::$PLUGIN_BASE_NAME . '_' . syntax_plugin_combo_math::getComponentName();
         $mathJaxDiv = $testResponse->queryHTML('#' . $divId)->text();
         // The comments are not returned
         // therefore we don't see "<!--No Math expression on the page found-->"
@@ -118,7 +120,7 @@ class plugin_webcomponent_math_test extends DokuWikiTest
         global $conf;
         $conf['template'] = 'bootie';
 
-        $pageId = webcomponent::getNameSpace() . 'test_library_added';
+        $pageId = PluginUtility::getNameSpace() . 'test_library_added';
 
         // For the first run, there is no metadata ?
         $meta = p_get_metadata($pageId);
@@ -131,12 +133,12 @@ class plugin_webcomponent_math_test extends DokuWikiTest
 
         // We got meta
         $meta = p_get_metadata($pageId);
-        $this->assertEquals(true, $meta[syntax_plugin_webcomponent_math::MATH_EXPRESSION],"Metadata present");
+        $this->assertEquals(true, $meta[syntax_plugin_combo_math::MATH_EXPRESSION],"Metadata present");
 
         // Request, MathJax should be in the page
         $testRequest = new TestRequest();
         $testResponse = $testRequest->get(array('id' => $pageId));
-        $divId = webcomponent::PLUGIN_NAME . '_' . syntax_plugin_webcomponent_math::getComponentName();
+        $divId = PluginUtility::$PLUGIN_BASE_NAME . '_' . syntax_plugin_combo_math::getComponentName();
         $mathJaxDiv = $testResponse->queryHTML('#' . $divId)->text();
         $expected = strpos($mathJaxDiv,'MathJax.Hub.Config');
         $this->assertEquals(true, $expected > 0, "Mathjax library added");
@@ -150,12 +152,12 @@ class plugin_webcomponent_math_test extends DokuWikiTest
         // We got no meta anymore
         $meta = p_get_metadata($pageId);
         print_r($meta);
-        $this->assertEquals(false, $meta[syntax_plugin_webcomponent_math::MATH_EXPRESSION],"Metadata no more present");
+        $this->assertEquals(false, $meta[syntax_plugin_combo_math::MATH_EXPRESSION],"Metadata no more present");
 
         // No MathJax Anymore
         $testRequest = new TestRequest();
         $testResponse = $testRequest->get(array('id' => $pageId));
-        $divId = webcomponent::PLUGIN_NAME . '_' . syntax_plugin_webcomponent_math::getComponentName();
+        $divId = PluginUtility::$PLUGIN_BASE_NAME . '_' . syntax_plugin_combo_math::getComponentName();
         $mathJaxDiv = $testResponse->queryHTML('#' . $divId)->text();
         $expected = strpos($mathJaxDiv, 'MathJax.Hub.Config');
         $this->assertEquals(0, $expected, "No library anymore");

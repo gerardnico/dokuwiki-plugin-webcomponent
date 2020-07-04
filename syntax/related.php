@@ -3,6 +3,9 @@
  * DokuWiki Syntax Plugin Related.
  *
  */
+
+use ComboStrap\PluginUtility;
+
 if (!defined('DOKU_INC')) {
     die();
 }
@@ -16,7 +19,7 @@ require_once(DOKU_INC . 'inc/parserutils.php');
  *
  * The name of the class must follow a pattern (don't change it)
  */
-class syntax_plugin_webcomponent_related extends DokuWiki_Syntax_Plugin
+class syntax_plugin_combo_related extends DokuWiki_Syntax_Plugin
 {
 
 
@@ -37,7 +40,7 @@ class syntax_plugin_webcomponent_related extends DokuWiki_Syntax_Plugin
 
     public static function getElementId()
     {
-        return webcomponent::PLUGIN_NAME . "_" . self::getElementName();
+        return PluginUtility::$PLUGIN_BASE_NAME . "_" . self::getElementName();
     }
 
 
@@ -77,12 +80,12 @@ class syntax_plugin_webcomponent_related extends DokuWiki_Syntax_Plugin
     function connectTo($mode)
     {
         // The basic
-        $this->Lexer->addSpecialPattern('<' . self::getElementName() . '[^>]*>', $mode, 'plugin_' . webcomponent::PLUGIN_NAME . '_' . $this->getPluginComponent());
+        $this->Lexer->addSpecialPattern('<' . self::getElementName() . '[^>]*>', $mode, 'plugin_' . PluginUtility::$PLUGIN_BASE_NAME . '_' . $this->getPluginComponent());
 
         // To replace backlinks, you may add it in the configuration
         $extraPattern = $this->getConf(self::EXTRA_PATTERN_CONF);
         if ($extraPattern != "") {
-            $this->Lexer->addSpecialPattern($extraPattern, $mode, 'plugin_' . webcomponent::PLUGIN_NAME . '_' . $this->getPluginComponent());
+            $this->Lexer->addSpecialPattern($extraPattern, $mode, 'plugin_' . PluginUtility::$PLUGIN_BASE_NAME . '_' . $this->getPluginComponent());
         }
 
     }
@@ -165,7 +168,7 @@ class syntax_plugin_webcomponent_related extends DokuWiki_Syntax_Plugin
 
                 // Dokuwiki debug
                 dbglog("No Backlinks", "Related plugins: all backlinks for page: $id");
-                $renderer->doc .= "<strong>Plugin " . webcomponent::PLUGIN_NAME . " - Component " . self::getElementName() . ": " . $lang['nothingfound'] . "</strong>" . DOKU_LF;
+                $renderer->doc .= "<strong>Plugin " . PluginUtility::$PLUGIN_BASE_NAME . " - Component " . self::getElementName() . ": " . $lang['nothingfound'] . "</strong>" . DOKU_LF;
 
             } else {
 
@@ -253,7 +256,7 @@ class syntax_plugin_webcomponent_related extends DokuWiki_Syntax_Plugin
 
     public static function getElementName()
     {
-        return webcomponent::getTagName(get_called_class());
+        return PluginUtility::getTagName(get_called_class());
     }
 
 

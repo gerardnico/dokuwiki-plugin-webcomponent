@@ -3,14 +3,16 @@
 
 
 // must be run within Dokuwiki
+use ComboStrap\PluginUtility;
+
 if(!defined('DOKU_INC')) die();
 
 /**
- * Class syntax_plugin_webcomponent_note
+ * Class syntax_plugin_combo_note
  * Implementation of a note
  * called an alert in <a href="https://getbootstrap.com/docs/4.0/components/alerts/">bootstrap</a>
  */
-class syntax_plugin_webcomponent_note extends DokuWiki_Syntax_Plugin {
+class syntax_plugin_combo_note extends DokuWiki_Syntax_Plugin {
 
     const NOTE_TAG = "note";
 
@@ -65,8 +67,8 @@ class syntax_plugin_webcomponent_note extends DokuWiki_Syntax_Plugin {
     function connectTo($mode) {
 
         foreach ($this->getTags() as $tag) {
-            $pattern = webcomponent::getContainerTagPattern($tag);
-            $this->Lexer->addEntryPattern($pattern, $mode, 'plugin_' . webcomponent::PLUGIN_NAME . '_' . $this->getPluginComponent());
+            $pattern = PluginUtility::getContainerTagPattern($tag);
+            $this->Lexer->addEntryPattern($pattern, $mode, 'plugin_' . PluginUtility::$PLUGIN_BASE_NAME . '_' . $this->getPluginComponent());
         }
 
     }
@@ -74,7 +76,7 @@ class syntax_plugin_webcomponent_note extends DokuWiki_Syntax_Plugin {
     function postConnect() {
 
         foreach ($this->getTags() as $tag) {
-            $this->Lexer->addExitPattern('</' . $tag . '>', 'plugin_' . webcomponent::PLUGIN_NAME . '_' . $this->getPluginComponent());
+            $this->Lexer->addExitPattern('</' . $tag . '>', 'plugin_' . PluginUtility::$PLUGIN_BASE_NAME . '_' . $this->getPluginComponent());
         }
 
     }
@@ -84,7 +86,7 @@ class syntax_plugin_webcomponent_note extends DokuWiki_Syntax_Plugin {
         switch ($state) {
 
             case DOKU_LEXER_ENTER :
-                $attributes = webcomponent::getAttributes($match);
+                $attributes = PluginUtility::getAttributes($match);
                 return array($state, $attributes);
 
             case DOKU_LEXER_UNMATCHED :

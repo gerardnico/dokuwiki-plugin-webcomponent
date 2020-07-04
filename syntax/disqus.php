@@ -1,11 +1,13 @@
 <?php
 
-require_once(__DIR__ . '/../webcomponent.php');
+use ComboStrap\PluginUtility;
+
+require_once(__DIR__ . '/../class/PLuginUtility.php');
 
 /**
  * Disqus integration
  */
-class syntax_plugin_webcomponent_disqus extends DokuWiki_Syntax_Plugin
+class syntax_plugin_combo_disqus extends DokuWiki_Syntax_Plugin
 {
 
     const FORUM_SHORT_NAME = 'forumShortName';
@@ -62,8 +64,8 @@ class syntax_plugin_webcomponent_disqus extends DokuWiki_Syntax_Plugin
      */
     function connectTo($mode)
     {
-        $pattern = webcomponent::getLeafTagPattern(self::getTag());
-        $this->Lexer->addSpecialPattern($pattern, $mode, 'plugin_' . webcomponent::PLUGIN_NAME . '_' . $this->getPluginComponent());
+        $pattern = PluginUtility::getLeafTagPattern(self::getTag());
+        $this->Lexer->addSpecialPattern($pattern, $mode, 'plugin_' . PluginUtility::$PLUGIN_BASE_NAME . '_' . $this->getPluginComponent());
     }
 
     /**
@@ -90,7 +92,7 @@ class syntax_plugin_webcomponent_disqus extends DokuWiki_Syntax_Plugin
                 // Suppress the tag name
                 $match = str_replace(self::getTag(), "", $match);
                 // Get the parameters
-                $parameters = webcomponent::parseMatch($match);
+                $parameters = PluginUtility::parseMatch($match);
                 return array($state, $parameters);
 
 

@@ -4,10 +4,12 @@
 // https://developer.mozilla.org/en-US/docs/Web/HTML/Element/cite
 
 // must be run within Dokuwiki
+use ComboStrap\PluginUtility;
+
 if(!defined('DOKU_INC')) die();
 
 
-class syntax_plugin_webcomponent_brand extends DokuWiki_Syntax_Plugin {
+class syntax_plugin_combo_brand extends DokuWiki_Syntax_Plugin {
 
     /**
      * Syntax Type.
@@ -56,14 +58,14 @@ class syntax_plugin_webcomponent_brand extends DokuWiki_Syntax_Plugin {
      */
     function connectTo($mode) {
 
-        $pattern = webcomponent::getContainerTagPattern(self::getTag());
-        $this->Lexer->addEntryPattern($pattern, $mode, 'plugin_' . webcomponent::PLUGIN_NAME . '_' . $this->getPluginComponent());
+        $pattern = PluginUtility::getContainerTagPattern(self::getTag());
+        $this->Lexer->addEntryPattern($pattern, $mode, 'plugin_' . PluginUtility::$PLUGIN_BASE_NAME . '_' . $this->getPluginComponent());
 
     }
 
     function postConnect() {
 
-        $this->Lexer->addExitPattern('</' . self::getTag() . '>', 'plugin_' . webcomponent::PLUGIN_NAME . '_' . $this->getPluginComponent());
+        $this->Lexer->addExitPattern('</' . self::getTag() . '>', 'plugin_' . PluginUtility::$PLUGIN_BASE_NAME . '_' . $this->getPluginComponent());
 
     }
 
@@ -73,7 +75,7 @@ class syntax_plugin_webcomponent_brand extends DokuWiki_Syntax_Plugin {
 
             case DOKU_LEXER_ENTER :
                 $match = substr($match, strlen($this->getPluginComponent()) + 1, -1);
-                $parameters = webcomponent::parseMatch($match);
+                $parameters = PluginUtility::parseMatch($match);
                 return array($state, $parameters);
 
             case DOKU_LEXER_UNMATCHED :

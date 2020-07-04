@@ -7,7 +7,7 @@ if (!defined('DOKU_PLUGIN')) define('DOKU_PLUGIN', DOKU_INC . 'lib/plugins/');
 require_once(DOKU_PLUGIN . 'admin.php');
 require_once(DOKU_INC . 'inc/parser/xhtml.php');
 require_once(__DIR__ . '/../class/PageRules.php');
-require_once(__DIR__ . '/../class/PluginStatic.php');
+require_once(__DIR__ . '/../class/PluginUtility.php');
 
 /**
  * The admin pages
@@ -19,7 +19,7 @@ require_once(__DIR__ . '/../class/PluginStatic.php');
  *   * be equal to the name of the file
  *   * and have only letters
  */
-class admin_plugin_webcomponent_pagerules extends DokuWiki_Admin_Plugin
+class admin_plugin_combo_pagerules extends DokuWiki_Admin_Plugin
 {
 
 
@@ -36,7 +36,7 @@ class admin_plugin_webcomponent_pagerules extends DokuWiki_Admin_Plugin
 
 
     /**
-     * admin_plugin_webcomponent constructor.
+     * admin_plugin_combo constructor.
      *
      * Use the get function instead
      */
@@ -76,7 +76,7 @@ class admin_plugin_webcomponent_pagerules extends DokuWiki_Admin_Plugin
      */
     function getMenuText($language)
     {
-        return ucfirst(PluginStatic::$PLUGIN_NAME) . " - " . $this->lang['PageRules'];
+        return ucfirst(PluginUtility::$PLUGIN_NAME) . " - " . $this->lang['PageRules'];
     }
 
     public function getMenuIcon()
@@ -96,7 +96,7 @@ class admin_plugin_webcomponent_pagerules extends DokuWiki_Admin_Plugin
          * to not make sqlite mandatory everywhere
          */
         if ($this->pageRuleManager == null) {
-            $sqlite = PluginStatic::getSqlite();
+            $sqlite = PluginUtility::getSqlite();
             if ($sqlite == null) {
                 // A message should have already been send by the getSqlite function
                 return;
@@ -116,16 +116,16 @@ class admin_plugin_webcomponent_pagerules extends DokuWiki_Admin_Plugin
             $priority = $_POST[PageRules::PRIORITY_NAME];
 
             if ($matcher == null) {
-                msg('Matcher can not be null', PluginStatic::LVL_MSG_ERROR);
+                msg('Matcher can not be null', PluginUtility::LVL_MSG_ERROR);
                 return;
             }
             if ($target == null) {
-                msg('Target can not be null', PluginStatic::LVL_MSG_ERROR);
+                msg('Target can not be null', PluginUtility::LVL_MSG_ERROR);
                 return;
             }
 
             if ($matcher == $target) {
-                msg($this->lang['SameSourceAndTargetAndPage'] . ': ' . $matcher . '', PluginStatic::LVL_MSG_ERROR);
+                msg($this->lang['SameSourceAndTargetAndPage'] . ': ' . $matcher . '', PluginUtility::LVL_MSG_ERROR);
                 return;
             }
 
@@ -134,7 +134,7 @@ class admin_plugin_webcomponent_pagerules extends DokuWiki_Admin_Plugin
             } else {
                 $this->pageRuleManager->updateRule($id, $matcher, $target, $priority);
             }
-            msg($this->lang['Saved'], PluginStatic::LVL_MSG_INFO);
+            msg($this->lang['Saved'], PluginUtility::LVL_MSG_INFO);
 
 
         }
@@ -143,7 +143,7 @@ class admin_plugin_webcomponent_pagerules extends DokuWiki_Admin_Plugin
 
             $ruleId = $_POST[PageRules::ID_NAME];
             $this->pageRuleManager->deleteRule($ruleId);
-            msg($this->lang['Deleted'], PluginStatic::LVL_MSG_INFO);
+            msg($this->lang['Deleted'], PluginUtility::LVL_MSG_INFO);
 
         }
 

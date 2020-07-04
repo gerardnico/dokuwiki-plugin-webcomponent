@@ -3,11 +3,14 @@
  * DokuWiki Syntax Plugin Combostrap.
  *
  */
+
+use ComboStrap\PluginUtility;
+
 if (!defined('DOKU_INC')) {
     die();
 }
 
-require_once(__DIR__ . '/../webcomponent.php');
+require_once(__DIR__ . '/../class/PLuginUtility.php');
 
 /**
  * All DokuWiki plugins to extend the parser/rendering mechanism
@@ -17,7 +20,7 @@ require_once(__DIR__ . '/../webcomponent.php');
  * ie:
  *    syntax_plugin_PluginName_ComponentName
  */
-class syntax_plugin_webcomponent_cardcolumns extends DokuWiki_Syntax_Plugin
+class syntax_plugin_combo_cardcolumns extends DokuWiki_Syntax_Plugin
 {
 
 
@@ -77,7 +80,7 @@ class syntax_plugin_webcomponent_cardcolumns extends DokuWiki_Syntax_Plugin
     {
         foreach (self::getTags() as $tag) {
             $pattern = '<' . $tag . '.*?>(?=.*?</' . $tag . '>)';
-            $this->Lexer->addEntryPattern($pattern, $mode, 'plugin_' . webcomponent::PLUGIN_NAME . '_' . $this->getPluginComponent());
+            $this->Lexer->addEntryPattern($pattern, $mode, 'plugin_' . PluginUtility::$PLUGIN_BASE_NAME . '_' . $this->getPluginComponent());
         }
 
     }
@@ -85,7 +88,7 @@ class syntax_plugin_webcomponent_cardcolumns extends DokuWiki_Syntax_Plugin
     public function postConnect()
     {
         foreach (self::getTags() as $tag) {
-            $this->Lexer->addExitPattern('</' . $tag . '>', 'plugin_' . webcomponent::PLUGIN_NAME . '_' . $this->getPluginComponent());
+            $this->Lexer->addExitPattern('</' . $tag . '>', 'plugin_' . PluginUtility::$PLUGIN_BASE_NAME . '_' . $this->getPluginComponent());
         }
 
     }
@@ -116,7 +119,7 @@ class syntax_plugin_webcomponent_cardcolumns extends DokuWiki_Syntax_Plugin
                 foreach (self::getTags() as $tag) {
                     $match = str_replace( $tag, "",$match);
                 }
-                $parameters = webcomponent::parseMatch($match);
+                $parameters = PluginUtility::parseMatch($match);
                 return array($state, $parameters);
 
             case DOKU_LEXER_EXIT :

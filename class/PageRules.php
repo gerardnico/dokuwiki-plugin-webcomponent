@@ -1,11 +1,11 @@
 <?php
 
-
+namespace ComboStrap;
 /**
  * The manager that handles the redirection metadata
  *
  */
-require_once(__DIR__ . '/PluginStatic.php');
+require_once(__DIR__ . '/PluginUtility.php');
 
 class PageRules
 {
@@ -29,7 +29,7 @@ class PageRules
      * We need to pass it then
      * @param helper_plugin_sqlite $sqlite
      */
-    public function __construct(helper_plugin_sqlite $sqlite)
+    public function __construct($sqlite)
     {
         $this->sqlite = $sqlite;
     }
@@ -44,7 +44,7 @@ class PageRules
 
         $res = $this->sqlite->query('delete from PAGE_RULES where id = ?', $ruleId);
         if (!$res) {
-            PluginStatic::msg("Something went wrong when deleting the redirections");
+            PluginUtility::msg("Something went wrong when deleting the redirections");
         }
         $this->sqlite->res_close($res);
 
@@ -132,7 +132,7 @@ class PageRules
 
         $res = $this->sqlite->storeEntry('PAGE_RULES', $entry);
         if (!$res) {
-            PluginStatic::msg("There was a problem during insertion");
+            PluginUtility::msg("There was a problem during insertion");
         }
         $lastInsertId = $this->sqlite->getAdapter()->getDb()->lastInsertId();
         $this->sqlite->res_close($res);
@@ -155,7 +155,7 @@ class PageRules
         $statement = 'update PAGE_RULES set matcher = ?, target = ?, priority = ?, timestamp = ? where id = ?';
         $res = $this->sqlite->query($statement, $entry);
         if (!$res) {
-            PluginStatic::msg("There was a problem during the update");
+            PluginUtility::msg("There was a problem during the update");
         }
         $this->sqlite->res_close($res);
 
@@ -171,7 +171,7 @@ class PageRules
 
         $res = $this->sqlite->query("delete from PAGE_RULES");
         if (!$res) {
-            PluginStatic::msg('Errors during delete of all redirections');
+            PluginUtility::msg('Errors during delete of all redirections');
         }
         $this->sqlite->res_close($res);
 
@@ -186,7 +186,7 @@ class PageRules
 
         $res = $this->sqlite->query("select count(1) from PAGE_RULES");
         if (!$res) {
-            PluginStatic::msg('Errors during delete of all redirections');
+            PluginUtility::msg('Errors during delete of all redirections');
         }
         $value = $this->sqlite->res2single($res);
         $this->sqlite->res_close($res);

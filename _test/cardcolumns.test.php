@@ -1,21 +1,27 @@
 <?php
 
-require_once(__DIR__ . '/../webcomponent.php');
+use ComboStrap\PluginUtility;
+
+require_once(__DIR__ . '/../class/PluginUtility.php');
 /**
  * Test the component plugin
  *
- * @group plugin_webcomponent
+ * @group plugin_combo
  * @group plugins
  */
-class plugin_webcomponent_cardcolumns_test extends DokuWikiTest
+class plugin_combo_cardcolumns_test extends DokuWikiTest
 {
 
-    protected $pluginsEnabled = [webcomponent::PLUGIN_NAME];
+    public function setUp()
+    {
+        $this->pluginsEnabled[] = PluginUtility::$PLUGIN_BASE_NAME;
+        parent::setUp();
+    }
 
 
     public function test_component_name() {
 
-        $componentNames = syntax_plugin_webcomponent_cardcolumns::getTags();
+        $componentNames = syntax_plugin_combo_cardcolumns::getTags();
         $tags = array (
             'card-columns',
             'teaser-columns'
@@ -26,12 +32,12 @@ class plugin_webcomponent_cardcolumns_test extends DokuWikiTest
 
     public function test_base() {
 
-        $componentName = syntax_plugin_webcomponent_cardcolumns::getTags()[0];
+        $componentName = syntax_plugin_combo_cardcolumns::getTags()[0];
         $doku_text = '<'. $componentName .'>'.DOKU_LF.
-            '<'.syntax_plugin_webcomponent_card::getTag().' style="width: 18rem;">'.DOKU_LF.
+            '<'.syntax_plugin_combo_card::getTag().' style="width: 18rem;">'.DOKU_LF.
             '===== Title ====='.DOKU_LF.
             'Teaser Text'.DOKU_LF.
-            '</'.syntax_plugin_webcomponent_card::getTag().'>'.DOKU_LF.
+            '</'.syntax_plugin_combo_card::getTag().'>'.DOKU_LF.
             '</'.$componentName.'>';
 
         $info = array();

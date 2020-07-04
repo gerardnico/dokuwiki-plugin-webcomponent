@@ -1,11 +1,15 @@
 <?php
 
+namespace ComboStrap;
+
+use action_plugin_combo_urlmanager;
+
 include_once(__DIR__ . "/PagesIndex.php");
 
 /**
  * Class UrlManagerBestEndPage
  *
- * A class that implements the BestEndPage Algorithm for the {@link action_plugin_webcomponent_urlmanager urlManager}
+ * A class that implements the BestEndPage Algorithm for the {@link action_plugin_combo_urlmanager urlManager}
  */
 class UrlManagerBestEndPage
 {
@@ -86,13 +90,13 @@ class UrlManagerBestEndPage
 
         $return = array();
         global $conf;
-        $minimalScoreForARedirect = $conf['plugin'][PluginStatic::$PLUGIN_BASE_NAME][self::CONF_MINIMAL_SCORE_FOR_REDIRECT];
+        $minimalScoreForARedirect = $conf['plugin'][PluginUtility::$PLUGIN_BASE_NAME][self::CONF_MINIMAL_SCORE_FOR_REDIRECT];
 
         list($bestPageId, $bestScore) = self::getBestEndPageId($pageId);
         if ($bestPageId != null) {
-            $redirectType = action_plugin_webcomponent_urlmanager::REDIRECT_HTTP;
+            $redirectType = action_plugin_combo_urlmanager::REDIRECT_HTTP;
             if ($minimalScoreForARedirect != 0 && $bestScore >= $minimalScoreForARedirect) {
-                $redirectType = action_plugin_webcomponent_urlmanager::REDIRECT_ID;
+                $redirectType = action_plugin_combo_urlmanager::REDIRECT_ID;
             }
             $return = array(
                 $bestPageId,

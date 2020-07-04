@@ -1,20 +1,24 @@
 <?php
 /**
  *
- * Test the {@link action_plugin_webcomponent_urlmessage}
+ * Test the {@link action_plugin_combo_urlmessage}
  *
- * @group plugin_webcomponent
+ * @group plugin_combo
  * @group plugins
  *
  */
+
+use ComboStrap\PagesIndex;
+use ComboStrap\PluginUtility;
+
 require_once(__DIR__ . '/../action/urlmessage.php');
 
-class plugin_webcomponent_url_message_test extends DokuWikiTest
+class plugin_combo_url_message_test extends DokuWikiTest
 {
 
     public function setUp()
     {
-        $this->pluginsEnabled[] = PluginStatic::$PLUGIN_BASE_NAME;
+        $this->pluginsEnabled[] = PluginUtility::$PLUGIN_BASE_NAME;
         //$this->pluginsEnabled[] = 'sqlite';
         parent::setUp();
     }
@@ -41,12 +45,12 @@ class plugin_webcomponent_url_message_test extends DokuWikiTest
         $request = new TestRequest();
         $response = $request->get(array(
             'id' => $existingPage,
-            action_plugin_webcomponent_urlmessage::ORIGIN_PAGE => 'page that does not exist',
-            action_plugin_webcomponent_urlmessage::ORIGIN_TYPE => action_plugin_webcomponent_urlmanager::TARGET_ORIGIN_BEST_PAGE_NAME
+            action_plugin_combo_urlmessage::ORIGIN_PAGE => 'page that does not exist',
+            action_plugin_combo_urlmessage::ORIGIN_TYPE => action_plugin_combo_urlmanager::TARGET_ORIGIN_BEST_PAGE_NAME
         ), '/doku.php');
 
 
-        $href = $response->queryHTML('.' . action_plugin_webcomponent_urlmessage::REDIRECT_MANAGER_BOX_CLASS)->count();
+        $href = $response->queryHTML('.' . action_plugin_combo_urlmessage::REDIRECT_MANAGER_BOX_CLASS)->count();
         $this->assertEquals(1, $href, "A box message should be present");
 
         $href = $response->queryHTML('.managerreference > a' )->attr('href');

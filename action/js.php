@@ -9,7 +9,7 @@ if (!defined('DOKU_INC')) die();
 /**
  * Suppress the Javascript of Dokuwiki not needed on a page show
  */
-class action_plugin_webcomponent_js extends DokuWiki_Action_Plugin
+class action_plugin_combo_js extends DokuWiki_Action_Plugin
 {
 
     // Because the javascript is a second request call

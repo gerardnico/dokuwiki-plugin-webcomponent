@@ -1,5 +1,10 @@
 <?php
 
+use ComboStrap\PageRules;
+use ComboStrap\PluginUtility;
+use ComboStrap\UrlCanonical;
+use ComboStrap\UrlManagerBestEndPage;
+
 if (!defined('DOKU_INC')) die();
 if (!defined('DOKU_PLUGIN')) define('DOKU_PLUGIN', DOKU_INC . 'lib/plugins/');
 // Needed for the page lookup
@@ -13,13 +18,13 @@ require_once(__DIR__ . '/../class/UrlManagerBestEndPage.php');
 require_once(__DIR__ . '/urlmessage.php');
 
 /**
- * Class action_plugin_webcomponent_url
+ * Class action_plugin_combo_url
  *
  * The actual URL manager
  *
  *
  */
-class action_plugin_webcomponent_urlmanager extends DokuWiki_Action_Plugin
+class action_plugin_combo_urlmanager extends DokuWiki_Action_Plugin
 {
 
 
@@ -102,7 +107,7 @@ class action_plugin_webcomponent_urlmanager extends DokuWiki_Action_Plugin
         // because otherwise the sqlite plugin would become mandatory for all test
         // because dokuwiki instantiate all action class first
         if ($this->sqlite == null) {
-            $this->sqlite = PluginStatic::getSqlite();
+            $this->sqlite = PluginUtility::getSqlite();
             if ($this->sqlite == null) {
                 return false;
             } else {
@@ -113,7 +118,7 @@ class action_plugin_webcomponent_urlmanager extends DokuWiki_Action_Plugin
 
         global $INFO;
         if ($INFO['exists']) {
-            action_plugin_webcomponent_urlmessage::unsetNotification();
+            action_plugin_combo_urlmessage::unsetNotification();
             // Check if there is a canonical meta
             $this->canonicalManager->processCanonicalMeta();
             return false;
@@ -136,7 +141,7 @@ class action_plugin_webcomponent_urlmanager extends DokuWiki_Action_Plugin
                 $this->IdRedirect($targetPage, self::TARGET_ORIGIN_CANONICAL);
                 return true;
             } else {
-                PluginStatic::msg("The canonical page ({$targetPage}) from the ID ({$ID}) does not exist",PluginStatic::LVL_MSG_WARNING);
+                PluginUtility::msg("The canonical page ({$targetPage}) from the ID ({$ID}) does not exist",PluginUtility::LVL_MSG_WARNING);
             }
 
         }
@@ -351,7 +356,7 @@ class action_plugin_webcomponent_urlmanager extends DokuWiki_Action_Plugin
         $pageName = noNS($ID);
         if ($pageName != $conf['sidebar']) {
 
-            action_plugin_webcomponent_urlmessage::notify($ID, self::GO_TO_EDIT_MODE);
+            action_plugin_combo_urlmessage::notify($ID, self::GO_TO_EDIT_MODE);
 
         }
 
@@ -437,10 +442,10 @@ class action_plugin_webcomponent_urlmanager extends DokuWiki_Action_Plugin
         $this->logRedirection($ID, $target, $targetOrigin,self::REDIRECT_HTTP);
 
         // Notify
-        action_plugin_webcomponent_urlmessage::notify($ID, $targetOrigin);
+        action_plugin_combo_urlmessage::notify($ID, $targetOrigin);
 
         // An url ?
-        if (PluginStatic::isValidURL($target)) {
+        if (PluginUtility::isValidURL($target)) {
 
             $targetUrl = $target;
 
@@ -451,8 +456,8 @@ class action_plugin_webcomponent_urlmanager extends DokuWiki_Action_Plugin
 
             // Query String to pass the message
             $urlParams = array(
-                action_plugin_webcomponent_urlmessage::ORIGIN_PAGE => $ID,
-                action_plugin_webcomponent_urlmessage::ORIGIN_TYPE => $targetOrigin
+                action_plugin_combo_urlmessage::ORIGIN_PAGE => $ID,
+                action_plugin_combo_urlmessage::ORIGIN_TYPE => $targetOrigin
             );
 
             $targetUrl = wl($link[0], $urlParams, true, '&');
@@ -586,7 +591,7 @@ class action_plugin_webcomponent_urlmanager extends DokuWiki_Action_Plugin
         $res = $this->sqlite->storeEntry('redirections_log', $row);
 
         if (!$res) {
-            PluginStatic::msg("An error occurred");
+            PluginUtility::msg("An error occurred");
         }
 
     }
@@ -634,7 +639,7 @@ class action_plugin_webcomponent_urlmanager extends DokuWiki_Action_Plugin
         }
 
         // If this is an external redirect (other domain)
-        if (PluginStatic::isValidURL($calculatedTarget)) {
+        if (PluginUtility::isValidURL($calculatedTarget)) {
 
             $this->httpRedirect($calculatedTarget, self::TARGET_ORIGIN_PAGE_RULES, true);
             return true;
@@ -652,7 +657,7 @@ class action_plugin_webcomponent_urlmanager extends DokuWiki_Action_Plugin
 
         } else {
 
-            PluginStatic::msg("The calculated target page ($calculatedTarget) (for the non-existent page `$ID` with the matcher `$ruleMatcher`) does not exist",PluginStatic::LVL_MSG_ERROR);
+            PluginUtility::msg("The calculated target page ($calculatedTarget) (for the non-existent page `$ID` with the matcher `$ruleMatcher`) does not exist",PluginUtility::LVL_MSG_ERROR);
             return false;
 
         }

@@ -4,10 +4,12 @@
 
 
 // must be run within Dokuwiki
+use ComboStrap\PluginUtility;
+
 if(!defined('DOKU_INC')) die();
 
 
-class syntax_plugin_webcomponent_search extends DokuWiki_Syntax_Plugin {
+class syntax_plugin_combo_search extends DokuWiki_Syntax_Plugin {
 
     function getType() {
         return 'substition';
@@ -29,7 +31,7 @@ class syntax_plugin_webcomponent_search extends DokuWiki_Syntax_Plugin {
 
     function connectTo($mode) {
 
-        $this->Lexer->addSpecialPattern('<' . self::getTag() . '[^>]*>',$mode,'plugin_' . webcomponent::PLUGIN_NAME . '_' . $this->getPluginComponent());
+        $this->Lexer->addSpecialPattern('<' . self::getTag() . '[^>]*>',$mode,'plugin_' . PluginUtility::$PLUGIN_BASE_NAME . '_' . $this->getPluginComponent());
 
     }
 
@@ -43,7 +45,7 @@ class syntax_plugin_webcomponent_search extends DokuWiki_Syntax_Plugin {
                     'autocomplete' => true
                 );
                 $match = utf8_substr($match, strlen($this->getPluginComponent()) + 1, -1);
-                $parameters = array_merge($init, webcomponent::parseMatch($match));
+                $parameters = array_merge($init, PluginUtility::parseMatch($match));
                 return array($state, $parameters);
 
         }

@@ -12,7 +12,7 @@ if (!defined('DOKU_PLUGIN')) define('DOKU_PLUGIN', DOKU_INC . 'lib/plugins/');
  *
  */
 
-class action_plugin_webcomponent_metamessage extends DokuWiki_Action_Plugin
+class action_plugin_combo_metamessage extends DokuWiki_Action_Plugin
 {
 
     // a class can not start with a number then webcomponent is not a valid class name
@@ -51,7 +51,7 @@ class action_plugin_webcomponent_metamessage extends DokuWiki_Action_Plugin
             ptln('<div class="alert alert-success ' . self::META_MESSAGE_BOX_CLASS . '" role="alert">');
 
             global $ID;
-            $canonical = p_get_metadata($ID, action_plugin_webcomponent_metacanonical::CANONICAL_PROPERTY);
+            $canonical = p_get_metadata($ID, action_plugin_combo_metacanonical::CANONICAL_PROPERTY);
             if ($canonical) {
                 print $canonical;
             } else {

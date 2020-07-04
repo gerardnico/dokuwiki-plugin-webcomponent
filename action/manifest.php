@@ -13,7 +13,7 @@ if (!defined('DOKU_INC')) die();
  *
  */
 
-class action_plugin_webcomponent_manifest extends DokuWiki_Action_Plugin
+class action_plugin_combo_manifest extends DokuWiki_Action_Plugin
 {
 
 

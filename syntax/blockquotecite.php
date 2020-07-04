@@ -4,10 +4,12 @@
 // https://developer.mozilla.org/en-US/docs/Web/HTML/Element/cite
 
 // must be run within Dokuwiki
+use ComboStrap\PluginUtility;
+
 if (!defined('DOKU_INC')) die();
 
 
-class syntax_plugin_webcomponent_blockquotecite extends DokuWiki_Syntax_Plugin
+class syntax_plugin_combo_blockquotecite extends DokuWiki_Syntax_Plugin
 {
 
 
@@ -37,9 +39,9 @@ class syntax_plugin_webcomponent_blockquotecite extends DokuWiki_Syntax_Plugin
 
     function connectTo($mode)
     {
-        if ($mode == "plugin_webcomponent_blockquote") {
+        if ($mode == "plugin_combo_blockquote") {
             $pattern = '<' . self::getTag() . '.*?>(?=.*?</' . self::getTag() . '>)';
-            $this->Lexer->addEntryPattern($pattern, $mode, 'plugin_' . webcomponent::PLUGIN_NAME . '_' . $this->getPluginComponent());
+            $this->Lexer->addEntryPattern($pattern, $mode, 'plugin_' . PluginUtility::$PLUGIN_BASE_NAME . '_' . $this->getPluginComponent());
         }
     }
 
@@ -47,7 +49,7 @@ class syntax_plugin_webcomponent_blockquotecite extends DokuWiki_Syntax_Plugin
     function postConnect()
     {
 
-        $this->Lexer->addExitPattern('</' . self::getTag() . '>', 'plugin_' . webcomponent::PLUGIN_NAME . '_' . $this->getPluginComponent());
+        $this->Lexer->addExitPattern('</' . self::getTag() . '>', 'plugin_' . PluginUtility::$PLUGIN_BASE_NAME . '_' . $this->getPluginComponent());
 
     }
 

@@ -4,11 +4,14 @@
  * Implementatiojn of https://getbootstrap.com/docs/4.1/content/typography/#blockquotes
  *
  */
+
+use ComboStrap\PluginUtility;
+
 if (!defined('DOKU_INC')) {
     die();
 }
 
-require_once(__DIR__ . '/../webcomponent.php');
+require_once(__DIR__ . '/../class/PLuginUtility.php');
 
 /**
  * All DokuWiki plugins to extend the parser/rendering mechanism
@@ -18,7 +21,7 @@ require_once(__DIR__ . '/../webcomponent.php');
  * ie:
  *    syntax_plugin_PluginName_ComponentName
  */
-class syntax_plugin_webcomponent_blockquote extends DokuWiki_Syntax_Plugin
+class syntax_plugin_combo_blockquote extends DokuWiki_Syntax_Plugin
 {
 
 
@@ -83,18 +86,18 @@ class syntax_plugin_webcomponent_blockquote extends DokuWiki_Syntax_Plugin
     function connectTo($mode)
     {
 
-        $pattern = webcomponent::getContainerTagPattern($this->getPluginComponent());
-        $this->Lexer->addEntryPattern($pattern, $mode, 'plugin_' . webcomponent::PLUGIN_NAME . '_' . $this->getPluginComponent());
+        $pattern = PluginUtility::getContainerTagPattern($this->getPluginComponent());
+        $this->Lexer->addEntryPattern($pattern, $mode, 'plugin_' . PluginUtility::$PLUGIN_BASE_NAME . '_' . $this->getPluginComponent());
 
     }
 
     public function postConnect()
     {
 
-        $this->Lexer->addExitPattern('</' . self::getTagName() . '>', 'plugin_' . webcomponent::PLUGIN_NAME . '_' . $this->getPluginComponent());
+        $this->Lexer->addExitPattern('</' . self::getTagName() . '>', 'plugin_' . PluginUtility::$PLUGIN_BASE_NAME . '_' . $this->getPluginComponent());
 
         // Receive the image
-        $this->Lexer->addPattern(self::IMAGE_PATTERN, 'plugin_' . webcomponent::PLUGIN_NAME . '_' . $this->getPluginComponent());
+        $this->Lexer->addPattern(self::IMAGE_PATTERN, 'plugin_' . PluginUtility::$PLUGIN_BASE_NAME . '_' . $this->getPluginComponent());
 
     }
 
@@ -119,7 +122,7 @@ class syntax_plugin_webcomponent_blockquote extends DokuWiki_Syntax_Plugin
             case DOKU_LEXER_ENTER:
                 // Suppress the component name
                 $match = substr($match, strlen($this->getPluginComponent()) + 1, -1);
-                $parameters = webcomponent::parseMatch($match);
+                $parameters = PluginUtility::parseMatch($match);
                 return array($state, $parameters);
 
             case DOKU_LEXER_UNMATCHED :
@@ -128,7 +131,7 @@ class syntax_plugin_webcomponent_blockquote extends DokuWiki_Syntax_Plugin
             case DOKU_LEXER_MATCHED :
 
                 $parameters = array();
-                $citeTag = syntax_plugin_webcomponent_cite::getTag();
+                $citeTag = syntax_plugin_combo_cite::getTag();
                 if (preg_match('/<' . $citeTag . '>(.*)<\/' . $citeTag . '>/msSi', $match, $matches)) {
                     // We have a citation
                     $parameters['cite']['content'] = $matches[1];

@@ -2,12 +2,12 @@
 /**
  * Tests over DokuWiki function for the webcomponent plugin
  *
- * @group plugin_webcomponent
+ * @group plugin_combo
  * @group plugins
  */
 
 
-class plugin_webcomponent_dokuwiki_test extends DokuWikiTest
+class plugin_combo_dokuwiki_test extends DokuWikiTest
 {
 
 

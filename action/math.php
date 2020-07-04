@@ -4,14 +4,16 @@
  *
  */
 
+use ComboStrap\PluginUtility;
+
 if (!defined('DOKU_INC')) die();
-require_once(__DIR__ . '/../webcomponent.php');
+require_once(__DIR__ . '/../class/PLuginUtility.php');
 require_once(__DIR__ . '/../syntax/math.php');
 
 /**
  * Math
  */
-class action_plugin_webcomponent_math extends DokuWiki_Action_Plugin
+class action_plugin_combo_math extends DokuWiki_Action_Plugin
 {
 
 
@@ -51,10 +53,10 @@ class action_plugin_webcomponent_math extends DokuWiki_Action_Plugin
         // Check metadata to see if there is a math syntax
         // https://www.dokuwiki.org/devel:metadata#metadata_index
         global $ID;
-        $isMathExpression = p_get_metadata($ID, syntax_plugin_webcomponent_math::MATH_EXPRESSION);
+        $isMathExpression = p_get_metadata($ID, syntax_plugin_combo_math::MATH_EXPRESSION);
 
         // Node Id
-        $math_div_id = webcomponent::PLUGIN_NAME . '_' . syntax_plugin_webcomponent_math::getComponentName();
+        $math_div_id = PluginUtility::$PLUGIN_BASE_NAME . '_' . syntax_plugin_combo_math::getComponentName();
         ptln('<div id="' . $math_div_id . '">');
         if ($isMathExpression) {
 

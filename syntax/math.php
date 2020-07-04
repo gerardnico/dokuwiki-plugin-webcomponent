@@ -1,13 +1,15 @@
 <?php
 
+use ComboStrap\PluginUtility;
+
 if (!defined('DOKU_INC')) die();
-require_once(__DIR__ . '/../webcomponent.php');
+require_once(__DIR__ . '/../class/PLuginUtility.php');
 
 
 /**
- * Class syntax_plugin_webcomponent_math
+ * Class syntax_plugin_combo_math
  */
-class syntax_plugin_webcomponent_math extends DokuWiki_Syntax_Plugin
+class syntax_plugin_combo_math extends DokuWiki_Syntax_Plugin
 {
 
     const MATH_EXPRESSION = 'math_expression';
@@ -73,8 +75,8 @@ class syntax_plugin_webcomponent_math extends DokuWiki_Syntax_Plugin
         // Add the entry patterns
         foreach (self::getElements() as $element) {
 
-            $pattern = webcomponent::getContainerTagPattern($element);
-            $this->Lexer->addEntryPattern($pattern, $mode, 'plugin_' . webcomponent::PLUGIN_NAME . '_' . $this->getPluginComponent());
+            $pattern = PluginUtility::getContainerTagPattern($element);
+            $this->Lexer->addEntryPattern($pattern, $mode, 'plugin_' . PluginUtility::$PLUGIN_BASE_NAME . '_' . $this->getPluginComponent());
 
         }
 
@@ -86,7 +88,7 @@ class syntax_plugin_webcomponent_math extends DokuWiki_Syntax_Plugin
     {
 
         foreach (self::getElements() as $element) {
-            $this->Lexer->addExitPattern('</' . $element . '>', 'plugin_' . webcomponent::PLUGIN_NAME . '_' . $this->getPluginComponent());
+            $this->Lexer->addExitPattern('</' . $element . '>', 'plugin_' . PluginUtility::$PLUGIN_BASE_NAME . '_' . $this->getPluginComponent());
         }
 
     }
@@ -108,7 +110,7 @@ class syntax_plugin_webcomponent_math extends DokuWiki_Syntax_Plugin
 //        global $ID;
 //        p_set_metadata(
 //            $ID,
-//            array(syntax_plugin_webcomponent_math::MATH_EXPRESSION => false),
+//            array(syntax_plugin_combo_math::MATH_EXPRESSION => false),
 //            $render = false,
 //            $persistent = true
 //        );
@@ -170,12 +172,12 @@ class syntax_plugin_webcomponent_math extends DokuWiki_Syntax_Plugin
 
     static public function getElements()
     {
-        return webcomponent::getTags(get_called_class());
+        return PluginUtility::getTags(get_called_class());
     }
 
     public static function getComponentName()
     {
-        return webcomponent::getTagName(get_called_class());
+        return PluginUtility::getTagName(get_called_class());
     }
 
 }

@@ -1,5 +1,8 @@
 <?php
 
+use ComboStrap\PagesIndex;
+use ComboStrap\PluginUtility;
+
 if (!defined('DOKU_INC')) die();
 if (!defined('DOKU_PLUGIN')) define('DOKU_PLUGIN', DOKU_INC . 'lib/plugins/');
 
@@ -16,9 +19,9 @@ require_once(__DIR__ . '/../class/message.model.php');
  *
  *
  */
-require_once(__DIR__ . '/../class/message.model.php');
 
-class action_plugin_webcomponent_urlmessage extends DokuWiki_Action_Plugin
+
+class action_plugin_combo_urlmessage extends DokuWiki_Action_Plugin
 {
 
     // a class can not start with a number then webcomponent is not a valid class name
@@ -94,7 +97,7 @@ class action_plugin_webcomponent_urlmessage extends DokuWiki_Action_Plugin
         // Are we a test call
         // The redirection does not exist the process otherwise the test fails
         global $ID;
-        if ($ID == $pageIdOrigin && action_plugin_webcomponent_urlmanager::GO_TO_EDIT_MODE != $redirectSource) {
+        if ($ID == $pageIdOrigin && action_plugin_combo_urlmanager::GO_TO_EDIT_MODE != $redirectSource) {
             return;
         }
 
@@ -102,32 +105,32 @@ class action_plugin_webcomponent_urlmessage extends DokuWiki_Action_Plugin
 
             switch ($redirectSource) {
 
-                case action_plugin_webcomponent_urlmanager::TARGET_ORIGIN_PAGE_RULES:
+                case action_plugin_combo_urlmanager::TARGET_ORIGIN_PAGE_RULES:
                     $message->addContent(sprintf($this->getLang('message_redirected_by_redirect'), hsc($pageIdOrigin)));
                     $message->setType(Message404::TYPE_CLASSIC);
                     break;
 
-                case action_plugin_webcomponent_urlmanager::TARGET_ORIGIN_START_PAGE:
+                case action_plugin_combo_urlmanager::TARGET_ORIGIN_START_PAGE:
                     $message->addContent(sprintf($this->lang['message_redirected_to_startpage'], hsc($pageIdOrigin)));
                     $message->setType(Message404::TYPE_WARNING);
                     break;
 
-                case  action_plugin_webcomponent_urlmanager::TARGET_ORIGIN_BEST_PAGE_NAME:
+                case  action_plugin_combo_urlmanager::TARGET_ORIGIN_BEST_PAGE_NAME:
                     $message->addContent(sprintf($this->lang['message_redirected_to_bestpagename'], hsc($pageIdOrigin)));
                     $message->setType(Message404::TYPE_WARNING);
                     break;
 
-                case action_plugin_webcomponent_urlmanager::TARGET_ORIGIN_BEST_NAMESPACE:
+                case action_plugin_combo_urlmanager::TARGET_ORIGIN_BEST_NAMESPACE:
                     $message->addContent(sprintf($this->lang['message_redirected_to_bestnamespace'], hsc($pageIdOrigin)));
                     $message->setType(Message404::TYPE_WARNING);
                     break;
 
-                case action_plugin_webcomponent_urlmanager::TARGET_ORIGIN_SEARCH_ENGINE:
+                case action_plugin_combo_urlmanager::TARGET_ORIGIN_SEARCH_ENGINE:
                     $message->addContent(sprintf($this->lang['message_redirected_to_searchengine'], hsc($pageIdOrigin)));
                     $message->setType(Message404::TYPE_WARNING);
                     break;
 
-                case action_plugin_webcomponent_urlmanager::GO_TO_EDIT_MODE:
+                case action_plugin_combo_urlmanager::GO_TO_EDIT_MODE:
                     $message->addContent($this->lang['message_redirected_to_edit_mode']);
                     $message->setType(Message404::TYPE_CLASSIC);
                     break;
@@ -136,7 +139,7 @@ class action_plugin_webcomponent_urlmessage extends DokuWiki_Action_Plugin
 
             // Add a list of page with the same name to the message
             // if the redirections is not planned
-            if ($redirectSource != action_plugin_webcomponent_urlmanager::TARGET_ORIGIN_PAGE_RULES) {
+            if ($redirectSource != action_plugin_combo_urlmanager::TARGET_ORIGIN_PAGE_RULES) {
                 $this->addToMessagePagesWithSameName($message, $pageIdOrigin);
             }
 
@@ -225,7 +228,7 @@ class action_plugin_webcomponent_urlmessage extends DokuWiki_Action_Plugin
 
             print $message->getContent();
 
-            print '<div class="managerreference">' . $this->lang['message_come_from'] . ' <a href="' . $pluginInfo['url'] . '/'.action_plugin_webcomponent_urlmanager::CANONICAL.'" class="urlextern" title="' . $pluginInfo['desc'] . '" >Url Manager</a>.</div>';
+            print '<div class="managerreference">' . $this->lang['message_come_from'] . ' <a href="' . $pluginInfo['domain'] . '/'.action_plugin_combo_urlmanager::CANONICAL.'" class="urlextern" title="' . $pluginInfo['desc'] . '" >Url Manager</a>.</div>';
             print('</div>');
 
         }
@@ -327,7 +330,7 @@ class action_plugin_webcomponent_urlmessage extends DokuWiki_Action_Plugin
         if (!$result) {
             // Session is really not a well known mechanism
             // Set this error in a info level to not fail the test
-            PluginStatic::msg("Failure to write the session", PluginStatic::LVL_MSG_INFO);
+            PluginUtility::msg("Failure to write the session", PluginUtility::LVL_MSG_INFO);
         }
 
     }

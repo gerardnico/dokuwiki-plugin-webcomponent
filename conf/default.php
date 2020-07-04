@@ -34,16 +34,16 @@ $conf['extra_pattern'] = '{{backlinks>.}}';
 $conf['forumShortName'] = '';
 
 /**
- * ie {@link action_plugin_webcomponent_urlmanager::GO_TO_BEST_END_PAGE_NAME}
+ * ie {@link action_plugin_combo_urlmanager::GO_TO_BEST_END_PAGE_NAME}
  */
 $conf['ActionReaderFirst']  = 'GoToBestEndPageName';
 
 /**
- * ie {@link action_plugin_webcomponent_urlmanager::GO_TO_BEST_PAGE_NAME}
+ * ie {@link action_plugin_combo_urlmanager::GO_TO_BEST_PAGE_NAME}
  */
 $conf['ActionReaderSecond'] = 'GoToBestPageName';
 /**
- * ie {@link action_plugin_webcomponent_urlmanager::GO_TO_SEARCH_ENGINE}
+ * ie {@link action_plugin_combo_urlmanager::GO_TO_SEARCH_ENGINE}
  */
 $conf['ActionReaderThird']  = 'GoToSearchEngine';
 $conf['GoToEditMode'] = 1;
@@ -65,7 +65,7 @@ $conf['MinimalNamesCountForAutomaticCanonical'] = 0;
 
 /**
  * Icon Namespace
- * See {@link syntax_plugin_webcomponent_icon::CONF_ICONS_MEDIA_NAMESPACE}
- * See {@link syntax_plugin_webcomponent_icon::CONF_ICONS_MEDIA_NAMESPACE_DEFAULT}
+ * See {@link syntax_plugin_combo_icon::CONF_ICONS_MEDIA_NAMESPACE}
+ * See {@link syntax_plugin_combo_icon::CONF_ICONS_MEDIA_NAMESPACE_DEFAULT}
  */
 $conf['icons_namespace']=":combostrap:icons";

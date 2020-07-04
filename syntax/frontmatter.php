@@ -19,6 +19,9 @@
  * https://www.dokuwiki.org/plugin:struct
  *
  */
+
+use ComboStrap\PluginUtility;
+
 if (!defined('DOKU_INC')) {
     die();
 }
@@ -27,7 +30,7 @@ if (!defined('DOKU_INC')) {
  * All DokuWiki plugins to extend the parser/rendering mechanism
  * need to inherit from this class
  */
-class syntax_plugin_webcomponent_frontmatter extends DokuWiki_Syntax_Plugin
+class syntax_plugin_combo_frontmatter extends DokuWiki_Syntax_Plugin
 {
 
     /**
@@ -65,7 +68,7 @@ class syntax_plugin_webcomponent_frontmatter extends DokuWiki_Syntax_Plugin
     {
         if ($mode == "base") {
             // only from the top
-            $this->Lexer->addSpecialPattern('---json.*?---', $mode, 'plugin_' . webcomponent::PLUGIN_NAME . '_' . $this->getPluginComponent());
+            $this->Lexer->addSpecialPattern('---json.*?---', $mode, 'plugin_' . PluginUtility::$PLUGIN_BASE_NAME . '_' . $this->getPluginComponent());
         }
     }
 
@@ -109,9 +112,9 @@ class syntax_plugin_webcomponent_frontmatter extends DokuWiki_Syntax_Plugin
             }
 
             // Processing should not be defined by key
-            if (array_key_exists(action_plugin_webcomponent_metacanonical::CANONICAL_PROPERTY, $json)) {
+            if (array_key_exists(action_plugin_combo_metacanonical::CANONICAL_PROPERTY, $json)) {
                 global $ID;
-                p_set_metadata($ID, array(action_plugin_webcomponent_metacanonical::CANONICAL_PROPERTY => $json[action_plugin_webcomponent_metacanonical::CANONICAL_PROPERTY]));
+                p_set_metadata($ID, array(action_plugin_combo_metacanonical::CANONICAL_PROPERTY => $json[action_plugin_combo_metacanonical::CANONICAL_PROPERTY]));
             }
 
             return array($json);

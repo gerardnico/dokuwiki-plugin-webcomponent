@@ -1,9 +1,9 @@
 <?php
 
 if (!defined('DOKU_INC')) die();
-require_once(__DIR__ . '/../webcomponent.php');
+require_once(__DIR__ . '/../class/PLuginUtility.php');
 
-class action_plugin_webcomponent_blockquote extends DokuWiki_Action_Plugin
+class action_plugin_combo_blockquote extends DokuWiki_Action_Plugin
 {
 
     /**
@@ -22,7 +22,7 @@ class action_plugin_webcomponent_blockquote extends DokuWiki_Action_Plugin
         $event->data[] = array(
             'type' => 'format',
             'title' => 'blockquote',
-            'icon' => '../../plugins/' . webcomponent::PLUGIN_NAME . '/images/blockquote-icon.png',
+            'icon' => '../../plugins/' . PluginUtility::$PLUGIN_BASE_NAME . '/images/blockquote-icon.png',
             'open' => '<blockquote>',
             'close' => '</blockquote>',
 

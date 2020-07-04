@@ -1,12 +1,14 @@
 <?php
 
-require_once(__DIR__ . '/../class/PluginStatic.php');
-class dokuwiki_plugin_webcomponent_sqlite_test extends DokuWikiTest
+use ComboStrap\PluginUtility;
+
+require_once(__DIR__ . '/../class/PluginUtility.php');
+class dokuwiki_plugin_combo_sqlite_test extends DokuWikiTest
 {
 
     public function setUp()
     {
-        $this->pluginsEnabled[] = PluginStatic::$PLUGIN_BASE_NAME;
+        $this->pluginsEnabled[] = PluginUtility::$PLUGIN_BASE_NAME;
 
         parent::setUp();
 

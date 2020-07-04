@@ -1,21 +1,23 @@
 <?php
 
-require_once(__DIR__ . '/../webcomponent.php');
+use ComboStrap\PluginUtility;
+
+require_once(__DIR__ . '/../class/PluginUtility.php');
 
 /**
- * Test the component plugin
+ * Test the component plugin {@link ComboStrap\PluginUtility} class
  *
- * @group plugin_webcomponent
+ * @group plugin_combo
  * @group plugins
  */
-class plugin_webcomponent_test extends DokuWikiTest
+class plugin_combo_plugin_utility_test extends DokuWikiTest
 {
 
 
     public function test_parse_parameters_base()
     {
         $match = ' class="nico"';
-        $parameters = webcomponent::parseMatch($match);
+        $parameters = PluginUtility::parseMatch($match);
         $this->assertEquals("nico", $parameters["class"]);
 
     }
@@ -24,7 +26,7 @@ class plugin_webcomponent_test extends DokuWikiTest
     {
 
         $match = ' class="" ';
-        $parameters = webcomponent::parseMatch($match);
+        $parameters = PluginUtility::parseMatch($match);
         $this->assertEquals("", $parameters["class"]);
         $this->assertEquals(true, array_key_exists("class",$parameters));
 
@@ -39,7 +41,7 @@ class plugin_webcomponent_test extends DokuWikiTest
         $classes = "class1 class2";
         $style = 'width:12rem; height:13rem';
         $match = '<icon class="'.$classes. '" style="' . $style . '" whatever="yolo"/>';
-        $parameters = webcomponent::getAttributes($match);
+        $parameters = PluginUtility::getAttributes($match);
 
         $this->assertEquals($classes, $parameters["class"]);
         $this->assertEquals($style, $parameters["style"]);
@@ -49,7 +51,7 @@ class plugin_webcomponent_test extends DokuWikiTest
          * Container tag
          */
         $match = '<icon class="'.$classes. '" style="' . $style . '" whatever="yolo">';
-        $parameters = webcomponent::getAttributes($match);
+        $parameters = PluginUtility::getAttributes($match);
 
         $this->assertEquals($classes, $parameters["class"]);
         $this->assertEquals($style, $parameters["style"]);

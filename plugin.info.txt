@@ -1,7 +1,8 @@
-base    webcomponent
+base    combo
 author  Nicolas GERARD
-email   nico@bytle.net
+email   support@combostrap.com
 date    2019-06-14
-name    Combostraps Plugin
-desc    A collection of Dokuwiki Plugins from UI to SEO and Url management
-url     https://combostrap.com
+name    Combo Plugin
+desc    A collection of Dokuwiki Plugins from UI to SEO via Url management
+url     https://combostrap.com/combo
+domain  https://combostrap.com

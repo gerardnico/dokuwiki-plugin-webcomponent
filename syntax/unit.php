@@ -7,18 +7,20 @@
  */
 
 // must be run within Dokuwiki
+use ComboStrap\PluginUtility;
+
 if (!defined('DOKU_INC')) die();
-require_once(__DIR__ . '/../webcomponent.php');
+require_once(__DIR__ . '/../class/PLuginUtility.php');
 
 /**
  * All DokuWiki plugins to extend the parser/rendering mechanism
  * need to inherit from this class
- * 
+ *
  * Format
- * 
+ *
  * syntax_plugin_PluginName_PluginComponent
  */
-class syntax_plugin_webcomponent_unit extends DokuWiki_Syntax_Plugin
+class syntax_plugin_combo_unit extends DokuWiki_Syntax_Plugin
 {
 
 
@@ -26,7 +28,7 @@ class syntax_plugin_webcomponent_unit extends DokuWiki_Syntax_Plugin
 
     private static function getTag()
     {
-        return webcomponent::getTagName(get_called_class());
+        return PluginUtility::getTagName(get_called_class());
     }
 
     /*
@@ -46,21 +48,21 @@ class syntax_plugin_webcomponent_unit extends DokuWiki_Syntax_Plugin
     {
         return 168;
     }
-    
+
     /**
-     * 
+     *
      * @return array
      * The plugin type that are allowed inside
      * this node (All !)
      * Otherwise the node that are in the matched content are not processed
      */
-    function getAllowedTypes() { 
-        return array('container', 'formatting', 'substition', 'protected', 'disabled', 'paragraphs'); 
-        
+    function getAllowedTypes() {
+        return array('container', 'formatting', 'substition', 'protected', 'disabled', 'paragraphs');
+
     }
-    
+
     /**
-     * Handle the node 
+     * Handle the node
      * @return string
      * See
      * https://www.dokuwiki.org/devel:syntax_plugins#ptype
@@ -71,15 +73,15 @@ class syntax_plugin_webcomponent_unit extends DokuWiki_Syntax_Plugin
     public function connectTo($mode)
     {
         // This define the DOKU_LEXER_ENTER state
-        $pattern = webcomponent::getContainerTagPattern(self::getElementName());
-        $this->Lexer->addEntryPattern($pattern, $mode, 'plugin_' . webcomponent::PLUGIN_NAME . '_' . $this->getPluginComponent());
+        $pattern = PluginUtility::getContainerTagPattern(self::getElementName());
+        $this->Lexer->addEntryPattern($pattern, $mode, 'plugin_' . PluginUtility::$PLUGIN_BASE_NAME . '_' . $this->getPluginComponent());
 
     }
 
     public function postConnect()
     {
         // We define the DOKU_LEXER_EXIT state
-        $this->Lexer->addExitPattern('</' . self::getElementName() . '>', 'plugin_' . webcomponent::PLUGIN_NAME . '_' . $this->getPluginComponent());
+        $this->Lexer->addExitPattern('</' . self::getElementName() . '>', 'plugin_' . PluginUtility::$PLUGIN_BASE_NAME . '_' . $this->getPluginComponent());
 
     }
 
@@ -101,7 +103,7 @@ class syntax_plugin_webcomponent_unit extends DokuWiki_Syntax_Plugin
 
                 // Suppress the tag name
                 $match = utf8_substr($match, strlen(self::getTag()) + 1, -1);
-                $parameters = webcomponent::parseMatch($match);
+                $parameters = PluginUtility::parseMatch($match);
                 return array($state, $parameters);
 
                 break;
@@ -109,9 +111,9 @@ class syntax_plugin_webcomponent_unit extends DokuWiki_Syntax_Plugin
             case DOKU_LEXER_UNMATCHED :
 
 
-                
-                // 
-                // The nested authorized plugin are given in the function 
+
+                //
+                // The nested authorized plugin are given in the function
                 // getAllowedTypes
                 //
                 // cdata  means normal text ??? See xhtml.php function cdata
@@ -146,7 +148,7 @@ class syntax_plugin_webcomponent_unit extends DokuWiki_Syntax_Plugin
         // The $data variable comes from the handle() function
         //
         // $mode = 'xhtml' means that we output html
-        // There is other mode such as metadata, odt 
+        // There is other mode such as metadata, odt
         if ($format == 'xhtml') {
 
             /**
@@ -183,7 +185,7 @@ class syntax_plugin_webcomponent_unit extends DokuWiki_Syntax_Plugin
 
     public static function getElementName()
     {
-        return webcomponent::getTagName(get_called_class());
+        return PluginUtility::getTagName(get_called_class());
     }
 
 }

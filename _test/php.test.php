@@ -4,7 +4,7 @@ use PHPUnit\Framework\TestCase;
 /**
  * Tests over the php configuration
  *
- * @group plugin_webcomponent
+ * @group plugin_combo
  * @group plugins
  */
 final class PhpTest extends TestCase

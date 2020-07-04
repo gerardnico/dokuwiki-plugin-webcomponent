@@ -2,19 +2,24 @@
 /**
  * Integration Tests for the handling of the canonical
  *
- * plugin_webcomponent
+ * plugin_combo
  * @group plugins
  *
  */
 
-require_once(__DIR__ . '/../class/UrlCanonical.php');
+use ComboStrap\PluginUtility;
+use ComboStrap\UrlCanonical;
 
-class plugin_webcomponent_alias_test extends DokuWikiTest
+require_once(__DIR__ . '/../class/PluginUtility.php');
+
+
+
+class plugin_combo_alias_test extends DokuWikiTest
 {
 
     public function setUp()
     {
-        $this->pluginsEnabled[] = PluginStatic::$PLUGIN_BASE_NAME;
+        $this->pluginsEnabled[] = PluginUtility::$PLUGIN_BASE_NAME;
         $this->pluginsEnabled[] = 'sqlite';
         parent::setUp();
     }
@@ -27,7 +32,7 @@ class plugin_webcomponent_alias_test extends DokuWikiTest
     public function test_canonical()
     {
 
-        $urlCanonicalManager = new UrlCanonical(PluginStatic::getSqlite());
+        $urlCanonicalManager = new UrlCanonical(PluginUtility::getSqlite());
 
         // Data
         $pageId = "web:javascript:variable";
@@ -94,7 +99,7 @@ class plugin_webcomponent_alias_test extends DokuWikiTest
     public function test_canonical_meta()
     {
 
-        $metaKey = action_plugin_webcomponent_metacanonical::CANONICAL_PROPERTY;
+        $metaKey = action_plugin_combo_metacanonical::CANONICAL_PROPERTY;
         $pageId = 'description:test';
         $canonicalValue = "javascript:variable";
         $text = DOKU_LF . '---json' . DOKU_LF
@@ -147,7 +152,7 @@ class plugin_webcomponent_alias_test extends DokuWikiTest
     public function test_canonical_meta_auto()
     {
 
-        $canonicalKey = action_plugin_webcomponent_metacanonical::CANONICAL_PROPERTY;
+        $canonicalKey = action_plugin_combo_metacanonical::CANONICAL_PROPERTY;
         $canonicalValue = 'without:canonical';
         $pageId = 'page:' . $canonicalValue . '';
         saveWikiText($pageId, "Non empty", 'Created');
@@ -163,7 +168,7 @@ class plugin_webcomponent_alias_test extends DokuWikiTest
         $request->get(array('id' => $pageId), '/doku.php');
         $canonicalMeta = p_get_metadata($pageId, $canonicalKey, METADATA_RENDER_UNLIMITED);
         $this->assertEquals("", $canonicalMeta,"No canonical in the meta when automatic canonical is off");
-        $urlCanonical = new UrlCanonical(PluginStatic::getSqlite());
+        $urlCanonical = new UrlCanonical(PluginUtility::getSqlite());
         $page = $urlCanonical->getPage($pageId);
         $this->assertEquals("", $page[$canonicalKey],"No canonical value in the database either");
 
@@ -171,7 +176,7 @@ class plugin_webcomponent_alias_test extends DokuWikiTest
          * Set it on, a canonical should have been created
          */
         global $conf;
-        $conf['plugin'][PluginStatic::$PLUGIN_BASE_NAME][action_plugin_webcomponent_metacanonical::CANONICAL_LAST_NAMES_COUNT_CONF] = 2;
+        $conf['plugin'][PluginUtility::$PLUGIN_BASE_NAME][action_plugin_combo_metacanonical::CANONICAL_LAST_NAMES_COUNT_CONF] = 2;
         $request = new TestRequest(); // initialize the request
         $request->get(array('id' => $pageId), '/doku.php');
         $canonicalMeta = p_get_metadata($pageId, $canonicalKey, METADATA_RENDER_UNLIMITED);
@@ -187,7 +192,7 @@ class plugin_webcomponent_alias_test extends DokuWikiTest
         $startPageCanonical = "web";
         $startPageId = $startPageCanonical . ':start';
         saveWikiText($startPageId, "Non empty", 'Created');
-        $conf['plugin'][PluginStatic::$PLUGIN_BASE_NAME][action_plugin_webcomponent_metacanonical::CANONICAL_LAST_NAMES_COUNT_CONF] = 2;
+        $conf['plugin'][PluginUtility::$PLUGIN_BASE_NAME][action_plugin_combo_metacanonical::CANONICAL_LAST_NAMES_COUNT_CONF] = 2;
         $request = new TestRequest(); // initialize the request
         $request->get(array('id' => $startPageId), '/doku.php');
         $canonicalMeta = p_get_metadata($startPageId, $canonicalKey, METADATA_RENDER_UNLIMITED);
@@ -201,7 +206,7 @@ class plugin_webcomponent_alias_test extends DokuWikiTest
         $canonical = "acanonical";
         p_set_metadata($pageIdWithCanonical, array($canonicalKey => $canonical));
         saveWikiText($pageIdWithCanonical, "Non empty", 'Created');
-        $conf['plugin'][PluginStatic::$PLUGIN_BASE_NAME][action_plugin_webcomponent_metacanonical::CANONICAL_LAST_NAMES_COUNT_CONF] = 2;
+        $conf['plugin'][PluginUtility::$PLUGIN_BASE_NAME][action_plugin_combo_metacanonical::CANONICAL_LAST_NAMES_COUNT_CONF] = 2;
         $request = new TestRequest(); // initialize the request
         $request->get(array('id' => $pageIdWithCanonical), '/doku.php');
         $canonicalMeta = p_get_metadata($pageIdWithCanonical, $canonicalKey, METADATA_RENDER_UNLIMITED);

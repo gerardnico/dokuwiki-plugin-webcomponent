@@ -1,23 +1,26 @@
 <?php
 
+use ComboStrap\PluginUtility;
+use ComboStrap\TestUtility;
+
 if (!defined('DW_LF')) {
     define('DW_LF', "\n");
 }
 
-require_once(__DIR__ . '/../webcomponent.php');
-require_once(__DIR__ . '/../class/PluginStatic.php');
+require_once(__DIR__ . '/../class/TestUtility.php');
+require_once(__DIR__ . '/../class/PluginUtility.php');
 /**
  * Test the related plugin
  *
- * @group plugin_webcomponent
+ * @group plugin_combo
  * @group plugins
  */
-class dokuwiki_plugin_webcomponent_related_test extends DokuWikiTest
+class dokuwiki_plugin_combo_related_test extends DokuWikiTest
 {
 
     public function setUp()
     {
-        $this->pluginsEnabled[] = PluginStatic::$PLUGIN_BASE_NAME;
+        $this->pluginsEnabled[] = PluginUtility::$PLUGIN_BASE_NAME;
         $this->pluginsEnabled[] = 'sqlite';
 
         // Config changes have only effect in function setUpBeforeClass()
@@ -25,17 +28,17 @@ class dokuwiki_plugin_webcomponent_related_test extends DokuWikiTest
 
         parent::setUp();
 
-        webcomponent::setUpPagesLocation();
+        TestUtility::setUpPagesLocation();
 
-        $conf ['plugin'][webcomponent::PLUGIN_NAME][syntax_plugin_webcomponent_related::EXTRA_PATTERN_CONF] = self::EXTRA_PATTERN_VALUE;
+        $conf ['plugin'][PluginUtility::$PLUGIN_BASE_NAME][syntax_plugin_combo_related::EXTRA_PATTERN_CONF] = self::EXTRA_PATTERN_VALUE;
 
-        dbglog("\nSetup was called- Test Plugin" . webcomponent::PLUGIN_NAME." - Compo".syntax_plugin_webcomponent_related::getElementName());
+        dbglog("\nSetup was called- Test Plugin" . PluginUtility::$PLUGIN_BASE_NAME ." - Compo".syntax_plugin_combo_related::getElementName());
 
     }
 
 
     // Namespace where all test page will be added
-    const TEST_PAGE_NAMESPACE = webcomponent::PLUGIN_NAME . 'test:';
+    const TEST_PAGE_NAMESPACE = 'test:';
     const REFERENT_PAGE_ID = self::TEST_PAGE_NAMESPACE . 'referent';
     public static $referrers = array();
 
@@ -65,7 +68,7 @@ class dokuwiki_plugin_webcomponent_related_test extends DokuWikiTest
         saveWikiText($referentPageId,
             '======  A referent page ====== ' . DW_LF . DW_LF .
             '=====  Articles Related ====== ' . DW_LF .
-            '<' . syntax_plugin_webcomponent_related::getElementName() . '>'
+            '<' . syntax_plugin_combo_related::getElementName() . '>'
             , $changeSummary);
         idx_addPage($referentPageId);
 
@@ -87,7 +90,7 @@ class dokuwiki_plugin_webcomponent_related_test extends DokuWikiTest
         saveWikiText(self::$extraPatternPage,
             '======  ' . $PageId . ' ======' . DW_LF . DW_LF .
             self::EXTRA_PATTERN_VALUE . DW_LF . DW_LF .
-            '<' . syntax_plugin_webcomponent_related::getElementName() . '>', $changeSummary);
+            '<' . syntax_plugin_combo_related::getElementName() . '>', $changeSummary);
         idx_addPage(self::$extraPatternPage);
         self::createReferrerPage(self::$extraPatternPage);
 
@@ -104,7 +107,7 @@ class dokuwiki_plugin_webcomponent_related_test extends DokuWikiTest
             , $changeSummary);
 
 
-        dbglog("\nTest Plugin" . webcomponent::PLUGIN_NAME.".".syntax_plugin_webcomponent_related::getElementName() . ': Start Page was created at ' . wikiFN($startId));
+        dbglog("\nTest Plugin" . PluginUtility::$PLUGIN_BASE_NAME .".".syntax_plugin_combo_related::getElementName() . ': Start Page was created at ' . wikiFN($startId));
 
 
     }
@@ -144,12 +147,12 @@ class dokuwiki_plugin_webcomponent_related_test extends DokuWikiTest
     {
         // Without max
         $referentPageId = self::REFERENT_PAGE_ID;
-        $relatedPlugin = new syntax_plugin_webcomponent_related();
+        $relatedPlugin = new syntax_plugin_combo_related();
         // Without max, it will take the conf default (10)
         $referrers = $relatedPlugin->related($referentPageId);
         $this->assertEquals(self::REFERRERS_COUNT, sizeof($referrers));
         // The first one must be the one that had two backlinks
-        $this->assertEquals(self::$referrers[self::REFERRERS_ID_TOP], $referrers[0][syntax_plugin_webcomponent_related::RELATED_PAGE_ID_PROP]);
+        $this->assertEquals(self::$referrers[self::REFERRERS_ID_TOP], $referrers[0][syntax_plugin_combo_related::RELATED_PAGE_ID_PROP]);
 
         // With a max via argument
         $max = 1;
@@ -159,11 +162,11 @@ class dokuwiki_plugin_webcomponent_related_test extends DokuWikiTest
 
         // With a max via the conf
         global $conf;
-        $oldMaxLinksValue = $conf ['plugin'][webcomponent::PLUGIN_NAME][syntax_plugin_webcomponent_related::MAX_LINKS_CONF];
-        $conf ['plugin'][webcomponent::PLUGIN_NAME][syntax_plugin_webcomponent_related::MAX_LINKS_CONF] = $max;
+        $oldMaxLinksValue = $conf ['plugin'][PluginUtility::$PLUGIN_BASE_NAME][syntax_plugin_combo_related::MAX_LINKS_CONF];
+        $conf ['plugin'][PluginUtility::$PLUGIN_BASE_NAME][syntax_plugin_combo_related::MAX_LINKS_CONF] = $max;
         $referrers = $relatedPlugin->related($referentPageId);
         $this->assertEquals($expected, sizeof($referrers));
-        $conf ['plugin'][webcomponent::PLUGIN_NAME][syntax_plugin_webcomponent_related::MAX_LINKS_CONF] = $oldMaxLinksValue;
+        $conf ['plugin'][PluginUtility::$PLUGIN_BASE_NAME][syntax_plugin_combo_related::MAX_LINKS_CONF] = $oldMaxLinksValue;
 
     }
 
@@ -172,12 +175,11 @@ class dokuwiki_plugin_webcomponent_related_test extends DokuWikiTest
 
 
         $request = new TestRequest();
-        $request->get(array('id' => self::$extraPatternPage));
-        $response = $request->execute();
+        $response = $request->get(array('id' => self::$extraPatternPage));
 
-        //$response->queryHTML('#'.syntax_plugin_related::ELEMENT_ID)->attr('content');
-        $idElements = $response->queryHTML('#' . syntax_plugin_webcomponent_related::getElementId())->length;
-        $this->assertEquals(2, $idElements);
+        $idElements = $response->queryHTML('#' . syntax_plugin_combo_related::getElementId());
+        $length = $idElements->length;
+        $this->assertEquals(2, $length,"There should be two links");
 
     }
 

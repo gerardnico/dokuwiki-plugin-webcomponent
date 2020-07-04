@@ -14,7 +14,7 @@ define('KEYWORD_SOURCE_ABSTRACT', 'abstract');
 define('KEYWORD_SOURCE_GLOBAL', 'global');
 define('KEYWORD_SOURCE_SYNTAX', 'syntax');
 
-class action_plugin_webcomponent_frontmatter extends DokuWiki_Action_Plugin
+class action_plugin_combo_frontmatter extends DokuWiki_Action_Plugin
 {
 
     public function register(Doku_Event_Handler $controller)

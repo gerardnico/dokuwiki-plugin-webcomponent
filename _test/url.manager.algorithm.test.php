@@ -3,19 +3,23 @@
  *
  * Test the algorithm
  *
- * @group plugin_webcomponent
+ * @group plugin_combo
  * @group plugins
  *
  */
-require_once(__DIR__ . '/../class/PluginStatic.php');
+
+use ComboStrap\PageRules;
+use ComboStrap\PluginUtility;
+
+require_once(__DIR__ . '/../class/PluginUtility.php');
 require_once(__DIR__ . '/../action/urlmanager.php');
 require_once(__DIR__ . '/../action/urlmessage.php');
-class plugin_webcomponent_url_manager_test extends DokuWikiTest
+class plugin_combo_url_manager_test extends DokuWikiTest
 {
 
     public function setUp()
     {
-        $this->pluginsEnabled[] = PluginStatic::$PLUGIN_BASE_NAME;
+        $this->pluginsEnabled[] = PluginUtility::$PLUGIN_BASE_NAME;
         $this->pluginsEnabled[] = 'sqlite';
         parent::setUp();
     }
@@ -28,10 +32,10 @@ class plugin_webcomponent_url_manager_test extends DokuWikiTest
 
 
         global $conf;
-        $conf['plugin'][PluginStatic::$PLUGIN_BASE_NAME]['ActionReaderFirst'] = action_plugin_webcomponent_urlmanager::GO_TO_SEARCH_ENGINE;
+        $conf['plugin'][PluginUtility::$PLUGIN_BASE_NAME]['ActionReaderFirst'] = action_plugin_combo_urlmanager::GO_TO_SEARCH_ENGINE;
 
         global $AUTH_ACL;
-        $aclReadOnlyFile = PluginStatic::$DIR_RESOURCES . '/acl.auth.read_only.php';
+        $aclReadOnlyFile = PluginUtility::$DIR_RESOURCES . '/acl.auth.read_only.php';
         $AUTH_ACL = file($aclReadOnlyFile);
 
         $request = new TestRequest();
@@ -68,10 +72,10 @@ class plugin_webcomponent_url_manager_test extends DokuWikiTest
     {
 
         global $conf;
-        $conf['plugin'][PluginStatic::$PLUGIN_BASE_NAME]['ActionReaderFirst'] = action_plugin_webcomponent_urlmanager::GO_TO_BEST_PAGE_NAME;
-        $conf['plugin'][PluginStatic::$PLUGIN_BASE_NAME]['WeightFactorForSamePageName'] = 4;
-        $conf['plugin'][PluginStatic::$PLUGIN_BASE_NAME]['WeightFactorForStartPage'] = 3;
-        $conf['plugin'][PluginStatic::$PLUGIN_BASE_NAME]['WeightFactorForSameNamespace'] = 5;
+        $conf['plugin'][PluginUtility::$PLUGIN_BASE_NAME]['ActionReaderFirst'] = action_plugin_combo_urlmanager::GO_TO_BEST_PAGE_NAME;
+        $conf['plugin'][PluginUtility::$PLUGIN_BASE_NAME]['WeightFactorForSamePageName'] = 4;
+        $conf['plugin'][PluginUtility::$PLUGIN_BASE_NAME]['WeightFactorForStartPage'] = 3;
+        $conf['plugin'][PluginUtility::$PLUGIN_BASE_NAME]['WeightFactorForSameNamespace'] = 5;
 
 
         // The page path component
@@ -87,7 +91,7 @@ class plugin_webcomponent_url_manager_test extends DokuWikiTest
         // A page in another branch on the same level
         $badTarget = "otherBranch" . $pathSeparator . $firstLevelName . $pathSeparator . $name;
 
-        $pageRules = new PageRules(PluginStatic::getSqlite());
+        $pageRules = new PageRules(PluginUtility::getSqlite());
         $pageRules->deleteAll();
 
 
@@ -100,7 +104,7 @@ class plugin_webcomponent_url_manager_test extends DokuWikiTest
 
         // Read only otherwise, you go in edit mode
         global $AUTH_ACL;
-        $aclReadOnlyFile = PluginStatic::$DIR_RESOURCES . '/acl.auth.read_only.php';
+        $aclReadOnlyFile = PluginUtility::$DIR_RESOURCES . '/acl.auth.read_only.php';
         $AUTH_ACL = file($aclReadOnlyFile);
 
 
@@ -113,15 +117,14 @@ class plugin_webcomponent_url_manager_test extends DokuWikiTest
         $components = parse_url($locationHeader);
         parse_str($components['query'], $queryKeys);
 
-        /** @noinspection PhpUndefinedMethodInspection */
         $this->assertNull($queryKeys['do'], "The page was only shown");
         /** @noinspection PhpUndefinedMethodInspection */
         $this->assertEquals($goodTarget, $queryKeys['id'], "The Id of the source page is the asked page");
 
         /** @noinspection PhpUndefinedMethodInspection */
-        $this->assertEquals($sourceId, $queryKeys[action_plugin_webcomponent_urlmessage::ORIGIN_PAGE],"The 404 id must be present");
+        $this->assertEquals($sourceId, $queryKeys[action_plugin_combo_urlmessage::ORIGIN_PAGE],"The 404 id must be present");
         /** @noinspection PhpUndefinedMethodInspection */
-        $this->assertEquals(action_plugin_webcomponent_urlmanager::TARGET_ORIGIN_BEST_PAGE_NAME, $queryKeys[action_plugin_webcomponent_urlmessage::ORIGIN_TYPE], "The redirect type is known");
+        $this->assertEquals(action_plugin_combo_urlmanager::TARGET_ORIGIN_BEST_PAGE_NAME, $queryKeys[action_plugin_combo_urlmessage::ORIGIN_TYPE], "The redirect type is known");
 
 
     }
@@ -134,11 +137,11 @@ class plugin_webcomponent_url_manager_test extends DokuWikiTest
     {
 
         global $conf;
-        $conf['plugin'][PluginStatic::$PLUGIN_BASE_NAME]['ActionReaderFirst'] = action_plugin_webcomponent_urlmanager::GO_TO_BEST_NAMESPACE;
-        $conf['plugin'][PluginStatic::$PLUGIN_BASE_NAME]['WeightFactorForSamePageName'] = 4;
-        $conf['plugin'][PluginStatic::$PLUGIN_BASE_NAME]['WeightFactorForStartPage'] = 3;
-        $conf['plugin'][PluginStatic::$PLUGIN_BASE_NAME]['WeightFactorForSameNamespace'] = 5;
-        $conf['plugin'][PluginStatic::$PLUGIN_BASE_NAME]['WordsSeparator'] = ':';
+        $conf['plugin'][PluginUtility::$PLUGIN_BASE_NAME]['ActionReaderFirst'] = action_plugin_combo_urlmanager::GO_TO_BEST_NAMESPACE;
+        $conf['plugin'][PluginUtility::$PLUGIN_BASE_NAME]['WeightFactorForSamePageName'] = 4;
+        $conf['plugin'][PluginUtility::$PLUGIN_BASE_NAME]['WeightFactorForStartPage'] = 3;
+        $conf['plugin'][PluginUtility::$PLUGIN_BASE_NAME]['WeightFactorForSameNamespace'] = 5;
+        $conf['plugin'][PluginUtility::$PLUGIN_BASE_NAME]['WordsSeparator'] = ':';
 
 
         // Set of 3 pages, when a page has an homonym (same page name) but within another completly differents path (the name of the path have nothing in common)
@@ -161,12 +164,12 @@ class plugin_webcomponent_url_manager_test extends DokuWikiTest
         idx_addPage($goodTargetId);
 
         // Delete any redirections
-        $pageRules = new PageRules(PluginStatic::getSqlite());
+        $pageRules = new PageRules(PluginUtility::getSqlite());
         $pageRules->deleteAll();
 
         // Read only otherwise, you go in edit mode
         global $AUTH_ACL;
-        $aclReadOnlyFile = PluginStatic::$DIR_RESOURCES . '/acl.auth.read_only.php';
+        $aclReadOnlyFile = PluginUtility::$DIR_RESOURCES . '/acl.auth.read_only.php';
         $AUTH_ACL = file($aclReadOnlyFile);
 
         // Test request
@@ -183,9 +186,9 @@ class plugin_webcomponent_url_manager_test extends DokuWikiTest
         $this->assertEquals($goodTargetId, $queryKeys['id'], "The Id of the source page is the asked page");
 
         /** @noinspection PhpUndefinedMethodInspection */
-        $this->assertEquals($sourceId, $queryKeys[action_plugin_webcomponent_urlmessage::ORIGIN_PAGE],"The 404 id must be present");
+        $this->assertEquals($sourceId, $queryKeys[action_plugin_combo_urlmessage::ORIGIN_PAGE],"The 404 id must be present");
         /** @noinspection PhpUndefinedMethodInspection */
-        $this->assertEquals(action_plugin_webcomponent_urlmanager::TARGET_ORIGIN_BEST_NAMESPACE, $queryKeys[action_plugin_webcomponent_urlmessage::ORIGIN_TYPE], "The redirect type is known");
+        $this->assertEquals(action_plugin_combo_urlmanager::TARGET_ORIGIN_BEST_NAMESPACE, $queryKeys[action_plugin_combo_urlmessage::ORIGIN_TYPE], "The redirect type is known");
 
 
 
@@ -199,10 +202,10 @@ class plugin_webcomponent_url_manager_test extends DokuWikiTest
 
 
         global $conf;
-        $conf['plugin'][PluginStatic::$PLUGIN_BASE_NAME]['ActionReaderFirst'] = action_plugin_webcomponent_urlmanager::GO_TO_BEST_END_PAGE_NAME;
+        $conf['plugin'][PluginUtility::$PLUGIN_BASE_NAME]['ActionReaderFirst'] = action_plugin_combo_urlmanager::GO_TO_BEST_END_PAGE_NAME;
 
         global $AUTH_ACL;
-        $aclReadOnlyFile = PluginStatic::$DIR_RESOURCES . '/acl.auth.read_only.php';
+        $aclReadOnlyFile = PluginUtility::$DIR_RESOURCES . '/acl.auth.read_only.php';
         $AUTH_ACL = file($aclReadOnlyFile);
 
         $name = "best_end_page_name";
@@ -223,8 +226,8 @@ class plugin_webcomponent_url_manager_test extends DokuWikiTest
         $this->assertNull($queryKeys['do'], "The page was only shown");
         $this->assertEquals($targetId, $queryKeys['id'], "The Id of the source page is the asked page");
 
-        $this->assertEquals($sourceId, $queryKeys[action_plugin_webcomponent_urlmessage::ORIGIN_PAGE],"The 404 id must be present");
-        $this->assertEquals(action_plugin_webcomponent_urlmanager::TARGET_ORIGIN_BEST_END_PAGE_NAME, $queryKeys[action_plugin_webcomponent_urlmessage::ORIGIN_TYPE], "The redirect type is known");
+        $this->assertEquals($sourceId, $queryKeys[action_plugin_combo_urlmessage::ORIGIN_PAGE],"The 404 id must be present");
+        $this->assertEquals(action_plugin_combo_urlmanager::TARGET_ORIGIN_BEST_END_PAGE_NAME, $queryKeys[action_plugin_combo_urlmessage::ORIGIN_TYPE], "The redirect type is known");
 
     }
 
@@ -239,12 +242,12 @@ class plugin_webcomponent_url_manager_test extends DokuWikiTest
 
         global $conf;
         $pathSeparator = ':';
-        $conf['plugin'][PluginStatic::$PLUGIN_BASE_NAME]['ActionReaderFirst'] = action_plugin_webcomponent_urlmanager::GO_TO_BEST_PAGE_NAME;
-        $conf['plugin'][PluginStatic::$PLUGIN_BASE_NAME]['WeightFactorForSamePageName'] = 4;
-        $conf['plugin'][PluginStatic::$PLUGIN_BASE_NAME]['WeightFactorForStartPage'] = 3;
-        $conf['plugin'][PluginStatic::$PLUGIN_BASE_NAME]['WeightFactorForSameNamespace'] = 5;
-        $conf['plugin'][PluginStatic::$PLUGIN_BASE_NAME]['WordsSeparator'] = $pathSeparator;
-        $conf['plugin'][PluginStatic::$PLUGIN_BASE_NAME]['ShowPageNameIsNotUnique'] = 1;
+        $conf['plugin'][PluginUtility::$PLUGIN_BASE_NAME]['ActionReaderFirst'] = action_plugin_combo_urlmanager::GO_TO_BEST_PAGE_NAME;
+        $conf['plugin'][PluginUtility::$PLUGIN_BASE_NAME]['WeightFactorForSamePageName'] = 4;
+        $conf['plugin'][PluginUtility::$PLUGIN_BASE_NAME]['WeightFactorForStartPage'] = 3;
+        $conf['plugin'][PluginUtility::$PLUGIN_BASE_NAME]['WeightFactorForSameNamespace'] = 5;
+        $conf['plugin'][PluginUtility::$PLUGIN_BASE_NAME]['WordsSeparator'] = $pathSeparator;
+        $conf['plugin'][PluginUtility::$PLUGIN_BASE_NAME]['ShowPageNameIsNotUnique'] = 1;
 
 
         // Set of 3 pages, when a page has an homonym (same page name) but within another completly differents path (the name of the path have nothing in common)
@@ -257,7 +260,7 @@ class plugin_webcomponent_url_manager_test extends DokuWikiTest
         $badTarget = $subName2 . $pathSeparator . $name; // score of 4: same page name score of 4
 
 
-        $pageRules = new PageRules(PluginStatic::getSqlite());
+        $pageRules = new PageRules(PluginUtility::getSqlite());
         $pageRules->deleteAll();
 
 
@@ -269,7 +272,7 @@ class plugin_webcomponent_url_manager_test extends DokuWikiTest
 
         // Read only otherwise, you go in edit mode
         global $AUTH_ACL;
-        $aclReadOnlyFile = PluginStatic::$DIR_RESOURCES . '/acl.auth.read_only.php';
+        $aclReadOnlyFile = PluginUtility::$DIR_RESOURCES . '/acl.auth.read_only.php';
         $AUTH_ACL = file($aclReadOnlyFile);
 
 
@@ -285,9 +288,9 @@ class plugin_webcomponent_url_manager_test extends DokuWikiTest
         $this->assertEquals($goodTarget, $queryKeys['id'], "The Id is the target page");
 
         /** @noinspection PhpUndefinedMethodInspection */
-        $this->assertEquals($sourceId, $queryKeys[action_plugin_webcomponent_urlmessage::ORIGIN_PAGE],"The 404 id must be present");
+        $this->assertEquals($sourceId, $queryKeys[action_plugin_combo_urlmessage::ORIGIN_PAGE],"The 404 id must be present");
         /** @noinspection PhpUndefinedMethodInspection */
-        $this->assertEquals(action_plugin_webcomponent_urlmanager::TARGET_ORIGIN_BEST_PAGE_NAME, $queryKeys[action_plugin_webcomponent_urlmessage::ORIGIN_TYPE], "The redirect type is known");
+        $this->assertEquals(action_plugin_combo_urlmanager::TARGET_ORIGIN_BEST_PAGE_NAME, $queryKeys[action_plugin_combo_urlmessage::ORIGIN_TYPE], "The redirect type is known");
 
 
     }

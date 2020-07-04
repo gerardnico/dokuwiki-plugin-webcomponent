@@ -7,18 +7,20 @@
  */
 
 // must be run within Dokuwiki
+use ComboStrap\PluginUtility;
+
 if (!defined('DOKU_INC')) die();
-require_once(__DIR__ . '/../webcomponent.php');
+require_once(__DIR__ . '/../class/PLuginUtility.php');
 
 /**
  * All DokuWiki plugins to extend the parser/rendering mechanism
  * need to inherit from this class
- * 
+ *
  * Format
- * 
+ *
  * syntax_plugin_PluginName_PluginComponent
  */
-class syntax_plugin_webcomponent_console extends DokuWiki_Syntax_Plugin
+class syntax_plugin_combo_console extends DokuWiki_Syntax_Plugin
 {
 
 
@@ -39,21 +41,21 @@ class syntax_plugin_webcomponent_console extends DokuWiki_Syntax_Plugin
     {
         return 168;
     }
-    
+
     /**
-     * 
+     *
      * @return array
      * The plugin type that are allowed inside
      * this node (ie nested)
      * Otherwise the node that are in the matched content are not processed
      */
-    function getAllowedTypes() { 
-        return array(); 
-        
+    function getAllowedTypes() {
+        return array();
+
     }
-    
+
     /**
-     * Handle the node 
+     * Handle the node
      * @return string
      * See
      * https://www.dokuwiki.org/devel:syntax_plugins#ptype
@@ -64,15 +66,15 @@ class syntax_plugin_webcomponent_console extends DokuWiki_Syntax_Plugin
     public function connectTo($mode)
     {
         // This define the DOKU_LEXER_ENTER state
-        $pattern = webcomponent::getContainerTagPattern(self::getElementName());
-        $this->Lexer->addEntryPattern($pattern, $mode, 'plugin_' . webcomponent::PLUGIN_NAME . '_' . $this->getPluginComponent());
+        $pattern = PluginUtility::getContainerTagPattern(self::getElementName());
+        $this->Lexer->addEntryPattern($pattern, $mode, 'plugin_' . PluginUtility::$PLUGIN_BASE_NAME . '_' . $this->getPluginComponent());
 
     }
 
     public function postConnect()
     {
         // We define the DOKU_LEXER_EXIT state
-        $this->Lexer->addExitPattern('</' . self::getElementName() . '>', 'plugin_' . webcomponent::PLUGIN_NAME . '_' . $this->getPluginComponent());
+        $this->Lexer->addExitPattern('</' . self::getElementName() . '>', 'plugin_' . PluginUtility::$PLUGIN_BASE_NAME . '_' . $this->getPluginComponent());
     }
 
 
@@ -120,7 +122,7 @@ class syntax_plugin_webcomponent_console extends DokuWiki_Syntax_Plugin
         // The $data variable comes from the handle() function
         //
         // $mode = 'xhtml' means that we output html
-        // There is other mode such as metadata, odt 
+        // There is other mode such as metadata, odt
         if ($format == 'xhtml') {
 
             $state = $data[0];
@@ -136,7 +138,7 @@ class syntax_plugin_webcomponent_console extends DokuWiki_Syntax_Plugin
                      */
                     $renderer->code($text);
                     break;
-                
+
             }
             return true;
         }
@@ -145,7 +147,7 @@ class syntax_plugin_webcomponent_console extends DokuWiki_Syntax_Plugin
 
     public static function getElementName()
     {
-        return webcomponent::getTagName(get_called_class());
+        return PluginUtility::getTagName(get_called_class());
     }
 
 }

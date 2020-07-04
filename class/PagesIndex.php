@@ -1,5 +1,7 @@
 <?php
 
+namespace ComboStrap;
+
 /**
  * Class PagesIndex
  * Function on the page index

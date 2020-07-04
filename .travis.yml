@@ -18,7 +18,7 @@ install:
   - sh travis.sh
 
 script:
-  - cd _test && ./phpunit.phar --stderr --group plugin_webcomponent --verbose --debug
+  - cd _test && ./phpunit.phar --stderr --group plugin_combo --verbose --debug
 
 notifications:
   email:

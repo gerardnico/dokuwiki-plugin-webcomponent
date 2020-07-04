@@ -4,10 +4,12 @@
 // https://developer.mozilla.org/en-US/docs/Web/HTML/Element/cite
 
 // must be run within Dokuwiki
+use ComboStrap\PluginUtility;
+
 if (!defined('DOKU_INC')) die();
 
 
-class syntax_plugin_webcomponent_cardheader extends DokuWiki_Syntax_Plugin
+class syntax_plugin_combo_cardheader extends DokuWiki_Syntax_Plugin
 {
 
     // Header pattern that we expect in a card (teaser) ie  ==== Hello =====
@@ -37,8 +39,8 @@ class syntax_plugin_webcomponent_cardheader extends DokuWiki_Syntax_Plugin
     function connectTo($mode)
     {
         // Only inside a card
-        if ($mode == "plugin_webcomponent_card") {
-            $this->Lexer->addSpecialPattern(self::HEADER_PATTERN, $mode, 'plugin_' . webcomponent::PLUGIN_NAME . '_' . $this->getPluginComponent());
+        if ($mode == "plugin_combo_card") {
+            $this->Lexer->addSpecialPattern(self::HEADER_PATTERN, $mode, 'plugin_' . PluginUtility::$PLUGIN_BASE_NAME . '_' . $this->getPluginComponent());
         }
     }
 

@@ -1,23 +1,29 @@
 <?php
 
-require_once(__DIR__ . '/../webcomponent.php');
+use ComboStrap\PluginUtility;
+
+require_once(__DIR__ . '/../class/PLuginUtility.php');
 
 /**
  * Test the component plugin
  *
- * @group plugin_webcomponent
+ * @group plugin_combo
  * @group plugins
  */
-class plugin_webcomponent_button_test extends DokuWikiTest
+class plugin_combo_button_test extends DokuWikiTest
 {
 
-    protected $pluginsEnabled = [webcomponent::PLUGIN_NAME];
+    public function setUp()
+    {
+        $this->pluginsEnabled[] = PluginUtility::$PLUGIN_BASE_NAME;
+        parent::setUp();
+    }
 
 
     public function test_component_name()
     {
 
-        $componentName = syntax_plugin_webcomponent_button::getTag();
+        $componentName = syntax_plugin_combo_button::getTag();
 
         $this->assertEquals('button', $componentName);
 
@@ -27,7 +33,7 @@ class plugin_webcomponent_button_test extends DokuWikiTest
     {
 
         // https://getbootstrap.com/docs/4.3/components/card/#using-custom-css
-        $elements = syntax_plugin_webcomponent_button::getTags();
+        $elements = syntax_plugin_combo_button::getTags();
         $link_content = 'Go Somewhere';
         $id = 'namespace:page';
         $expected = '<button type="button" class="btn btn-primary"><a href="/./doku.php?id='.$id.'#section" class="wikilink2" title="namespace:page" rel="nofollow" data-wiki-id="'.$id.'">' . $link_content . '</a></button>';
@@ -48,7 +54,7 @@ class plugin_webcomponent_button_test extends DokuWikiTest
     {
 
         // https://getbootstrap.com/docs/4.3/components/card/#using-custom-css
-        $elements = syntax_plugin_webcomponent_button::getTags();
+        $elements = syntax_plugin_combo_button::getTags();
         $link_content = 'Go Somewhere';
         $id = "namespace:page";
         $expected = '<button type="button" class="btn btn-primary mbt-3"><a href="/./doku.php?id='.$id.'#section" class="wikilink2" title="namespace:page" rel="nofollow" data-wiki-id="'.$id.'">' . $link_content . '</a></button>';
@@ -66,7 +72,7 @@ class plugin_webcomponent_button_test extends DokuWikiTest
     {
 
         // https://getbootstrap.com/docs/4.3/components/card/#using-custom-css
-        $elements = syntax_plugin_webcomponent_button::getTags();
+        $elements = syntax_plugin_combo_button::getTags();
         $link_content = 'Go Somewhere';
         $external = 'https://gerardnico.com';
         $expected = '<button type="button" class="btn btn-primary"><a href="https://gerardnico.com" class="urlextern" title="https://gerardnico.com" rel="ugc nofollow">' . $link_content . '</a></button>';
@@ -83,11 +89,11 @@ class plugin_webcomponent_button_test extends DokuWikiTest
     public function test_indexer()
     {
 
-        $pageIdReferent = webcomponent::getNameSpace().'referrer';
-        $pageId =  webcomponent::getNameSpace() . 'test_indexer';
+        $pageIdReferent = PluginUtility::getNameSpace() .'referrer';
+        $pageId =  PluginUtility::getNameSpace() . 'test_indexer';
 
 
-        $element = syntax_plugin_webcomponent_button::getTags()[0];
+        $element = syntax_plugin_combo_button::getTags()[0];
         $doku_text = '<' . $element . '>' . '[['.$pageIdReferent.']]' . '</' . $element . '>';
 
 

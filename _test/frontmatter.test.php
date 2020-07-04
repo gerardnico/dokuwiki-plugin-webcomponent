@@ -1,22 +1,24 @@
 <?php
 
-require_once(__DIR__ . '/../webcomponent.php');
-require_once(__DIR__ . '/../class/PluginStatic.php');
+use ComboStrap\PluginUtility;
+
+require_once(__DIR__ . '/../class/PLuginUtility.php');
+require_once(__DIR__ . '/../class/PluginUtility.php');
 
 /**
  * Test the front matter component plugin
  *
- * @group plugin_webcomponent
+ * @group plugin_combo
  * @group plugins
  */
-class plugin_webcomponent_frontmatter_test extends DokuWikiTest
+class plugin_combo_frontmatter_test extends DokuWikiTest
 {
 
 
     public function setUp()
     {
 
-        $this->pluginsEnabled[] = PluginStatic::$PLUGIN_BASE_NAME;
+        $this->pluginsEnabled[] = PluginUtility::$PLUGIN_BASE_NAME;
         $this->pluginsEnabled[] = 'sqlite';
 
         global $conf;

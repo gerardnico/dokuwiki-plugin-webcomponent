@@ -3,6 +3,9 @@
  * DokuWiki Syntax Plugin Combostrap.
  *
  */
+
+use ComboStrap\PluginUtility;
+
 if (!defined('DOKU_INC')) {
     die();
 }
@@ -14,7 +17,7 @@ if (!defined('DOKU_PLUGIN')) {
 
 require_once(DOKU_PLUGIN . 'syntax.php');
 require_once(DOKU_INC . 'inc/parserutils.php');
-require_once(__DIR__ . '/../webcomponent.php');
+require_once(__DIR__ . '/../class/PLuginUtility.php');
 
 /**
  * All DokuWiki plugins to extend the parser/rendering mechanism
@@ -29,7 +32,7 @@ require_once(__DIR__ . '/../webcomponent.php');
  * !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
  *
  */
-class syntax_plugin_webcomponent_icon extends DokuWiki_Syntax_Plugin
+class syntax_plugin_combo_icon extends DokuWiki_Syntax_Plugin
 {
 
     const CONF_ICONS_MEDIA_NAMESPACE = "icons_namespace";
@@ -95,8 +98,8 @@ class syntax_plugin_webcomponent_icon extends DokuWiki_Syntax_Plugin
     function connectTo($mode)
     {
 
-        $pattern = webcomponent::getLeafTagPattern(self::getTag());
-        $this->Lexer->addSpecialPattern($pattern, $mode, 'plugin_' . webcomponent::PLUGIN_NAME . '_' . $this->getPluginComponent());
+        $pattern = PluginUtility::getLeafTagPattern(self::getTag());
+        $this->Lexer->addSpecialPattern($pattern, $mode, 'plugin_' . PluginUtility::$PLUGIN_BASE_NAME . '_' . $this->getPluginComponent());
 
     }
 
@@ -123,7 +126,7 @@ class syntax_plugin_webcomponent_icon extends DokuWiki_Syntax_Plugin
             case DOKU_LEXER_SPECIAL:
 
                 // Get the parameters
-                $parameters = webcomponent::getAttributes($match);
+                $parameters = PluginUtility::getAttributes($match);
                 // TODO ? Download the icon
                 return array($state, $parameters);
 
@@ -160,7 +163,7 @@ class syntax_plugin_webcomponent_icon extends DokuWiki_Syntax_Plugin
 
                     $name = "name";
                     if (!array_key_exists($name, $attributes)) {
-                        PluginStatic::msg("The name attribute is mandatory for an icon.", PluginStatic::LVL_MSG_ERROR);
+                        PluginUtility::msg("The name attribute is mandatory for an icon.", PluginUtility::LVL_MSG_ERROR);
                         return false;
                     }
                     $iconName = $attributes[$name];
@@ -173,7 +176,7 @@ class syntax_plugin_webcomponent_icon extends DokuWiki_Syntax_Plugin
                         // Is it a file ?
                         $path =  pathinfo($mediaFile);
                         if ($path['extension']!=""){
-                            PluginStatic::msg("The media file ($mediaFile) could not be found. If you want an icon from the material design icon library, indicate a name without extension.", PluginStatic::LVL_MSG_ERROR);
+                            PluginUtility::msg("The media file ($mediaFile) could not be found. If you want an icon from the material design icon library, indicate a name without extension.", PluginUtility::LVL_MSG_ERROR);
                             return false;
                         }
 
@@ -191,7 +194,7 @@ class syntax_plugin_webcomponent_icon extends DokuWiki_Syntax_Plugin
                             if (!file_exists($iconDir)) {
                                 $return = mkdir($iconDir, $mode = 0770, $recursive = true);
                                 if ($return == false) {
-                                    PluginStatic::msg("The icon directory ($iconDir) could not be created.", PluginStatic::LVL_MSG_ERROR);
+                                    PluginUtility::msg("The icon directory ($iconDir) could not be created.", PluginUtility::LVL_MSG_ERROR);
                                     return false;
                                 }
                             }
@@ -200,10 +203,10 @@ class syntax_plugin_webcomponent_icon extends DokuWiki_Syntax_Plugin
                             $gitUrl = "https://raw.githubusercontent.com/Templarian/MaterialDesign/master/svg/$iconName.svg";
                             $return = file_put_contents($mediaFile, fopen($gitUrl, 'r'));
                             if ($return != false) {
-                                PluginStatic::msg("The material design icon ($attributes[$name]) was downloaded to ($mediaId)", PluginStatic::LVL_MSG_INFO);
+                                PluginUtility::msg("The material design icon ($attributes[$name]) was downloaded to ($mediaId)", PluginUtility::LVL_MSG_INFO);
                             } else {
 
-                                PluginStatic::msg("The file ($gitUrl) could not be downloaded from ($mediaFile)", PluginStatic::LVL_MSG_INFO);
+                                PluginUtility::msg("The file ($gitUrl) could not be downloaded from ($mediaFile)", PluginUtility::LVL_MSG_INFO);
 
                                 // Try the official API
                                 // Read the icon meta of
@@ -229,10 +232,10 @@ class syntax_plugin_webcomponent_icon extends DokuWiki_Syntax_Plugin
                                     $downloadUrl = "https://materialdesignicons.com/api/download/icon/svg/$iconId";
                                     $return = file_put_contents($mediaFile, fopen($downloadUrl, 'r'));
                                     if ($return == false) {
-                                        PluginStatic::msg("The file ($downloadUrl) could not be downloaded to ($mediaFile)", PluginStatic::LVL_MSG_ERROR);
+                                        PluginUtility::msg("The file ($downloadUrl) could not be downloaded to ($mediaFile)", PluginUtility::LVL_MSG_ERROR);
                                         return false;
                                     } else {
-                                        PluginStatic::msg("The material design icon ($attributes[$name]) was downloaded to ($mediaId)", PluginStatic::LVL_MSG_INFO);
+                                        PluginUtility::msg("The material design icon ($attributes[$name]) was downloaded to ($mediaId)", PluginUtility::LVL_MSG_INFO);
                                     }
 
                                 }
@@ -245,7 +248,7 @@ class syntax_plugin_webcomponent_icon extends DokuWiki_Syntax_Plugin
                     }
 
                     if (!file_exists($mediaFile)) {
-                        PluginStatic::msg("The icon ($mediaId) could not be found as media file or material design icon", PluginStatic::LVL_MSG_ERROR);
+                        PluginUtility::msg("The icon ($mediaId) could not be found as media file or material design icon", PluginUtility::LVL_MSG_ERROR);
                         return false;
                     }
 
@@ -253,7 +256,7 @@ class syntax_plugin_webcomponent_icon extends DokuWiki_Syntax_Plugin
                     try {
                         $mediaSvgXml = simplexml_load_file($mediaFile);
                     } catch (Exception $e) {
-                        PluginStatic::msg("The icon file ($mediaFile) could not be loaded as a XML SVG. The error returned is $e", PluginStatic::LVL_MSG_ERROR);
+                        PluginUtility::msg("The icon file ($mediaFile) could not be loaded as a XML SVG. The error returned is $e", PluginUtility::LVL_MSG_ERROR);
                         return false;
                     }
 
@@ -302,7 +305,7 @@ class syntax_plugin_webcomponent_icon extends DokuWiki_Syntax_Plugin
                         $styleRules[] = "color:" . $colorValue;
                     }
                     if (sizeof($styleRules) != 0) {
-                        $attributes[$styleName] = webcomponent::array2InlineStyle($styleRules);
+                        $attributes[$styleName] = PluginUtility::array2InlineStyle($styleRules);
                     }
                     foreach ($attributes as $name => $value) {
                         $mediaSvgXml->addAttribute($name, $value);
@@ -322,7 +325,7 @@ class syntax_plugin_webcomponent_icon extends DokuWiki_Syntax_Plugin
     public
     static function getTag()
     {
-        return webcomponent::getTagName(get_called_class());
+        return PluginUtility::getTagName(get_called_class());
     }
 
     /**

@@ -4,10 +4,12 @@
 // https://developer.mozilla.org/en-US/docs/Web/HTML/Element/cite
 
 // must be run within Dokuwiki
+use ComboStrap\PluginUtility;
+
 if(!defined('DOKU_INC')) die();
 
 
-class syntax_plugin_webcomponent_cite extends DokuWiki_Syntax_Plugin {
+class syntax_plugin_combo_cite extends DokuWiki_Syntax_Plugin {
 
     CONST TAG = "cite";
 
@@ -38,14 +40,14 @@ class syntax_plugin_webcomponent_cite extends DokuWiki_Syntax_Plugin {
 
     function connectTo($mode) {
 
-        $pattern = webcomponent::getContainerTagPattern(self::TAG);
-        $this->Lexer->addEntryPattern($pattern, $mode, webcomponent::getModeForComponent($this->getPluginComponent()));
+        $pattern = PluginUtility::getContainerTagPattern(self::TAG);
+        $this->Lexer->addEntryPattern($pattern, $mode, PluginUtility::getModeForComponent($this->getPluginComponent()));
 
     }
 
     function postConnect() {
 
-        $this->Lexer->addExitPattern('</' . self::TAG . '>', webcomponent::getModeForComponent($this->getPluginComponent()));
+        $this->Lexer->addExitPattern('</' . self::TAG . '>', PluginUtility::getModeForComponent($this->getPluginComponent()));
 
     }
 
@@ -68,7 +70,7 @@ class syntax_plugin_webcomponent_cite extends DokuWiki_Syntax_Plugin {
 
             case DOKU_LEXER_ENTER :
 
-                $attributes = webcomponent::getAttributes($match);
+                $attributes = PluginUtility::getAttributes($match);
                 return array($state, $attributes);
 
             case DOKU_LEXER_UNMATCHED :
@@ -106,7 +108,7 @@ class syntax_plugin_webcomponent_cite extends DokuWiki_Syntax_Plugin {
 
                     $renderer->doc .= "<cite";
                     if (sizeof($payload)>0) {
-                        $inlineAttributes = webcomponent::array2HTMLAttributes($payload);
+                        $inlineAttributes = PluginUtility::array2HTMLAttributes($payload);
                         $renderer->doc .= " $inlineAttributes";
                     }
                     $renderer->doc .= ">";

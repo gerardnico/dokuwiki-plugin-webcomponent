@@ -3,6 +3,9 @@
  * DokuWiki Syntax Plugin Combostrap.
  *
  */
+
+use ComboStrap\PluginUtility;
+
 if (!defined('DOKU_INC')) {
     die();
 }
@@ -14,7 +17,7 @@ if (!defined('DOKU_PLUGIN')) {
 
 require_once(DOKU_PLUGIN . 'syntax.php');
 require_once(DOKU_INC . 'inc/parserutils.php');
-require_once(__DIR__ . '/../webcomponent.php');
+require_once(__DIR__ . '/../class/PLuginUtility.php');
 
 /**
  * All DokuWiki plugins to extend the parser/rendering mechanism
@@ -28,7 +31,7 @@ require_once(__DIR__ . '/../webcomponent.php');
  * !!!!!!!!!!! The component name must be the name of the php file !!!
  * !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
  */
-class syntax_plugin_webcomponent_button extends DokuWiki_Syntax_Plugin
+class syntax_plugin_combo_button extends DokuWiki_Syntax_Plugin
 {
 
 
@@ -95,8 +98,8 @@ class syntax_plugin_webcomponent_button extends DokuWiki_Syntax_Plugin
 
         foreach (self::getTags() as $tag) {
 
-            $pattern = webcomponent::getContainerTagPattern($tag);
-            $this->Lexer->addEntryPattern($pattern, $mode, 'plugin_' . webcomponent::PLUGIN_NAME . '_' . $this->getPluginComponent());
+            $pattern = PluginUtility::getContainerTagPattern($tag);
+            $this->Lexer->addEntryPattern($pattern, $mode, 'plugin_' . PluginUtility::$PLUGIN_BASE_NAME . '_' . $this->getPluginComponent());
 
         }
 
@@ -106,7 +109,7 @@ class syntax_plugin_webcomponent_button extends DokuWiki_Syntax_Plugin
     {
 
         foreach (self::getTags() as $tag) {
-            $this->Lexer->addExitPattern('</' . $tag . '>', 'plugin_' . webcomponent::PLUGIN_NAME . '_' . $this->getPluginComponent());
+            $this->Lexer->addExitPattern('</' . $tag . '>', 'plugin_' . PluginUtility::$PLUGIN_BASE_NAME . '_' . $this->getPluginComponent());
         }
 
 
@@ -136,7 +139,7 @@ class syntax_plugin_webcomponent_button extends DokuWiki_Syntax_Plugin
                 // Suppress the tag name
                 $tag = self::getTagInString($match);
                 $match = substr($match, strlen($tag) + 1, -1);
-                $parameters = webcomponent::parseMatch($match);
+                $parameters = PluginUtility::parseMatch($match);
                 return array($state, $parameters);
 
             case DOKU_LEXER_UNMATCHED :
@@ -208,7 +211,7 @@ class syntax_plugin_webcomponent_button extends DokuWiki_Syntax_Plugin
 
     public static function getTag()
     {
-        return webcomponent::getTagName(get_called_class());
+        return PluginUtility::getTagName(get_called_class());
     }
 
     public static function getTags()

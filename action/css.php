@@ -4,13 +4,13 @@
 if (!defined('DOKU_INC')) die();
 
 /**
- * Class action_plugin_webcomponent_css
+ * Class action_plugin_combo_css
  * Delete Backend CSS for front-end
  *
  * Bug:
  *   * https://gerardnico.com/web/browser/lighthouse - no interwiki
  */
-class action_plugin_webcomponent_css extends DokuWiki_Action_Plugin
+class action_plugin_combo_css extends DokuWiki_Action_Plugin
 {
 
     /**
