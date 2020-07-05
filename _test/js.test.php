@@ -64,4 +64,21 @@ class plugin_combo_js_test extends DokuWikiTest
     }
 
 
+    /**
+     * Test that Js php is running smoothly
+     */
+    public function test_js_php()
+    {
+
+        $jsFile = DOKU_INC . 'lib/exe/js.php';
+        $this->assertEquals(true, file_exists($jsFile));
+        /** @noinspection PhpIncludeInspection */
+        require_once $jsFile;
+        ob_start();
+        js_out();
+        $output = ob_get_contents();
+        ob_end_clean();
+        $this->assertTrue(strlen($output)>0,"There is an output");
+
+    }
 }
