@@ -133,11 +133,17 @@ class admin_plugin_combo_pagerules extends DokuWiki_Admin_Plugin
             }
 
             if ($id == null) {
-                $this->pageRuleManager->addRule($matcher, $target, $priority);
+                if (!$this->pageRuleManager->patternExists($matcher)) {
+                    $this->pageRuleManager->addRule($matcher, $target, $priority);
+                    msg($this->lang['Saved'], PluginUtility::LVL_MSG_INFO);
+                } else {
+                    msg("The matcher pattern ($matcher) already exists. The page rule was not inserted.", PluginUtility::LVL_MSG_ERROR);
+                }
             } else {
                 $this->pageRuleManager->updateRule($id, $matcher, $target, $priority);
+                msg($this->lang['Saved'], PluginUtility::LVL_MSG_INFO);
             }
-            msg($this->lang['Saved'], PluginUtility::LVL_MSG_INFO);
+
 
 
         }
@@ -161,7 +167,7 @@ class admin_plugin_combo_pagerules extends DokuWiki_Admin_Plugin
 
         global $conf;
 
-        ptln('<h1>' . ucfirst($this->getPluginName()) . ' - ' . ucfirst($this->getPluginComponent()) . '</a></h1>');
+        ptln('<h1>' . ucfirst(PluginUtility::$PLUGIN_NAME) . ' - ' . ucfirst($this->getPluginComponent()) . '</a></h1>');
         $relativePath = 'admin/' . $this->getPluginComponent() . '_intro';
         echo $this->locale_xhtml($relativePath);
 

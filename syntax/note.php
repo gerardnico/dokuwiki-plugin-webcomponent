@@ -68,7 +68,7 @@ class syntax_plugin_combo_note extends DokuWiki_Syntax_Plugin {
 
         foreach ($this->getTags() as $tag) {
             $pattern = PluginUtility::getContainerTagPattern($tag);
-            $this->Lexer->addEntryPattern($pattern, $mode, 'plugin_' . PluginUtility::$PLUGIN_BASE_NAME . '_' . $this->getPluginComponent());
+            $this->Lexer->addEntryPattern($pattern, $mode, PluginUtility::getModeForComponent($this->getPluginComponent()));
         }
 
     }
@@ -76,7 +76,7 @@ class syntax_plugin_combo_note extends DokuWiki_Syntax_Plugin {
     function postConnect() {
 
         foreach ($this->getTags() as $tag) {
-            $this->Lexer->addExitPattern('</' . $tag . '>', 'plugin_' . PluginUtility::$PLUGIN_BASE_NAME . '_' . $this->getPluginComponent());
+            $this->Lexer->addExitPattern('</' . $tag . '>', PluginUtility::getModeForComponent($this->getPluginComponent()));
         }
 
     }
@@ -118,14 +118,21 @@ class syntax_plugin_combo_note extends DokuWiki_Syntax_Plugin {
         if ($format == 'xhtml') {
 
             /** @var Doku_Renderer_xhtml $renderer */
-            list($state, $attributes) = $data;
+            list($state, $payload) = $data;
             switch ($state) {
                 case DOKU_LEXER_ENTER :
-                    $renderer->doc .= '<div class="alert alert-info" role="note">';
+                    $attributes = $payload;
+                    $classValue = "alert alert-info";
+                    if (array_key_exists("class", $attributes)) {
+                        $attributes["class"] .= " {$classValue}";
+                    } else {
+                        $attributes["class"] = "{$classValue}";
+                    }
+                    $renderer->doc .= '<div '.PluginUtility::array2HTMLAttributes($attributes).' role="note">';
                     break;
 
                 case DOKU_LEXER_UNMATCHED :
-                    $renderer->doc .= $renderer->_xmlEntities($attributes);
+                    $renderer->doc .= $renderer->_xmlEntities($payload);
                     break;
 
                 case DOKU_LEXER_EXIT :

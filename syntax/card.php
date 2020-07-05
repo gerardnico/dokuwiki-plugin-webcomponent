@@ -36,10 +36,6 @@ class syntax_plugin_combo_card extends DokuWiki_Syntax_Plugin
 
     // The elements of a teaser
     // because they are assembled at the end
-    private $startElement;
-    private $text;
-    private $header;
-    private $image;
     const body_html = DOKU_TAB . '<div class="card-body">';
 
 
@@ -96,8 +92,8 @@ class syntax_plugin_combo_card extends DokuWiki_Syntax_Plugin
     /**
      * Create a pattern that will called this plugin
      *
-     * @see Doku_Parser_Mode::connectTo()
      * @param string $mode
+     * @see Doku_Parser_Mode::connectTo()
      */
     function connectTo($mode)
     {
@@ -105,7 +101,7 @@ class syntax_plugin_combo_card extends DokuWiki_Syntax_Plugin
         foreach (self::getTags() as $tag) {
 
             $pattern = PluginUtility::getContainerTagPattern($tag);
-            $this->Lexer->addEntryPattern($pattern, $mode, 'plugin_' . PluginUtility::$PLUGIN_BASE_NAME . '_' . $this->getPluginComponent());
+            $this->Lexer->addEntryPattern($pattern, $mode, PluginUtility::getModeForComponent($this->getPluginComponent()));
         }
 
 
@@ -115,11 +111,11 @@ class syntax_plugin_combo_card extends DokuWiki_Syntax_Plugin
     {
 
         foreach (self::getTags() as $tag) {
-            $this->Lexer->addExitPattern('</' . $tag . '>', 'plugin_' . PluginUtility::$PLUGIN_BASE_NAME . '_' . $this->getPluginComponent());
+            $this->Lexer->addExitPattern('</' . $tag . '>', PluginUtility::getModeForComponent($this->getPluginComponent()));
         }
 
         // Image
-        $this->Lexer->addPattern(self::IMAGE_PATTERN, 'plugin_' . PluginUtility::$PLUGIN_BASE_NAME . '_' . $this->getPluginComponent());
+        $this->Lexer->addPattern(self::IMAGE_PATTERN, PluginUtility::getModeForComponent($this->getPluginComponent()));
 
     }
 
@@ -128,13 +124,13 @@ class syntax_plugin_combo_card extends DokuWiki_Syntax_Plugin
      * The handle function goal is to parse the matched syntax through the pattern function
      * and to return the result for use in the renderer
      * This result is always cached until the page is modified.
-     * @see DokuWiki_Syntax_Plugin::handle()
-     *
      * @param string $match
      * @param int $state
      * @param int $pos
      * @param Doku_Handler $handler
      * @return array|bool
+     * @see DokuWiki_Syntax_Plugin::handle()
+     *
      */
     function handle($match, $state, $pos, Doku_Handler $handler)
     {
@@ -143,15 +139,8 @@ class syntax_plugin_combo_card extends DokuWiki_Syntax_Plugin
 
             case DOKU_LEXER_ENTER:
 
-                // Suppress the component name
-                // Suppress the <>
-                $match = substr($match, 1, -1);
-                // Suppress the tag name
-                foreach (self::getTags() as $tag) {
-                    $match = str_replace($tag, "", $match);
-                }
-                $parameters = PluginUtility::parseMatch($match);
-                return array($state, $parameters);
+                $attributes = PluginUtility::getAttributes($match);
+                return array($state, $attributes);
 
             case DOKU_LEXER_UNMATCHED :
 
@@ -159,14 +148,14 @@ class syntax_plugin_combo_card extends DokuWiki_Syntax_Plugin
 
             case DOKU_LEXER_MATCHED :
 
-                $parameters = array();
+                $attributes = array();
 
                 if (preg_match('/' . self::IMAGE_PATTERN . '/msSi', $match . DOKU_LF)) {
                     // We have an image, we parse it (Doku_Handler_Parse_Media in handler.php)
-                    $parameters['image'] = Doku_Handler_Parse_Media($match);
+                    $attributes['image'] = Doku_Handler_Parse_Media($match);
                 }
 
-                return array($state, $parameters);
+                return array($state, $attributes);
 
             case DOKU_LEXER_EXIT :
 
@@ -195,37 +184,39 @@ class syntax_plugin_combo_card extends DokuWiki_Syntax_Plugin
         if ($format == 'xhtml') {
 
             /** @var Doku_Renderer_xhtml $renderer */
-            list($state, $parameters) = $data;
+            list($state, $payload) = $data;
             switch ($state) {
 
                 case DOKU_LEXER_ENTER :
 
-                    $renderer->doc .= '<div class="card"';
-                    foreach ($parameters as $key => $value) {
-                        $renderer->doc .= ' ' . $key . '="' . $value . '"';
+                    $attributes = $payload;
+                    if (array_key_exists("class", $attributes)) {
+                        $attributes["class"].=" card";
+                    } else {
+                        $attributes["class"]="card";
                     }
-                    $renderer->doc .= '>'. DOKU_LF ;
-                    $renderer->doc .= self::body_html.DOKU_LF;
+                    $renderer->doc .= '<div '.PluginUtility::array2HTMLAttributes($attributes).'>' . DOKU_LF;
+                    $renderer->doc .= self::body_html . DOKU_LF;
                     break;
 
                 case DOKU_LEXER_UNMATCHED :
 
-                    $renderer->doc .= $renderer->_xmlEntities($parameters);
+                    $renderer->doc .= $renderer->_xmlEntities($payload);
 
                     break;
 
                 case DOKU_LEXER_MATCHED:
 
 
-                    if (array_key_exists('image', $parameters)) {
+                    if (array_key_exists('image', $payload)) {
 
-                        $renderer->doc = substr ($renderer->doc, 0, strlen($renderer->doc)-strlen(self::body_html)-strlen(DOKU_LF));
-                        $src = $parameters['image']['src'];
-                        $width = $parameters['image']['width'];
-                        $height = $parameters['image']['height'];
-                        $title = $parameters['image']['title'];
+                        $renderer->doc = substr($renderer->doc, 0, strlen($renderer->doc) - strlen(self::body_html) - strlen(DOKU_LF));
+                        $src = $payload['image']['src'];
+                        $width = $payload['image']['width'];
+                        $height = $payload['image']['height'];
+                        $title = $payload['image']['title'];
                         //Snippet taken from $renderer->doc .= $renderer->internalmedia($src, $linking = 'nolink');
-                        $renderer->doc .= DOKU_TAB . '<img class="card-img-top" src="' . ml($src, array('w' => $width, 'h' => $height, 'cache' => true)) . '" alt="' . $title . '" width="' . $width . '">' .DOKU_LF;
+                        $renderer->doc .= DOKU_TAB . '<img class="card-img-top" src="' . ml($src, array('w' => $width, 'h' => $height, 'cache' => true)) . '" alt="' . $title . '" width="' . $width . '">' . DOKU_LF;
                         $renderer->doc .= self::body_html;
                     }
                     break;

@@ -1,4 +1,8 @@
 <?php
+
+use ComboStrap\PluginUtility;
+use ComboStrap\UrlManagerBestEndPage;
+
 require_once(__DIR__ . '/../../class/UrlManagerBestEndPage.php');
 
 /**
