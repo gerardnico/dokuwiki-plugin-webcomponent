@@ -12,7 +12,10 @@ if (!defined('DOKU_INC')) die();
 class syntax_plugin_combo_cardheader extends DokuWiki_Syntax_Plugin
 {
 
-    // Header pattern that we expect in a card (teaser) ie  ==== Hello =====
+    /**
+     * Header pattern that we expect in a card (teaser) ie  ==== Hello =====
+     * Found in {@link \dokuwiki\Parsing\ParserMode\Header}
+     */
     const HEADER_PATTERN = '[ \t]*={2,}[^\n]+={2,}[ \t]*(?=\n)';
 
     // The fix top menu strike again

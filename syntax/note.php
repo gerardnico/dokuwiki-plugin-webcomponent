@@ -151,9 +151,6 @@ class syntax_plugin_combo_note extends DokuWiki_Syntax_Plugin
                         $attributes["class"] = "{$classValue}";
                     }
 
-                    // Process the style attributes
-                    PluginUtility::processStyle($attributes);
-
                     $renderer->doc .= '<div ' . PluginUtility::array2HTMLAttributes($attributes) . ' role="note">';
                     break;
 

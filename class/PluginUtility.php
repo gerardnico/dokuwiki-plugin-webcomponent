@@ -204,6 +204,10 @@ class PluginUtility
      */
     public static function array2HTMLAttributes($attributes)
     {
+        // Process the style attributes if any
+        self::processStyle($attributes);
+
+        // Then transform
         $tagAttributeString = "";
         foreach ($attributes as $name => $value) {
             $tagAttributeString .= hsc($name) . '="' . hsc($value) . '" ';
@@ -251,7 +255,7 @@ class PluginUtility
         }
 
         // Suppress the >
-        if ($match[strlen($match)] == ">") {
+        if ($match[strlen($match)-1] == ">") {
             $match = substr($match, 0, strlen($match) - 1);
         }
 
@@ -261,10 +265,33 @@ class PluginUtility
         }
 
         // Suppress the tag name (ie until the first blank)
-        $match = substr($match, strpos($match, " "));
+        $spacePosition = strpos($match, " ");
+        if (!$spacePosition){
+            // No space, meaning this is only the tag name
+            return array();
+        }
+        $match = trim(substr($match, $spacePosition));
 
-        // Parse the parameters
-        return self::parseMatch($match);
+        // Do we have a type as first argument ?
+        $attributes = array();
+        $spacePosition = strpos($match, " ");
+        if ($spacePosition){
+            $firstArgument = substr($match, 0, $spacePosition);
+        } else {
+            $firstArgument = $match;
+        }
+        if (!strpos($firstArgument,"=")){
+            $attributes["type"] = $firstArgument;
+            // Suppress the type
+            $match = substr($match, strlen($firstArgument));
+        }
+
+        // Parse the remaining attributes
+        $parsedAttributes = self::parseMatch($match);
+
+        // Merge and return
+        $attributes = array_merge($attributes, $parsedAttributes);;
+        return $attributes;
 
     }
 

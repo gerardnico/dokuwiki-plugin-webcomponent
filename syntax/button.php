@@ -136,11 +136,8 @@ class syntax_plugin_combo_button extends DokuWiki_Syntax_Plugin
 
             case DOKU_LEXER_ENTER:
 
-                // Suppress the tag name
-                $tag = self::getTagInString($match);
-                $match = substr($match, strlen($tag) + 1, -1);
-                $parameters = PluginUtility::parseMatch($match);
-                return array($state, $parameters);
+                $attributes = PluginUtility::getAttributes($match);
+                return array($state, $attributes);
 
             case DOKU_LEXER_UNMATCHED :
 
@@ -177,23 +174,30 @@ class syntax_plugin_combo_button extends DokuWiki_Syntax_Plugin
 
                 /** @var Doku_Renderer_xhtml $renderer */
 
-                list($state, $parameters) = $data;
+                list($state, $payload) = $data;
                 switch ($state) {
 
                     case DOKU_LEXER_ENTER :
-                        $class = "";
-                        if (array_key_exists("class", $parameters)) {
-                            $class = hsc($parameters["class"]);
+                        $attributes = $payload;
+                        if (array_key_exists("class", $attributes)) {
+                            $attributes["class"] .= " btn";
+                        } else {
+                            $attributes["class"] .= "btn";
                         }
-                        if ($class != "") {
-                            $class = " " . $class;
+                        if (array_key_exists("type", $attributes)) {
+                            $type = $attributes["type"];
+                            $attributes["class"] .= " btn-".$type;
+                            unset($attributes["type"]);
+                        } else {
+                            $attributes["class"] .= " btn-primary";
                         }
-                        $renderer->doc .= '<button type="button" class="btn btn-primary' . $class . '">';
+                        $inlineAttributes = PluginUtility::array2HTMLAttributes($attributes);
+                        $renderer->doc .= '<button type="button" '.$inlineAttributes.'>';
                         break;
 
                     case DOKU_LEXER_UNMATCHED :
 
-                        $renderer->doc .= $renderer->_xmlEntities($parameters);
+                        $renderer->doc .= $renderer->_xmlEntities($payload);
                         break;
 
 

@@ -5,19 +5,11 @@
  */
 
 use ComboStrap\PluginUtility;
-
-if (!defined('DOKU_INC')) {
-    die();
-}
-
-if (!defined('DOKU_PLUGIN')) {
-    define('DOKU_PLUGIN', DOKU_INC . 'lib/plugins/');
-}
+use ComboStrap\XmlUtility;
 
 
-require_once(DOKU_PLUGIN . 'syntax.php');
-require_once(DOKU_INC . 'inc/parserutils.php');
 require_once(__DIR__ . '/../class/PluginUtility.php');
+require_once (__DIR__."/../class/XmlUtility.php");
 
 /**
  * All DokuWiki plugins to extend the parser/rendering mechanism
@@ -280,7 +272,7 @@ class syntax_plugin_combo_icon extends DokuWiki_Syntax_Plugin
                         $widthValue = $attributes[$widthName];
                         unset($attributes[$widthName]);
                     }
-                    $this->setXmlAttribute($widthName, $widthValue, $mediaSvgXml);
+                    XmlUtility::setAttribute($widthName, $widthValue, $mediaSvgXml);
 
                     // Height
                     $heightName = "height";
@@ -289,11 +281,11 @@ class syntax_plugin_combo_icon extends DokuWiki_Syntax_Plugin
                         $heightValue = $attributes[$heightName];
                         unset($attributes[$heightName]);
                     }
-                    $this->setXmlAttribute($heightName, $heightValue, $mediaSvgXml);
+                    XmlUtility::setAttribute($heightName, $heightValue, $mediaSvgXml);
 
                     // Add fill="currentColor"
                     $pathXml = $mediaSvgXml->{'path'};
-                    $this->setXmlAttribute("fill", "currentColor", $pathXml);
+                    XmlUtility::setAttribute("fill", "currentColor", $pathXml);
 
                     // Process the style
                     PluginUtility::processStyle($attributes);
@@ -317,21 +309,6 @@ class syntax_plugin_combo_icon extends DokuWiki_Syntax_Plugin
     static function getTag()
     {
         return PluginUtility::getTagName(get_called_class());
-    }
-
-    /**
-     * @param $attName
-     * @param $attValue
-     * @param SimpleXMLElement $mediaSvgXml
-     */
-    public function setXmlAttribute($attName, $attValue, SimpleXMLElement $mediaSvgXml)
-    {
-        $actualWidthValue = (string)$mediaSvgXml[$attName];
-        if ($actualWidthValue != "") {
-            $mediaSvgXml[$attName] = $attValue;
-        } else {
-            $mediaSvgXml->addAttribute($attName, $attValue);
-        }
     }
 
 
