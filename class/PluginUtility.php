@@ -405,7 +405,9 @@ class PluginUtility
         if (array_key_exists($styleAttributeName, $attributes)) {
             foreach (explode(";", $attributes[$styleAttributeName]) as $property){
                 list($key,$value)=explode(":",$property);
-                $styleProperties[$key]= $value;
+                if ($key!="") {
+                    $styleProperties[$key] = $value;
+                }
             }
         }
         $colorAttributes = ["color","background-color","border-color"];

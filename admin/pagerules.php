@@ -94,19 +94,6 @@ class admin_plugin_combo_pagerules extends DokuWiki_Admin_Plugin
     function handle()
     {
 
-        /**
-         * Handle Sqlite instantiation  here and not in the constructore
-         * to not make sqlite mandatory everywhere
-         */
-        if ($this->pageRuleManager == null) {
-            $sqlite = PluginUtility::getSqlite();
-            if ($sqlite == null) {
-                // A message should have already been send by the getSqlite function
-                return;
-            }
-            $this->pageRuleManager = new PageRules($sqlite);
-
-        }
 
         /**
          * If one of the form submit has the add key
@@ -165,7 +152,20 @@ class admin_plugin_combo_pagerules extends DokuWiki_Admin_Plugin
     function html()
     {
 
-        global $conf;
+        /**
+         * Handle Sqlite instantiation  here and not in the constructor
+         * to not make sqlite mandatory everywhere
+         */
+        if ($this->pageRuleManager == null) {
+
+            $sqlite = PluginUtility::getSqlite();
+            if ($sqlite == null) {
+                // A message should have already been send by the getSqlite function
+                return;
+            }
+            $this->pageRuleManager = new PageRules($sqlite);
+
+        }
 
         ptln('<h1>' . ucfirst(PluginUtility::$PLUGIN_NAME) . ' - ' . ucfirst($this->getPluginComponent()) . '</a></h1>');
         $relativePath = 'admin/' . $this->getPluginComponent() . '_intro';
@@ -236,9 +236,7 @@ class admin_plugin_combo_pagerules extends DokuWiki_Admin_Plugin
             ptln('	<input type="submit" name="upsert" name="Create a page rule" class="button" value="' . $this->getLangOrDefault('AddNewRule','Add a new rule') . '" />');
             ptln('</form>');
 
-            //      List of redirection
-
-
+            // List of redirection
             $rules = $this->pageRuleManager->getRules();
 
             if (sizeof($rules)==0){

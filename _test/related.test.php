@@ -173,7 +173,6 @@ class dokuwiki_plugin_combo_related_test extends DokuWikiTest
     public function test_extraPattern()
     {
 
-
         $request = new TestRequest();
         $response = $request->get(array('id' => self::$extraPatternPage));
 

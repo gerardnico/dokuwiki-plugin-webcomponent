@@ -46,9 +46,9 @@ class plugin_combo_cardcolumns_test extends DokuWikiTest
         $xhtml = p_render('xhtml', $instructions, $info);
 
         $expected = '<div class="card-columns">'.DOKU_LF.
-            '<div class="card" style="width: 18rem;">'.DOKU_LF.
+            '<div style="width: 18rem" class="card">'.DOKU_LF.
             DOKU_TAB.'<div class="card-body">'.DOKU_LF.
-            DOKU_TAB.DOKU_TAB.'<h2 class="card-title">Title</h2>'.DOKU_LF.
+            DOKU_TAB.DOKU_TAB.'<h2 class="card-title" '.syntax_plugin_combo_cardheader::CARD_TITLE_STYLE.'>Title</h2>'.DOKU_LF.
             '<p>'.DOKU_LF.
             'Teaser Text'.DOKU_LF.
             '</p>'.DOKU_LF.

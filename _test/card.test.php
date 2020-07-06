@@ -44,7 +44,7 @@ class plugin_combo_teaser_test extends DokuWikiTest
         $instructions = p_get_instructions($doku_text);
         $xhtml = p_render('xhtml', $instructions, $info);
 
-        $expected = '<div style="width: 18rem;" class="mb-3 card">' . DOKU_LF .
+        $expected = '<div style="width: 18rem" class="mb-3 card">' . DOKU_LF .
             DOKU_TAB . '<img class="card-img-top" src="/./lib/exe/fetch.php?w=30&amp;tok=029902&amp;media=allowclipboardhelper.jpg" alt="" width="30">' . DOKU_LF .
             DOKU_TAB . '<div class="card-body">' . DOKU_LF .
             DOKU_TAB . DOKU_TAB . '<h4 class="card-title" '.syntax_plugin_combo_cardheader::CARD_TITLE_STYLE.'>Teaser Title</h4>' . DOKU_LF .
@@ -70,7 +70,7 @@ class plugin_combo_teaser_test extends DokuWikiTest
             '</' . $componentName . '>' . DOKU_LF;
 
 
-        $expected = '<div style="width: 18rem;" class="card">' . DOKU_LF .
+        $expected = '<div style="width: 18rem" class="card">' . DOKU_LF .
             DOKU_TAB . '<img class="card-img-top" src="/./lib/exe/fetch.php?w=30&amp;tok=029902&amp;media=allowclipboardhelper.jpg" alt="" width="30">' . DOKU_LF .
             DOKU_TAB . '<div class="card-body">' . DOKU_LF .
             DOKU_TAB . DOKU_TAB . '<h4 class="card-title" '.syntax_plugin_combo_cardheader::CARD_TITLE_STYLE.'>Teaser Title</h4>' . DOKU_LF .
