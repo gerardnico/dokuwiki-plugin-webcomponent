@@ -168,17 +168,27 @@ class syntax_plugin_combo_icon extends DokuWiki_Syntax_Plugin
                     }
                     $iconName = $attributes[$name];
 
-                    // Trying to find/download the icon file
-                    // The name may be a media id directly
-                    $mediaFile = mediaFN($iconName);
-                    if (!file_exists($mediaFile)) {
-
-                        // Is it a file ?
-                        $path =  pathinfo($mediaFile);
-                        if ($path['extension']!=""){
-                            PluginUtility::msg("The media file ($mediaFile) could not be found. If you want an icon from the material design icon library, indicate a name without extension.", PluginUtility::LVL_MSG_ERROR);
-                            return false;
+                    // If the name have an extension, it's a file
+                    // Otherwise, it's an icon from the library
+                    $path = pathinfo($iconName);
+                    if ($path['extension']!=""){
+                        // loop through candidates until a match was found:
+                        $mediaFile = mediaFN($iconName);
+                        // May be an icon from the templates
+                        if (!file_exists($mediaFile)){
+                            $mediaTplFile  = tpl_incdir().'images/'.$iconName;
+                            if (!file_exists($mediaTplFile)){
+                                // Trying to see if it's not in the template images directory
+                                PluginUtility::msg("The media file could not be found in the media or template library . If you want an icon from the material design icon library, indicate a name without extension.", PluginUtility::LVL_MSG_ERROR);
+                                PluginUtility::msg("Media File Library tested: $mediaFile", PluginUtility::LVL_MSG_ERROR);
+                                PluginUtility::msg("Media Template Library tested: $mediaTplFile", PluginUtility::LVL_MSG_ERROR);
+                                return false;
+                            } else {
+                                $mediaFile = $mediaTplFile;
+                            }
                         }
+
+                    } else {
 
                         // It may be a icon name from material design
                         $iconNameSpace = $this->getConf(self::CONF_ICONS_MEDIA_NAMESPACE);
@@ -247,13 +257,11 @@ class syntax_plugin_combo_icon extends DokuWiki_Syntax_Plugin
 
                     }
 
-                    if (!file_exists($mediaFile)) {
-                        PluginUtility::msg("The icon ($mediaId) could not be found as media file or material design icon", PluginUtility::LVL_MSG_ERROR);
-                        return false;
-                    }
 
                     // Build the svg Element
                     try {
+                        /** @noinspection PhpComposerExtensionStubsInspection */
+                        /** @noinspection PhpUndefinedVariableInspection */
                         $mediaSvgXml = simplexml_load_file($mediaFile);
                     } catch (Exception $e) {
                         PluginUtility::msg("The icon file ($mediaFile) could not be loaded as a XML SVG. The error returned is $e", PluginUtility::LVL_MSG_ERROR);

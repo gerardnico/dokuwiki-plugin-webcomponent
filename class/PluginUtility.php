@@ -3,6 +3,7 @@
 
 namespace ComboStrap;
 
+use RuntimeException;
 use TestRequest;
 
 /**
