@@ -144,7 +144,22 @@ class syntax_plugin_combo_note extends DokuWiki_Syntax_Plugin
                                 break;
                         }
                     }
-                    $classValue .= " alert-" . $type;
+                    if ($type != "tip") {
+                        $classValue .= " alert-" . $type;
+                    } else {
+                        // There is no alert-tip color
+                        // base color was background color and we have modified the luminance
+                        if (!array_key_exists("color", $attributes)) {
+                            $attributes["color"] = "#6c6400"; // lum - 51
+                        }
+                        if (!array_key_exists("border-color", $attributes)) {
+                            $attributes["border-color"] = "#FFF78c"; // lum - 186
+                        }
+                        if (!array_key_exists("background-color", $attributes)) {
+                            $attributes["background-color"] = "#fff79f"; // lum - 195
+                        }
+                    }
+
                     if (array_key_exists("class", $attributes)) {
                         $attributes["class"] .= " {$classValue}";
                     } else {
