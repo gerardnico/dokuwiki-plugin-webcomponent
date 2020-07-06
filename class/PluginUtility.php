@@ -271,6 +271,9 @@ class PluginUtility
             return array();
         }
         $match = trim(substr($match, $spacePosition));
+        if ($match==""){
+            return array();
+        }
 
         // Do we have a type as first argument ?
         $attributes = array();

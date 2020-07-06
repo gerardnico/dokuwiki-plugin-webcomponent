@@ -34,6 +34,21 @@ class plugin_combo_plugin_utility_test extends DokuWikiTest
     public function test_parse_parameters_no_content()
     {
 
+        $match = '<NOTE tip>';
+        $attributes = PluginUtility::getAttributes($match);
+        $this->assertArrayHasKey("type", $attributes);
+        $this->assertEquals("tip", $attributes["type"]);
+
+        $match = '<NOTE >';
+        $attributes = PluginUtility::getAttributes($match);
+        $this->assertArrayNotHasKey("type", $attributes);
+
+
+    }
+
+    public function test_parse_parameters_type()
+    {
+
         $match = ' class="mx-auto" background-color="purple"';
         $parameters = PluginUtility::parseMatch($match);
         $this->assertEquals("mx-auto", $parameters["class"]);
