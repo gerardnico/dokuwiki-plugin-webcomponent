@@ -34,12 +34,14 @@ class plugin_combo_plugin_utility_test extends DokuWikiTest
     public function test_parse_parameters_no_content()
     {
 
-        $match = ' class="" ';
+        $match = ' class="mx-auto" background-color="purple"';
         $parameters = PluginUtility::parseMatch($match);
-        $this->assertEquals("", $parameters["class"]);
+        $this->assertEquals("mx-auto", $parameters["class"]);
+        $this->assertEquals("purple", $parameters["background-color"]);
         $this->assertEquals(true, array_key_exists("class",$parameters));
 
     }
+
 
     public function test_get_attributes()
     {

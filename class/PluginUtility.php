@@ -222,7 +222,7 @@ class PluginUtility
         $parameters = array();
 
         // /i not case sensitive
-        $attributePattern = "\\s*(\w+)\\s*=\\s*[\'\"]{1}([^\`\"]*)[\'\"]{1}\\s*";
+        $attributePattern = "\\s*([-\w]+)\\s*=\\s*[\'\"]{1}([^\`\"]*)[\'\"]{1}\\s*";
         $result = preg_match_all('/' . $attributePattern . '/i', $match, $matches);
         if ($result != 0) {
             foreach ($matches[1] as $key => $parameterKey) {
@@ -268,12 +268,20 @@ class PluginUtility
     }
 
     /**
-     * @param array $styleRules - an array of CSS rule (ie color:red)
+     * @param array $styleProperties - an array of CSS properties with key, value
      * @return string - the value for the style attribute (ie all rules where joined with the comma)
      */
-    public static function array2InlineStyle(array $styleRules)
+    public static function array2InlineStyle(array $styleProperties)
     {
-        return implode(";", $styleRules);
+        $inlineCss = "";
+        foreach ($styleProperties as $key => $value){
+            $inlineCss .= "$key:$value;";
+        }
+        // Suppress the last ;
+        if ($inlineCss[strlen($inlineCss)-1]==";"){
+            $inlineCss = substr($inlineCss,0,-1);
+        }
+        return $inlineCss;
     }
 
     /**
@@ -380,6 +388,64 @@ class PluginUtility
         // global $INFO;
         // $INFO['ismanager'] = true;
 
+    }
+
+    /**
+     * This method will takes attributes
+     * and process the plugin styling attribute such as width and height
+     * to put them in a style HTML attrbute
+     * @param $attributes
+     */
+    public static function processStyle(&$attributes)
+    {
+        // Style (color)
+        $styleAttributeName = "style";
+        $styleProperties = array();
+        if (array_key_exists($styleAttributeName, $attributes)) {
+            foreach (explode(";", $attributes[$styleAttributeName]) as $property){
+                list($key,$value)=explode(":",$property);
+                $styleProperties[$key]= $value;
+            }
+        }
+        $colorAttributes = ["color","background-color","border-color"];
+        foreach ($colorAttributes as $colorAttribute) {
+            if (array_key_exists($colorAttribute, $attributes)) {
+                $styleProperties[$colorAttribute]=self::getColorValue($attributes[$colorAttribute]);
+                unset($attributes[$colorAttribute]);
+            }
+        }
+
+        $widthName = "width";
+        if (array_key_exists($widthName, $attributes)) {
+            $styleProperties[$widthName] = trim($attributes[$widthName]);
+            unset($attributes[$widthName]);
+        }
+
+        $heightName = "height";
+        if (array_key_exists($heightName, $attributes)) {
+            $styleProperties[$heightName] = trim($attributes[$heightName]);
+            unset($attributes[$heightName]);
+        }
+
+        if (sizeof($styleProperties) != 0) {
+            $attributes[$styleAttributeName] = PluginUtility::array2InlineStyle($styleProperties);
+        }
+
+    }
+
+    /**
+     * Return a combostrap value to a web color value
+     * @param string $color a color value
+     * @return string
+     */
+    public static function getColorValue($color)
+    {
+        if ($color[0] == "#") {
+            $colorValue = $color;
+        } else {
+            $colorValue = "var(--" . $color . ")";
+        }
+        return $colorValue;
     }
 
     /**

@@ -1,5 +1,9 @@
 # TODO
 
+## Alias
+
+  * Alias: php/switch and php/case
+  * Reverse / Permalink: html:svg = svg:html
 
 ## Bad Behavior
 
@@ -18,9 +22,7 @@ db:oracle:999999.9:union:all:select_null:from_dual_and_0_0
 }
 ```
 
-## Reverse / Permalink
 
-html:svg = svg:html
 
 ## UI
 

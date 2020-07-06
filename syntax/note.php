@@ -1,18 +1,18 @@
 <?php
 
 
-
 // must be run within Dokuwiki
 use ComboStrap\PluginUtility;
 
-if(!defined('DOKU_INC')) die();
+if (!defined('DOKU_INC')) die();
 
 /**
  * Class syntax_plugin_combo_note
  * Implementation of a note
  * called an alert in <a href="https://getbootstrap.com/docs/4.0/components/alerts/">bootstrap</a>
  */
-class syntax_plugin_combo_note extends DokuWiki_Syntax_Plugin {
+class syntax_plugin_combo_note extends DokuWiki_Syntax_Plugin
+{
 
     const NOTE_TAG = "note";
 
@@ -22,7 +22,8 @@ class syntax_plugin_combo_note extends DokuWiki_Syntax_Plugin {
      * Needs to return one of the mode types defined in $PARSER_MODES in parser.php
      * @see DokuWiki_Syntax_Plugin::getType()
      */
-    function getType() {
+    function getType()
+    {
         return 'container';
     }
 
@@ -35,7 +36,8 @@ class syntax_plugin_combo_note extends DokuWiki_Syntax_Plugin {
      *
      * @see DokuWiki_Syntax_Plugin::getPType()
      */
-    function getPType() {
+    function getPType()
+    {
         return 'block';
     }
 
@@ -48,15 +50,18 @@ class syntax_plugin_combo_note extends DokuWiki_Syntax_Plugin {
      *
      * Return an array of one or more of the mode types {@link $PARSER_MODES} in Parser.php
      */
-    function getAllowedTypes() {
+    function getAllowedTypes()
+    {
         return array('container', 'formatting', 'substition', 'protected', 'disabled', 'paragraphs');
     }
 
-    function getSort() {
+    function getSort()
+    {
         return 201;
     }
 
-    function getTags(){
+    function getTags()
+    {
         return
             array(
                 strtolower(self::NOTE_TAG),
@@ -64,7 +69,8 @@ class syntax_plugin_combo_note extends DokuWiki_Syntax_Plugin {
             );
     }
 
-    function connectTo($mode) {
+    function connectTo($mode)
+    {
 
         foreach ($this->getTags() as $tag) {
             $pattern = PluginUtility::getContainerTagPattern($tag);
@@ -73,7 +79,8 @@ class syntax_plugin_combo_note extends DokuWiki_Syntax_Plugin {
 
     }
 
-    function postConnect() {
+    function postConnect()
+    {
 
         foreach ($this->getTags() as $tag) {
             $this->Lexer->addExitPattern('</' . $tag . '>', PluginUtility::getModeForComponent($this->getPluginComponent()));
@@ -81,7 +88,8 @@ class syntax_plugin_combo_note extends DokuWiki_Syntax_Plugin {
 
     }
 
-    function handle($match, $state, $pos, Doku_Handler $handler) {
+    function handle($match, $state, $pos, Doku_Handler $handler)
+    {
 
         switch ($state) {
 
@@ -90,7 +98,7 @@ class syntax_plugin_combo_note extends DokuWiki_Syntax_Plugin {
                 return array($state, $attributes);
 
             case DOKU_LEXER_UNMATCHED :
-                return array ($state, $match);
+                return array($state, $match);
 
             case DOKU_LEXER_EXIT :
 
@@ -122,13 +130,31 @@ class syntax_plugin_combo_note extends DokuWiki_Syntax_Plugin {
             switch ($state) {
                 case DOKU_LEXER_ENTER :
                     $attributes = $payload;
-                    $classValue = "alert alert-info";
+                    $classValue = "alert";
+                    $type = "info";
+                    if (array_key_exists("type", $attributes)) {
+                        $type = $attributes["type"];
+                        // Switch for the color
+                        switch ($type) {
+                            case "important":
+                                $type = "warning";
+                                break;
+                            case "warning":
+                                $type = "danger";
+                                break;
+                        }
+                    }
+                    $classValue .= " alert-" . $type;
                     if (array_key_exists("class", $attributes)) {
                         $attributes["class"] .= " {$classValue}";
                     } else {
                         $attributes["class"] = "{$classValue}";
                     }
-                    $renderer->doc .= '<div '.PluginUtility::array2HTMLAttributes($attributes).' role="note">';
+
+                    // Process the style attributes
+                    PluginUtility::processStyle($attributes);
+
+                    $renderer->doc .= '<div ' . PluginUtility::array2HTMLAttributes($attributes) . ' role="note">';
                     break;
 
                 case DOKU_LEXER_UNMATCHED :

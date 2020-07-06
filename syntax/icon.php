@@ -287,26 +287,9 @@ class syntax_plugin_combo_icon extends DokuWiki_Syntax_Plugin
                     $pathXml = $mediaSvgXml->{'path'};
                     $this->setXmlAttribute("fill", "currentColor", $pathXml);
 
-                    // Style (color)
-                    $styleName = "style";
-                    $styleRules = array();
-                    if (array_key_exists($styleName, $attributes)) {
-                        $styleRules[] = $attributes[$styleName];
-                    }
-                    $colorName = "color";
-                    if (array_key_exists($colorName, $attributes)) {
-                        $color = trim($attributes[$colorName]);
-                        unset($attributes[$colorName]);
-                        if ($color[0] == "#") {
-                            $colorValue = $color;
-                        } else {
-                            $colorValue = "var(--" . $color . ")";
-                        }
-                        $styleRules[] = "color:" . $colorValue;
-                    }
-                    if (sizeof($styleRules) != 0) {
-                        $attributes[$styleName] = PluginUtility::array2InlineStyle($styleRules);
-                    }
+                    // Process the style
+                    PluginUtility::processStyle($attributes);
+
                     foreach ($attributes as $name => $value) {
                         $mediaSvgXml->addAttribute($name, $value);
                     }

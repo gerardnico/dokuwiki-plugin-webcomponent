@@ -87,7 +87,7 @@ class action_plugin_combo_urlmessage extends DokuWiki_Action_Plugin
 
 
         // Message
-        $message = new Message404();
+        $message = new Message();
 
         list($pageIdOrigin, $redirectSource) = self::getMessageSessionProperties();
         if ($pageIdOrigin == null) {
@@ -107,32 +107,32 @@ class action_plugin_combo_urlmessage extends DokuWiki_Action_Plugin
 
                 case action_plugin_combo_urlmanager::TARGET_ORIGIN_PAGE_RULES:
                     $message->addContent(sprintf($this->getLang('message_redirected_by_redirect'), hsc($pageIdOrigin)));
-                    $message->setType(Message404::TYPE_CLASSIC);
+                    $message->setType(Message::TYPE_CLASSIC);
                     break;
 
                 case action_plugin_combo_urlmanager::TARGET_ORIGIN_START_PAGE:
                     $message->addContent(sprintf($this->lang['message_redirected_to_startpage'], hsc($pageIdOrigin)));
-                    $message->setType(Message404::TYPE_WARNING);
+                    $message->setType(Message::TYPE_WARNING);
                     break;
 
                 case  action_plugin_combo_urlmanager::TARGET_ORIGIN_BEST_PAGE_NAME:
                     $message->addContent(sprintf($this->lang['message_redirected_to_bestpagename'], hsc($pageIdOrigin)));
-                    $message->setType(Message404::TYPE_WARNING);
+                    $message->setType(Message::TYPE_WARNING);
                     break;
 
                 case action_plugin_combo_urlmanager::TARGET_ORIGIN_BEST_NAMESPACE:
                     $message->addContent(sprintf($this->lang['message_redirected_to_bestnamespace'], hsc($pageIdOrigin)));
-                    $message->setType(Message404::TYPE_WARNING);
+                    $message->setType(Message::TYPE_WARNING);
                     break;
 
                 case action_plugin_combo_urlmanager::TARGET_ORIGIN_SEARCH_ENGINE:
                     $message->addContent(sprintf($this->lang['message_redirected_to_searchengine'], hsc($pageIdOrigin)));
-                    $message->setType(Message404::TYPE_WARNING);
+                    $message->setType(Message::TYPE_WARNING);
                     break;
 
                 case action_plugin_combo_urlmanager::GO_TO_EDIT_MODE:
                     $message->addContent($this->lang['message_redirected_to_edit_mode']);
-                    $message->setType(Message404::TYPE_CLASSIC);
+                    $message->setType(Message::TYPE_CLASSIC);
                     break;
 
             }
@@ -171,7 +171,7 @@ class action_plugin_combo_urlmessage extends DokuWiki_Action_Plugin
 
             if (count($pagesWithSameName) > 0) {
 
-                $message->setType(Message404::TYPE_WARNING);
+                $message->setType(Message::TYPE_WARNING);
 
                 // Assign the value to a variable to be able to use the construct .=
                 if ($message->getContent() <> '') {
@@ -186,7 +186,7 @@ class action_plugin_combo_urlmessage extends DokuWiki_Action_Plugin
                     if ($i > 10) {
                         $message->addContent('<li>' .
                             tpl_link(
-                                wl($pageId) . "&do=search&q=" . rawurldecode($pageName),
+                                wl($pageId) . "?do=search&q=" . rawurldecode($pageName),
                                 "More ...",
                                 'class="" rel="nofollow" title="More..."',
                                 $return = true
@@ -220,7 +220,7 @@ class action_plugin_combo_urlmessage extends DokuWiki_Action_Plugin
 
             $pluginInfo = $this->getInfo();
 
-            if ($message->getType() == Message404::TYPE_CLASSIC) {
+            if ($message->getType() == Message::TYPE_CLASSIC) {
                 ptln('<div class="alert alert-success ' . self::REDIRECT_MANAGER_BOX_CLASS . '" role="alert">');
             } else {
                 ptln('<div class="alert alert-warning ' . self::REDIRECT_MANAGER_BOX_CLASS . '" role="alert">');

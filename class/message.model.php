@@ -1,7 +1,7 @@
 <?php
 
 
-class Message404
+class Message
 {
 
 

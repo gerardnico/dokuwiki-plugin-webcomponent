@@ -195,6 +195,8 @@ class syntax_plugin_combo_card extends DokuWiki_Syntax_Plugin
                     } else {
                         $attributes["class"]="card";
                     }
+                    PluginUtility::processStyle($attributes);
+
                     $renderer->doc .= '<div '.PluginUtility::array2HTMLAttributes($attributes).'>' . DOKU_LF;
                     $renderer->doc .= self::body_html . DOKU_LF;
                     break;
