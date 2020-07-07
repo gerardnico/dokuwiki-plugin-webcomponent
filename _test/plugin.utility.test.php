@@ -46,6 +46,51 @@ class plugin_combo_plugin_utility_test extends DokuWikiTest
 
     }
 
+    public function test_get_request_script()
+    {
+
+
+        // A call to the web server set that
+        $_SERVER["SCRIPT_NAME"]="/doku.php";
+        $requestScript = PluginUtility::getRequestScript();
+        $this->assertEquals("doku.php", $requestScript);
+
+
+        // A call to the test framework set that
+        $_SERVER["DOCUMENT_URI"]="/doku.php";
+        $requestScript = PluginUtility::getRequestScript();
+        $this->assertEquals("doku.php", $requestScript);
+
+        // With css
+        $_SERVER["DOCUMENT_URI"]="/lib/exe/css.php";
+        $requestScript = PluginUtility::getRequestScript();
+        $this->assertEquals("css.php", $requestScript);
+
+        // With test property
+        PluginUtility::setTestProperty("SCRIPT_NAME", "css2.php");
+        $requestScript = PluginUtility::getRequestScript();
+        $this->assertEquals("css2.php", $requestScript);
+
+    }
+
+    public function test_get_url_property()
+    {
+
+        // A call to the web server set that
+        $name = "wahtever";
+        $value = PluginUtility::getPropertyValue($name);
+        $this->assertEquals(null, $value);
+
+        // A call to the web server set that
+
+        $expectedValue = "value";
+        PluginUtility::setTestProperty($name, $expectedValue);
+        $value = PluginUtility::getPropertyValue($name);
+        $this->assertEquals($expectedValue, $value);
+
+
+    }
+
     public function test_parse_parameters_type()
     {
 

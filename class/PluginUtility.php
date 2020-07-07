@@ -137,7 +137,7 @@ class PluginUtility
         global $lang;
         self::$PLUGIN_LANG = $lang[self::$PLUGIN_BASE_NAME];
         self::$DIR_RESOURCES = __DIR__ . '/../_testResources';
-        self::$URL_BASE = "https://".parse_url(self::$INFO_PLUGIN['url'],PHP_URL_HOST);
+        self::$URL_BASE = "https://" . parse_url(self::$INFO_PLUGIN['url'], PHP_URL_HOST);
 
     }
 
@@ -255,7 +255,7 @@ class PluginUtility
         }
 
         // Suppress the >
-        if ($match[strlen($match)-1] == ">") {
+        if ($match[strlen($match) - 1] == ">") {
             $match = substr($match, 0, strlen($match) - 1);
         }
 
@@ -266,24 +266,24 @@ class PluginUtility
 
         // Suppress the tag name (ie until the first blank)
         $spacePosition = strpos($match, " ");
-        if (!$spacePosition){
+        if (!$spacePosition) {
             // No space, meaning this is only the tag name
             return array();
         }
         $match = trim(substr($match, $spacePosition));
-        if ($match==""){
+        if ($match == "") {
             return array();
         }
 
         // Do we have a type as first argument ?
         $attributes = array();
         $spacePosition = strpos($match, " ");
-        if ($spacePosition){
+        if ($spacePosition) {
             $firstArgument = substr($match, 0, $spacePosition);
         } else {
             $firstArgument = $match;
         }
-        if (!strpos($firstArgument,"=")){
+        if (!strpos($firstArgument, "=")) {
             $attributes["type"] = $firstArgument;
             // Suppress the type
             $match = substr($match, strlen($firstArgument));
@@ -305,12 +305,12 @@ class PluginUtility
     public static function array2InlineStyle(array $styleProperties)
     {
         $inlineCss = "";
-        foreach ($styleProperties as $key => $value){
+        foreach ($styleProperties as $key => $value) {
             $inlineCss .= "$key:$value;";
         }
         // Suppress the last ;
-        if ($inlineCss[strlen($inlineCss)-1]==";"){
-            $inlineCss = substr($inlineCss,0,-1);
+        if ($inlineCss[strlen($inlineCss) - 1] == ";") {
+            $inlineCss = substr($inlineCss, 0, -1);
         }
         return $inlineCss;
     }
@@ -433,17 +433,17 @@ class PluginUtility
         $styleAttributeName = "style";
         $styleProperties = array();
         if (array_key_exists($styleAttributeName, $attributes)) {
-            foreach (explode(";", $attributes[$styleAttributeName]) as $property){
-                list($key,$value)=explode(":",$property);
-                if ($key!="") {
+            foreach (explode(";", $attributes[$styleAttributeName]) as $property) {
+                list($key, $value) = explode(":", $property);
+                if ($key != "") {
                     $styleProperties[$key] = $value;
                 }
             }
         }
-        $colorAttributes = ["color","background-color","border-color"];
+        $colorAttributes = ["color", "background-color", "border-color"];
         foreach ($colorAttributes as $colorAttribute) {
             if (array_key_exists($colorAttribute, $attributes)) {
-                $styleProperties[$colorAttribute]=self::getColorValue($attributes[$colorAttribute]);
+                $styleProperties[$colorAttribute] = self::getColorValue($attributes[$colorAttribute]);
                 unset($attributes[$colorAttribute]);
             }
         }
@@ -479,6 +479,66 @@ class PluginUtility
             $colorValue = "var(--" . $color . ")";
         }
         return $colorValue;
+    }
+
+    /**
+     * Return the name of the requested script
+     */
+    public static function getRequestScript()
+    {
+        $scriptPath = null;
+        $testPropertyValue = self::getPropertyValue("SCRIPT_NAME");
+        if (defined('DOKU_UNITTEST') && $testPropertyValue != null) {
+            return $testPropertyValue;
+        }
+        if (array_key_exists("DOCUMENT_URI", $_SERVER)) {
+            $scriptPath = $_SERVER["DOCUMENT_URI"];
+        }
+        if ($scriptPath == null && array_key_exists("SCRIPT_NAME", $_SERVER)) {
+            $scriptPath = $_SERVER["SCRIPT_NAME"];
+        }
+        if ($scriptPath == null) {
+            msg("Unable to find the main script", self::LVL_MSG_ERROR);
+        }
+        $path_parts = pathinfo($scriptPath);
+        return $path_parts['basename'];
+    }
+
+    /**
+     *
+     * @param $name
+     * @param $default
+     * @return string - the value of a query string property or if in test mode, the value of a test variable
+     * set with {@link self::setTestProperty}
+     */
+    public static function getPropertyValue($name, $default = null)
+    {
+        global $INPUT;
+        $value = $INPUT->str($name);
+        if ($value == null && defined('DOKU_UNITTEST')) {
+            global $COMBO;
+            $value = $COMBO[$name];
+        }
+        if ($value == null) {
+            return $default;
+        } else {
+            return $value;
+        }
+
+    }
+
+    /**
+     * Set a test variable in the global scope
+     * on the global array COMBO
+     * @param $name
+     * @param $value
+     * Test property are used to set a test variable
+     * in order to test ancillary doku script such as css.php/js.php
+     * because the dokuwiki framework does not allow a request on them
+     */
+    public static function setTestProperty($name, $value)
+    {
+        $GLOBALS["COMBO"][$name] = $value;
     }
 
     /**
