@@ -190,12 +190,11 @@ class syntax_plugin_combo_buttonlink extends DokuWiki_Syntax_Plugin
                 break;
 
 
-            case
-            'metadata':
+            case 'metadata':
                 /**
-                 * Keep track of the backlinks
+                 * Keep track of the backlinks ie meta['relation']['references']
+                 * @var Doku_Renderer_metadata $renderer
                  */
-                /** @var Doku_Renderer_metadata $renderer */
                 $renderer->internallink($id);
                 return true;
                 break;

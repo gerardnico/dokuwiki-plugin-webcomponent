@@ -9,6 +9,18 @@ if (!defined('DOKU_INC')) die();
  *
  * Bug:
  *   * https://gerardnico.com/web/browser/lighthouse - no interwiki
+ *
+ * A call to /lib/exe/css.php?t=template&tseed=time()
+ *
+ *    * t is the template
+ *
+ *    * tseed is md5 of modified time of the below config file set at {@link tpl_metaheaders()}
+ *
+ *        * conf/dokuwiki.php
+ *        * conf/local.php
+ *        * conf/local.protected.php
+ *        * conf/tpl/strap/style.ini
+ *
  */
 class action_plugin_combo_css extends DokuWiki_Action_Plugin
 {
@@ -18,13 +30,67 @@ class action_plugin_combo_css extends DokuWiki_Action_Plugin
      *
      * @param Doku_Event_Handler $controller DokuWiki's event controller object
      * @return void
+     *
+     * To fire this event
+     *   * Ctrl+Shift+R to disable browser cache
+     *
      */
     public function register(Doku_Event_Handler $controller)
     {
-        $controller->register_hook('CSS_STYLES_INCLUDED', 'BEFORE', $this, 'handle_css_styles');
+        if ($_SERVER["SCRIPT_NAME"] == "/lib/exe/css.php") {
+            /**
+             * The process follows the following steps:
+             *     * With CSS_STYLES_INCLUDED, you choose the file that you want
+             *     * then with CSS_CACHE_USE, you can change the cache key name
+             */
+            $controller->register_hook('CSS_STYLES_INCLUDED', 'BEFORE', $this, 'handle_css_styles');
+            $controller->register_hook('CSS_CACHE_USE', 'BEFORE', $this, 'handle_css_cache');
+        }
+
+        /**
+         * Add a property to the URL to create two CSS file:
+         *   * one public
+         *   * one private (logged in)
+         */
+        $controller->register_hook('TPL_METAHEADER_OUTPUT', 'BEFORE', $this, 'handle_css_metaheader');
 
     }
 
+    /**
+     * @param Doku_Event $event
+     * @param $param
+     *
+     * Add query parameter to the CSS header call. ie
+     * <link rel="preload" href="/lib/exe/css.php?t=template&tseed=8e31090353c8fcf80aa6ff0ea9bf3746" as="style">
+     * to indicate if the page that calls the css is from a user that is logged in or not:
+     *   * public vs private
+     *   * ie frontend vs backend
+     */
+    public function handle_css_metaheader(Doku_Event &$event, $param)
+    {
+
+    }
+
+    /**
+     *
+     * @param Doku_Event $event event object by reference
+     * @param mixed $param [the parameters passed as fifth argument to register_hook() when this
+     *                           handler was registered]
+     * @return void
+     *
+     * Change the key of the cache.
+     *
+     * The default key can be seen in the {@link css_out()} function
+     * when a new cache is created (ie new cache(key,ext)
+     *
+     * @see <a href="https://github.com/i-net-software/dokuwiki-plugin-lightweightcss/blob/master/action.php#L122">Credits</a>
+     */
+    public function handle_css_cache(Doku_Event &$event, $param)
+    {
+        global $INPUT;
+        $event->data->key .= $INPUT->str('f', 'style');
+        $event->data->cache = getCacheName($event->data->key, $event->data->ext);
+    }
 
     /**
      * Finally, handle the JS script list. The script would be fit to do even more stuff / types
@@ -37,36 +103,57 @@ class action_plugin_combo_css extends DokuWiki_Action_Plugin
      */
     public function handle_css_styles(Doku_Event &$event, $param)
     {
+        /**
+         * There is one call by:
+         *   * mediatype (ie scree, all, print, speech)
+         *   * and one call for the dokuwiki default
+         */
+        $excludedPlugins = array(
+            "acl",
+            "authplain",
+            "changes",
+            "config",
+            "extension",
+            "info",
+            "move",
+            "popularity",
+            "revert",
+            "safefnrecode",
+            "searchindex",
+            "sqlite",
+            "upgrade",
+            "usermanager"
+        );
 
         switch ($event->data['mediatype']) {
 
             case 'print':
             case 'screen':
             case 'all':
-                $excludedPlugins = array("acl", "authplain", "changes", "config", "extension", "info", "move", "popularity", "revert", "safefnrecode", "searchindex", "sqlite", "upgrade", "usermanager");
                 $filteredDataFiles = array();
                 $files = $event->data['files'];
-                foreach ($files as $fileKey => $file) {
+                foreach ($files as $file => $fileDirectory) {
                     // lib styles
-                    if (strpos($file, 'lib/styles')) {
+                    if (strpos($fileDirectory, 'lib/styles')) {
                         // Geshi (syntax highlighting) and basic style of doku, we keep.
-                        $filteredDataFiles[$fileKey] = $file;
+                        $filteredDataFiles[$file] = $fileDirectory;
                         continue;
                     }
                     // No Css from lib scripts
-                    if (strpos($file, 'lib/scripts')) {
+                    // Jquery is here
+                    if (strpos($fileDirectory, 'lib/scripts')) {
                         continue;
                     }
                     // Excluded
                     $isExcluded = false;
                     foreach ($excludedPlugins as $plugin) {
-                        if (strpos($fileKey, 'lib/plugins/' . $plugin)) {
+                        if (strpos($file, 'lib/plugins/' . $plugin)) {
                             $isExcluded = true;
                             break;
                         }
                     }
                     if (!$isExcluded) {
-                        $filteredDataFiles[$fileKey] = $file;
+                        $filteredDataFiles[$file] = $fileDirectory;
                     }
                 }
 
