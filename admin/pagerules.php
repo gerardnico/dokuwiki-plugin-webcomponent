@@ -55,6 +55,25 @@ class admin_plugin_combo_pagerules extends DokuWiki_Admin_Plugin
 
     }
 
+    /**
+     * Handle Sqlite instantiation  here and not in the constructor
+     * to not make sqlite mandatory everywhere
+     */
+    private function initiatePageRuleManager()
+    {
+
+        if ($this->pageRuleManager == null) {
+
+            $sqlite = PluginUtility::getSqlite();
+            if ($sqlite == null) {
+                // A message should have already been send by the getSqlite function
+                return;
+            }
+            $this->pageRuleManager = new PageRules($sqlite);
+
+        }
+    }
+
 
     /**
      * Access for managers allowed
@@ -94,6 +113,7 @@ class admin_plugin_combo_pagerules extends DokuWiki_Admin_Plugin
     function handle()
     {
 
+        $this->initiatePageRuleManager();
 
         /**
          * If one of the form submit has the add key
@@ -152,20 +172,7 @@ class admin_plugin_combo_pagerules extends DokuWiki_Admin_Plugin
     function html()
     {
 
-        /**
-         * Handle Sqlite instantiation  here and not in the constructor
-         * to not make sqlite mandatory everywhere
-         */
-        if ($this->pageRuleManager == null) {
-
-            $sqlite = PluginUtility::getSqlite();
-            if ($sqlite == null) {
-                // A message should have already been send by the getSqlite function
-                return;
-            }
-            $this->pageRuleManager = new PageRules($sqlite);
-
-        }
+        $this->initiatePageRuleManager();
 
         ptln('<h1>' . ucfirst(PluginUtility::$PLUGIN_NAME) . ' - ' . ucfirst($this->getPluginComponent()) . '</a></h1>');
         $relativePath = 'admin/' . $this->getPluginComponent() . '_intro';
