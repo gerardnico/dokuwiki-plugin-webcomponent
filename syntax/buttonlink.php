@@ -3,8 +3,9 @@
 // implementation of
 // https://developer.mozilla.org/en-US/docs/Web/HTML/Element/cite
 
-require_once (__DIR__."/../class/PluginUtility.php");
-require_once (__DIR__."/../class/XmlUtility.php");
+require_once(__DIR__ . "/../class/PluginUtility.php");
+require_once(__DIR__ . "/../class/XmlUtility.php");
+
 use ComboStrap\PluginUtility;
 use ComboStrap\XmlUtility;
 
@@ -25,6 +26,11 @@ class syntax_plugin_combo_buttonlink extends DokuWiki_Syntax_Plugin
      * Found in {@link \dokuwiki\Parsing\ParserMode\Internallink}
      */
     const LINK_PATTERN = "\[\[.*?\]\](?!\])";
+
+    /**
+     * The extra style for the link
+     */
+    const STYLE_VALUE = ";background-color:inherit;border-color:inherit;color:inherit";
 
 
     /**
@@ -70,7 +76,7 @@ class syntax_plugin_combo_buttonlink extends DokuWiki_Syntax_Plugin
      */
     function getSort()
     {
-        return 1;
+        return 100;
     }
 
 
@@ -97,32 +103,28 @@ class syntax_plugin_combo_buttonlink extends DokuWiki_Syntax_Plugin
     function handle($match, $state, $pos, Doku_Handler $handler)
     {
 
-        switch ($state) {
+        /**
+         * Because we use the specialPattern, there is only one state ie DOKU_LEXER_SPECIAL
+         */
 
-            // As this is a container, this cannot happens but yeah, now, you know
-            case DOKU_LEXER_SPECIAL :
+        /**
+         * Code adapted from See {@link $handler->internallink($match,$state,$pos)}
+         */
+        // Strip the opening and closing markup
+        $link = preg_replace(array('/^\[\[/', '/\]\]$/u'), '', $match);
 
-                /**
-                 * Code adapted from See {@link $handler->internallink($match,$state,$pos)}
-                 */
-
-                // Strip the opening and closing markup
-                $link = preg_replace(array('/^\[\[/', '/\]\]$/u'), '', $match);
-
-                // Split title from URL
-                $link = explode('|', $link, 2);
-                if (!isset($link[1])) {
-                    $link[1] = null;
-                } else if (preg_match('/^\{\{[^\}]+\}\}$/', $link[1])) {
-                    // If the title is an image, convert it to an array containing the image details
-                    $link[1] = Doku_Handler_Parse_Media($link[1]);
-                }
-                $link[0] = trim($link[0]);
-
-                return array($state, $link);
-
+        // Split title from URL
+        $link = explode('|', $link, 2);
+        if (!isset($link[1])) {
+            $link[1] = null;
+        } else if (preg_match('/^\{\{[^\}]+\}\}$/', $link[1])) {
+            // If the title is an image, convert it to an array containing the image details
+            $link[1] = Doku_Handler_Parse_Media($link[1]);
         }
-        return array();
+        $link[0] = trim($link[0]);
+
+        return $link;
+
 
     }
 
@@ -138,57 +140,65 @@ class syntax_plugin_combo_buttonlink extends DokuWiki_Syntax_Plugin
      */
     function render($format, Doku_Renderer $renderer, $data)
     {
+        // The data
+        $link = $data;
+        $id = $link[0];
+        $title = $link[1];
+        switch ($format) {
+            case 'xhtml':
 
-        if ($format == 'xhtml') {
+                /** @var Doku_Renderer_xhtml $renderer */
 
-            /** @var Doku_Renderer_xhtml $renderer */
-            list($state, $link) = $data;
-            switch ($state) {
+                // Always return the string
+                $returnOnly = true;
 
-                case DOKU_LEXER_SPECIAL :
+                // The HTML created by DokuWiki
+                $html = "";
+                if (link_isinterwiki($id)) {
+                    // Interwiki
+                    $interWiki = explode('>', $id, 2);
+                    $wikiName = strtolower($interWiki[0]);
+                    $wikiUri = $interWiki[1];
+                    $html = $renderer->interwikilink($id, $title, $wikiName, $wikiUri, $returnOnly);
+                } elseif (preg_match('/^\\\\\\\\[^\\\\]+?\\\\/u', $id)) {
+                    $html = $renderer->windowssharelink($id, $title);
+                } elseif (preg_match('#^([a-z0-9\-\.+]+?)://#i', $id)) {
+                    $html = $renderer->externallink($id, $title, $returnOnly);
+                } elseif (preg_match('<' . PREG_PATTERN_VALID_EMAIL . '>', $id)) {
+                    // E-Mail (pattern above is defined in inc/mail.php)
+                    $html = $renderer->emaillink($id, $title, $returnOnly);
+                } elseif (preg_match('!^#.+!', $id)) {
+                    $html = $renderer->locallink(substr($id, 1), $title, $returnOnly);
+                } else {
+                    $queryUrl = null;
+                    $html = $renderer->internallink($id, $title, $queryUrl, $returnOnly);
+                }
 
-                    // Always return the string
-                    $returnOnly = true;
-                    $id = $link[0];
-                    $title = $link[1];
+                try {
+                    /** @noinspection PhpComposerExtensionStubsInspection */
+                    /** @noinspection PhpUndefinedVariableInspection */
+                    $linkDom = new SimpleXMLElement ($html);
+                } catch (Exception $e) {
+                    PluginUtility::msg("The HTML link ($html) is not a valid HTML element. The error returned is $e", PluginUtility::LVL_MSG_ERROR);
+                    return false;
+                }
+                XmlUtility::addAttributeValue("style", self::STYLE_VALUE, $linkDom);
 
-                    // The HTML created by DokuWiki
-                    $html = "";
-                    if (link_isinterwiki($link[0])) {
-                        // Interwiki
-                        $interWiki = explode('>', $id, 2);
-                        $wikiName = strtolower($interWiki[0]);
-                        $wikiUri = $interWiki[1];
-                        $html= $renderer->interwikilink($id, $title, $wikiName, $wikiUri, $returnOnly);
-                    } elseif (preg_match('/^\\\\\\\\[^\\\\]+?\\\\/u', $link[0])) {
-                        $html = $renderer->windowssharelink($id, $title);
-                    } elseif (preg_match('#^([a-z0-9\-\.+]+?)://#i', $link[0])) {
-                        $html = $renderer->externallink($id, $title, $returnOnly);
-                    } elseif (preg_match('<' . PREG_PATTERN_VALID_EMAIL . '>', $link[0])) {
-                        // E-Mail (pattern above is defined in inc/mail.php)
-                        $html = $renderer->emaillink($id, $title,$returnOnly);
-                    } elseif (preg_match('!^#.+!', $link[0])) {
-                        $html = $renderer->locallink(substr($id, 1), $title, $returnOnly);
-                    } else {
-                        $queryUrl = null;
-                        $html = $renderer->internallink($id, $title, $queryUrl, $returnOnly);
-                    }
+                $renderer->doc .= XmlUtility::asHtml($linkDom);
 
-                    try {
-                        /** @noinspection PhpComposerExtensionStubsInspection */
-                        /** @noinspection PhpUndefinedVariableInspection */
-                        $linkDom = new SimpleXMLElement ($html);
-                    } catch (Exception $e) {
-                        PluginUtility::msg("The HTML link ($html) is not a valid HTML element. The error returned is $e", PluginUtility::LVL_MSG_ERROR);
-                        return false;
-                    }
-                    XmlUtility::addAttributeValue("style",";background-color:inherit;border-color:inherit;color:inherit",$linkDom);
+                return true;
+                break;
 
-                    $renderer->doc .= XmlUtility::asHtml($linkDom);
 
-                    break;
-
-            }
+            case
+            'metadata':
+                /**
+                 * Keep track of the backlinks
+                 */
+                /** @var Doku_Renderer_metadata $renderer */
+                $renderer->internallink($id);
+                return true;
+                break;
         }
         // unsupported $mode
         return false;
