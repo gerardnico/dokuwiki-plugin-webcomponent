@@ -16,7 +16,7 @@ require_once(__DIR__ . '/../class/UrlUtility.php');
  * @group plugin_combo
  * @group plugins
  */
-class plugin_combo_css_test extends DokuWikiTest
+class plugin_combo_css_twisted_test extends DokuWikiTest
 {
 
     public function setUp()
@@ -29,29 +29,16 @@ class plugin_combo_css_test extends DokuWikiTest
         PluginUtility::setTestProperty(action_plugin_combo_css::END_KEY,action_plugin_combo_css::VALUE_FRONT);
         PluginUtility::setTestProperty("SCRIPT_NAME","css.php");
 
+        PluginUtility::setConf(array(action_plugin_combo_css::CONF_ENABLE_MINIMAL_FRONTEND_STYLESHEET=>1));
+
+
         parent::setUp();
+
+
+
     }
 
 
-
-
-    /**
-     * Add a query string to make a difference between public and private
-     */
-    public function test_css_query_string()
-    {
-
-        $pageId = "cssQueryStringPage";
-        saveWikiText($pageId, "A page that should exist to be able to make a query", "Summary");
-        idx_addPage($pageId);
-        $testRequest = new TestRequest();
-        $testResponse = $testRequest->get(array('id' => $pageId),"/doku.php");
-        $cssHrefAttribute = $testResponse->queryHTML('link[href*="css.php"]' )->attr('href');
-        $endKeyValue =  UrlUtility::getPropertyValue($cssHrefAttribute, action_plugin_combo_css::END_KEY);
-        $this->assertEquals("public", $endKeyValue);
-
-
-    }
 
 
 
@@ -96,6 +83,8 @@ class plugin_combo_css_test extends DokuWikiTest
 
         // Before - 141620
         // After - 103711
+
+        PluginUtility::unsetTestProperties();
 
     }
 }

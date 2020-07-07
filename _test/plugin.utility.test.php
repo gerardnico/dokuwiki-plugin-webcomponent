@@ -14,6 +14,7 @@ class plugin_combo_plugin_utility_test extends DokuWikiTest
 {
 
 
+
     public function test_parse_parameters_base()
     {
         $match = ' class="nico"';

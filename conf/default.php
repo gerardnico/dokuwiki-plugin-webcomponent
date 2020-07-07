@@ -69,3 +69,11 @@ $conf['MinimalNamesCountForAutomaticCanonical'] = 0;
  * See {@link syntax_plugin_combo_icon::CONF_ICONS_MEDIA_NAMESPACE_DEFAULT}
  */
 $conf['icons_namespace']=":combostrap:icons";
+
+/**
+ * Css Optimization
+ * See {@link action_plugin_combo_css::CONF_ENABLE_MINIMAL_FRONTEND_STYLESHEET}
+ * See {@link action_plugin_combo_css::CONF_DISABLE_DOKUWIKI_STYLESHEET}
+ */
+$conf['enableMinimalFrontEndStylesheet'] = 0;
+$conf['disableDokuwikiStylesheet'] = 0;

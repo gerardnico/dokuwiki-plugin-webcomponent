@@ -510,6 +510,8 @@ class PluginUtility
      * @param $default
      * @return string - the value of a query string property or if in test mode, the value of a test variable
      * set with {@link self::setTestProperty}
+     * This is used to test script that are not supported by the dokuwiki test framework
+     * such as css.php
      */
     public static function getPropertyValue($name, $default = null)
     {
@@ -539,6 +541,35 @@ class PluginUtility
     public static function setTestProperty($name, $value)
     {
         $GLOBALS["COMBO"][$name] = $value;
+    }
+
+    /**
+     * Delete all test properties
+     */
+    public static function unsetTestProperties()
+    {
+        unset($GLOBALS["COMBO"]);
+    }
+
+    /**
+     * Register function are called with the configuration
+     * that are copied for each test
+     *
+     * This function makes it easier to set a couple of configuration
+     * in the setUp of test before the parent:setUp
+     *
+     * @param $configurations - an array of configuration
+     *
+     */
+    public static function setConf($configurations)
+    {
+        $file = dirname(DOKU_CONF).'/conf/local.php';
+        $text = DOKU_LF;
+        foreach ($configurations as $key => $value){
+                $text .= '$conf[\'plugin\'][\''.self::$PLUGIN_BASE_NAME.'\'][\''.$key.'\'] = \''.$value.'\';  '.DOKU_LF;
+        }
+        file_put_contents($file,$text,FILE_APPEND );
+
     }
 
     /**

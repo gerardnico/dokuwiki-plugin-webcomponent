@@ -36,4 +36,9 @@ $lang[UrlManagerBestEndPage::CONF_MINIMAL_SCORE_FOR_REDIRECT]='<a href="'.Plugin
 
 $lang[syntax_plugin_combo_icon::CONF_ICONS_MEDIA_NAMESPACE]='<a href="'.PluginUtility::$URL_BASE.'/icon#configuration">UI Icon Component</a> - The media namespace where the downloaded icons will be search and saved';
 
+/**
+ * Css Optimization
+ */
+$lang[action_plugin_combo_css::CONF_ENABLE_MINIMAL_FRONTEND_STYLESHEET]='<a href="'.PluginUtility::$URL_BASE.'/css/optimization">Css Optimization</a> - If enabled, the DokuWiki Stylesheet for a public user will be minimized';
+$lang[action_plugin_combo_css::CONF_ENABLE_MINIMAL_FRONTEND_STYLESHEET]='<a href="'.PluginUtility::$URL_BASE.'/css/optimization">Css Optimization</a> - If disabled, the DokuWiki Stylesheet will not be loaded for a public user';
 ?>
