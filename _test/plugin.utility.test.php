@@ -1,6 +1,7 @@
 <?php
 
 use ComboStrap\PluginUtility;
+use ComboStrap\TestUtility;
 
 require_once(__DIR__ . '/../class/PluginUtility.php');
 
@@ -68,7 +69,7 @@ class plugin_combo_plugin_utility_test extends DokuWikiTest
         $this->assertEquals("css.php", $requestScript);
 
         // With test property
-        PluginUtility::setTestProperty("SCRIPT_NAME", "css2.php");
+        TestUtility::setTestProperty("SCRIPT_NAME", "css2.php");
         $requestScript = PluginUtility::getRequestScript();
         $this->assertEquals("css2.php", $requestScript);
 
@@ -85,7 +86,7 @@ class plugin_combo_plugin_utility_test extends DokuWikiTest
         // A call to the web server set that
 
         $expectedValue = "value";
-        PluginUtility::setTestProperty($name, $expectedValue);
+        TestUtility::setTestProperty($name, $expectedValue);
         $value = PluginUtility::getPropertyValue($name);
         $this->assertEquals($expectedValue, $value);
 

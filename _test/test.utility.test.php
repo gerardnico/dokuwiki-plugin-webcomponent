@@ -1,6 +1,7 @@
 <?php
 
 use ComboStrap\PluginUtility;
+use ComboStrap\TestUtility;
 use ComboStrap\UrlUtility;
 
 require_once(__DIR__ . '/../class/TestUtility.php');
@@ -21,7 +22,7 @@ class plugin_combo_test_utility_test extends DokuWikiTest
     {
         $this->pluginsEnabled[] = PluginUtility::$PLUGIN_BASE_NAME;
 
-        PluginUtility::setConf(array(self::KEY_TEST => self::VALUE_TEST));
+        TestUtility::setConf(array(self::KEY_TEST => self::VALUE_TEST));
         parent::setUp();
 
     }

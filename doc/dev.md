@@ -21,6 +21,10 @@ mv /opt/www/bytle/farmer.bytle.net/combo.zip /opt/www/bytle/farmer.bytle.net/com
 zip /opt/www/bytle/farmer.bytle.net/combo.zip -r ./combo
 ```
   * Reinstall at DataCadamia via the Plugin Manager
+  * Check the error log
+```bash
+tail -f /var/log/php-fpm/www-error.log
+```
   * Working ?
   * Release the date at DokuWiki
 

@@ -67,18 +67,6 @@ class PluginUtility
     public static $PLUGIN_NAME;
 
     /**
-     * Validate URL
-     * Allows for port, path and query string validations
-     * @param string $url string containing url user input
-     * @return   boolean     Returns TRUE/FALSE
-     */
-    static function isValidURL($url)
-    {
-        // of preg_match('/^https?:\/\//',$url) ? from redirect plugin
-        return preg_match('|^http(s)?://[a-z0-9-]+(.[a-z0-9-]+)*(:[0-9]+)?(/.*)?$|i', $url);
-    }
-
-    /**
      * Init the data store
      * Sqlite cannot be static because
      * between two test classes
@@ -530,61 +518,14 @@ class PluginUtility
     }
 
     /**
-     * Set a test variable in the global scope
-     * on the global array COMBO
-     * @param $name
-     * @param $value
-     * Test property are used to set a test variable
-     * in order to test ancillary doku script such as css.php/js.php
-     * because the dokuwiki framework does not allow a request on them
+     * Create an URL to the documentation website
+     * @param $slug
+     * @param $text
+     * @return string - an url
      */
-    public static function setTestProperty($name, $value)
+    public static function createUrl($slug, $text)
     {
-        $GLOBALS["COMBO"][$name] = $value;
-    }
-
-    /**
-     * Delete all test properties
-     */
-    public static function unsetTestProperties()
-    {
-        unset($GLOBALS["COMBO"]);
-    }
-
-    /**
-     * Register function are called with the configuration
-     * that are copied for each test
-     *
-     * This function makes it easier to set a couple of configuration
-     * in the setUp of test before the parent:setUp
-     *
-     * @param $configurations - an array of configuration
-     *
-     */
-    public static function setConf($configurations)
-    {
-        $file = dirname(DOKU_CONF).'/conf/local.php';
-        $text = DOKU_LF;
-        foreach ($configurations as $key => $value){
-                $text .= '$conf[\'plugin\'][\''.self::$PLUGIN_BASE_NAME.'\'][\''.$key.'\'] = \''.$value.'\';  '.DOKU_LF;
-        }
-        file_put_contents($file,$text,FILE_APPEND );
-
-    }
-
-    /**
-     * Generate a text with a max length of $length
-     * and add ... if above
-     * @param $myString
-     * @param $length
-     * @return string
-     */
-    function truncateString($myString, $length)
-    {
-        if (strlen($myString) > $length) {
-            $myString = substr($myString, 0, $length) . ' ...';
-        }
-        return $myString;
+        return '<a href="'.self::$URL_BASE.'/'.$slug.'">'.$text.'</a>';
     }
 
 }

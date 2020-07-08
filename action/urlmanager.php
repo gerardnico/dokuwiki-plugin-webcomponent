@@ -4,6 +4,7 @@ use ComboStrap\PageRules;
 use ComboStrap\PluginUtility;
 use ComboStrap\UrlCanonical;
 use ComboStrap\UrlManagerBestEndPage;
+use ComboStrap\UrlUtility;
 
 if (!defined('DOKU_INC')) die();
 if (!defined('DOKU_PLUGIN')) define('DOKU_PLUGIN', DOKU_INC . 'lib/plugins/');
@@ -445,7 +446,7 @@ class action_plugin_combo_urlmanager extends DokuWiki_Action_Plugin
         action_plugin_combo_urlmessage::notify($ID, $targetOrigin);
 
         // An url ?
-        if (PluginUtility::isValidURL($target)) {
+        if (UrlUtility::isValidURL($target)) {
 
             $targetUrl = $target;
 
@@ -639,7 +640,7 @@ class action_plugin_combo_urlmanager extends DokuWiki_Action_Plugin
         }
 
         // If this is an external redirect (other domain)
-        if (PluginUtility::isValidURL($calculatedTarget)) {
+        if (UrlUtility::isValidURL($calculatedTarget)) {
 
             $this->httpRedirect($calculatedTarget, self::TARGET_ORIGIN_PAGE_RULES, true);
             return true;

@@ -1,6 +1,7 @@
 <?php
 
 use ComboStrap\PluginUtility;
+use ComboStrap\TestUtility;
 use ComboStrap\UrlUtility;
 
 require_once(__DIR__ . '/../class/PluginUtility.php');
@@ -26,10 +27,10 @@ class plugin_combo_css_twisted_test extends DokuWikiTest
         /**
          * {@link DokuWikiTest} set the environment at set up to front
          */
-        PluginUtility::setTestProperty(action_plugin_combo_css::END_KEY,action_plugin_combo_css::VALUE_FRONT);
-        PluginUtility::setTestProperty("SCRIPT_NAME","css.php");
+        TestUtility::setTestProperty(action_plugin_combo_css::END_KEY, action_plugin_combo_css::VALUE_FRONT);
+        TestUtility::setTestProperty("SCRIPT_NAME", "css.php");
 
-        PluginUtility::setConf(array(action_plugin_combo_css::CONF_ENABLE_MINIMAL_FRONTEND_STYLESHEET=>1));
+        TestUtility::setConf(array(action_plugin_combo_css::CONF_ENABLE_MINIMAL_FRONTEND_STYLESHEET => 1));
 
 
         parent::setUp();
@@ -72,7 +73,7 @@ class plugin_combo_css_twisted_test extends DokuWikiTest
         /**
          * A call as backend
          */
-        PluginUtility::setTestProperty(action_plugin_combo_css::END_KEY,action_plugin_combo_css::VALUE_BACK);
+        TestUtility::setTestProperty(action_plugin_combo_css::END_KEY, action_plugin_combo_css::VALUE_BACK);
         ob_start();
         css_out();
         $output = ob_get_contents();
@@ -84,7 +85,7 @@ class plugin_combo_css_twisted_test extends DokuWikiTest
         // Before - 141620
         // After - 103711
 
-        PluginUtility::unsetTestProperties();
+        TestUtility::unsetTestProperties();
 
     }
 }

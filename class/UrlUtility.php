@@ -21,4 +21,16 @@ class UrlUtility
         parse_str($parsedQuery,$parsedQueryArray);
         return $parsedQueryArray[$propertyName];
     }
+
+    /**
+     * Validate URL
+     * Allows for port, path and query string validations
+     * @param string $url string containing url user input
+     * @return   boolean     Returns TRUE/FALSE
+     */
+    public static function isValidURL($url)
+    {
+        // of preg_match('/^https?:\/\//',$url) ? from redirect plugin
+        return preg_match('|^http(s)?://[a-z0-9-]+(.[a-z0-9-]+)*(:[0-9]+)?(/.*)?$|i', $url);
+    }
 }

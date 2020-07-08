@@ -1,5 +1,6 @@
 <?php
 
+use ComboStrap\MetadataUtility;
 use ComboStrap\PluginUtility;
 
 require_once(__DIR__ . '/../class/PluginUtility.php');
@@ -28,7 +29,7 @@ class plugin_combo_metaviewer_test extends DokuWikiTest
 
         $request = new TestRequest();
         $response = $request->get(array('do'=>'edit','id' => "ApageToEdit"), '/doku.php');
-        $box = $response->queryHTML('#'.action_plugin_combo_metaviewer::META_MESSAGE_BOX_ID)->count();
+        $box = $response->queryHTML('#'. MetadataUtility::META_MESSAGE_BOX_ID)->count();
         $this->assertEquals(1,$box,"The box is present");
 
     }
