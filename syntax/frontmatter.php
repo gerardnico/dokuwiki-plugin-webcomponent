@@ -89,6 +89,9 @@ class syntax_plugin_combo_frontmatter extends DokuWiki_Syntax_Plugin
     {
 
         if ($state == DOKU_LEXER_SPECIAL) {
+
+            global $ID;
+
             // strip
             //   from start `---json` + eol = 8
             //   from end   `---` + eol = 4
@@ -98,23 +101,41 @@ class syntax_plugin_combo_frontmatter extends DokuWiki_Syntax_Plugin
             $arrayFormat = true;
             $json = json_decode($match, $arrayFormat);
 
+            // Decodage problem
+            if ($json == null) {
+                return array($json);
+            }
+
             // Trim it
             $jsonKey = array_map('trim', array_keys($json));
             $jsonValues = array_map('trim', $json);
             $json = array_combine($jsonKey, $jsonValues);
 
-            // Process
-            if (array_key_exists('description', $json)) {
-                global $ID;
-                $description = p_get_metadata($ID, 'description');
-                $description['abstract'] = $json['description'];
-                p_set_metadata($ID, array('description' => $description));
-            }
 
-            // Processing should not be defined by key
-            if (array_key_exists(action_plugin_combo_metacanonical::CANONICAL_PROPERTY, $json)) {
-                global $ID;
-                p_set_metadata($ID, array(action_plugin_combo_metacanonical::CANONICAL_PROPERTY => $json[action_plugin_combo_metacanonical::CANONICAL_PROPERTY]));
+            $notModifiableMeta = [
+                "date",
+                "user",
+                "last_change",
+                "creator",
+                "contributor"
+            ];
+            foreach ($json as $key => $value) {
+
+                // Not modifiable metadata
+                if (in_array($key, $notModifiableMeta)) {
+                    PluginUtility::msg("Front Matter: The metadata ($key) is a protected metadata and cannot be modified", PluginUtility::LVL_MSG_WARNING);
+                    continue;
+                }
+
+                // Description is special
+                if ($key == "description") {
+                    p_set_metadata($ID, array("description" => array("abstract" => $value)));
+                    continue;
+                }
+
+                // Set the value persistently
+                p_set_metadata($ID, array($key => $value));
+
             }
 
             return array($json);
@@ -143,22 +164,16 @@ class syntax_plugin_combo_frontmatter extends DokuWiki_Syntax_Plugin
 
         if ($format == 'metadata') {
 
-            list($json) = $data;
 
-            if ($json == null) {
-                msg("Front Matter: The json object is not valid", -1, $allow = MSG_MANAGERS_ONLY);
-                return false;
-            }
+            global $ID;
 
             /** @var Doku_Renderer_metadata $renderer */
 
-            // do some validation / conversion for date metadata
-            if (isset($json['description'])) {
-                $renderer->meta['description']['abstract']=$json['description'];
+            list($json) = $data;
+            if ($json == null) {
+                PluginUtility::msg("Front Matter: The json object for the page ($ID) is not valid", PluginUtility::LVL_MSG_ERROR);
             }
 
-            // Ter info
-            // $renderer->_firstimage($subvalue);
 
         }
         return true;

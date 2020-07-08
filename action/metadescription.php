@@ -1,20 +1,14 @@
 <?php
 /**
  * Take the metadata description
- * https://github.com/lupo49/plugin-description/blob/master/action.php
+ *
  *
  */
 
-if (!defined('DOKU_INC')) die();
-if (!defined('DOKU_PLUGIN')) define('DOKU_PLUGIN', DOKU_INC . 'lib/plugins/');
 
-require_once(DOKU_PLUGIN . 'action.php');
 
-define('KEYWORD_SOURCE_ABSTRACT', 'abstract');
-define('KEYWORD_SOURCE_GLOBAL', 'global');
-define('KEYWORD_SOURCE_SYNTAX', 'syntax');
 
-class action_plugin_combo_frontmatter extends DokuWiki_Action_Plugin
+class action_plugin_combo_metadescription extends DokuWiki_Action_Plugin
 {
 
     public function register(Doku_Event_Handler $controller)

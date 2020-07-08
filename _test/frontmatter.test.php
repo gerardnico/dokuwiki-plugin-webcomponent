@@ -3,7 +3,6 @@
 use ComboStrap\PluginUtility;
 
 require_once(__DIR__ . '/../class/PluginUtility.php');
-require_once(__DIR__ . '/../class/PluginUtility.php');
 
 /**
  * Test the front matter component plugin
@@ -19,64 +18,75 @@ class plugin_combo_frontmatter_test extends DokuWikiTest
     {
 
         $this->pluginsEnabled[] = PluginUtility::$PLUGIN_BASE_NAME;
-        $this->pluginsEnabled[] = 'sqlite';
-
-        global $conf;
-
         parent::setUp();
 
-        // To get nice url
-        // https://www.dokuwiki.org/config:userewrite
-        $conf['userewrite']= 1;
-        // https://www.dokuwiki.org/config:useslash
-        $conf['useslash']= 1;
 
     }
 
 
-
     /**
-     * Test the description
+     * Test to create a meta
      */
-    public function test_frontmatter_description()
+    public function test_frontmatter_meta_setting()
     {
 
-        $pageId = 'description_test';
-        $description = "Go see my beautiful website";
+        $pageId = 'frontMatterTest';
+        $key = 'whatever';
+        $value = "A whatever value";
         $text = DOKU_LF . '---json' . DOKU_LF
             . '{' . DOKU_LF
-            . '   "description":"'.$description.'"' . DOKU_LF
-            . '}' .DOKU_LF
-            . '---' .DOKU_LF
+            . '   "' . $key . '":"' . $value . '",' . DOKU_LF
+            . '   "description":"whatever"' . DOKU_LF // Description has some processing, we set it to test that they does not come into play
+            . '}' . DOKU_LF
+            . '---' . DOKU_LF
             . 'Content';
         saveWikiText($pageId, $text, 'Created');
 
-        $descriptionMeta = p_get_metadata($pageId, 'description', METADATA_RENDER_UNLIMITED);
-        self::assertEquals($description, $descriptionMeta['abstract']);
+        $metaValue = p_get_metadata($pageId, $key);
+        self::assertEquals($value, $metaValue);
 
-        $description = "Go see my super beautiful website";
+
+    }
+
+    /**
+     * Test to create a meta that is not modifiable
+     */
+    public function test_frontmatter_meta_not_modifiable()
+    {
+
+        $pageId = 'frontMatterTest';
+        $key = 'user';
+        $value = "another user";
         $text = DOKU_LF . '---json' . DOKU_LF
             . '{' . DOKU_LF
-            . '   "description":"'.$description.'"' . DOKU_LF
-            . '}' .DOKU_LF
-            . '---' .DOKU_LF
+            . '   "' . $key . '":"' . $value . '"' . DOKU_LF
+            . '}' . DOKU_LF
+            . '---' . DOKU_LF
             . 'Content';
-        saveWikiText($pageId, $text, 'Updated meta');
-        $descriptionMeta = p_get_metadata($pageId, 'description', METADATA_RENDER_UNLIMITED);
-        self::assertEquals($description, $descriptionMeta['abstract']);
 
-        // Do we have the description in the meta
-        $request = new TestRequest(); // initialize the request
-        $response = $request->get(array('id' =>$pageId), '/doku.php');
-        $metaDescription = $response->queryHTML('meta[name="description"]')->attr('content');
-        $this->assertEquals($description, $metaDescription);
+        $error = null;
+        try {
+            saveWikiText($pageId, $text, 'Created');
+            // trigger a metadata render
+            p_get_metadata($pageId, $key);
+        } catch (Exception $e) {
+            $error = $e;
+        }
+
+        $this->assertNotNull($error);
+        $message = $error->getMessage();
+        $inString =  strpos($message,"combo");
+        $this->assertNotFalse($inString, "This is a combo message");
+
+
     }
 
     /**
      * From
      * https://www.dokuwiki.org/devel:unittesting
      */
-    function metaGeneratorTest() {
+    function metaGeneratorTest()
+    {
         // make a request
         $request = new TestRequest();
         $response = $request->execute();
