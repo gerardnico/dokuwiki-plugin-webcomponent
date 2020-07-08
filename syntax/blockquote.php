@@ -130,13 +130,7 @@ class syntax_plugin_combo_blockquote extends DokuWiki_Syntax_Plugin
 
             case DOKU_LEXER_MATCHED :
 
-                $parameters = array();
-                $citeTag = syntax_plugin_combo_cite::getTag();
-                if (preg_match('/<' . $citeTag . '>(.*)<\/' . $citeTag . '>/msSi', $match, $matches)) {
-                    // We have a citation
-                    $parameters['cite']['content'] = $matches[1];
-                }
-
+                $parameters = array ();
                 if (preg_match('/' . self::IMAGE_PATTERN . '/msSi', $match, $matches)) {
                     // We have an image, we parse it (Doku_Handler_Parse_Media in handler.php)
                     $parameters['image'] = Doku_Handler_Parse_Media($match);

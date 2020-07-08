@@ -12,15 +12,7 @@ class syntax_plugin_combo_disqus extends DokuWiki_Syntax_Plugin
 
     const FORUM_SHORT_NAME = 'forumShortName';
 
-    /**
-     *
-     * @return mixed|string - The tag (ie disqus)
-     */
-    private static function getTag()
-    {
-        list(/* $t */, /* $p */, /* $n */, $c) = explode('_', get_called_class(), 4);
-        return (isset($c) ? $c : '');
-    }
+    const TAG = 'disqus';
 
     /**
      * Syntax Type.
@@ -64,8 +56,8 @@ class syntax_plugin_combo_disqus extends DokuWiki_Syntax_Plugin
      */
     function connectTo($mode)
     {
-        $pattern = PluginUtility::getLeafTagPattern(self::getTag());
-        $this->Lexer->addSpecialPattern($pattern, $mode, 'plugin_' . PluginUtility::$PLUGIN_BASE_NAME . '_' . $this->getPluginComponent());
+        $pattern = PluginUtility::getLeafTagPattern(self::TAG);
+        $this->Lexer->addSpecialPattern($pattern, $mode, PluginUtility::getModeForComponent($this->getPluginComponent()));
     }
 
     /**
@@ -83,22 +75,11 @@ class syntax_plugin_combo_disqus extends DokuWiki_Syntax_Plugin
      */
     function handle($match, $state, $pos, Doku_Handler $handler)
     {
-        switch ($state) {
-
-            case DOKU_LEXER_SPECIAL:
-
-                // Suppress the </>
-                $match = substr($match, 1, -2);
-                // Suppress the tag name
-                $match = str_replace(self::getTag(), "", $match);
-                // Get the parameters
-                $parameters = PluginUtility::parseMatch($match);
-                return array($state, $parameters);
 
 
-        }
+        $attributes = PluginUtility::getAttributes($match);
+        return array($state, $attributes);
 
-        return array();
 
     }
 
@@ -113,31 +94,28 @@ class syntax_plugin_combo_disqus extends DokuWiki_Syntax_Plugin
      */
     function render($format, Doku_Renderer $renderer, $data)
     {
-        if ($format == 'xhtml') {
+        switch ($format) {
 
-            /** @var Doku_Renderer_xhtml $renderer */
-            list($state, $parameters) = $data;
-            switch ($state) {
+            case 'xhtml':
 
-                case DOKU_LEXER_ENTER :
+                /** @var Doku_Renderer_xhtml $renderer */
 
-                    global $INFO;
 
-                    /**
-                     * Disqus configuration
-                     * https://help.disqus.com/en/articles/1717084-javascript-configuration-variables
-                     */
-                    $disqusForumShortName = $this->getConf(self::FORUM_SHORT_NAME);
-                    if ($disqusForumShortName == ""){
-                        return false;
-                    }
-                    $disqusHscForumShortName = hsc($disqusForumShortName);
-                    $disqusIdentifier = "disqus-test";
+                /**
+                 * Disqus configuration
+                 * https://help.disqus.com/en/articles/1717084-javascript-configuration-variables
+                 */
+                $disqusForumShortName = $this->getConf(self::FORUM_SHORT_NAME);
+                if ($disqusForumShortName == "") {
+                    return false;
+                }
+                $disqusHscForumShortName = hsc($disqusForumShortName);
+                $disqusIdentifier = "disqus-test";
 
-                    /**
-                     * The javascript
-                     */
-                    $renderer->doc .= <<<EOD
+                /**
+                 * The javascript
+                 */
+                $renderer->doc .= <<<EOD
 <script charset="utf-8" type="text/javascript">
 
     // Configuration
@@ -164,15 +142,13 @@ class syntax_plugin_combo_disqus extends DokuWiki_Syntax_Plugin
 </script>
 <noscript><a href="https://disqus.com/home/discussion/$disqusForumShortName/$disqusIdentifier/">View the discussion thread.</a></noscript>
 EOD;
-                    // The tag
-                    $renderer->doc .= '<div id="disqus_thread"></div>';
-                    break;
+                // The tag
+                $renderer->doc .= '<div id="disqus_thread"></div>';
 
-                case DOKU_LEXER_EXIT :
-                    $renderer->doc .= '' . DOKU_LF;
-                    break;
-            }
-            return true;
+                return true;
+                break;
+            case 'metadata':
+
         }
         return false;
 
