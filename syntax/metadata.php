@@ -14,8 +14,6 @@ require_once (__DIR__.'/../class/MetadataUtility.php');
 class syntax_plugin_combo_metadata extends DokuWiki_Syntax_Plugin
 {
 
-    const METADATA_TAG = "metadata";
-
     /**
      * Syntax Type.
      *
@@ -65,7 +63,7 @@ class syntax_plugin_combo_metadata extends DokuWiki_Syntax_Plugin
     {
 
 
-        $pattern = PluginUtility::getLeafTagPattern(self::METADATA_TAG);
+        $pattern = PluginUtility::getLeafTagPattern(MetadataUtility::TAG);
         $this->Lexer->addSpecialPattern($pattern, $mode, PluginUtility::getModeForComponent($this->getPluginComponent()));
 
 
@@ -112,7 +110,7 @@ class syntax_plugin_combo_metadata extends DokuWiki_Syntax_Plugin
 
             /** @var Doku_Renderer_xhtml $renderer */
 
-            $renderer->doc .= MetadataUtility::getHtmlMetadataBox($this->lang);
+            $renderer->doc .= MetadataUtility::getHtmlMetadataBox($this, $data);
             return true;
 
         }

@@ -130,7 +130,7 @@ class syntax_plugin_combo_dropdown extends DokuWiki_Syntax_Plugin
 
                 // Suppress the tag name
                 $match = utf8_substr($match, strlen(self::getTag()) + 1, -1);
-                $parameters = PluginUtility::parseMatch($match);
+                $parameters = PluginUtility::parse2HTMLAttributes($match);
                 return array($state, $parameters);
 
             case DOKU_LEXER_UNMATCHED :

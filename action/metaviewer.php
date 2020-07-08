@@ -43,13 +43,14 @@ class action_plugin_combo_metaviewer extends DokuWiki_Action_Plugin
     /**
      * Main function; dispatches the visual comment actions
      * @param   $event Doku_Event
+     * @param $param
      */
     function _displayMetaViewer(&$event, $param)
     {
 
-        if ($event->data == 'edit' || $event->data == 'preview') {
+        if ($this->getConf(MetadataUtility::CONF_ENABLE_WHEN_EDITING) && ($event->data == 'edit' || $event->data == 'preview')) {
 
-            print MetadataUtility::getHtmlMetadataBox($this->lang);
+            print MetadataUtility::getHtmlMetadataBox($this);
 
         }
 

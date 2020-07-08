@@ -1,5 +1,6 @@
 <?php
 
+use ComboStrap\MetadataUtility;
 use ComboStrap\UrlManagerBestEndPage;
 
 include_once (__DIR__.'/../syntax/related.php');
@@ -56,3 +57,9 @@ $meta[syntax_plugin_combo_icon::CONF_ICONS_MEDIA_NAMESPACE]=array('string');
  */
 $meta[action_plugin_combo_css::CONF_ENABLE_MINIMAL_FRONTEND_STYLESHEET]=array('onoff');
 $meta[action_plugin_combo_css::CONF_DISABLE_DOKUWIKI_STYLESHEET]=array('onoff');
+
+/**
+ * Metadata Viewer
+ */
+$meta[MetadataUtility::CONF_METADATA_DEFAULT_ATTRIBUTES]=array('string');
+$meta[MetadataUtility::CONF_ENABLE_WHEN_EDITING]=array('onoff');

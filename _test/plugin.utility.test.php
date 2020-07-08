@@ -19,7 +19,7 @@ class plugin_combo_plugin_utility_test extends DokuWikiTest
     public function test_parse_parameters_base()
     {
         $match = ' class="nico"';
-        $parameters = PluginUtility::parseMatch($match);
+        $parameters = PluginUtility::parse2HTMLAttributes($match);
         $this->assertEquals("nico", $parameters["class"]);
 
     }
@@ -97,7 +97,7 @@ class plugin_combo_plugin_utility_test extends DokuWikiTest
     {
 
         $match = ' class="mx-auto" background-color="purple"';
-        $parameters = PluginUtility::parseMatch($match);
+        $parameters = PluginUtility::parse2HTMLAttributes($match);
         $this->assertEquals("mx-auto", $parameters["class"]);
         $this->assertEquals("purple", $parameters["background-color"]);
         $this->assertEquals(true, array_key_exists("class",$parameters));
@@ -129,6 +129,32 @@ class plugin_combo_plugin_utility_test extends DokuWikiTest
         $this->assertEquals($classes, $parameters["class"]);
         $this->assertEquals($style, $parameters["style"]);
         $this->assertEquals("yolo", $parameters["whatever"]);
+
+    }
+
+    /**
+     * Test if an expression is a regular expression pattern
+     */
+    public function test_expressionIsRegular()
+    {
+
+        // Not an expression
+        $inputExpression = "Hallo";
+        $isRegularExpression = PluginUtility::isRegularExpression($inputExpression);
+        /** @noinspection PhpUndefinedMethodInspection */
+        $this->assertEquals(0,$isRegularExpression,"The term (".$inputExpression.") is not a regular expression");
+
+        // A basic expression
+        $inputExpression = "/Hallo/";
+        $isRegularExpression = PluginUtility::isRegularExpression($inputExpression);
+        /** @noinspection PhpUndefinedMethodInspection */
+        $this->assertEquals(true,$isRegularExpression,"The term (".$inputExpression.") is a regular expression");
+
+        // A complicated expression
+        $inputExpression = "/(/path1/path2/)(.*)/";
+        $isRegularExpression = PluginUtility::isRegularExpression($inputExpression);
+        /** @noinspection PhpUndefinedMethodInspection */
+        $this->assertEquals(true,$isRegularExpression,"The term (" . $inputExpression . ") is a regular expression");
 
     }
 

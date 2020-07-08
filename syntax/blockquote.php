@@ -122,7 +122,7 @@ class syntax_plugin_combo_blockquote extends DokuWiki_Syntax_Plugin
             case DOKU_LEXER_ENTER:
                 // Suppress the component name
                 $match = substr($match, strlen($this->getPluginComponent()) + 1, -1);
-                $parameters = PluginUtility::parseMatch($match);
+                $parameters = PluginUtility::parse2HTMLAttributes($match);
                 return array($state, $parameters);
 
             case DOKU_LEXER_UNMATCHED :

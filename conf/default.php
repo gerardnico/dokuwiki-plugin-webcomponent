@@ -18,7 +18,7 @@
  */
 
 
-
+use ComboStrap\MetadataUtility;
 
 $conf['UnitShortCutKey'] = 'u';
 
@@ -77,3 +77,12 @@ $conf['icons_namespace']=":combostrap:icons";
  */
 $conf['enableMinimalFrontEndStylesheet'] = 0;
 $conf['disableDokuwikiStylesheet'] = 0;
+
+/**
+ * Metadata Viewer
+ * See {@link \ComboStrap\MetadataUtility::CONF_ENABLE_WHEN_EDITING
+ * See {@link \ComboStrap\MetadataUtility::CONF_METADATA_DEFAULT_ATTRIBUTES
+ * See {@link \ComboStrap\MetadataUtility::FILTER_ATTRIBUTE
+ */
+$conf['enableMetadataViewerWhenEditing']= 1;
+$conf['metadataViewerDefaultAttributes']= 'title="Metadata" filter="tableofcontents"';

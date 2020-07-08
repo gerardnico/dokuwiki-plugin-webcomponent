@@ -39,4 +39,22 @@ class ArrayUtility
         $content .= '</ul>';
         return $content;
     }
+
+    /**
+     * Delete from an array recursively key
+     * that match the regular expression
+     * @param array $array
+     * @param $pattern
+     */
+    public static function filterArrayByKey(array &$array, $pattern)
+    {
+        foreach($array as $key => &$value){
+            if (preg_match('/'.$pattern.'/i',$key)){
+                unset($array[$key]);
+            }
+            if (is_array($value)){
+                self::filterArrayByKey($value,$pattern);
+            }
+        }
+    }
 }

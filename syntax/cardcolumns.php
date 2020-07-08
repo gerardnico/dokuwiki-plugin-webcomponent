@@ -119,7 +119,7 @@ class syntax_plugin_combo_cardcolumns extends DokuWiki_Syntax_Plugin
                 foreach (self::getTags() as $tag) {
                     $match = str_replace( $tag, "",$match);
                 }
-                $parameters = PluginUtility::parseMatch($match);
+                $parameters = PluginUtility::parse2HTMLAttributes($match);
                 return array($state, $parameters);
 
             case DOKU_LEXER_EXIT :

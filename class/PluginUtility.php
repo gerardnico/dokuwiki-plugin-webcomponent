@@ -204,19 +204,19 @@ class PluginUtility
     }
 
     /**
-     * @param $match
+     * @param $string
      * @return array
      *
-     * Parse the matched text and return the parameters
+     * Parse a string to HTML attribute
      */
-    public static function parseMatch($match)
+    public static function parse2HTMLAttributes($string)
     {
 
         $parameters = array();
 
         // /i not case sensitive
         $attributePattern = "\\s*([-\w]+)\\s*=\\s*[\'\"]{1}([^\`\"]*)[\'\"]{1}\\s*";
-        $result = preg_match_all('/' . $attributePattern . '/i', $match, $matches);
+        $result = preg_match_all('/' . $attributePattern . '/i', $string, $matches);
         if ($result != 0) {
             foreach ($matches[1] as $key => $parameterKey) {
                 $parameters[hsc(strtolower($parameterKey))] = hsc($matches[2][$key]);
@@ -278,7 +278,7 @@ class PluginUtility
         }
 
         // Parse the remaining attributes
-        $parsedAttributes = self::parseMatch($match);
+        $parsedAttributes = self::parse2HTMLAttributes($match);
 
         // Merge and return
         $attributes = array_merge($attributes, $parsedAttributes);;
@@ -519,13 +519,25 @@ class PluginUtility
 
     /**
      * Create an URL to the documentation website
-     * @param $slug
+     * @param $canonical - canonical id or slug
      * @param $text
      * @return string - an url
      */
-    public static function createUrl($slug, $text)
+    public static function getUrl($canonical, $text)
     {
-        return '<a href="'.self::$URL_BASE.'/'.$slug.'">'.$text.'</a>';
+        /** @noinspection SpellCheckingInspection */
+        return '<a href="'.self::$URL_BASE.'/'. str_replace(":","/",$canonical).'" class="urlextern" title="'.$text.'">'.$text.'</a>';
+    }
+
+    /**
+     * An utility function to not search every time which array should be first
+     * @param array $inlineAttributes - the component inline attributes
+     * @param array $defaultAttributes - the default configuration attributes
+     * @return array - a merged array
+     */
+    public static function mergeAttributes(array $inlineAttributes, array $defaultAttributes = array())
+    {
+        return array_merge($defaultAttributes,$inlineAttributes);
     }
 
 }

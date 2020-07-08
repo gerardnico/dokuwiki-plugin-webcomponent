@@ -13,6 +13,9 @@ class syntax_plugin_combo_noteheader extends DokuWiki_Syntax_Plugin
     // Header pattern that we expect in a card (teaser) ie  ==== Hello =====
     const HEADER_PATTERN = '[ \t]*={2,}[^\n]+={2,}[ \t]*(?=\n)';
 
+    // The topbar strike again
+    const STYLE_ATTRIBUTE = 'style="color:inherit!important;margin-left:unset!important;margin-top:unset!important;padding-top:unset!important"';
+
     function getType()
     {
         return 'formatting';
@@ -93,7 +96,7 @@ class syntax_plugin_combo_noteheader extends DokuWiki_Syntax_Plugin
                 case DOKU_LEXER_SPECIAL :
                     $title = $parameters['header']['title'];
                     $level = $parameters['header']['level'];
-                    $renderer->doc .= DOKU_TAB. DOKU_TAB. '<h' . $level . ' class="alert-heading" style="color:inherit!important;margin-left:unset!important;margin-top:unset!important;padding-top:unset!important">';
+                    $renderer->doc .= DOKU_TAB. DOKU_TAB. '<h' . $level . ' class="alert-heading" ' . self::STYLE_ATTRIBUTE . '>';
                     $renderer->doc .= $renderer->_xmlEntities($title);
                     $renderer->doc .= "</h$level>";
 
