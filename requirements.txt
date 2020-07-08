@@ -1,3 +1,3 @@
 # additional requirements for this plugin: https://github.com/splitbrain/dokuwiki-travis
-https://github.com/gerardnico/dokuwiki-template-bootie.git   lib/tpl/bootie
+https://github.com/ComboStrap/dokuwiki-template-strap   lib/tpl/strap
 https://github.com/cosmocode/sqlite.git   lib/plugins/sqlite

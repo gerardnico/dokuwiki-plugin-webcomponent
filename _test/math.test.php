@@ -81,7 +81,7 @@ class plugin_combo_math_test extends DokuWikiTest
         // https://www.dokuwiki.org/devel:event:io_wikipage_write
 
         global $conf;
-        $conf['template'] = 'bootie';
+        $conf['template'] = 'strap';
 
         $pageId = PluginUtility::getNameSpace() . 'test_library_base';
 
@@ -118,7 +118,7 @@ class plugin_combo_math_test extends DokuWikiTest
     {
 
         global $conf;
-        $conf['template'] = 'bootie';
+        $conf['template'] = 'strap';
 
         $pageId = PluginUtility::getNameSpace() . 'test_library_added';
 

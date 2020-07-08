@@ -28,7 +28,7 @@ class action_plugin_combo_js extends DokuWiki_Action_Plugin
     public function register(Doku_Event_Handler $controller)
     {
 
-        // To add the act query string to tweak the cache at the end. ie http://localhost:81/lib/exe/js.php?t=bootie&tseed=3cf44e7&act=show
+        // To add the act query string to tweak the cache at the end. ie http://localhost:81/lib/exe/js.php?t=strap&tseed=3cf44e7&act=show
         $controller->register_hook('TPL_METAHEADER_OUTPUT', 'BEFORE', $this, 'handle_header');
 
         // To get only the script that we need
@@ -59,7 +59,7 @@ class action_plugin_combo_js extends DokuWiki_Action_Plugin
 
     /**
      * This is to handle the HTTP call
-     * /lib/exe/js.php?t=bootie&tseed=2eb19bd2d8991a9bb11366d787d4225e&wcacc=public
+     * /lib/exe/js.php?t=strap&tseed=2eb19bd2d8991a9bb11366d787d4225e&wcacc=public
      * @param Doku_Event $event
      * @param            $param
      */

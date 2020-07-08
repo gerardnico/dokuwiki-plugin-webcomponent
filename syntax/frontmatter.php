@@ -32,6 +32,9 @@ if (!defined('DOKU_INC')) {
  */
 class syntax_plugin_combo_frontmatter extends DokuWiki_Syntax_Plugin
 {
+    const PARSING_STATE_EMPTY = "empty";
+    const PARSING_STATE_ERROR = "error";
+    const PARSING_STATE_SUCCESSFUL = "successful";
 
     /**
      * Syntax Type.
@@ -95,7 +98,13 @@ class syntax_plugin_combo_frontmatter extends DokuWiki_Syntax_Plugin
             // strip
             //   from start `---json` + eol = 8
             //   from end   `---` + eol = 4
-            $match = substr($match, 8, -4);
+            $match = substr($match, 7, -3);
+
+            // Empty front matter
+            if (trim($match) == ""){
+                $this->closeParsing();
+                return array("state"=> self::PARSING_STATE_EMPTY);
+            }
 
             // Otherwise you get an object ie $arrayFormat-> syntax
             $arrayFormat = true;
@@ -103,7 +112,7 @@ class syntax_plugin_combo_frontmatter extends DokuWiki_Syntax_Plugin
 
             // Decodage problem
             if ($json == null) {
-                return array($json);
+                return array("state"=> self::PARSING_STATE_ERROR);
             }
 
             // Trim it
@@ -119,7 +128,7 @@ class syntax_plugin_combo_frontmatter extends DokuWiki_Syntax_Plugin
                 "creator",
                 "contributor"
             ];
-            foreach ($json as $key => $value) {
+            foreach ($json as $key => $metaKey) {
 
                 // Not modifiable metadata
                 if (in_array($key, $notModifiableMeta)) {
@@ -129,16 +138,18 @@ class syntax_plugin_combo_frontmatter extends DokuWiki_Syntax_Plugin
 
                 // Description is special
                 if ($key == "description") {
-                    p_set_metadata($ID, array("description" => array("abstract" => $value)));
+                    p_set_metadata($ID, array("description" => array("abstract" => $metaKey)));
                     continue;
                 }
 
                 // Set the value persistently
-                p_set_metadata($ID, array($key => $value));
+                p_set_metadata($ID, array($key => $metaKey));
 
             }
 
-            return array($json);
+            $this->closeParsing($json);
+
+            return array("state"=>self::PARSING_STATE_SUCCESSFUL);
         }
 
         return array();
@@ -168,15 +179,31 @@ class syntax_plugin_combo_frontmatter extends DokuWiki_Syntax_Plugin
             global $ID;
 
             /** @var Doku_Renderer_metadata $renderer */
-
-            list($json) = $data;
-            if ($json == null) {
+            list($state) = $data;
+            if ($state == self::PARSING_STATE_ERROR) {
                 PluginUtility::msg("Front Matter: The json object for the page ($ID) is not valid", PluginUtility::LVL_MSG_ERROR);
             }
 
 
+
         }
         return true;
+    }
+
+    /**
+     *
+     * @param array $json - The Json
+     * Delete the controlled meta that are no more present if they exists
+     */
+    public function closeParsing(array $json = array())
+    {
+        global $ID;
+        $managedMeta = ["description", "title"];
+        foreach ($managedMeta as $metaKey) {
+            if (!array_key_exists($metaKey, $json)) {
+                p_set_metadata($ID, array($metaKey => null));
+            }
+        }
     }
 
 
