@@ -10,6 +10,7 @@
 
 use ComboStrap\PagesIndex;
 use ComboStrap\PluginUtility;
+use ComboStrap\TestUtility;
 
 require_once(__DIR__ . '/../action/urlmessage.php');
 
@@ -39,8 +40,7 @@ class plugin_combo_url_message_test extends DokuWikiTest
 
         // Create the target Pages and add the pages to the index, otherwise, they will not be find by the ft_lookup
         $existingPage = "an:existing:page";
-        saveWikiText($existingPage, 'A page that exists', 'Test initialization');
-        idx_addPage($existingPage);
+        TestUtility::addPage($existingPage, 'A page that exists', 'Test initialization');
 
         $request = new TestRequest();
         $response = $request->get(array(
@@ -69,12 +69,10 @@ class plugin_combo_url_message_test extends DokuWikiTest
         // Create the target Pages and add the pages to the index, otherwise, they will not be find by the ft_lookup
         $name = "page_with_same_name";
         $targetPage = "an:existing:{$name}";
-        saveWikiText($targetPage, 'A page that exists', 'Test initialization');
-        idx_addPage($targetPage);
+        TestUtility::addPage($targetPage, 'A page that exists', 'Test initialization');
 
         $possibleTargetPage = "an:possible:target:{$name}";
-        saveWikiText($possibleTargetPage, 'A possible page that will be shown', 'Test initialization');
-        idx_addPage($possibleTargetPage);
+        TestUtility::addPage($possibleTargetPage, 'A possible page that will be shown', 'Test initialization');
 
         $sourceId= "another:page:{$name}";
         $pageWithSameName = PagesIndex::pagesWithSameName(noNs($sourceId), $targetPage);

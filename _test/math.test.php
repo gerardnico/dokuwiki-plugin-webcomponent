@@ -1,6 +1,7 @@
 <?php
 
 use ComboStrap\PluginUtility;
+use ComboStrap\TestUtility;
 
 require_once(__DIR__ . '/../class/PluginUtility.php');
 
@@ -89,8 +90,7 @@ class plugin_combo_math_test extends DokuWikiTest
 
         // saving the page
         $doku_text = 'whatever without math element';
-        saveWikiText($pageId, $doku_text, 'test_indexer test library base');
-        idx_addPage($pageId);
+        TestUtility::addPage($pageId, $doku_text, 'test_indexer test library base');
 
         // We got meta
         $meta = p_get_metadata($pageId);
@@ -116,8 +116,7 @@ class plugin_combo_math_test extends DokuWikiTest
 
         // With math
         $doku_text = '<math>x^2</math><math>x^2</math>';
-        saveWikiText($pageId, $doku_text, 'test_indexer test library added');
-        idx_addPage($pageId);
+        TestUtility::addPage($pageId, $doku_text, 'test_indexer test library added');
         $testRequest = new TestRequest();
         $testRequest->setServer('REQUEST_TIME',time());
         $testResponse = $testRequest->get(array('id' => $pageId));
@@ -126,8 +125,7 @@ class plugin_combo_math_test extends DokuWikiTest
 
         // Without math
         $doku_text = 'without math';
-        saveWikiText($pageId, $doku_text, 'test_indexer test library added');
-        idx_addPage($pageId);
+        TestUtility::addPage($pageId, $doku_text, 'test_indexer test library added');
         $testRequest = new TestRequest();
         $testRequest->setServer('REQUEST_TIME',time());
         $testResponse = $testRequest->get(array('id' => $pageId));
@@ -136,8 +134,7 @@ class plugin_combo_math_test extends DokuWikiTest
 
         // With math again
         $doku_text = '<math>x^2</math><math>x^2</math>';
-        saveWikiText($pageId, $doku_text, 'test_indexer test library added');
-        idx_addPage($pageId);
+        TestUtility::addPage($pageId, $doku_text, 'test_indexer test library added');
         $testRequest = new TestRequest();
         sleep ( 1); // To be sure to have not the same timestamp
         $testRequest->setServer('REQUEST_TIME',time());

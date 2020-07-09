@@ -3,9 +3,6 @@
 use ComboStrap\PluginUtility;
 use ComboStrap\TestUtility;
 
-if (!defined('DW_LF')) {
-    define('DW_LF', "\n");
-}
 
 require_once(__DIR__ . '/../class/TestUtility.php');
 require_once(__DIR__ . '/../class/PluginUtility.php');
@@ -21,18 +18,19 @@ class dokuwiki_plugin_combo_related_test extends DokuWikiTest
     public function setUp()
     {
         $this->pluginsEnabled[] = PluginUtility::$PLUGIN_BASE_NAME;
-        $this->pluginsEnabled[] = 'sqlite';
 
         // Config changes have only effect in function setUpBeforeClass()
         global $conf;
 
         parent::setUp();
 
-        TestUtility::setUpPagesLocation();
 
+        // Be sure to run as a super user
+        $_SERVER['REMOTE_USER'] = $conf['superuser'];
+
+        //
         $conf ['plugin'][PluginUtility::$PLUGIN_BASE_NAME][syntax_plugin_combo_related::EXTRA_PATTERN_CONF] = self::EXTRA_PATTERN_VALUE;
 
-        dbglog("\nSetup was called- Test Plugin" . PluginUtility::$PLUGIN_BASE_NAME ." - Compo".syntax_plugin_combo_related::getElementName());
 
     }
 
@@ -60,17 +58,13 @@ class dokuwiki_plugin_combo_related_test extends DokuWikiTest
         parent::setUpBeforeClass();
         // Config changes in function setUpBeforeClass() have no effect set setup
 
-        // Create the pages
-        $changeSummary = 'Test - Component related';
-
         // Create the referent page
         $referentPageId = self::REFERENT_PAGE_ID;
-        saveWikiText($referentPageId,
+        TestUtility::addPage($referentPageId,
             '======  A referent page ====== ' . DW_LF . DW_LF .
             '=====  Articles Related ====== ' . DW_LF .
-            '<' . syntax_plugin_combo_related::getElementName() . '>'
-            , $changeSummary);
-        idx_addPage($referentPageId);
+            '<' . syntax_plugin_combo_related::getElementName() . '>');
+
 
         // Create the referrers page with a link to the referent page
         for ($i = 1; $i <= self::REFERRERS_COUNT; $i++) {
@@ -87,24 +81,12 @@ class dokuwiki_plugin_combo_related_test extends DokuWikiTest
         // Extra Pattern Page
         $PageId = 'extraPatternTest';
         self::$extraPatternPage = self::TEST_PAGE_NAMESPACE . $PageId;
-        saveWikiText(self::$extraPatternPage,
+        TestUtility::addPage(self::$extraPatternPage,
             '======  ' . $PageId . ' ======' . DW_LF . DW_LF .
             self::EXTRA_PATTERN_VALUE . DW_LF . DW_LF .
-            '<' . syntax_plugin_combo_related::getElementName() . '>', $changeSummary);
-        idx_addPage(self::$extraPatternPage);
+            '<' . syntax_plugin_combo_related::getElementName() . '>');
         self::createReferrerPage(self::$extraPatternPage);
 
-        // A Home page to be able to test visually
-        $startId = self::TEST_PAGE_NAMESPACE . 'start';
-        $referrersWiki = "";
-        foreach (self::$referrers as $referrer) {
-            $referrersWiki .= '  * [[' . $referrer . ']]' . DW_LF;
-        }
-        saveWikiText($startId, '====== The related home page ======' . DW_LF . DW_LF .
-            '  * [[' . $referentPageId . ']]' . DW_LF .
-            $referrersWiki .
-            '  * [[' . self::$extraPatternPage . ']]' . DW_LF
-            , $changeSummary);
 
 
         dbglog("\nTest Plugin" . PluginUtility::$PLUGIN_BASE_NAME .".".syntax_plugin_combo_related::getElementName() . ': Start Page was created at ' . wikiFN($startId));
@@ -120,10 +102,9 @@ class dokuwiki_plugin_combo_related_test extends DokuWikiTest
     {
         $referrerId = sizeof(self::$referrers) + 1;
         $referrerPageId = self::TEST_PAGE_NAMESPACE . 'referrer' . $referrerId;
-        saveWikiText($referrerPageId,
+        TestUtility::addPage($referrerPageId,
             '======   Referrer ' . $referrerId . ' to ' . $referentPageId . ' ======' . DW_LF . DW_LF .
-            '  * [[' . $referentPageId . ']]', "Test");
-        idx_addPage($referrerPageId);
+            '  * [[' . $referentPageId . ']]');
         self::$referrers[] = $referrerPageId;
         return $referrerPageId;
     }
@@ -132,17 +113,21 @@ class dokuwiki_plugin_combo_related_test extends DokuWikiTest
 
 
 
-    // Test the dokuwiki backlinks function
-    public function test_backlinks()
+    /**
+     * Test the {@link  ft_backlinks() backlinks function}
+     */
+    public function test_doku_backlinks()
     {
 
-        $backlinks = ft_backlinks(self::REFERENT_PAGE_ID);
-        $this->assertEquals(self::REFERRERS_COUNT, sizeof($backlinks));
+        $backlinks = ft_backlinks(self::REFERENT_PAGE_ID, $ignore_perms = true);
+        $this->assertEquals(self::REFERRERS_COUNT, sizeof($backlinks), "The dokuwiki ft_baclinks function is working");
 
     }
 
-    // Test the related features of the related function
-    // default, max and order
+    /**
+     * Test the related features of the related function
+     * default, max and order
+     */
     public function test_BaseRelated()
     {
         // Without max

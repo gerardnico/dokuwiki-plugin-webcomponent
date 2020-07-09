@@ -43,7 +43,7 @@ class plugin_combo_description_test extends DokuWikiTest
             . '}' .DOKU_LF
             . '---' .DOKU_LF
             . 'Content';
-        saveWikiText($pageId, $text, 'Created');
+        TestUtility::addPage($pageId, $text, 'Created');
 
 
         $descriptionMeta = TestUtility::getMeta($pageId,"description");
@@ -56,7 +56,7 @@ class plugin_combo_description_test extends DokuWikiTest
             . '}' .DOKU_LF
             . '---' .DOKU_LF
             . 'Content';
-        saveWikiText($pageId, $text, 'Updated meta');
+        TestUtility::addPage($pageId, $text, 'Updated meta');
         $descriptionMeta = TestUtility::getMeta($pageId,"description");
         $this->assertEquals($description, $descriptionMeta['abstract'],"The description should have been saved");
 

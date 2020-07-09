@@ -1,6 +1,7 @@
 <?php
 
 use ComboStrap\PluginUtility;
+use ComboStrap\TestUtility;
 
 require_once(__DIR__ . '/../class/PluginUtility.php');
 
@@ -94,15 +95,13 @@ class plugin_combo_button_test extends DokuWikiTest
 
         // The home page
         $pageIdReferent = PluginUtility::getNameSpace() .'referrer';
-        saveWikiText($pageIdReferent, 'Not null', 'test_indexer test base');
-        idx_addPage($pageIdReferent);
+        TestUtility::addPage($pageIdReferent, 'Not null', 'test_indexer test base');
 
         // The backlinks page
         $pageWithBacklinks =  PluginUtility::getNameSpace() . 'test_indexer';
         $element = syntax_plugin_combo_button::getTags()[0];
         $textWithBackLinks = '<' . $element . '>' . '[['.$pageIdReferent.']]' . '</' . $element . '>';
-        saveWikiText($pageWithBacklinks, $textWithBackLinks, 'test_indexer test base');
-        idx_addPage($pageWithBacklinks);
+        TestUtility::addPage($pageWithBacklinks, $textWithBackLinks, 'test_indexer test base');
 
 
         // The test

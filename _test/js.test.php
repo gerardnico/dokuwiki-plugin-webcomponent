@@ -1,6 +1,7 @@
 <?php
 
 use ComboStrap\PluginUtility;
+use ComboStrap\TestUtility;
 
 require_once(__DIR__ . '/../class/PluginUtility.php');
 
@@ -52,8 +53,7 @@ class plugin_combo_js_test extends DokuWikiTest
         $test_name = 'test_js_show_query_string';
         $pageId = PluginUtility::getNameSpace() . $test_name;
         $doku_text = 'whatever';
-        saveWikiText($pageId, $doku_text, $test_name);
-        idx_addPage($pageId);
+        TestUtility::addPage($pageId, $doku_text, $test_name);
         $testRequest = new TestRequest();
         $testResponse = $testRequest->get(array('id' => $pageId));
         $jsSrcAttribute = $testResponse->queryHTML('script[src*="js.php"]' )->attr('src');

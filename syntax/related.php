@@ -6,10 +6,6 @@
 
 use ComboStrap\PluginUtility;
 
-if (!defined('DOKU_INC')) {
-    die();
-}
-
 
 require_once(DOKU_INC . 'inc/parserutils.php');
 
@@ -18,6 +14,19 @@ require_once(DOKU_INC . 'inc/parserutils.php');
  * need to inherit from this class
  *
  * The name of the class must follow a pattern (don't change it)
+ *
+ * The index and the metadata key for backlinks is  called 'relation_references'
+ * It's the key value that you need to pass in the {@link lookupKey} of the {@link \dokuwiki\Search\Indexer}
+ *
+ * Type of conf[index]/index:
+ *   * page.idx (id of the page is the element number)
+ *   * title
+ *   * relation_references_w.idx - _w for words
+ *   * relation_references_w.idx - _i for lines (index by lines)
+ *
+ * The index is a associative map by key
+ *
+ *
  */
 class syntax_plugin_combo_related extends DokuWiki_Syntax_Plugin
 {
@@ -114,7 +123,7 @@ class syntax_plugin_combo_related extends DokuWiki_Syntax_Plugin
             case DOKU_LEXER_SPECIAL :
 
                 // Parse the parameters
-                $match = utf8_substr($match, strlen(self::getElementName()), -1);
+                $match = substr($match, strlen(self::getElementName()), -1);
                 $parameters=array();
 
                 // /i not case sensitive
@@ -220,7 +229,7 @@ class syntax_plugin_combo_related extends DokuWiki_Syntax_Plugin
             $max = $this->getConf(self::MAX_LINKS_CONF);
         }
         // Call the dokuwiki backlinks function
-        @require_once(DOKU_INC . 'inc/fulltext.php');
+        // @require_once(DOKU_INC . 'inc/fulltext.php');
         // Backlinks called the indexer, for more info
         // See: https://www.dokuwiki.org/devel:metadata#metadata_index
         $backlinks = ft_backlinks($id, $ignore_perms = false);
@@ -256,7 +265,7 @@ class syntax_plugin_combo_related extends DokuWiki_Syntax_Plugin
 
     public static function getElementName()
     {
-        return PluginUtility::getTagName(get_called_class());
+        return "related";
     }
 
 

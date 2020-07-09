@@ -1,8 +1,10 @@
 <?php
 
 use ComboStrap\PluginUtility;
+use ComboStrap\TestUtility;
 
 require_once(__DIR__ . '/../class/PluginUtility.php');
+require_once(__DIR__ . '/../class/TestUtility.php');
 
 /**
  * Test the front matter component plugin
@@ -40,7 +42,7 @@ class plugin_combo_frontmatter_test extends DokuWikiTest
             . '}' . DOKU_LF
             . '---' . DOKU_LF
             . 'Content';
-        saveWikiText($pageId, $text, 'Created');
+        TestUtility::addPage($pageId, $text, 'Created');
 
         $metaValue = p_get_metadata($pageId, $key);
         self::assertEquals($value, $metaValue);
@@ -66,7 +68,7 @@ class plugin_combo_frontmatter_test extends DokuWikiTest
 
         $error = null;
         try {
-            saveWikiText($pageId, $text, 'Created');
+            TestUtility::addPage($pageId, $text, 'Created');
             // trigger a metadata render
             p_get_metadata($pageId, $key);
         } catch (Exception $e) {

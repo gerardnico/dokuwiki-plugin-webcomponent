@@ -8,6 +8,7 @@
  */
 
 use ComboStrap\PluginUtility;
+use ComboStrap\TestUtility;
 use ComboStrap\UrlCanonical;
 
 require_once(__DIR__ . '/../class/UrlCanonical.php');
@@ -58,7 +59,7 @@ class plugin_combo_canonical_test extends DokuWikiTest
             . '}' . DOKU_LF
             . '---' . DOKU_LF
             . 'Content';
-        saveWikiText($pageId, $text, 'Page creation');
+        TestUtility::addPage($pageId, $text);
 
         // In a request
         $request = new TestRequest();
@@ -68,10 +69,10 @@ class plugin_combo_canonical_test extends DokuWikiTest
         $this->assertEquals(1, $urlCanonicalManager->pageExist($pageId), "The page was added to the table");
 
         // Page move
-        saveWikiText($pageId, "", 'Page deletion');
+        TestUtility::addPage($pageId, "", 'Page deletion');
         /** @noinspection PhpUndefinedMethodInspection */
         $this->assertEquals(false, page_exists($pageId), "The old page does not exist on disk");
-        saveWikiText($newPageId, $text, 'Page creation');
+        TestUtility::addPage($newPageId, $text, 'Page creation');
 
         // A request
         $request = new TestRequest();
@@ -107,7 +108,7 @@ class plugin_combo_canonical_test extends DokuWikiTest
             . '}' . DOKU_LF
             . '---' . DOKU_LF
             . 'Content';
-        saveWikiText($pageId, $text, 'Created');
+        TestUtility::addPage($pageId, $text, 'Created');
 
         $canonicalMeta = p_get_metadata($pageId, $metaKey, METADATA_RENDER_UNLIMITED);
         /** @noinspection PhpUndefinedMethodInspection */
@@ -121,7 +122,7 @@ class plugin_combo_canonical_test extends DokuWikiTest
             . '}' . DOKU_LF
             . '---' . DOKU_LF
             . 'Content';
-        saveWikiText($pageId, $text, 'Updated meta');
+        TestUtility::addPage($pageId, $text, 'Updated meta');
         $canonicalMeta = p_get_metadata($pageId, $metaKey, METADATA_RENDER_UNLIMITED);
         /** @noinspection PhpUndefinedMethodInspection */
         $this->assertEquals($canonicalValue, $canonicalMeta);
@@ -154,7 +155,7 @@ class plugin_combo_canonical_test extends DokuWikiTest
         $canonicalKey = action_plugin_combo_metacanonical::CANONICAL_PROPERTY;
         $canonicalValue = 'without:canonical';
         $pageId = 'page:' . $canonicalValue . '';
-        saveWikiText($pageId, "Non empty", 'Created');
+        TestUtility::addPage($pageId, "Non empty", 'Created');
 
         $canonicalMeta = p_get_metadata($pageId, $canonicalKey, METADATA_RENDER_UNLIMITED);
         /** @noinspection PhpUndefinedMethodInspection */
@@ -190,7 +191,7 @@ class plugin_combo_canonical_test extends DokuWikiTest
         $conf['start'] = 'start';
         $startPageCanonical = "web";
         $startPageId = $startPageCanonical . ':start';
-        saveWikiText($startPageId, "Non empty", 'Created');
+        TestUtility::addPage($startPageId, "Non empty", 'Created');
         $conf['plugin'][PluginUtility::$PLUGIN_BASE_NAME][action_plugin_combo_metacanonical::CANONICAL_LAST_NAMES_COUNT_CONF] = 2;
         $request = new TestRequest(); // initialize the request
         $request->get(array('id' => $startPageId), '/doku.php');
@@ -204,7 +205,7 @@ class plugin_combo_canonical_test extends DokuWikiTest
         $pageIdWithCanonical = "data:modeling:identifier";
         $canonical = "acanonical";
         p_set_metadata($pageIdWithCanonical, array($canonicalKey => $canonical));
-        saveWikiText($pageIdWithCanonical, "Non empty", 'Created');
+        TestUtility::addPage($pageIdWithCanonical, "Non empty", 'Created');
         $conf['plugin'][PluginUtility::$PLUGIN_BASE_NAME][action_plugin_combo_metacanonical::CANONICAL_LAST_NAMES_COUNT_CONF] = 2;
         $request = new TestRequest(); // initialize the request
         $request->get(array('id' => $pageIdWithCanonical), '/doku.php');

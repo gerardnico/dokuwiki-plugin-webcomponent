@@ -78,17 +78,33 @@ class TestUtility
     }
 
     /**
+     * This function was created to prevent a
+     * problem with the function {@link p_read_metadata()} because
+     * of the static recursion variable.
+     * It means that when all test are run, the {@link p_read_metadata} will not run for the second test
+     *
+     * This problem is now solved by calling it
+     * when creating the page with the function {@link addPage}
+     *
+     * The old function is still there at {@link getMetaDirect}
+     *
      * @param $pageId
      * @param $key
-     * The {@link p_read_metadata()} use a static variable
-     * to prevent recursive call.
-     * It means that when all test are run, the {@link p_read_metadata} will not run for the second test
-     * This function helps with that
      * @return mixed|string
      */
     public static function getMeta($pageId, $key)
     {
+        return p_get_metadata($pageId,$key);
+    }
 
+    /**
+     * See {@link getMeta}
+     *
+     * @param $pageId
+     * @param $key
+     * @return mixed|null
+     */
+    private static function getMetaDirect($pageId, $key){
         $meta = p_read_metadata($pageId, false);
         $meta = p_render_metadata($pageId, $meta);
         if ($meta == null) {
@@ -105,6 +121,35 @@ class TestUtility
         } else {
             return $meta['current'][$key];
         }
+    }
+
+    /**
+     * Add a page to DokuWiki
+     *   (save and add it to the index)
+     * @param $pageId
+     * @param $content
+     * @param string $summary - an optional summary for the save/change
+     */
+    public static function addPage($pageId, $content, $summary = "Test")
+    {
+
+        saveWikiText($pageId,$content,$summary);
+
+        /**
+         * The static $recursion field of {@link p_get_metadata()}
+         * strike again thinking that the test are a metadata recursion
+         * avoiding rendering the meta and therefore we got not metadata and no backlinks
+         * to avoid this problem, we just call the metadata before the index
+         */
+        $meta = p_read_metadata($pageId, false);
+        $meta = p_render_metadata($pageId, $meta);
+        p_save_metadata($pageId, $meta);
+
+        /**
+         * Add the page to the index
+         */
+        idx_addPage($pageId);
+
 
     }
 }

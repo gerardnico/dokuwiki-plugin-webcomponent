@@ -10,6 +10,7 @@
 
 use ComboStrap\PageRules;
 use ComboStrap\PluginUtility;
+use ComboStrap\TestUtility;
 
 require_once(__DIR__ . '/../class/PluginUtility.php');
 require_once(__DIR__ . '/../action/urlmanager.php');
@@ -96,10 +97,8 @@ class plugin_combo_url_manager_test extends DokuWikiTest
 
 
         // Create the target Pages and add the pages to the index, otherwise, they will not be find by the ft_lookup
-        saveWikiText($goodTarget, 'REDIRECT Best Page Name Same Branch', 'Test initialization');
-        idx_addPage($goodTarget);
-        saveWikiText($badTarget, 'REDIRECT Best Page Name Other Branch', 'Test initialization');
-        idx_addPage($badTarget);
+        TestUtility::addPage($goodTarget, 'REDIRECT Best Page Name Same Branch', 'Test initialization');
+        TestUtility::addPage($badTarget, 'REDIRECT Best Page Name Other Branch', 'Test initialization');
 
 
         // Read only otherwise, you go in edit mode
@@ -158,10 +157,8 @@ class plugin_combo_url_manager_test extends DokuWikiTest
         $badTargetId =  $namespace2. $pathSeparator  .'redirect_to_namespace_start_page';
 
         // Create the target Pages and add the pages to the index, otherwise, they will not be find by the ft_lookup
-        saveWikiText($badTargetId, 'Page with the same name', 'but without any common name (namespace) in the path');
-        idx_addPage($badTargetId);
-        saveWikiText($goodTargetId, 'The start page of the 404 page namespace', 'Test initialization');
-        idx_addPage($goodTargetId);
+        TestUtility::addPage($badTargetId, 'Page with the same name', 'but without any common name (namespace) in the path');
+        TestUtility::addPage($goodTargetId, 'The start page of the 404 page namespace', 'Test initialization');
 
         // Delete any redirections
         $pageRules = new PageRules(PluginUtility::getSqlite());
@@ -212,8 +209,7 @@ class plugin_combo_url_manager_test extends DokuWikiTest
         $sourceId = "ns:ns2:cat:{$name}";
         $targetId = "ns3:${name}";
 
-        saveWikiText($targetId, 'Page with the same name', '');
-        idx_addPage($targetId);
+        TestUtility::addPage($targetId, 'Page with the same name', '');
 
         $request = new TestRequest();
         $response = $request->get(array('id' => $sourceId), '/doku.php');
@@ -265,10 +261,8 @@ class plugin_combo_url_manager_test extends DokuWikiTest
 
 
         // Create the target Pages and add the pages to the index, otherwise, they will not be find by the ft_lookup
-        saveWikiText($badTarget, 'Page with the same name', 'but without any common name (namespace) in the path');
-        idx_addPage($badTarget);
-        saveWikiText($goodTarget, 'The start page that has the same name that it\'s parent', 'Test initialization');
-        idx_addPage($goodTarget);
+        TestUtility::addPage($badTarget, 'Page with the same name', 'but without any common name (namespace) in the path');
+        TestUtility::addPage($goodTarget, 'The start page that has the same name that it\'s parent', 'Test initialization');
 
         // Read only otherwise, you go in edit mode
         global $AUTH_ACL;

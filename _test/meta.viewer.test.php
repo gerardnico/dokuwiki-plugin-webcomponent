@@ -2,6 +2,7 @@
 
 use ComboStrap\MetadataUtility;
 use ComboStrap\PluginUtility;
+use ComboStrap\TestUtility;
 
 require_once(__DIR__ . '/../class/PluginUtility.php');
 
@@ -48,8 +49,7 @@ class plugin_combo_metaviewer_test extends DokuWikiTest
     {
 
         $pageId="metadataViewer";
-        saveWikiText($pageId, MetadataUtility::TAG, "Summary");
-        idx_addPage($pageId);
+        TestUtility::addPage($pageId, MetadataUtility::TAG, "Summary");
         $request = new TestRequest();
         $response = $request->get(array('id' => $pageId), '/doku.php');
         $box = $response->queryHTML('#'. MetadataUtility::META_MESSAGE_BOX_ID)->count();

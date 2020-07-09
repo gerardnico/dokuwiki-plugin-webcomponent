@@ -4,7 +4,6 @@
 namespace ComboStrap;
 
 
-use dokuwiki\Extension\Plugin;
 use RuntimeException;
 use TestRequest;
 

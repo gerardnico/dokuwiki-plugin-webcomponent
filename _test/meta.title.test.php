@@ -44,7 +44,7 @@ class plugin_combo_meta_title_test extends DokuWikiTest
         $pageId = 'title_test_id';
 
         $pageContent = "====== {$pageTitleValue} =====";
-        saveWikiText($pageId, $pageContent, 'Created');
+        TestUtility::addPage($pageId, $pageContent, 'Created');
 
         // Test meta
         $titleMeta = TestUtility::getMeta($pageId,$metaTitleKey);
@@ -63,7 +63,7 @@ class plugin_combo_meta_title_test extends DokuWikiTest
             . '   "description":"'.$metaTitleValue.'"' . DOKU_LF // Set the desc to test side effect
             . '}' .DOKU_LF
             . '---'.DOKU_LF;
-        saveWikiText($pageId, $frontMatter.$pageContent, 'Add frontmatter');
+        TestUtility::addPage($pageId, $frontMatter.$pageContent, 'Add frontmatter');
 
         // Test
         $titleMeta = TestUtility::getMeta ($pageId, $metaTitleKey);
@@ -78,7 +78,7 @@ class plugin_combo_meta_title_test extends DokuWikiTest
         // Resave without frontmatter
         $emptyFrontMatter = DOKU_LF . '---json' . DOKU_LF
             . '---'.DOKU_LF;
-        saveWikiText($pageId, $emptyFrontMatter.$pageContent, 'Add frontmatter');
+        TestUtility::addPage($pageId, $emptyFrontMatter.$pageContent, 'Add frontmatter');
         $titleMeta = TestUtility::getMeta($pageId, $metaTitleKey);
         $this->assertEquals($pageTitleValue, $titleMeta, "Title test 5 - The default meta should be the h1 heading");
 

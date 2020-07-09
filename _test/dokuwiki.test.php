@@ -1,11 +1,14 @@
 <?php
+
+use ComboStrap\TestUtility;
+
 /**
- * Tests over DokuWiki function for the webcomponent plugin
+ * Tests over DokuWiki function for the Combo plugin
  *
  * @group plugin_combo
  * @group plugins
  */
-
+require_once(__DIR__ . '/../class/TestUtility.php');
 
 class plugin_combo_dokuwiki_test extends DokuWikiTest
 {
@@ -23,7 +26,7 @@ class plugin_combo_dokuwiki_test extends DokuWikiTest
     {
 
         $pageExistId = 'page_exist';
-        saveWikiText($pageExistId, 'REDIRECT Best Page Name Same Branch', 'Test initialization');
+        TestUtility::addPage($pageExistId, 'REDIRECT Best Page Name Same Branch', 'Test initialization');
         // Not in a request
         /** @noinspection PhpUndefinedMethodInspection */
         $this->assertTrue(page_exists($pageExistId));

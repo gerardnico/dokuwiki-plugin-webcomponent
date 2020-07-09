@@ -9,6 +9,7 @@
  */
 
 use ComboStrap\PluginUtility;
+use ComboStrap\TestUtility;
 
 require_once (__DIR__ . '/../class/PluginUtility.php');
 require_once (__DIR__.'/../syntax/icon.php');
@@ -40,8 +41,7 @@ final class plugin_combo_icon_test extends DokuWikiTest
         $expectedStyleValue = "color:red";
         $widthValue = '96px';
         $heightValue = '64px';
-        saveWikiText($iconPage, '<icon name="logo.svg" width="' . $widthValue . '" height="' . $heightValue . '" class="' .$expectedClassValue.'" style="'.$expectedStyleValue.'"/>', '');
-        idx_addPage($iconPage);
+        TestUtility::addPage($iconPage, '<icon name="logo.svg" width="' . $widthValue . '" height="' . $heightValue . '" class="' .$expectedClassValue.'" style="'.$expectedStyleValue.'"/>', '');
 
 
         TestUtils::rcopy(dirname(DOKU_CONF).'/data/media', PluginUtility::$DIR_RESOURCES . '/logo.svg');
@@ -68,9 +68,7 @@ final class plugin_combo_icon_test extends DokuWikiTest
         $expectedStyleValue = "color:red";
         $widthValue = '96px';
         $heightValue = '64px';
-        saveWikiText($iconPage, '<icon name="'.$name.'" width="' . $widthValue . '" height="' . $heightValue . '" class="' .$expectedClassValue.'" style="'.$expectedStyleValue.'"/>', '');
-        idx_addPage($iconPage);
-
+        TestUtility::addPage($iconPage, '<icon name="'.$name.'" width="' . $widthValue . '" height="' . $heightValue . '" class="' .$expectedClassValue.'" style="'.$expectedStyleValue.'"/>', '');
 
         TestUtils::rcopy(dirname(DOKU_CONF).'/data/media', PluginUtility::$DIR_RESOURCES . '/logo.svg');
 

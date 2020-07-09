@@ -12,6 +12,7 @@
 
 use ComboStrap\PageRules;
 use ComboStrap\PluginUtility;
+use ComboStrap\TestUtility;
 use ComboStrap\UrlCanonical;
 
 require_once(__DIR__ . '/../class/PageRules.php');
@@ -90,9 +91,9 @@ class plugin_combo_url_manager_page_rules_test extends DokuWikiTest
 
         // in the $ID value, the first : is suppressed
         $sourcePageId = "an:page:that:does:not:exist";
-        saveWikiText($sourcePageId, "", 'Without content the page is deleted');
+        TestUtility::addPage($sourcePageId, "", 'Without content the page is deleted');
         $targetPage = "an:existing:page";
-        saveWikiText($targetPage, 'EXPLICIT_REDIRECT_PAGE_TARGET', 'Test initialization');
+        TestUtility::addPage($targetPage, 'EXPLICIT_REDIRECT_PAGE_TARGET', 'Test initialization');
 
 
         $pageRules->addRule($sourcePageId, $targetPage,0);
@@ -134,10 +135,10 @@ class plugin_combo_url_manager_page_rules_test extends DokuWikiTest
         // in the $ID value, the first : is suppressed
         $oldNameSpace = "database";
         $sourcePageId = "{$oldNameSpace}:sqlite:table";
-        saveWikiText($sourcePageId, "", 'Without content the page is deleted');
+        TestUtility::addPage($sourcePageId, "", 'Without content the page is deleted');
         $newNameSpaceName = "db";
         $targetPage = "{$newNameSpaceName}:sqlite:table";
-        saveWikiText($targetPage, 'EXPLICIT_REDIRECT_PAGE_TARGET', 'Test initialization');
+        TestUtility::addPage($targetPage, 'EXPLICIT_REDIRECT_PAGE_TARGET', 'Test initialization');
 
         // Create the rules
         $matcher = "{$oldNameSpace}:*";
@@ -180,10 +181,10 @@ class plugin_combo_url_manager_page_rules_test extends DokuWikiTest
         // in the $ID value, the first : is suppressed
         $oldNameSpace = "aVeryOldNamespace";
         $sourcePageId = "{$oldNameSpace}:subNamespace:table";
-        saveWikiText($sourcePageId, "", 'Without content the page is deleted');
+        TestUtility::addPage($sourcePageId, "", 'Without content the page is deleted');
         $newNameSpaceName = "aNewNameSpace";
         $targetPage = "{$newNameSpaceName}:subNamespace:table";
-        saveWikiText($targetPage, 'EXPLICIT_REDIRECT_PAGE_TARGET', 'Test initialization');
+        TestUtility::addPage($targetPage, 'EXPLICIT_REDIRECT_PAGE_TARGET', 'Test initialization');
 
         // Create the rules
         $matcher = "{$oldNameSpace}:*:ta*";
@@ -226,8 +227,7 @@ class plugin_combo_url_manager_page_rules_test extends DokuWikiTest
     public function testPageRuleDbOperations()
     {
         $targetPage = 'testRedirectionsOperations:test';
-        saveWikiText($targetPage, 'Test ', 'but without any common name (namespace) in the path');
-        idx_addPage($targetPage);
+        TestUtility::addPage($targetPage, 'Test ', 'but without any common name (namespace) in the path');
 
         $pageRules = new PageRules(PluginUtility::getSqlite());
 
