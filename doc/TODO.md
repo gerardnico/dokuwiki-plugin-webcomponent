@@ -62,6 +62,7 @@ Button in navbar
   * Rename teaser-columns with card columns
   * Implement: image bottom for card
 
+< Meta Name = "Generator" ComboStrap>
 
 ## Pricing
 

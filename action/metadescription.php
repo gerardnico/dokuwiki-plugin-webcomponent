@@ -1,11 +1,14 @@
 <?php
+
+use ComboStrap\PluginUtility;
+
 /**
  * Take the metadata description
  *
  *
  */
 
-
+require_once(__DIR__ . '/../class/PluginUtility.php');
 
 
 class action_plugin_combo_metadescription extends DokuWiki_Action_Plugin
@@ -22,7 +25,7 @@ class action_plugin_combo_metadescription extends DokuWiki_Action_Plugin
     function description_modification(&$event, $param)
     {
 
-        if (empty($event->data) || empty($event->data['meta'])) return;
+        // if (empty($event->data) || empty($event->data['meta'])) return;
 
         global $ID;
 
@@ -30,23 +33,40 @@ class action_plugin_combo_metadescription extends DokuWiki_Action_Plugin
          * Description
          * https://www.dokuwiki.org/devel:metadata
          */
-        $description = p_get_metadata($ID, 'description');
-        if (empty($description)) return;
+        if (defined('DOKU_UNITTEST') ){
+            $render = METADATA_RENDER_USING_SIMPLE_CACHE;
+        } else {
+            $render = METADATA_RENDER_USING_CACHE;
+        }
+        $dokuWikiDescription = p_get_metadata($ID, 'description',$render);
+        if (empty($dokuWikiDescription)) {
+            if (defined('DOKU_UNITTEST')) {
+                global $INPUT;
+                $showActions = ["show", ""]; // Empty for the test
+                if (in_array($INPUT->str("do"), $showActions)) {
+                    PluginUtility::msg("Page ($ID): The description should never be null when rendering the page", PluginUtility::LVL_MSG_INFO);
+                }
+            }
+            return;
+        }
 
         // Get the abstract and suppress the carriage return
-        $abstract = str_replace("\n", " ", $description['abstract']);
-        if (empty($abstract)) return;
+        $description = str_replace("\n", " ", $dokuWikiDescription['abstract']);
+        if (empty($description)) {
+            PluginUtility::msg("Page ($ID): The dokuwiki abstract meta is null", PluginUtility::LVL_MSG_WARNING);
+            return;
+        }
 
         // Suppress the title
         $title = p_get_metadata($ID, 'title');
-        $meta = str_replace($title, "", $abstract);
+        $description = str_replace($title, "", $description);
         // Suppress the star, the tab, About
-        $meta = preg_replace('/(\*|\t|About)/im', "", $meta);
+        $description = preg_replace('/(\*|\t|About)/im', "", $description);
         // Suppress all double space and trim
-        $meta = trim(preg_replace('/  /m', " ", $meta));
+        $description = trim(preg_replace('/  /m', " ", $description));
 
         // Add it to the meta
-        $event->data['meta'][] = array("name" => "description", "content" => $meta);
+        $event->data['meta'][] = array("name" => "description", "content" => $description);
 
 
     }

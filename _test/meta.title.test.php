@@ -1,8 +1,10 @@
 <?php
 
 use ComboStrap\PluginUtility;
+use ComboStrap\TestUtility;
 
 require_once(__DIR__ . '/../class/PluginUtility.php');
+require_once(__DIR__ . '/../class/TestUtility.php');
 
 /**
  * Test the title meta
@@ -35,6 +37,7 @@ class plugin_combo_meta_title_test extends DokuWikiTest
     {
         global $conf;
         $conf['template'] = 'strap';
+        $conf['useheading'] = 1;
 
         $metaTitleValue = "Title Meta - Go see my beautiful website";
         $titleHeading = "Title Heading - Hallo";
@@ -46,7 +49,7 @@ class plugin_combo_meta_title_test extends DokuWikiTest
         saveWikiText($pageId, $pageContent, 'Created');
 
         // Test meta
-        $titleMeta = p_get_metadata($pageId, $metaTitleKey);
+        $titleMeta = TestUtility::getMeta($pageId,$metaTitleKey);
         $this->assertEquals($titleHeading, $titleMeta, "Title test 1 - The default meta should be the h1 heading");
 
         // Test html title

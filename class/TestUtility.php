@@ -76,4 +76,26 @@ class TestUtility
         file_put_contents($file, $text, FILE_APPEND);
 
     }
+
+    /**
+     * @param $pageId
+     * @param $key
+     * The {@link p_read_metadata()} use a static variable
+     * to prevent recursive call.
+     * It means that when all test are run, the {@link p_read_metadata} will not run for the second test
+     * This function helps with that
+
+     */
+    public static function getMeta($pageId, $key)
+    {
+        $meta = p_read_metadata($pageId,false);
+        $meta = p_render_metadata($pageId, $meta);
+        if (key_exists($key,$meta['persistent'])) {
+            return $meta['persistent'][$key];
+        } else {
+            return $meta['current'][$key];
+        }
+
+
+    }
 }

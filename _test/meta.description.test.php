@@ -1,9 +1,10 @@
 <?php
 
 use ComboStrap\PluginUtility;
+use ComboStrap\TestUtility;
 
 require_once(__DIR__ . '/../class/PluginUtility.php');
-
+require_once(__DIR__ . '/../class/TestUtility.php');
 /**
  * Test the description meta
  *
@@ -44,8 +45,9 @@ class plugin_combo_description_test extends DokuWikiTest
             . 'Content';
         saveWikiText($pageId, $text, 'Created');
 
-        $descriptionMeta = p_get_metadata($pageId, 'description', METADATA_RENDER_UNLIMITED);
-        self::assertEquals($description, $descriptionMeta['abstract']);
+
+        $descriptionMeta = TestUtility::getMeta($pageId,"description");
+        $this->assertEquals($description, $descriptionMeta['abstract']);
 
         $description = "Go see my super beautiful website";
         $text = DOKU_LF . '---json' . DOKU_LF
@@ -55,14 +57,14 @@ class plugin_combo_description_test extends DokuWikiTest
             . '---' .DOKU_LF
             . 'Content';
         saveWikiText($pageId, $text, 'Updated meta');
-        $descriptionMeta = p_get_metadata($pageId, 'description', METADATA_RENDER_UNLIMITED);
-        self::assertEquals($description, $descriptionMeta['abstract'],"The description should have been saved");
+        $descriptionMeta = TestUtility::getMeta($pageId,"description");
+        $this->assertEquals($description, $descriptionMeta['abstract'],"The description should have been saved");
 
         // Do we have the description in the meta
         $request = new TestRequest(); // initialize the request
         $response = $request->get(array('id' =>$pageId), '/doku.php');
         $metaDescription = $response->queryHTML('meta[name="description"]')->attr('content');
-        $this->assertEquals($description, $metaDescription,"The description cannot be seen in the page");
+        $this->assertEquals($description, $metaDescription,"The meta description was not be seen in the page");
 
     }
 
