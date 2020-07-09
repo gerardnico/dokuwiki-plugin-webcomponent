@@ -68,7 +68,7 @@ class plugin_combo_meta_title_test extends DokuWikiTest
         saveWikiText($pageId, $frontMatter.$pageContent, 'Add frontmatter');
 
         // Test
-        $titleMeta = p_get_metadata($pageId, $metaTitleKey);
+        $titleMeta = TestUtility::getMeta   ($pageId, $metaTitleKey);
         $this->assertEquals($metaTitleValue, $titleMeta,"Title test 3 - The title  meta should be present");
 
         // Do we have the description in the meta
@@ -81,7 +81,7 @@ class plugin_combo_meta_title_test extends DokuWikiTest
         $emptyFrontMatter = DOKU_LF . '---json' . DOKU_LF
             . '---'.DOKU_LF;
         saveWikiText($pageId, $emptyFrontMatter.$pageContent, 'Add frontmatter');
-        $titleMeta = p_get_metadata($pageId, $metaTitleKey);
+        $titleMeta = TestUtility::getMeta($pageId, $metaTitleKey);
         $this->assertEquals($titleHeading, $titleMeta, "Title test 5 - The default meta should be the h1 heading");
 
     }
