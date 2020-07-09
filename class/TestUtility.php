@@ -89,19 +89,22 @@ class TestUtility
     public static function getMeta($pageId, $key)
     {
 
-            $meta = p_read_metadata($pageId, false);
-            $meta = p_render_metadata($pageId, $meta);
-            if ($meta == null){
-                // When you make a admin test call, the page ID = start and there is no meta
-                return null;
-            }
-            if (key_exists($key, $meta['persistent'])) {
-                return $meta['persistent'][$key];
-            } else {
-                return $meta['current'][$key];
-            }
-
-
+        $meta = p_read_metadata($pageId, false);
+        $meta = p_render_metadata($pageId, $meta);
+        if ($meta == null) {
+            // When you make a admin test call, the page ID = start and there is no meta
+            return null;
+        }
+        $value = null;
+        if (key_exists($key, $meta['persistent'])) {
+            // value may null here also
+            $value = $meta['persistent'][$key];
+        }
+        if ($value != null) {
+            return $value;
+        } else {
+            return $meta['current'][$key];
+        }
 
     }
 }
