@@ -13,8 +13,33 @@ class syntax_plugin_combo_math extends DokuWiki_Syntax_Plugin
 {
 
     const MATH_EXPRESSION = 'math_expression';
+    const MATH_JAX_DIV_ID = "mathjax_id";
+    const HTML_SCRIPT_MATHJAX = <<<EOD
+<script type="text/x-mathjax-config">
+                MathJax.Hub.Config({
+                    showProcessingMessages: true,
+                    extensions: ["tex2jax.js","TeX/AMSmath.js","TeX/AMSsymbols.js"],
+                    jax: ["input/TeX", "output/HTML-CSS"],
+                    tex2jax: {
+                        inlineMath: [ ["<math>","</math>"]],
+                        displayMath: [ ["<MATH>","</MATH>"] ],
+                        processEscapes: true,
+                        scale:120
+                    },
+                    "HTML-CSS": { fonts: ["TeX"] }
+                });
+</script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js" async></script>
+EOD;
+    private $indicators = array();
 
-
+    /**
+     * syntax_plugin_combo_math constructor.
+     */
+    public function __construct()
+    {
+        PluginUtility::msg("The math syntax object was instantiated",PluginUtility::LVL_MSG_DEBUG);
+    }
 
 
     /**
@@ -27,7 +52,7 @@ class syntax_plugin_combo_math extends DokuWiki_Syntax_Plugin
      */
     public function getType()
     {
-        return 'protected';
+        return 'substition';
     }
 
     /**
@@ -73,10 +98,10 @@ class syntax_plugin_combo_math extends DokuWiki_Syntax_Plugin
     {
 
         // Add the entry patterns
-        foreach (self::getElements() as $element) {
+        foreach (self::getTags() as $element) {
 
-            $pattern = PluginUtility::getContainerTagPattern($element);
-            $this->Lexer->addEntryPattern($pattern, $mode, 'plugin_' . PluginUtility::$PLUGIN_BASE_NAME . '_' . $this->getPluginComponent());
+            $pattern = PluginUtility::getLeafContainerTagPattern($element);
+            $this->Lexer->addSpecialPattern($pattern, $mode, PluginUtility::getModeForComponent($this->getPluginComponent()));
 
         }
 
@@ -84,14 +109,6 @@ class syntax_plugin_combo_math extends DokuWiki_Syntax_Plugin
 
     }
 
-    public function postConnect()
-    {
-
-        foreach (self::getElements() as $element) {
-            $this->Lexer->addExitPattern('</' . $element . '>', 'plugin_' . PluginUtility::$PLUGIN_BASE_NAME . '_' . $this->getPluginComponent());
-        }
-
-    }
 
     /**
      *
@@ -104,22 +121,7 @@ class syntax_plugin_combo_math extends DokuWiki_Syntax_Plugin
     public function handle($match, $state, $pos, Doku_Handler $handler)
     {
 
-        // A metadata to tell if the page has a math expression or not
-        // Use in the action plugin to add or not the library
-        // Reset a math tag was not found
-//        global $ID;
-//        p_set_metadata(
-//            $ID,
-//            array(syntax_plugin_combo_math::MATH_EXPRESSION => false),
-//            $render = false,
-//            $persistent = true
-//        );
-
-        // The element is also needed by mathjax
-        // pass the whole thing
-        return array(
-            0 => $match
-        );
+        return array($match);
     }
 
     /**
@@ -135,29 +137,22 @@ class syntax_plugin_combo_math extends DokuWiki_Syntax_Plugin
     function render($format, Doku_Renderer $renderer, $data)
     {
 
-        $content = $data[0];
+        list($content)=$data;
         switch ($format) {
             case 'xhtml':
             case 'odt':
                 /** @var Doku_Renderer_xhtml $renderer */
-                $renderer->doc .= $renderer->_xmlEntities($content);
+                $renderer->doc .= $renderer->_xmlEntities($content).DOKU_LF;
+                if (!PluginUtility::htmlSnippetAlreadyAdded($this->indicators)){
+                    $renderer->doc .= '<div id="'. self::MATH_JAX_DIV_ID .'">'.DOKU_LF;
+                    $renderer->doc .= self::HTML_SCRIPT_MATHJAX;
+                    $renderer->doc .= '</div>';
+                }
                 break;
 
             case 'latexport':
                 // Pass math expressions to latexport renderer
                 $renderer->mathjax_content($content);
-                break;
-
-            case 'metadata':
-                // Adding a meta to say that there is a math expression
-                global $ID;
-                /** @var Doku_Renderer_metadata $renderer */
-                // No persistence, only for the run
-                if (isset($renderer->persistent[self::MATH_EXPRESSION])) {
-                    unset($renderer->persistent[self::MATH_EXPRESSION]);
-                }
-                $renderer->meta[self::MATH_EXPRESSION] = true;
-
                 break;
 
             default:
@@ -170,7 +165,7 @@ class syntax_plugin_combo_math extends DokuWiki_Syntax_Plugin
 
     }
 
-    static public function getElements()
+    static public function getTags()
     {
         return PluginUtility::getTags(get_called_class());
     }

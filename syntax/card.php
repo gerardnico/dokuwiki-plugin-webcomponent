@@ -139,7 +139,7 @@ class syntax_plugin_combo_card extends DokuWiki_Syntax_Plugin
 
             case DOKU_LEXER_ENTER:
 
-                $attributes = PluginUtility::getAttributes($match);
+                $attributes = PluginUtility::getTagAttributes($match);
                 return array($state, $attributes);
 
             case DOKU_LEXER_UNMATCHED :

@@ -1,9 +1,27 @@
 # TODO
 
+## Bug
+
+The canonical page
+  * The page (viz:viz) and the page (data:viz:viz) have the same canonical.
 ## Alias
 
   * Alias: php/switch and php/case
   * Reverse / Permalink: html:svg = svg:html
+
+## Anchor
+
+  * https://github.com/bryanbraun/anchorjs
+  * Cookie Law Banner Notice
+
+## Issue template
+
+https://docs.github.com/en/github/building-a-strong-community/manually-creating-a-single-issue-template-for-your-repository
+https://github.com/giterlizzi/dokuwiki-template-bootstrap3/tree/master/.github
+
+## Template
+
+https://bootswatch.com/
 
 ## Bad Behavior
 
@@ -45,3 +63,6 @@ Button in navbar
   * Implement: image bottom for card
 
 
+## Pricing
+
+https://webflow.com/pricing

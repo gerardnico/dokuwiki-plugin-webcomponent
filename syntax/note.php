@@ -94,7 +94,7 @@ class syntax_plugin_combo_note extends DokuWiki_Syntax_Plugin
         switch ($state) {
 
             case DOKU_LEXER_ENTER :
-                $attributes = PluginUtility::getAttributes($match);
+                $attributes = PluginUtility::getTagAttributes($match);
                 return array($state, $attributes);
 
             case DOKU_LEXER_UNMATCHED :

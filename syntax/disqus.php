@@ -77,7 +77,7 @@ class syntax_plugin_combo_disqus extends DokuWiki_Syntax_Plugin
     {
 
 
-        $attributes = PluginUtility::getAttributes($match);
+        $attributes = PluginUtility::getTagAttributes($match);
         return array($state, $attributes);
 
 

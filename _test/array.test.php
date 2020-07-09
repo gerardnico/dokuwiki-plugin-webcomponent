@@ -24,7 +24,7 @@ class plugin_combo_array_test extends DokuWikiTest
             ),
             "key2"=>"valueKey2"
         );
-        ArrayUtility::filterArrayByKey($arrayToFilter, "/toF/i");
+        ArrayUtility::filterArrayByKey($arrayToFilter, "toFi");
         $this->assertArrayHasKey($keyToNotFilter, $arrayToFilter["key"]);
         $this->assertArrayNotHasKey($keyToFilter, $arrayToFilter["key"]);
 

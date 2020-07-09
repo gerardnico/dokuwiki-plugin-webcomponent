@@ -118,7 +118,7 @@ class syntax_plugin_combo_icon extends DokuWiki_Syntax_Plugin
             case DOKU_LEXER_SPECIAL:
 
                 // Get the parameters
-                $parameters = PluginUtility::getAttributes($match);
+                $parameters = PluginUtility::getTagAttributes($match);
                 // TODO ? Download the icon
                 return array($state, $parameters);
 

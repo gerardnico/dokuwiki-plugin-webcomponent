@@ -3,6 +3,8 @@
 
 namespace ComboStrap;
 
+
+use dokuwiki\Extension\Plugin;
 use RuntimeException;
 use TestRequest;
 
@@ -33,8 +35,10 @@ class PluginUtility
     const LVL_MSG_INFO = 0;
     const LVL_MSG_SUCCESS = 1;
     const LVL_MSG_WARNING = 2;
+    const LVL_MSG_DEBUG = 3;
     const DOKU_DATA_DIR = '/dokudata/pages';
     const DOKU_CACHE_DIR = '/dokudata/cache';
+
 
     /**
      * The URL base of the documentation
@@ -65,6 +69,7 @@ class PluginUtility
      * @var string
      */
     public static $PLUGIN_NAME;
+
 
     /**
      * Init the data store
@@ -154,9 +159,15 @@ class PluginUtility
     public static function msg($message, $level = self::LVL_MSG_ERROR)
     {
         $msg = self::$PLUGIN_BASE_NAME . " - $message";
-        msg($msg, $level, $allow = MSG_MANAGERS_ONLY);
-        dbg($msg);
-        if (defined('DOKU_UNITTEST') && $level != self::LVL_MSG_SUCCESS && $level != self::LVL_MSG_INFO) {
+        if ($level!=self::LVL_MSG_DEBUG) {
+            msg($msg, $level, $allow = MSG_MANAGERS_ONLY);
+        }
+        /**
+         * Print to a log file
+         * Note: {@link dbg()} dbg print to the web page
+         */
+        dbglog($msg);
+        if (defined('DOKU_UNITTEST') && ($level == self::LVL_MSG_WARNING || $level == self::LVL_MSG_ERROR)) {
             throw new RuntimeException($msg);
         }
     }
@@ -232,19 +243,24 @@ class PluginUtility
      * @param $match
      * @return array
      */
-    public static function getAttributes($match)
+    public static function getTagAttributes($match)
     {
+
+        // Until the first >
+        $pos = strpos($match,">");
+        if ($pos == false){
+            self::msg("The match does not contain any tag. Match: {$match}",self::LVL_MSG_ERROR);
+            return array();
+        }
+        $match = substr($match,0,$pos);
+
+
         // Trim to start clean
         $match = trim($match);
 
         // Suppress the <
         if ($match[0] == "<") {
             $match = substr($match, 1);
-        }
-
-        // Suppress the >
-        if ($match[strlen($match) - 1] == ">") {
-            $match = substr($match, 0, strlen($match) - 1);
         }
 
         // Suppress the / for a leaf tag
@@ -538,6 +554,78 @@ class PluginUtility
     public static function mergeAttributes(array $inlineAttributes, array $defaultAttributes = array())
     {
         return array_merge($defaultAttributes,$inlineAttributes);
+    }
+
+    /**
+     * A pattern for a container tag
+     * that needs to catch the content
+     *
+     * Use as a special pattern (substition)
+     *
+     * The {@link \syntax_plugin_combo_math} use it
+     * @param $tag
+     * @return string - a pattern
+     */
+    public static function getLeafContainerTagPattern($tag)
+    {
+        return '<' . $tag . '.*?>.*?<\/' . $tag . '>';
+    }
+
+    /**
+     * Return the content of a tag
+     * <math>Content</math>
+     * @param $match
+     * @return string the content
+     */
+    public static function getTagContent($match)
+    {
+        // From the first >
+        $start = strpos($match,">");
+        if ($start == false){
+            self::msg("The match does not contain any opening tag. Match: {$match}",self::LVL_MSG_ERROR);
+            return "";
+        }
+        $match = substr($match, $start + 1);
+        // If this is the last character, we get a false
+        if ($match == false){
+            self::msg("The match does not contain any closing tag. Match: {$match}",self::LVL_MSG_ERROR);
+            return "";
+        }
+
+        $end = strpos($match,"</");
+        if ($end == false){
+            self::msg("The match does not contain any closing tag. Match: {$match}",self::LVL_MSG_ERROR);
+            return "";
+        }
+
+        return substr($match,0,$end);
+    }
+
+    /**
+     *
+     * Check if a HTML tag was already added for a request
+     * The request id is just the timestamp
+     * An indicator array should be provided
+     * @param $indicators
+     * @return bool
+     */
+    public static function htmlSnippetAlreadyAdded(&$indicators)
+    {
+        global $ID;
+        if (isset($_SERVER['REQUEST_TIME_FLOAT'])){
+            // since php 5.4
+            $requestTime = $_SERVER['REQUEST_TIME_FLOAT'];
+        } else {
+            // DokuWiki test framework use this
+            $requestTime = $_SERVER['REQUEST_TIME'];
+        }
+        $uniqueId = hash( 'crc32b', $_SERVER['REMOTE_ADDR']. $_SERVER['REMOTE_PORT']. $requestTime . $ID);
+        if (array_key_exists($uniqueId, $indicators)){
+            return true;
+        } else {
+            $indicators[$uniqueId]=$requestTime;
+            return false;
+        }
     }
 
 }

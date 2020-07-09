@@ -37,12 +37,12 @@ class plugin_combo_plugin_utility_test extends DokuWikiTest
     {
 
         $match = '<NOTE tip>';
-        $attributes = PluginUtility::getAttributes($match);
+        $attributes = PluginUtility::getTagAttributes($match);
         $this->assertArrayHasKey("type", $attributes);
         $this->assertEquals("tip", $attributes["type"]);
 
         $match = '<NOTE >';
-        $attributes = PluginUtility::getAttributes($match);
+        $attributes = PluginUtility::getTagAttributes($match);
         $this->assertArrayNotHasKey("type", $attributes);
 
 
@@ -114,7 +114,7 @@ class plugin_combo_plugin_utility_test extends DokuWikiTest
         $classes = "class1 class2";
         $style = 'width:12rem; height:13rem';
         $match = '<icon class="'.$classes. '" style="' . $style . '" whatever="yolo"/>';
-        $parameters = PluginUtility::getAttributes($match);
+        $parameters = PluginUtility::getTagAttributes($match);
 
         $this->assertEquals($classes, $parameters["class"]);
         $this->assertEquals($style, $parameters["style"]);
@@ -124,11 +124,53 @@ class plugin_combo_plugin_utility_test extends DokuWikiTest
          * Container tag
          */
         $match = '<icon class="'.$classes. '" style="' . $style . '" whatever="yolo">';
-        $parameters = PluginUtility::getAttributes($match);
+        $parameters = PluginUtility::getTagAttributes($match);
 
         $this->assertEquals($classes, $parameters["class"]);
         $this->assertEquals($style, $parameters["style"]);
         $this->assertEquals("yolo", $parameters["whatever"]);
+
+
+        /**
+         * Leaf Container tag
+         */
+        $match = '<math class="'.$classes. '" style="' . $style . '" whatever="yolo">x^2</math>';
+        $parameters = PluginUtility::getTagAttributes($match);
+
+        $this->assertEquals($classes, $parameters["class"]);
+        $this->assertEquals($style, $parameters["style"]);
+        $this->assertEquals("yolo", $parameters["whatever"]);
+
+    }
+
+    public function test_get_content()
+    {
+
+        $expectedContent = "x^2";
+        $match = '<math whatever="yolo">'.$expectedContent.'</math>';
+        $content = PluginUtility::getTagContent($match);
+        $this->assertEquals($expectedContent, $content);
+
+        // A substituion leaf tag has no content
+        $error = null;
+        try {
+            $match = '<math whatever="yolo"/>';
+            PluginUtility::getTagContent($match);
+        } catch (Exception $e){
+            $error = $e;
+        }
+        $this->assertNotNull($error);
+
+        // A Passing only the first tag will not work also
+        $error = null;
+        try {
+            $match = '<math whatever="yolo">';
+            PluginUtility::getTagContent($match);
+        } catch (Exception $e){
+            $error = $e;
+        }
+        $this->assertNotNull($error);
+
 
     }
 

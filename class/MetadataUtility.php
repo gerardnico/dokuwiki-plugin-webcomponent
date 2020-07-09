@@ -29,7 +29,7 @@ class MetadataUtility
     /**
      * A regular expression to filter the output
      */
-    const FILTER_ATTRIBUTE = "filter";
+    const EXCLUDE_ATTRIBUTE = "exclude";
 
     /**
      * The HTML tag
@@ -61,8 +61,8 @@ class MetadataUtility
         $metas = $metadata['persistent'];
 
 
-        if (array_key_exists(self::FILTER_ATTRIBUTE, $attributes)) {
-            $filter = $attributes[self::FILTER_ATTRIBUTE];
+        if (array_key_exists(self::EXCLUDE_ATTRIBUTE, $attributes)) {
+            $filter = $attributes[self::EXCLUDE_ATTRIBUTE];
             ArrayUtility::filterArrayByKey($metas, $filter);
         }
         if (!array_key_exists("canonical", $metas)) {
