@@ -19,19 +19,15 @@ if (!defined('DOKU_INC')) {
 require_once(__DIR__ . '/../class/PluginUtility.php');
 
 /**
- * Implementation of the {@link https:/combostrap.com/container}
+ * The {@link https://combostrap.com/row row} of a {@link https://combostrap.com/grid grid}
  *
- * All DokuWiki plugins to extend the parser/rendering mechanism
- * need to inherit from this class
  *
- * The name of the class must follow a pattern (don't change it)
- * ie:
- *    syntax_plugin_PluginName_ComponentName
+ * Note: The name of the class must follow this pattern ie syntax_plugin_PluginName_ComponentName
  */
-class syntax_plugin_combo_container extends DokuWiki_Syntax_Plugin
+class syntax_plugin_combo_row extends DokuWiki_Syntax_Plugin
 {
-    const TAG = "container";
 
+    const TAG = "row";
 
     /**
      * Syntax Type.
@@ -82,8 +78,8 @@ class syntax_plugin_combo_container extends DokuWiki_Syntax_Plugin
     /**
      * Create a pattern that will called this plugin
      *
-     * @param string $mode
      * @see Doku_Parser_Mode::connectTo()
+     * @param string $mode
      */
     function connectTo($mode)
     {
@@ -105,13 +101,13 @@ class syntax_plugin_combo_container extends DokuWiki_Syntax_Plugin
      * The handle function goal is to parse the matched syntax through the pattern function
      * and to return the result for use in the renderer
      * This result is always cached until the page is modified.
+     * @see DokuWiki_Syntax_Plugin::handle()
+     *
      * @param string $match
      * @param int $state
      * @param int $pos
      * @param Doku_Handler $handler
      * @return array|bool
-     * @see DokuWiki_Syntax_Plugin::handle()
-     *
      */
     function handle($match, $state, $pos, Doku_Handler $handler)
     {
@@ -120,10 +116,9 @@ class syntax_plugin_combo_container extends DokuWiki_Syntax_Plugin
 
             case DOKU_LEXER_ENTER:
 
-                // Suppress the component name
+                $attributes = PluginUtility::getTagAttributes($match);
 
-                $tagAttributes = PluginUtility::getTagAttributes($match);
-                return array($state, $tagAttributes);
+                return array($state, $attributes);
 
             case DOKU_LEXER_UNMATCHED:
                 return array($state, $match);
@@ -155,13 +150,13 @@ class syntax_plugin_combo_container extends DokuWiki_Syntax_Plugin
         if ($format == 'xhtml') {
 
             /** @var Doku_Renderer_xhtml $renderer */
-            list($state, $payload) = $data;
+            list($state,$payload) = $data;
             switch ($state) {
 
                 case DOKU_LEXER_ENTER :
                     $attributes = $payload;
                     if (array_key_exists("class", $attributes)) {
-                        $attributes["class"] .= " " . self::TAG;
+                        $attributes["class"] .= " ".self::TAG;
                     } else {
                         $attributes["class"] .= self::TAG;
                     }
@@ -183,6 +178,9 @@ class syntax_plugin_combo_container extends DokuWiki_Syntax_Plugin
         }
         return false;
     }
+
+
+
 
 
 }

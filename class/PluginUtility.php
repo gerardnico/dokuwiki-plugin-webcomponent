@@ -676,6 +676,11 @@ class PluginUtility
         p_set_metadata(self::getPageId(),array ($key=>$value));
     }
 
+    public static function escape($payload)
+    {
+        return hsc($payload);
+    }
+
 
 }
 
