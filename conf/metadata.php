@@ -15,7 +15,7 @@ $meta[syntax_plugin_combo_related::EXTRA_PATTERN_CONF] = array('string');
  * Disqus
  */
 include_once (__DIR__.'/../syntax/disqus.php');
-$meta[syntax_plugin_combo_disqus::FORUM_SHORT_NAME] = array('string');
+$meta[syntax_plugin_combo_disqus::CONF_DEFAULT_ATTRIBUTES] = array('string');
 
 
 /**

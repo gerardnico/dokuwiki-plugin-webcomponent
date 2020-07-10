@@ -1,18 +1,28 @@
 <?php
 
 use ComboStrap\PluginUtility;
+use ComboStrap\UrlCanonical;
 
 require_once(__DIR__ . '/../class/PluginUtility.php');
 
 /**
  * Disqus integration
+ * https://combostrap.com/disqus
  */
 class syntax_plugin_combo_disqus extends DokuWiki_Syntax_Plugin
 {
 
-    const FORUM_SHORT_NAME = 'forumShortName';
+    const CONF_DEFAULT_ATTRIBUTES = 'disqusDefaultAttributes';
+
+    const ATTRIBUTE_SHORTNAME = "shortname";
+    const ATTRIBUTE_IDENTIFIER = 'id';
+    const ATTRIBUTE_TITLE = 'title';
+    const ATTRIBUTE_URL = 'url';
 
     const TAG = 'disqus';
+
+    const META_DISQUS_IDENTIFIER = "disqus_identifier";
+    const ATTRIBUTE_CATEGORY = "category";
 
     /**
      * Syntax Type.
@@ -78,7 +88,7 @@ class syntax_plugin_combo_disqus extends DokuWiki_Syntax_Plugin
 
 
         $attributes = PluginUtility::getTagAttributes($match);
-        return array($state, $attributes);
+        return array($attributes);
 
 
     }
@@ -94,10 +104,12 @@ class syntax_plugin_combo_disqus extends DokuWiki_Syntax_Plugin
      */
     function render($format, Doku_Renderer $renderer, $data)
     {
+
         switch ($format) {
 
             case 'xhtml':
 
+                list($attributes) = $data;
                 /** @var Doku_Renderer_xhtml $renderer */
 
 
@@ -105,12 +117,55 @@ class syntax_plugin_combo_disqus extends DokuWiki_Syntax_Plugin
                  * Disqus configuration
                  * https://help.disqus.com/en/articles/1717084-javascript-configuration-variables
                  */
-                $disqusForumShortName = $this->getConf(self::FORUM_SHORT_NAME);
-                if ($disqusForumShortName == "") {
+                $default = PluginUtility::getTagAttributes($this->getConf(self::CONF_DEFAULT_ATTRIBUTES));
+                $attributes = PluginUtility::mergeAttributes($attributes, $default);
+                $forumShortName = $attributes[self::ATTRIBUTE_SHORTNAME];
+                if (empty($forumShortName)) {
+                    PluginUtility::msg("The disqus forum shortName should not be empty", PluginUtility::LVL_MSG_ERROR, self::TAG);
                     return false;
                 }
-                $disqusHscForumShortName = hsc($disqusForumShortName);
-                $disqusIdentifier = "disqus-test";
+                $forumShortName = hsc($forumShortName);
+
+                $disqusIdentifier = PluginUtility::getMeta(self::META_DISQUS_IDENTIFIER);
+                if (empty($disqusIdentifier)) {
+
+                    $disqusIdentifier = $attributes[self::ATTRIBUTE_IDENTIFIER];
+                    if (empty($disqusIdentifier)) {
+                        $disqusIdentifier = PluginUtility::getPageId();
+                    }
+
+                    $canonical = PluginUtility::getMeta(UrlCanonical::CANONICAL_PROPERTY);
+                    if (!empty($canonical)) {
+                        $disqusIdentifier = $canonical;
+                    }
+                    PluginUtility::setMeta(self::META_DISQUS_IDENTIFIER,$disqusIdentifier);
+                }
+                $disqusConfig = "this.page.identifier = \"$disqusIdentifier\";";
+
+                $url = $attributes[self::ATTRIBUTE_URL];
+                if (empty($url)) {
+                    if (!empty($canonical)) {
+                        $url = UrlCanonical::getUrl($canonical);
+                    }
+                }
+
+                if (!empty($url)) {
+                    $disqusConfig .= "this.page.url = $url;";
+                }
+
+                $title = $attributes[self::ATTRIBUTE_TITLE];
+                if (empty($title)) {
+                    $title = action_plugin_combo_metatitle::getTitle();
+                    if (!empty($title)){
+                        $disqusConfig .= "this.page.title = $title;";
+                    }
+                }
+
+                $category = $attributes[self::ATTRIBUTE_CATEGORY];
+                if (empty($category)){
+                    $disqusConfig .= "this.page.category_id = $category;";
+                }
+
 
                 /**
                  * The javascript
@@ -124,23 +179,19 @@ class syntax_plugin_combo_disqus extends DokuWiki_Syntax_Plugin
     // Otherwise, disqus will see no config
     // noinspection ES6ConvertVarToLetConst
     var disqus_config = function () {
-        this.page.identifier = "$disqusIdentifier";
-        this.callbacks.onNewComment = [function(comment) {
-              alert(comment.id);
-              alert(comment.text);
-        }];
+        $disqusConfig
     };
 
     // Embed the library
     (function() {
         const d = document, s = d.createElement('script');
-        s.src = 'https://$disqusHscForumShortName.disqus.com/embed.js';
+        s.src = 'https://$forumShortName.disqus.com/embed.js';
         s.setAttribute('data-timestamp', (+new Date()).toString());
         (d.head || d.body).appendChild(s);
     })();
 
 </script>
-<noscript><a href="https://disqus.com/home/discussion/$disqusForumShortName/$disqusIdentifier/">View the discussion thread.</a></noscript>
+<noscript><a href="https://disqus.com/home/discussion/$forumShortName/$disqusIdentifier/">View the discussion thread.</a></noscript>
 EOD;
                 // The tag
                 $renderer->doc .= '<div id="disqus_thread"></div>';

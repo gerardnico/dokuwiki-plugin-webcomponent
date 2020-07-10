@@ -17,7 +17,7 @@ $lang[syntax_plugin_combo_related::EXTRA_PATTERN_CONF] = PluginUtility::getUrl("
 /**
  * Disqus
  */
-$lang[syntax_plugin_combo_disqus::FORUM_SHORT_NAME] = PluginUtility::getUrl("disqus", "Disqus").' - The disqus forum short name (ie the disqus website identifier)';
+$lang[syntax_plugin_combo_disqus::CONF_DEFAULT_ATTRIBUTES] = PluginUtility::getUrl("disqus", "Disqus").' - The disqus forum short name (ie the disqus website identifier)';
 
 
 /**

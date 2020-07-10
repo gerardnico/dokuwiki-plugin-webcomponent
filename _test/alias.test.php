@@ -101,7 +101,7 @@ class plugin_combo_alias_test extends DokuWikiTest
     public function test_canonical_meta()
     {
 
-        $metaKey = action_plugin_combo_metacanonical::CANONICAL_PROPERTY;
+        $metaKey = UrlCanonical::CANONICAL_PROPERTY;
         $pageId = 'description:test';
         $canonicalValue = "javascript:variable";
         $text = DOKU_LF . '---json' . DOKU_LF
@@ -154,7 +154,7 @@ class plugin_combo_alias_test extends DokuWikiTest
     public function test_canonical_meta_auto()
     {
 
-        $canonicalKey = action_plugin_combo_metacanonical::CANONICAL_PROPERTY;
+        $canonicalKey = UrlCanonical::CANONICAL_PROPERTY;
         $canonicalValue = 'without:canonical';
         $pageId = 'page:' . $canonicalValue . '';
         TestUtility::addPage($pageId, "Non empty", 'Created');

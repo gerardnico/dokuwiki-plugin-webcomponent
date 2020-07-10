@@ -9,6 +9,7 @@ require_once(__DIR__ . '/PluginUtility.php');
 
 class UrlCanonical
 {
+    const CANONICAL_PROPERTY = 'canonical';
     /**
      * @var helper_plugin_sqlite $sqlite
      */
@@ -30,6 +31,29 @@ class UrlCanonical
     public function __construct($sqlite)
     {
         $this->sqlite = $sqlite;
+    }
+
+    /**
+     *
+     * @param $canonical - null or the canonical value
+     * @return string - the canonical URL
+     */
+    public static function getUrl($canonical)
+    {
+        if ($canonical != null) {
+            $canonicalUrl = getBaseURL(true) . strtr($canonical, ':', '/');
+        } else {
+            /**
+             * Dokuwiki Methodology taken from {@link tpl_metaheaders()}
+             */
+            global $ID;
+            global $conf;
+            $canonicalUrl = wl($ID, '', true, '&');
+            if ($ID == $conf['start']) {
+                $canonicalUrl = DOKU_URL;
+            }
+        }
+        return$canonicalUrl;
     }
 
 

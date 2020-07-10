@@ -154,17 +154,27 @@ class PluginUtility
      * Fail if in test
      * @param string $message
      * @param int $level - the level see LVL constant
+     * @param string $canonical - the canonical
      */
-    public static function msg($message, $level = self::LVL_MSG_ERROR)
+    public static function msg($message, $level = self::LVL_MSG_ERROR, $canonical = null)
     {
-        $msg = self::$PLUGIN_BASE_NAME . " - $message";
+        $prefix = self::getUrl("",self::$PLUGIN_NAME);
+        if ($canonical!=null){
+            $prefix = self::getUrl($canonical,ucfirst($canonical));
+        }
+        $htmlMsg =  $prefix. " - ".$message;
         if ($level!=self::LVL_MSG_DEBUG) {
-            msg($msg, $level, $allow = MSG_MANAGERS_ONLY);
+            msg($htmlMsg, $level, $allow = MSG_MANAGERS_ONLY);
         }
         /**
          * Print to a log file
          * Note: {@link dbg()} dbg print to the web page
          */
+        $prefix = self::$PLUGIN_NAME;
+        if ($canonical!=null){
+            $prefix .= ' - '.$canonical;
+        }
+        $msg = $prefix . ' - ' . $message;
         dbglog($msg);
         if (defined('DOKU_UNITTEST') && ($level == self::LVL_MSG_WARNING || $level == self::LVL_MSG_ERROR)) {
             throw new RuntimeException($msg);
@@ -627,6 +637,44 @@ class PluginUtility
         }
     }
 
+    /**
+     * Get the page id
+     * If the page is a sidebar, it will not return the id of the sidebar
+     * but the one of the page
+     * @return string
+     */
+    public static function getPageId()
+    {
+        global $ID;
+        global $INFO;
+        $callingId = $ID;
+        // If the component is in a sidebar, we don't want the ID of the sidebar
+        // but the ID of the page.
+        if ($INFO != null) {
+            $callingId = $INFO['id'];
+        }
+        return $callingId;
+    }
+
+    /**
+     * Get a meta for the current page
+     * @param $key - the meta key
+     * @return string
+     */
+    public static function getMeta($key)
+    {
+        return p_get_metadata(PluginUtility::getPageId(),$key);
+    }
+
+    /**
+     * Set a meta for the current page
+     * @param $key
+     * @param $value
+     */
+    public static function setMeta($key, $value)
+    {
+        p_set_metadata(self::getPageId(),array ($key=>$value));
+    }
 
 
 }

@@ -1,5 +1,8 @@
 <?php
 
+use ComboStrap\PluginUtility;
+use ComboStrap\UrlCanonical;
+
 if (!defined('DOKU_INC')) die();
 
 /**
@@ -15,7 +18,6 @@ class action_plugin_combo_metacanonical extends DokuWiki_Action_Plugin
      * The conf
      */
     const CANONICAL_LAST_NAMES_COUNT_CONF = 'MinimalNamesCountForAutomaticCanonical';
-    const CANONICAL_PROPERTY = 'canonical';
 
 
     function __construct()
@@ -56,7 +58,7 @@ class action_plugin_combo_metacanonical extends DokuWiki_Action_Plugin
          * {@link wl()} use the constant DOKU_URL that is set before any test via getBaseURL(true)
          */
 
-        $canonical = p_get_metadata($ID, self::CANONICAL_PROPERTY);
+        $canonical = PluginUtility::getMeta(UrlCanonical::CANONICAL_PROPERTY);
 
         /**
          * The last part of the id as canonical
@@ -83,20 +85,10 @@ class action_plugin_combo_metacanonical extends DokuWiki_Action_Plugin
                 $names = array_slice($names, 0, $namesLength -1);
             }
             $canonical = implode(":", $names);
-            p_set_metadata($ID, array(self::CANONICAL_PROPERTY => $canonical));
+            p_set_metadata($ID, array(UrlCanonical::CANONICAL_PROPERTY => $canonical));
         }
 
-        if ($canonical != null) {
-            $canonicalUrl = getBaseURL(true) . strtr($canonical, ':', '/');
-        } else {
-            /**
-             * Dokuwiki Methodology taken from {@link tpl_metaheaders()}
-             */
-            $canonicalUrl = wl($ID, '', true, '&');
-            if ($ID == $conf['start']) {
-                $canonicalUrl = DOKU_URL;
-            }
-        }
+        $canonicalUrl = UrlCanonical::getUrl($canonical);
 
         /**
          * Replace the meta entry

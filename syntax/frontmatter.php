@@ -198,7 +198,10 @@ class syntax_plugin_combo_frontmatter extends DokuWiki_Syntax_Plugin
     public function closeParsing(array $json = array())
     {
         global $ID;
-        $managedMeta = ["description", "title"];
+        $managedMeta = [
+            "description",
+            "title",
+            syntax_plugin_combo_disqus::META_DISQUS_IDENTIFIER];
         foreach ($managedMeta as $metaKey) {
             if (!array_key_exists($metaKey, $json)) {
                 p_set_metadata($ID, array($metaKey => null));
