@@ -30,8 +30,9 @@ $conf['extra_pattern'] = '{{backlinks>.}}';
 
 /**
  * Disqus
+ * See {@link syntax_plugin_combo_disqus::CONF_DEFAULT_ATTRIBUTES}
  */
-$conf['forumShortName'] = '';
+$conf['disqusDefaultAttributes']='shortName=""';
 
 /**
  * ie {@link action_plugin_combo_urlmanager::GO_TO_BEST_END_PAGE_NAME}
@@ -86,3 +87,9 @@ $conf['disableDokuwikiStylesheet'] = 0;
  */
 $conf['enableMetadataViewerWhenEditing']= 1;
 $conf['metadataViewerDefaultAttributes']= 'title="Metadata" exclude="tableofcontents"';
+
+/**
+ * Badge
+ * See {@link syntax_plugin_combo_badge::CONF_DEFAULT_ATTRIBUTES_KEY
+ */
+$conf['defaultBadgeAttributes'] = 'type="info" rounded="true"';

@@ -25,4 +25,14 @@ class StringUtility
         }
         return $myString;
     }
+
+    /**
+     * @param $string
+     * @return string - the string without any carriage return
+     * Used to compare string without worrying about carriage return
+     */
+    public static function normalized($string)
+    {
+        return str_replace("\n","", $string);
+    }
 }

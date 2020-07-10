@@ -77,7 +77,7 @@ class plugin_combo_frontmatter_test extends DokuWikiTest
 
         $this->assertNotNull($error);
         $message = $error->getMessage();
-        $inString =  strpos($message,"combo");
+        $inString =  strpos($message,PluginUtility::$PLUGIN_NAME);
         $this->assertNotFalse($inString, "This is a combo message");
 
 

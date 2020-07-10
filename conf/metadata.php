@@ -63,3 +63,8 @@ $meta[action_plugin_combo_css::CONF_DISABLE_DOKUWIKI_STYLESHEET]=array('onoff');
  */
 $meta[MetadataUtility::CONF_METADATA_DEFAULT_ATTRIBUTES]=array('string');
 $meta[MetadataUtility::CONF_ENABLE_WHEN_EDITING]=array('onoff');
+
+/**
+ * Badge
+ */
+$meta[syntax_plugin_combo_badge::CONF_DEFAULT_ATTRIBUTES_KEY]=array('string');
