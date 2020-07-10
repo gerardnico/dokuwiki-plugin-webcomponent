@@ -15,6 +15,7 @@ if (!defined('DOKU_PLUGIN')) define('DOKU_PLUGIN', DOKU_INC . 'lib/plugins/');
 
 require_once(__DIR__ . '/../class/PageRules.php');
 require_once(__DIR__ . '/../class/UrlCanonical.php');
+require_once(__DIR__ . '/../class/UrlUtility.php');
 require_once(__DIR__ . '/../class/UrlManagerBestEndPage.php');
 require_once(__DIR__ . '/urlmessage.php');
 
