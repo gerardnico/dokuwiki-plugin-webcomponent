@@ -456,14 +456,22 @@ class PluginUtility
         $colorAttributes = ["color", "background-color", "border-color"];
         foreach ($colorAttributes as $colorAttribute) {
             if (array_key_exists($colorAttribute, $attributes)) {
-                $styleProperties[$colorAttribute] = self::getColorValue($attributes[$colorAttribute]);
+                $colorValue = $attributes[$colorAttribute];
+                $gradientPrefix = 'gradient-';
+                if (strpos($colorValue, $gradientPrefix) === 0){
+                    $mainColorValue = substr($colorValue,strlen($gradientPrefix));
+                    $styleProperties['background-image'] = 'linear-gradient(to top,#fff 0,'.self::getColorValue($mainColorValue).' 100%)';
+                    $styleProperties['background-color'] = 'unset!important';
+                } else {
+                    $styleProperties[$colorAttribute] = self::getColorValue($colorValue);
+                }
                 unset($attributes[$colorAttribute]);
             }
         }
 
         $widthName = "width";
         if (array_key_exists($widthName, $attributes)) {
-            $styleProperties[$widthName] = trim($attributes[$widthName]);
+            $styleProperties['max-width'] = trim($attributes[$widthName]);
             unset($attributes[$widthName]);
         }
 
