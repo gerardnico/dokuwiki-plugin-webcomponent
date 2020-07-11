@@ -174,4 +174,19 @@ class LinkUtility
 
     }
 
+    /**
+     * Inherit the color of their parent and not from Dokuwiki
+     * @param $htmlLink
+     * @return bool|false|string
+     */
+    public static function inheritColorFromParent($htmlLink)
+    {
+        /**
+         * The extra style for the link
+         */
+        $styleValue = ";background-color:inherit;border-color:inherit;color:inherit";
+        return HtmlUtility::addAttributeValue($htmlLink,"style", $styleValue);
+
+    }
+
 }

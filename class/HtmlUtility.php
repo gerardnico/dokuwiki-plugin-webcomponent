@@ -14,6 +14,8 @@ namespace ComboStrap;
 
 
 use SimpleXMLElement;
+require_once(__DIR__ . '/../class/PluginUtility.php');
+require_once(__DIR__ . '/../class/XmlUtility.php');
 
 /**
  * Class HtmlUtility

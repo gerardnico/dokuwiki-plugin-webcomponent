@@ -23,6 +23,13 @@ require_once(__DIR__ . '/../class/PluginUtility.php');
 class syntax_plugin_combo_navbar extends DokuWiki_Syntax_Plugin
 {
 
+    const TAG = 'navbar';
+
+    /**
+     * Do we need to add a container
+     * @var bool
+     */
+    private $containerInside = true;
 
     /**
      * Syntax Type.
@@ -73,21 +80,21 @@ class syntax_plugin_combo_navbar extends DokuWiki_Syntax_Plugin
     /**
      * Create a pattern that will called this plugin
      *
-     * @see Doku_Parser_Mode::connectTo()
      * @param string $mode
+     * @see Doku_Parser_Mode::connectTo()
      */
     function connectTo($mode)
     {
 
-        $pattern = PluginUtility::getContainerTagPattern(self::getElementName());
-        $this->Lexer->addEntryPattern($pattern, $mode, 'plugin_' . PluginUtility::$PLUGIN_BASE_NAME . '_' . $this->getPluginComponent());
+        $pattern = PluginUtility::getContainerTagPattern(self::TAG);
+        $this->Lexer->addEntryPattern($pattern, $mode, PluginUtility::getModeForComponent($this->getPluginComponent()));
 
     }
 
     public function postConnect()
     {
 
-        $this->Lexer->addExitPattern('</' . self::getElementName() . '>', 'plugin_' . PluginUtility::$PLUGIN_BASE_NAME . '_' . $this->getPluginComponent());
+        $this->Lexer->addExitPattern('</' . self::TAG . '>', PluginUtility::getModeForComponent($this->getPluginComponent()));
 
     }
 
@@ -96,13 +103,13 @@ class syntax_plugin_combo_navbar extends DokuWiki_Syntax_Plugin
      * The handle function goal is to parse the matched syntax through the pattern function
      * and to return the result for use in the renderer
      * This result is always cached until the page is modified.
-     * @see DokuWiki_Syntax_Plugin::handle()
-     *
      * @param string $match
      * @param int $state
      * @param int $pos
      * @param Doku_Handler $handler
      * @return array|bool
+     * @see DokuWiki_Syntax_Plugin::handle()
+     *
      */
     function handle($match, $state, $pos, Doku_Handler $handler)
     {
@@ -111,10 +118,12 @@ class syntax_plugin_combo_navbar extends DokuWiki_Syntax_Plugin
 
             case DOKU_LEXER_ENTER:
 
-                // Suppress the component name
-                $match = substr($match, strlen(self::getElementName()) + 1, -1);
-                $parameters = PluginUtility::parse2HTMLAttributes($match);
-                return array($state, $parameters);
+                $tagAttributes = PluginUtility::getTagAttributes($match);
+                return array($state, $tagAttributes);
+
+            case DOKU_LEXER_UNMATCHED:
+
+                return PluginUtility::escape($match);
 
             case DOKU_LEXER_EXIT :
 
@@ -143,40 +152,76 @@ class syntax_plugin_combo_navbar extends DokuWiki_Syntax_Plugin
         if ($format == 'xhtml') {
 
             /** @var Doku_Renderer_xhtml $renderer */
-            list($state, $parameters) = $data;
+            list($state, $payload) = $data;
             switch ($state) {
 
                 case DOKU_LEXER_ENTER :
 
-                    $renderer->doc .= '<nav ';
-                    if (array_key_exists("id", $parameters)) {
-                        $renderer->doc .= ' id="'.$parameters["id"].'"';
+                    $attributes = $payload;
+                    $class = 'navbar navbar-light bg-light';
+                    if (array_key_exists("class", $attributes)) {
+                        $attributes["class"] .= ' ' . $class;
+                    } else {
+                        $attributes["class"] .= $class;
                     }
-                    $renderer->doc .= ' class="navbar';
-                    if (array_key_exists("class", $parameters)) {
-                        $renderer->doc .= ' '.$parameters["class"];
+
+                    // Grab the position
+                    $position = "";
+
+                    // Top bar height in the template
+                    global $conf;
+                    if ($conf['tpl']['strap']['heightTopBar'] !== 0){
+                        $position = "top";
                     }
-                    $renderer->doc .= '"';
-                    if (array_key_exists("style", $parameters)) {
-                        $renderer->doc .= ' style="'.$parameters["style"];
+                    if (array_key_exists("position", $attributes)) {
+                        $position = $attributes["position"];
+                        unset($attributes["position"]);
                     }
-                    $renderer->doc .= '">' . DOKU_LF;
+                    if ($position==="top") {
+                        $attributes["class"] .= ' fixed-top';
+                    }
+
+                    // Align
+                    $align = "center";
+                    if (array_key_exists("align", $attributes)) {
+                        $align = $attributes["align"];
+                        unset($attributes["align"]);
+                    }
+
+                    // Container
+                    if ($align === "center" && $position === "top") {
+                        $this->containerInside = true;
+                    }
+
+
+                    $inlineAttributes = PluginUtility::array2HTMLAttributes($attributes);
+
+                    $containerTag = "";
+                    if ($this->containerInside) {
+                        $containerTag = '<div class="container">';
+                    }
+
+                    $renderer->doc .= "<nav {$inlineAttributes}>" . DOKU_LF;
+
+                    // When the top is fixed, the container should be inside the navbar
+                    $renderer->doc .= "{$containerTag}" . DOKU_LF;
+                    break;
+
+                case DOKU_LEXER_UNMATCHED:
+                    $renderer->doc .= PluginUtility::escape($payload);
                     break;
 
                 case DOKU_LEXER_EXIT :
-
-                    $renderer->doc .= '</nav>' . DOKU_LF;
+                    $containerTag = "";
+                    if ($this->containerInside) {
+                        $containerTag = '</div>';
+                    }
+                    $renderer->doc .= "{$containerTag}</nav>" . DOKU_LF;
                     break;
             }
             return true;
         }
         return false;
-    }
-
-
-    public static function getElementName()
-    {
-        return PluginUtility::getTagName(get_called_class());
     }
 
 

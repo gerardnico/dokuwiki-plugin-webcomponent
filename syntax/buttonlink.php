@@ -20,10 +20,6 @@ if (!defined('DOKU_INC')) die();
 class syntax_plugin_combo_buttonlink extends DokuWiki_Syntax_Plugin
 {
 
-    /**
-     * The extra style for the link
-     */
-    const STYLE_VALUE = ";background-color:inherit;border-color:inherit;color:inherit";
 
 
     /**
@@ -123,9 +119,9 @@ class syntax_plugin_combo_buttonlink extends DokuWiki_Syntax_Plugin
                 /** @var Doku_Renderer_xhtml $renderer */
 
                 $htmlLink = LinkUtility::renderHTML($renderer, $data);
+                $htmlLink = LinkUtility::inheritColorFromParent($htmlLink);
 
 
-                $htmlLink = HtmlUtility::addAttributeValue($htmlLink,"style", self::STYLE_VALUE);
 
                 $renderer->doc .= $htmlLink;
 

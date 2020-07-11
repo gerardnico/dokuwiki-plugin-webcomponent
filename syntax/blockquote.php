@@ -45,6 +45,8 @@ class syntax_plugin_combo_blockquote extends DokuWiki_Syntax_Plugin
      *
      * No one of array('container', 'baseonly', 'formatting', 'substition', 'protected', 'disabled', 'paragraphs')
      * because we manage self the content and we call self the parser
+     *
+     * Return an array of one or more of the mode types {@link $PARSER_MODES} in Parser.php
      */
     public function getAllowedTypes()
     {
