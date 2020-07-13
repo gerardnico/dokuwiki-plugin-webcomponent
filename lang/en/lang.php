@@ -70,4 +70,5 @@ $lang['message_come_from'] = 'This message was fired by the ';
 
 $lang['SqliteMandatory'] = 'The <a href="https://www.dokuwiki.org/plugin:webcomponent">404 Manager plugin</a> uses the <a href="https://www.dokuwiki.org/plugin:sqlite">sqlite plugin</a> for all new functions above the version <a href="https://github.com/gerardnico/dokuwiki-plugin-webcomponent/blob/master/CHANGES.md#v110-09-07-2016">v1.1.0 (09-07-2016)</a>. You need do install it if you want to use them. See the <a href="https://github.com/gerardnico/dokuwiki-plugin-webcomponent/blob/master/CHANGES.md#v110-09-07-2016">changes file</a> for the list of new functionalities.';
 
+
 ?>

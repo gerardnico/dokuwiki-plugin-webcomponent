@@ -59,4 +59,6 @@ $lang[MetadataUtility::CONF_ENABLE_WHEN_EDITING]= PluginUtility::getUrl("metadat
  */
 $lang[syntax_plugin_combo_badge::CONF_DEFAULT_ATTRIBUTES_KEY] =  PluginUtility::getUrl("badge","Badge").' - Defines the default badge attributes';
 
+$lang['UnitShortCutKey'] = "A browser short cut to insert an unit test";
+
 ?>

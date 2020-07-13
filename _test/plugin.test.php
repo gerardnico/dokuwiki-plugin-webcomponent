@@ -72,72 +72,7 @@ class dokuwiki_plugin_combo_plugin_test extends DokuWikiTest
 
 
 
-    /**
-     * Test to ensure that every conf['...'] entry
-     * in conf/default.php has a corresponding meta['...'] entry in conf/metadata.php.
-     */
-    public function test_plugin_default()
-    {
-        $conf = array();
-        $conf_file = __DIR__ . '/../conf/default.php';
-        if (file_exists($conf_file)) {
-            include($conf_file);
-        }
 
-        $meta = array();
-        $meta_file = __DIR__ . '/../conf/metadata.php';
-        if (file_exists($meta_file)) {
-            include($meta_file);
-        }
-
-
-        $this->assertEquals(
-            gettype($conf),
-            gettype($meta),
-            'Both ' . DOKU_PLUGIN . 'syntax/conf/default.php and ' . DOKU_PLUGIN . 'syntax/conf/metadata.php have to exist and contain the same keys.'
-        );
-
-        if (gettype($conf) != 'NULL' && gettype($meta) != 'NULL') {
-            foreach ($conf as $key => $value) {
-                $this->assertArrayHasKey(
-                    $key,
-                    $meta,
-                    'Key $meta[\'' . $key . '\'] missing in ' . DOKU_PLUGIN . 'syntax/conf/metadata.php'
-                );
-            }
-
-            foreach ($meta as $key => $value) {
-                $this->assertArrayHasKey(
-                    $key,
-                    $conf,
-                    'Key $conf[\'' . $key . '\'] missing in ' . DOKU_PLUGIN . 'syntax/conf/default.php'
-                );
-            }
-        }
-
-        /**
-         * The default are read through parsing
-         * by the config plugin
-         * Yes that's fuck up but yeah
-         * This test check that we can read them
-         */
-        $parser = new ConfigParser();
-        $loader = new Loader($parser);
-        $defaultConf = $loader->loadDefaults();
-        $keyPrefix = "plugin____".PluginUtility::$PLUGIN_BASE_NAME."____";
-        $this->assertTrue(is_array($defaultConf));
-
-        // plugin defaults
-        foreach ($meta as $key => $value) {
-            $this->assertArrayHasKey(
-                $keyPrefix.$key,
-                $defaultConf,
-                'Key $conf[\'' . $key . '\'] could not be parsed in ' . DOKU_PLUGIN . 'syntax/conf/default.php. Be sure to give only values and not variable.'
-            );
-        }
-
-
-    }
 
 
 
