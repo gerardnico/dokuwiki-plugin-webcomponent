@@ -135,8 +135,20 @@ class syntax_plugin_combo_inote extends DokuWiki_Syntax_Plugin
                     if (empty($type)) {
                         $type = "info";
                     }
+                    if (array_key_exists("type", $attributes)) {
+                        $type = $attributes["type"];
+                        // Switch for the color
+                        switch ($type) {
+                            case "important":
+                                $type = "warning";
+                                break;
+                            case "warning":
+                                $type = "danger";
+                                break;
+                        }
+                    }
                     if ($type != "tip") {
-                        $classValue .= " alert-" . $type;
+                        $classValue .= " badge-" . $type;
                     } else {
                         if (!array_key_exists("background-color", $attributes)) {
                             $attributes["background-color"] = "#fff79f"; // lum - 195
