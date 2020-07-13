@@ -7,30 +7,38 @@ use ComboStrap\PluginUtility;
 if (!defined('DOKU_INC')) die();
 
 /**
- * Class syntax_plugin_combo_note
- * Implementation of a note
- * called an alert in <a href="https://getbootstrap.com/docs/4.0/components/alerts/">bootstrap</a>
+ * Class syntax_plugin_combo_inote
+ * Implementation of a inline note
+ * called an alert in <a href="https://getbootstrap.com/docs/4.0/components/badge/">bootstrap</a>
+ *
+ * Quickly created with a copy of a badge
  */
-class syntax_plugin_combo_note extends DokuWiki_Syntax_Plugin
+class syntax_plugin_combo_inote extends DokuWiki_Syntax_Plugin
 {
 
-    const TAG = "note";
+    const TAG = "inote";
+
+    const CONF_DEFAULT_ATTRIBUTES_KEY = 'defaultInoteAttributes';
+
+    const ATTRIBUTE_TYPE = "type";
+    const ATTRIBUTE_ROUNDED = "rounded";
 
     /**
      * Syntax Type.
      *
      * Needs to return one of the mode types defined in $PARSER_MODES in parser.php
+     * @see https://www.dokuwiki.org/devel:syntax_plugins#syntax_types
      * @see DokuWiki_Syntax_Plugin::getType()
      */
     function getType()
     {
-        return 'container';
+        return 'formatting';
     }
 
     /**
      * How Dokuwiki will add P element
      *
-     * * 'normal' - The plugin can be used inside paragraphs
+     *  * 'normal' - The plugin can be used inside paragraphs (inline)
      *  * 'block'  - Open paragraphs need to be closed before plugin output - block should not be inside paragraphs
      *  * 'stack'  - Special case. Plugin wraps other paragraphs. - Stacks can contain paragraphs
      *
@@ -38,7 +46,7 @@ class syntax_plugin_combo_note extends DokuWiki_Syntax_Plugin
      */
     function getPType()
     {
-        return 'block';
+        return 'normal';
     }
 
     /**
@@ -66,8 +74,8 @@ class syntax_plugin_combo_note extends DokuWiki_Syntax_Plugin
 
         $pattern = PluginUtility::getContainerTagPattern(self::TAG);
         $this->Lexer->addEntryPattern($pattern, $mode, PluginUtility::getModeForComponent($this->getPluginComponent()));
-    }
 
+    }
 
     function postConnect()
     {
@@ -117,32 +125,19 @@ class syntax_plugin_combo_note extends DokuWiki_Syntax_Plugin
             list($state, $payload) = $data;
             switch ($state) {
                 case DOKU_LEXER_ENTER :
-                    $attributes = $payload;
-                    $classValue = "alert";
-                    $type = "info";
-                    if (array_key_exists("type", $attributes)) {
-                        $type = $attributes["type"];
-                        // Switch for the color
-                        switch ($type) {
-                            case "important":
-                                $type = "warning";
-                                break;
-                            case "warning":
-                                $type = "danger";
-                                break;
-                        }
+
+                    $defaultConfValue = $this->getConf(self::CONF_DEFAULT_ATTRIBUTES_KEY);
+                    $defaultAttributes = PluginUtility::parse2HTMLAttributes($defaultConfValue);
+                    $attributes = PluginUtility::mergeAttributes($payload,$defaultAttributes);
+
+                    $classValue = "badge";
+                    $type = $attributes[self::ATTRIBUTE_TYPE];
+                    if (empty($type)) {
+                        $type = "info";
                     }
                     if ($type != "tip") {
                         $classValue .= " alert-" . $type;
                     } else {
-                        // There is no alert-tip color
-                        // base color was background color and we have modified the luminance
-                        if (!array_key_exists("color", $attributes)) {
-                            $attributes["color"] = "#6c6400"; // lum - 51
-                        }
-                        if (!array_key_exists("border-color", $attributes)) {
-                            $attributes["border-color"] = "#FFF78c"; // lum - 186
-                        }
                         if (!array_key_exists("background-color", $attributes)) {
                             $attributes["background-color"] = "#fff79f"; // lum - 195
                         }
@@ -154,7 +149,13 @@ class syntax_plugin_combo_note extends DokuWiki_Syntax_Plugin
                         $attributes["class"] = "{$classValue}";
                     }
 
-                    $renderer->doc .= '<div ' . PluginUtility::array2HTMLAttributes($attributes) . ' role="note">';
+                    $rounded = $attributes[self::ATTRIBUTE_ROUNDED];
+                    if (!empty($rounded)){
+                        $attributes["class"] .= " badge-pill";
+                        unset($attributes[self::ATTRIBUTE_ROUNDED]);
+                    }
+
+                    $renderer->doc .= '<span ' . PluginUtility::array2HTMLAttributes($attributes) . '>';
                     break;
 
                 case DOKU_LEXER_UNMATCHED :
@@ -162,7 +163,7 @@ class syntax_plugin_combo_note extends DokuWiki_Syntax_Plugin
                     break;
 
                 case DOKU_LEXER_EXIT :
-                    $renderer->doc .= '</div>';
+                    $renderer->doc .= '</span>';
                     break;
             }
             return true;

@@ -40,7 +40,7 @@ class syntax_plugin_combo_noteheader extends DokuWiki_Syntax_Plugin
     function connectTo($mode)
     {
         // Only inside a note
-        if ($mode == PluginUtility::getModeForComponent(syntax_plugin_combo_note::NOTE_TAG)) {
+        if ($mode == PluginUtility::getModeForComponent(syntax_plugin_combo_note::TAG)) {
             $this->Lexer->addSpecialPattern(self::HEADER_PATTERN, $mode, PluginUtility::getModeForComponent($this->getPluginComponent()));
         }
     }
