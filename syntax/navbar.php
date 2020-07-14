@@ -30,7 +30,7 @@ class syntax_plugin_combo_navbar extends DokuWiki_Syntax_Plugin
      * Do we need to add a container
      * @var bool
      */
-    private $containerInside = true;
+    private $containerInside = false;
 
     /**
      * Syntax Type.
@@ -166,6 +166,15 @@ class syntax_plugin_combo_navbar extends DokuWiki_Syntax_Plugin
                         $attributes["class"] .= $class;
                     }
 
+                    /**
+                     * Without the expand, the flex has a row direction
+                     * and not a column
+                     */
+                    if (array_key_exists("breakpoint", $attributes)) {
+                        $attributes["class"] .= ' navbar-expand-'.$attributes["breakpoint"];
+                        unset($attributes["breakpoint"]);
+                    }
+
                     // Grab the position
                     $position = "";
 
@@ -190,7 +199,7 @@ class syntax_plugin_combo_navbar extends DokuWiki_Syntax_Plugin
                     }
 
                     // Container
-                    if ($align === "center" && $position === "top") {
+                    if ($align === "center") {
                         $this->containerInside = true;
                     }
 
