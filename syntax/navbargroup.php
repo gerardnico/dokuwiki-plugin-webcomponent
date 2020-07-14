@@ -186,7 +186,7 @@ class syntax_plugin_combo_navbargroup extends DokuWiki_Syntax_Plugin
                     }
 
                     if (array_key_exists("expand", $payload)) {
-                        if ($payload["expand"]="true") {
+                        if ($payload["expand"]=="true") {
                             $payload["class"] .= " mr-auto";
                         }
                         unset($payload["expand"]);
