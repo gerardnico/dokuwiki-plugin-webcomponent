@@ -22,7 +22,7 @@ class NavBarUtility
      */
     public static function text($text)
     {
-        return '<span class="navbar-text">'.$text.'</span>';
+        return '<span class="navbar-text active">'.$text.'</span>';
     }
 
     /**
@@ -33,6 +33,7 @@ class NavBarUtility
     public static function switchDokuwiki2BootstrapClass($html)
     {
         $html = HtmlUtility::addAttributeValue($html,"class","nav-link");
+        $html = HtmlUtility::addAttributeValue($html,"class","active"); // The color is darker
         $html = LinkUtility::deleteDokuWikiClass($html);
         return $html;
     }

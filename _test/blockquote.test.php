@@ -23,7 +23,7 @@ class plugin_combo_blockquote_test extends DokuWikiTest
     public function test_tag_name()
     {
 
-        $elementName = syntax_plugin_combo_blockquote::getTagName();
+        $elementName = syntax_plugin_combo_blockquote::TAG;
 
         $this->assertEquals('blockquote', $elementName);
 
@@ -32,9 +32,9 @@ class plugin_combo_blockquote_test extends DokuWikiTest
     public function test_base()
     {
 
-        $element = syntax_plugin_combo_blockquote::getTagName();
+        $element = syntax_plugin_combo_blockquote::TAG;
         $dokuContent = '<' . $element . '>MyQuote</' . $element . '>';
-        $expected = '<div class="card m-3">'.DOKU_LF
+        $expected = '<div class="card">'.DOKU_LF
             .DOKU_TAB.'<div class="card-body">'.DOKU_LF
             .DOKU_TAB.DOKU_TAB.'<blockquote class="blockquote m-0">'.DOKU_LF
             .DOKU_TAB.DOKU_TAB.'MyQuote'.DOKU_LF
@@ -51,9 +51,9 @@ class plugin_combo_blockquote_test extends DokuWikiTest
     public function test_with_cite_base()
     {
 
-        $element = syntax_plugin_combo_blockquote::getTagName();
+        $element = syntax_plugin_combo_blockquote::TAG;
         $doku_text = '<' . $element . '>MyQuote<cite>Nico</cite></' . $element . '>';
-        $expected = '<div class="card m-3">'.DOKU_LF
+        $expected = '<div class="card">'.DOKU_LF
             .DOKU_TAB.'<div class="card-body">'.DOKU_LF
             .DOKU_TAB.DOKU_TAB.'<blockquote class="blockquote m-0">'.DOKU_LF
             .DOKU_TAB.DOKU_TAB.'MyQuote'.DOKU_LF
@@ -70,7 +70,7 @@ class plugin_combo_blockquote_test extends DokuWikiTest
     public function test_base_no_class()
     {
 
-        $element = syntax_plugin_combo_blockquote::getTagName();
+        $element = syntax_plugin_combo_blockquote::TAG;
         $doku_text = '<' . $element . ' class="" >MyQuote</' . $element . '>';
         $expected = '<div class="card">'.DOKU_LF
             .DOKU_TAB.'<div class="card-body">'.DOKU_LF

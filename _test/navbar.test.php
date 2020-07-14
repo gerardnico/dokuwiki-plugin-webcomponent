@@ -33,7 +33,7 @@ class plugin_combo_navbar_test extends DokuWikiTest
         $content = "<navbar class=\"$extraClass\"></navbar>";
         $instructions = p_get_instructions($content);
         $xhtml = p_render('xhtml', $instructions, $info);
-        $this->assertEquals("<nav class=\"$extraClass navbar\"></nav>", StringUtility::normalized($xhtml));
+        $this->assertEquals("<nav class=\"$extraClass navbar navbar-light\" style=\"background-color:var(--light)\"><div class=\"container\"></div></nav>", StringUtility::normalized($xhtml));
 
     }
 

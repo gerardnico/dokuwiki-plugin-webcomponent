@@ -159,11 +159,15 @@ class syntax_plugin_combo_navbar extends DokuWiki_Syntax_Plugin
                 case DOKU_LEXER_ENTER :
 
                     $attributes = $payload;
-                    $class = 'navbar navbar-light bg-light';
+                    $class = 'navbar';
                     if (array_key_exists("class", $attributes)) {
                         $attributes["class"] .= ' ' . $class;
                     } else {
                         $attributes["class"] .= $class;
+                    }
+
+                    if (!array_key_exists("background-color", $attributes)) {
+                        $attributes["background-color"] = 'light';
                     }
 
                     /**
@@ -184,6 +188,13 @@ class syntax_plugin_combo_navbar extends DokuWiki_Syntax_Plugin
                         unset($attributes["position"]);
                     }
 
+                    // Theming
+                    $theme = "light";
+                    if (array_key_exists("theme", $attributes)) {
+                        $theme = $attributes["theme"];
+                        unset($attributes["theme"]);
+                    }
+                    $attributes["class"] .= ' navbar-'.$theme;
 
                     // Align
                     $align = "center";

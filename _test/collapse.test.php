@@ -28,7 +28,8 @@ class plugin_combo_collapse_test extends DokuWikiTest
         $content = "<navbar><collapse></collapse></navbar>";
         $instructions = p_get_instructions($content);
         $xhtml = p_render('xhtml', $instructions, $info);
-        $this->assertEquals('<nav class="navbar"><button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarcollapse" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation""><span class="navbar-toggler-icon"></span></button><div id="navbarcollapse" class="collapse navbar-collapse"></div></nav>', StringUtility::normalized($xhtml));
+        $expected = '<nav class="navbar navbar-light" style="background-color:var(--light)"><div class="container"><button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarcollapse" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation""><span class="navbar-toggler-icon"></span></button><div id="navbarcollapse" class="collapse navbar-collapse"></div></div></nav>';
+        $this->assertEquals($expected, StringUtility::normalized($xhtml));
 
     }
 
@@ -38,7 +39,8 @@ class plugin_combo_collapse_test extends DokuWikiTest
         $content = "<navbar><collapse>[[a:link]]</collapse></navbar>";
         $instructions = p_get_instructions($content);
         $xhtml = p_render('xhtml', $instructions, $info);
-        $this->assertEquals("", StringUtility::normalized($xhtml));
+        $expected = '<nav class="navbar navbar-light" style="background-color:var(--light)"><div class="container"><button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarcollapse" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation""><span class="navbar-toggler-icon"></span></button><div id="navbarcollapse" class="collapse navbar-collapse"><div class="navbar-nav"><a href="/./doku.php?id=a:link" class="wikilink2 nav-link active" title="a:link" rel="nofollow" data-wiki-id="a:link">link</a></div></div></div></nav>';
+        $this->assertEquals($expected, StringUtility::normalized($xhtml));
 
     }
 

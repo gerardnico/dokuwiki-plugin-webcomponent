@@ -197,7 +197,7 @@ class syntax_plugin_combo_navbargroup extends DokuWiki_Syntax_Plugin
                     break;
                 case DOKU_LEXER_UNMATCHED :
 
-                    $renderer->doc .= PluginUtility::escape($payload);
+                    $renderer->doc .= NavBarUtility::text(PluginUtility::escape($payload));
                     break;
 
                 case DOKU_LEXER_MATCHED:

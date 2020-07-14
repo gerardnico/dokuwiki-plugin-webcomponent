@@ -177,7 +177,7 @@ class syntax_plugin_combo_dropdown extends DokuWiki_Syntax_Plugin
                         $name = $payload["name"];
                     }
                     $renderer->doc .= '<li class="nav-item dropdown">'
-                        . DOKU_TAB . '<a id="' . $dropDownId . '" href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" title="Title">' . $name . '</a>'
+                        . DOKU_TAB . '<a id="' . $dropDownId . '" href="#" class="nav-link dropdown-toggle active" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" title="Title">' . $name . '</a>'
                         . DOKU_TAB . '<div class="dropdown-menu" aria-labelledby="' . $dropDownId . '">';
                     break;
 
