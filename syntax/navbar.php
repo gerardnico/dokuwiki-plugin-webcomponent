@@ -176,20 +176,14 @@ class syntax_plugin_combo_navbar extends DokuWiki_Syntax_Plugin
                     }
 
                     // Grab the position
-                    $position = "";
+                    if (array_key_exists("position", $attributes)) {
+                        $position = $attributes["position"];
+                        if ($position==="top") {
+                            $attributes["class"] .= ' fixed-top';
+                        }
+                        unset($attributes["position"]);
+                    }
 
-                    // Top bar height in the template
-//                    global $conf;
-//                    if ($conf['tpl']['strap']['heightTopBar'] !== 0){
-//                        $position = "top";
-//                    }
-//                    if (array_key_exists("position", $attributes)) {
-//                        $position = $attributes["position"];
-//                        unset($attributes["position"]);
-//                    }
-//                    if ($position==="top") {
-//                        $attributes["class"] .= ' fixed-top';
-//                    }
 
                     // Align
                     $align = "center";

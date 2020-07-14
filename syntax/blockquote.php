@@ -24,7 +24,7 @@ require_once(__DIR__ . '/../class/PluginUtility.php');
 class syntax_plugin_combo_blockquote extends DokuWiki_Syntax_Plugin
 {
 
-
+    const TAG = "blockquote";
     const IMAGE_PATTERN = "\{\{(?:[^\}]|(?:\}[^\}]))+\}\}";
 
 
@@ -88,18 +88,18 @@ class syntax_plugin_combo_blockquote extends DokuWiki_Syntax_Plugin
     function connectTo($mode)
     {
 
-        $pattern = PluginUtility::getContainerTagPattern($this->getPluginComponent());
-        $this->Lexer->addEntryPattern($pattern, $mode, 'plugin_' . PluginUtility::$PLUGIN_BASE_NAME . '_' . $this->getPluginComponent());
+        $pattern = PluginUtility::getContainerTagPattern(self::TAG);
+        $this->Lexer->addEntryPattern($pattern, $mode, PluginUtility::getModeForComponent($this->getPluginComponent()));
 
     }
 
     public function postConnect()
     {
 
-        $this->Lexer->addExitPattern('</' . self::getTagName() . '>', 'plugin_' . PluginUtility::$PLUGIN_BASE_NAME . '_' . $this->getPluginComponent());
+        $this->Lexer->addExitPattern('</' . self::TAG . '>', PluginUtility::getModeForComponent($this->getPluginComponent()));
 
         // Receive the image
-        $this->Lexer->addPattern(self::IMAGE_PATTERN, 'plugin_' . PluginUtility::$PLUGIN_BASE_NAME . '_' . $this->getPluginComponent());
+        $this->Lexer->addPattern(self::IMAGE_PATTERN, PluginUtility::getModeForComponent($this->getPluginComponent()));
 
     }
 
@@ -123,21 +123,21 @@ class syntax_plugin_combo_blockquote extends DokuWiki_Syntax_Plugin
 
             case DOKU_LEXER_ENTER:
                 // Suppress the component name
-                $match = substr($match, strlen($this->getPluginComponent()) + 1, -1);
-                $parameters = PluginUtility::parse2HTMLAttributes($match);
-                return array($state, $parameters);
+
+                $tagAttributes = PluginUtility::getTagAttributes($match);
+                return array($state, $tagAttributes);
 
             case DOKU_LEXER_UNMATCHED :
                 return array($state, $match);
 
             case DOKU_LEXER_MATCHED :
 
-                $parameters = array ();
+                $tagAttributes = array ();
                 if (preg_match('/' . self::IMAGE_PATTERN . '/msSi', $match, $matches)) {
                     // We have an image, we parse it (Doku_Handler_Parse_Media in handler.php)
-                    $parameters['image'] = Doku_Handler_Parse_Media($match);
+                    $tagAttributes['image'] = Doku_Handler_Parse_Media($match);
                 }
-                return array($state, $parameters);
+                return array($state, $tagAttributes);
 
 
             case DOKU_LEXER_EXIT :
@@ -165,44 +165,42 @@ class syntax_plugin_combo_blockquote extends DokuWiki_Syntax_Plugin
         if ($format == 'xhtml') {
 
             /** @var Doku_Renderer_xhtml $renderer */
-            list($state, $parameters) = $data;
+            list($state, $payload) = $data;
             switch ($state) {
 
                 case DOKU_LEXER_ENTER :
-                    // w-75 for width 75
-                    $class = "m-3";
-                    if (array_key_exists("class", $parameters)) {
-                        $class = hsc($parameters["class"]);
+                    if (array_key_exists("class", $payload)) {
+                        $payload["class"] .= "card";
+                    } else {
+                        $payload["class"] ="card";
                     }
-                    if ($class != "") {
-                        $class = " " . $class;
-                    }
-                    $renderer->doc .= '<div class="card' . $class . '">' . DOKU_LF
+                    $inlineAttributes = PluginUtility::array2HTMLAttributes($payload);
+                    $renderer->doc .= "<div {$inlineAttributes}>" . DOKU_LF
                         . DOKU_TAB . '<div class="card-body">' . DOKU_LF
-                        . DOKU_TAB . DOKU_TAB . '<' . self::getTagName() . ' class="' . self::getTagName() . ' m-0"';
+                        . DOKU_TAB . DOKU_TAB . '<' . self::TAG . ' class="' . self::TAG . ' m-0"';
                     // m-0 on the blockquote element is to correct a bottom margin from bootstrap of 1em that we don't want
                     $renderer->doc .= '>' . DOKU_LF;
                     break;
 
                 case DOKU_LEXER_UNMATCHED :
 
-                    $renderer->doc .= DOKU_TAB . DOKU_TAB . hsc($parameters) . DOKU_LF;
+                    $renderer->doc .= DOKU_TAB . DOKU_TAB . hsc($payload) . DOKU_LF;
                     break;
 
                 case DOKU_LEXER_MATCHED:
 
-                    if (array_key_exists('cite', $parameters)) {
-                        $content = $parameters['cite']['content'];
+                    if (array_key_exists('cite', $payload)) {
+                        $content = $payload['cite']['content'];
                         $renderer->doc .= DOKU_TAB . DOKU_TAB . '<footer class="blockquote-footer text-right"><cite>';
                         $renderer->doc .= hsc($content); //webcomponent::render($content);
                         $renderer->doc .= "</cite></footer>" . DOKU_LF;
                     }
 
-                    if (array_key_exists('image', $parameters)) {
-                        $src = $parameters['image']['src'];
-                        $width = $parameters['image']['width'];
-                        $height = $parameters['image']['height'];
-                        $title = $parameters['image']['title'];
+                    if (array_key_exists('image', $payload)) {
+                        $src = $payload['image']['src'];
+                        $width = $payload['image']['width'];
+                        $height = $payload['image']['height'];
+                        $title = $payload['image']['title'];
                         //Snippet taken from $renderer->doc .= $renderer->internalmedia($src, $linking = 'nolink');
                         $renderer->doc .= '<img class="media my-3" src="' . ml($src, array('w' => $width, 'h' => $height, 'cache' => true)) . '" alt="' . hsc($title) . '" width="' . hsc($width) . '">';
                     }
@@ -229,11 +227,6 @@ class syntax_plugin_combo_blockquote extends DokuWiki_Syntax_Plugin
     }
 
 
-    public static function getTagName()
-    {
-        list(/* $t */, /* $p */, /* $n */, $c) = explode('_', get_called_class(), 4);
-        return (isset($c) ? $c : '');
-    }
 
 
 }
