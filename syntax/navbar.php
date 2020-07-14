@@ -174,10 +174,12 @@ class syntax_plugin_combo_navbar extends DokuWiki_Syntax_Plugin
                      * Without the expand, the flex has a row direction
                      * and not a column
                      */
+                    $breakpoint = "lg";
                     if (array_key_exists("breakpoint", $attributes)) {
-                        $attributes["class"] .= ' navbar-expand-'.$attributes["breakpoint"];
+                        $breakpoint = $attributes["breakpoint"];
                         unset($attributes["breakpoint"]);
                     }
+                    $attributes["class"] .= ' navbar-expand-'.$breakpoint;
 
                     // Grab the position
                     if (array_key_exists("position", $attributes)) {
