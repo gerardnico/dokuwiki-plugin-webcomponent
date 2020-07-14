@@ -2,6 +2,7 @@
 
 ## Steps
 
+  * Check a [detail page](http://localhost:81/_detail/strap/strap_heightfixedtopnavbar.png)
   * Change the date in the info plugin file
   * Change the snapshot value to the date in the changes page
   * Commit and push
