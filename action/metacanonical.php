@@ -43,6 +43,25 @@ class action_plugin_combo_metacanonical extends DokuWiki_Action_Plugin
         global $ID;
         global $conf;
 
+        /**
+         * Split the id by :
+         */
+        $names = preg_split("/:/", $ID);
+        $namesLength = sizeOf($names);
+
+        /**
+         * No canonical for bars
+         */
+        $bars = array($conf['sidebar']);
+        $strapTemplateName = 'strap';
+        if ($conf['template'] === $strapTemplateName) {
+            $bars[] = $conf['tpl'][$strapTemplateName]['headerbar'];
+            $bars[] = $conf['tpl'][$strapTemplateName]['footerbar'];
+            $bars[] = $conf['tpl'][$strapTemplateName]['sidekickbar'];
+        }
+        if (in_array($names[$namesLength - 1], $bars)) {
+            return;
+        }
 
         /**
          * Where do we pick the canonical URL
@@ -64,16 +83,11 @@ class action_plugin_combo_metacanonical extends DokuWiki_Action_Plugin
          * The last part of the id as canonical
          */
         // How many last parts are taken into account in the canonical processing (2 by default)
-        $canonicalLastNamesCount = $this->getConf(self::CANONICAL_LAST_NAMES_COUNT_CONF,0);
+        $canonicalLastNamesCount = $this->getConf(self::CANONICAL_LAST_NAMES_COUNT_CONF, 0);
         if ($canonical == null && $canonicalLastNamesCount > 0) {
-            /**
-             * Split the id by :
-             */
-            $names = preg_split("/:/", $ID);
             /**
              * Takes the last names part
              */
-            $namesLength = sizeOf($names);
             if ($namesLength > $canonicalLastNamesCount) {
                 $names = array_slice($names, $namesLength - $canonicalLastNamesCount);
             }
@@ -82,7 +96,7 @@ class action_plugin_combo_metacanonical extends DokuWiki_Action_Plugin
              * ie javascript:start will become javascript
              */
             if ($names[$namesLength - 1] == $conf['start']) {
-                $names = array_slice($names, 0, $namesLength -1);
+                $names = array_slice($names, 0, $namesLength - 1);
             }
             $canonical = implode(":", $names);
             p_set_metadata($ID, array(UrlCanonical::CANONICAL_PROPERTY => $canonical));

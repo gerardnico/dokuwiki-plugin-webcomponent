@@ -160,7 +160,7 @@ class PluginUtility
     {
         $prefix = self::getUrl("",self::$PLUGIN_NAME);
         if ($canonical!=null){
-            $prefix = self::getUrl($canonical,ucfirst($canonical));
+            $prefix = self::getUrl($canonical,ucfirst(str_replace(":"," ",$canonical)));
         }
         $htmlMsg =  $prefix. " - ".$message;
         if ($level!=self::LVL_MSG_DEBUG) {

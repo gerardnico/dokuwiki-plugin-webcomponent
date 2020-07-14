@@ -21,6 +21,7 @@
  */
 
 use ComboStrap\PluginUtility;
+use ComboStrap\UrlCanonical;
 
 if (!defined('DOKU_INC')) {
     die();
@@ -101,9 +102,9 @@ class syntax_plugin_combo_frontmatter extends DokuWiki_Syntax_Plugin
             $match = substr($match, 7, -3);
 
             // Empty front matter
-            if (trim($match) == ""){
+            if (trim($match) == "") {
                 $this->closeParsing();
-                return array("state"=> self::PARSING_STATE_EMPTY);
+                return array("state" => self::PARSING_STATE_EMPTY);
             }
 
             // Otherwise you get an object ie $arrayFormat-> syntax
@@ -112,7 +113,7 @@ class syntax_plugin_combo_frontmatter extends DokuWiki_Syntax_Plugin
 
             // Decodage problem
             if ($json == null) {
-                return array("state"=> self::PARSING_STATE_ERROR);
+                return array("state" => self::PARSING_STATE_ERROR);
             }
 
             // Trim it
@@ -149,7 +150,7 @@ class syntax_plugin_combo_frontmatter extends DokuWiki_Syntax_Plugin
 
             $this->closeParsing($json);
 
-            return array("state"=>self::PARSING_STATE_SUCCESSFUL);
+            return array("state" => self::PARSING_STATE_SUCCESSFUL);
         }
 
         return array();
@@ -185,7 +186,6 @@ class syntax_plugin_combo_frontmatter extends DokuWiki_Syntax_Plugin
             }
 
 
-
         }
         return true;
     }
@@ -194,19 +194,31 @@ class syntax_plugin_combo_frontmatter extends DokuWiki_Syntax_Plugin
      *
      * @param array $json - The Json
      * Delete the controlled meta that are no more present if they exists
+     * @return bool
      */
     public function closeParsing(array $json = array())
     {
         global $ID;
+
+        /**
+         * The managed meta with the exception of
+         * the {@link action_plugin_combo_metadescription::DESCRIPTION_META_KEY description}
+         * because it's already managed by dokuwiki in description['abstract']
+         */
         $managedMeta = [
-            "description",
-            "title",
-            syntax_plugin_combo_disqus::META_DISQUS_IDENTIFIER];
+            UrlCanonical::CANONICAL_PROPERTY,
+            action_plugin_combo_metatitle::TITLE_META_KEY,
+            syntax_plugin_combo_disqus::META_DISQUS_IDENTIFIER
+        ];
+        $meta = p_read_metadata($ID);
         foreach ($managedMeta as $metaKey) {
             if (!array_key_exists($metaKey, $json)) {
-                p_set_metadata($ID, array($metaKey => null));
+                if (isset($meta['persistent'][$metaKey])) {
+                    unset($meta['persistent'][$metaKey]);
+                }
             }
         }
+        return p_save_metadata($ID, $meta);
     }
 
 

@@ -204,7 +204,7 @@ class UrlCanonical
                     $this->sqlite->res_close($res);
 
                 } else {
-                    PluginUtility::msg("The page (" . $ID . ") and the page (" . $idInDb . ") have the same canonical.");
+                    PluginUtility::msg("The page ($ID) and the page ($idInDb) have the same canonical ($canonical)",PluginUtility::LVL_MSG_ERROR,"url:manager");
                 }
                 $this->persistPageAlias($canonical, $idInDb);
             }
