@@ -33,6 +33,23 @@ class XmlUtility
     }
 
     /**
+     * Delete the class value from the class attributes
+     * @param $classValue
+     * @param SimpleXMLElement $xml
+     */
+    public static function deleteClass($classValue, SimpleXMLElement $xml)
+    {
+        $class = (string)$xml["class"];
+        if ($class != "") {
+            $classValues = explode(" ", $class);
+            if (($key = array_search($classValue, $classValues)) !== false) {
+                unset($classValues[$key]);
+            }
+            $xml["class"] = implode(" ",$classValues);
+        }
+    }
+
+    /**
      *
      * Add a value to an attribute value
      * Example

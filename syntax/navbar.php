@@ -24,6 +24,7 @@ class syntax_plugin_combo_navbar extends DokuWiki_Syntax_Plugin
 {
 
     const TAG = 'navbar';
+    const COMPONENT = 'navbar';
 
     /**
      * Do we need to add a container
@@ -169,17 +170,17 @@ class syntax_plugin_combo_navbar extends DokuWiki_Syntax_Plugin
                     $position = "";
 
                     // Top bar height in the template
-                    global $conf;
-                    if ($conf['tpl']['strap']['heightTopBar'] !== 0){
-                        $position = "top";
-                    }
-                    if (array_key_exists("position", $attributes)) {
-                        $position = $attributes["position"];
-                        unset($attributes["position"]);
-                    }
-                    if ($position==="top") {
-                        $attributes["class"] .= ' fixed-top';
-                    }
+//                    global $conf;
+//                    if ($conf['tpl']['strap']['heightTopBar'] !== 0){
+//                        $position = "top";
+//                    }
+//                    if (array_key_exists("position", $attributes)) {
+//                        $position = $attributes["position"];
+//                        unset($attributes["position"]);
+//                    }
+//                    if ($position==="top") {
+//                        $attributes["class"] .= ' fixed-top';
+//                    }
 
                     // Align
                     $align = "center";

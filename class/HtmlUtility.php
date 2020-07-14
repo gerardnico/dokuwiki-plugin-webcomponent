@@ -36,13 +36,34 @@ class HtmlUtility
         try {
             /** @noinspection PhpComposerExtensionStubsInspection */
             /** @noinspection PhpUndefinedVariableInspection */
-            $linkDom = new SimpleXMLElement ($html);
+            $domElement = new SimpleXMLElement ($html);
         } catch (\Exception $e) {
-            PluginUtility::msg("The HTML link ($html) is not a valid HTML element. The error returned is $e", PluginUtility::LVL_MSG_ERROR);
+            PluginUtility::msg("The HTML ($html) is not a valid HTML element. The error returned is $e", PluginUtility::LVL_MSG_ERROR);
             return false;
         }
-        XmlUtility::addAttributeValue($attributeName, $attributeValue, $linkDom);
+        XmlUtility::addAttributeValue($attributeName, $attributeValue, $domElement);
 
-        return XmlUtility::asHtml($linkDom);
+        return XmlUtility::asHtml($domElement);
+    }
+
+    /**
+     * @param $html - the html of an element
+     * @param $classValue - the class to delete
+     * @return bool|false|string
+     */
+    public static function deleteClassValue($html, $classValue)
+    {
+        try {
+            /** @noinspection PhpComposerExtensionStubsInspection */
+            /** @noinspection PhpUndefinedVariableInspection */
+            $domElement = new SimpleXMLElement ($html);
+        } catch (\Exception $e) {
+            PluginUtility::msg("The HTML ($html) is not a valid HTML element. The error returned is $e", PluginUtility::LVL_MSG_ERROR);
+            return false;
+        }
+        XmlUtility::deleteClass($classValue, $domElement);
+
+        return XmlUtility::asHtml($domElement);
+
     }
 }

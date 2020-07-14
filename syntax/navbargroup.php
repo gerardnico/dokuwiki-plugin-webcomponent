@@ -4,6 +4,9 @@
  *
  */
 
+use ComboStrap\HtmlUtility;
+use ComboStrap\LinkUtility;
+use ComboStrap\NavBarUtility;
 use ComboStrap\PluginUtility;
 
 if (!defined('DOKU_INC')) {
@@ -11,6 +14,8 @@ if (!defined('DOKU_INC')) {
 }
 
 require_once(__DIR__ . '/../class/PluginUtility.php');
+require_once(__DIR__ . '/../class/LinkUtility.php');
+require_once(__DIR__ . '/../class/HtmlUtility.php');
 
 /**
  * All DokuWiki plugins to extend the parser/rendering mechanism
@@ -19,11 +24,13 @@ require_once(__DIR__ . '/../class/PluginUtility.php');
  * The name of the class must follow a pattern (don't change it)
  * ie:
  *    syntax_plugin_PluginName_ComponentName
+ *
+ * A navbar group is a navbar nav
  */
-class syntax_plugin_combo_group extends DokuWiki_Syntax_Plugin
+class syntax_plugin_combo_navbargroup extends DokuWiki_Syntax_Plugin
 {
 
-
+    const TAG = "group";
     /**
      * Syntax Type.
      *
@@ -73,21 +80,31 @@ class syntax_plugin_combo_group extends DokuWiki_Syntax_Plugin
     /**
      * Create a pattern that will called this plugin
      *
-     * @see Doku_Parser_Mode::connectTo()
      * @param string $mode
+     * @see Doku_Parser_Mode::connectTo()
      */
     function connectTo($mode)
     {
+        /**
+         * Only inside a navbar or collapse element
+         */
+        $authorizedMode = [
+            PluginUtility::getModeForComponent(syntax_plugin_combo_navbarcollapse::COMPONENT),
+            PluginUtility::getModeForComponent(syntax_plugin_combo_navbar::COMPONENT)
+        ];
 
-        $pattern = PluginUtility::getContainerTagPattern(self::getElementName());
-        $this->Lexer->addEntryPattern($pattern, $mode, 'plugin_' . PluginUtility::$PLUGIN_BASE_NAME . '_' . $this->getPluginComponent());
+        if (in_array($mode,$authorizedMode)) {
+            $pattern = PluginUtility::getContainerTagPattern(self::TAG);
+            $this->Lexer->addEntryPattern($pattern, $mode, PluginUtility::getModeForComponent($this->getPluginComponent()));
+            $this->Lexer->addPattern(LinkUtility::LINK_PATTERN, PluginUtility::getModeForComponent($this->getPluginComponent()));
+        }
 
     }
 
     public function postConnect()
     {
 
-        $this->Lexer->addExitPattern('</' . self::getElementName() . '>', 'plugin_' . PluginUtility::$PLUGIN_BASE_NAME . '_' . $this->getPluginComponent());
+        $this->Lexer->addExitPattern('</' . self::TAG . '>', 'plugin_' . PluginUtility::$PLUGIN_BASE_NAME . '_' . $this->getPluginComponent());
 
     }
 
@@ -96,13 +113,13 @@ class syntax_plugin_combo_group extends DokuWiki_Syntax_Plugin
      * The handle function goal is to parse the matched syntax through the pattern function
      * and to return the result for use in the renderer
      * This result is always cached until the page is modified.
-     * @see DokuWiki_Syntax_Plugin::handle()
-     *
      * @param string $match
      * @param int $state
      * @param int $pos
      * @param Doku_Handler $handler
      * @return array|bool
+     * @see DokuWiki_Syntax_Plugin::handle()
+     *
      */
     function handle($match, $state, $pos, Doku_Handler $handler)
     {
@@ -112,9 +129,16 @@ class syntax_plugin_combo_group extends DokuWiki_Syntax_Plugin
             case DOKU_LEXER_ENTER:
 
                 // Suppress the component name
-                $match = utf8_substr($match, strlen(self::getElementName()) + 1, -1);
-                $parameters = PluginUtility::parse2HTMLAttributes($match);
-                return array($state, $parameters);
+                $tagAttributes = PluginUtility::getTagAttributes($match);
+                return array($state, $tagAttributes);
+
+            case DOKU_LEXER_UNMATCHED:
+                return array($state, $match);
+
+            case DOKU_LEXER_MATCHED:
+
+                $linkAttributes = LinkUtility::getAttributes($match);
+                return array($state, $linkAttributes);
 
             case DOKU_LEXER_EXIT :
 
@@ -143,17 +167,36 @@ class syntax_plugin_combo_group extends DokuWiki_Syntax_Plugin
         if ($format == 'xhtml') {
 
             /** @var Doku_Renderer_xhtml $renderer */
-            list($state,$parameters) = $data;
+            list($state, $payload) = $data;
             switch ($state) {
 
                 case DOKU_LEXER_ENTER :
                     // https://getbootstrap.com/docs/4.0/components/navbar/#toggler splits the navbar-nav to another element
                     // navbar-nav implementation
-                    $renderer->doc .= '<ul class="navbar-nav';
-                    if (array_key_exists("class", $parameters)) {
-                        $renderer->doc .= ' '.$parameters["class"];
+
+                    $classValue = "navbar-nav";
+                    if (array_key_exists("class", $payload)) {
+                        $payload["class"] .= " {$classValue}";
+                    } else {
+                        $payload["class"] = $classValue;
                     }
-                    $renderer->doc .= '">' . DOKU_LF;
+
+                    if (array_key_exists("expand", $payload)) {
+                        $payload["class"] .= " mr-auto";
+                    }
+
+                    $inlineAttributes = PluginUtility::array2HTMLAttributes($payload);
+                    $renderer->doc .= "<ul {$inlineAttributes}>" . DOKU_LF;
+                    break;
+                case DOKU_LEXER_UNMATCHED :
+
+                    $renderer->doc .= PluginUtility::escape($payload);
+                    break;
+
+                case DOKU_LEXER_MATCHED:
+
+                    $html = LinkUtility::renderHTML($renderer,$payload);
+                    $renderer->doc .= NavBarUtility::switchDokuwiki2BootstrapClass($html);
                     break;
 
                 case DOKU_LEXER_EXIT :
@@ -166,10 +209,7 @@ class syntax_plugin_combo_group extends DokuWiki_Syntax_Plugin
     }
 
 
-    public static function getElementName()
-    {
-        return PluginUtility::getTagName(get_called_class());
-    }
+
 
 
 }

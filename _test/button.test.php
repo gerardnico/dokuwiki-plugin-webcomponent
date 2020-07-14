@@ -1,5 +1,6 @@
 <?php
 
+use ComboStrap\LinkUtility;
 use ComboStrap\PluginUtility;
 use ComboStrap\TestUtility;
 
@@ -37,7 +38,7 @@ class plugin_combo_button_test extends DokuWikiTest
         $elements = syntax_plugin_combo_button::getTags();
         $link_content = 'Go Somewhere';
         $id = 'namespace:page';
-        $expected = '<button type="button" class="btn btn-primary"><a href="/./doku.php?id='.$id.'#section" class="wikilink2" title="namespace:page" rel="nofollow" data-wiki-id="'.$id.'" style="'.syntax_plugin_combo_buttonlink::STYLE_VALUE.'">' . $link_content . '</a></button>';
+        $expected = '<button type="button" class="btn btn-primary"><a href="/./doku.php?id='.$id.'#section" class="wikilink2" title="namespace:page" rel="nofollow" data-wiki-id="'.$id.'" style="'. LinkUtility::STYLE_VALUE.'">' . $link_content . '</a></button>';
         $info = array();
         foreach ($elements as $element) {
             $doku_text = '<' . $element . '>' . '[['.$id.'#section|' . $link_content . ']]' . '</' . $element . '>';
@@ -58,7 +59,7 @@ class plugin_combo_button_test extends DokuWikiTest
         $elements = syntax_plugin_combo_button::getTags();
         $link_content = 'Go Somewhere';
         $id = "namespace:page";
-        $expected = '<button type="button" class="mbt-3 btn btn-primary"><a href="/./doku.php?id='.$id.'#section" class="wikilink2" title="namespace:page" rel="nofollow" data-wiki-id="'.$id.'" style="'.syntax_plugin_combo_buttonlink::STYLE_VALUE.'">' . $link_content . '</a></button>';
+        $expected = '<button type="button" class="mbt-3 btn btn-primary"><a href="/./doku.php?id='.$id.'#section" class="wikilink2" title="namespace:page" rel="nofollow" data-wiki-id="'.$id.'" style="'.LinkUtility::STYLE_VALUE.'">' . $link_content . '</a></button>';
         $info = array();
         foreach ($elements as $element) {
             $doku_text = '<' . $element . ' class="mbt-3" >' . '[['.$id.'#section|' . $link_content . ']]' . '</' . $element . '>';
@@ -76,7 +77,7 @@ class plugin_combo_button_test extends DokuWikiTest
         $elements = syntax_plugin_combo_button::getTags();
         $link_content = 'Go Somewhere';
         $external = 'https://gerardnico.com';
-        $expected = '<button type="button" class="btn btn-primary"><a href="https://gerardnico.com" class="urlextern" title="https://gerardnico.com" rel="ugc nofollow" style="'.syntax_plugin_combo_buttonlink::STYLE_VALUE.'">' . $link_content . '</a></button>';
+        $expected = '<button type="button" class="btn btn-primary"><a href="https://gerardnico.com" class="urlextern" title="https://gerardnico.com" rel="ugc nofollow" style="'.LinkUtility::STYLE_VALUE.'">' . $link_content . '</a></button>';
         $info = array();
         foreach ($elements as $element) {
             $doku_text = '<' . $element . '>' . '[['.$external.'|' . $link_content . ']]' . '</' . $element . '>';

@@ -18,8 +18,7 @@ use ComboStrap\PluginUtility;
 
 require_once(__DIR__ . '/../class/PluginUtility.php');
 require_once(__DIR__ . '/../class/NavBarUtility.php');
-require_once(__DIR__ . '/../class/LinkUtility.php');
-require_once(__DIR__ . '/../class/HtmlUtility.php');
+
 
 /**
  *
@@ -30,7 +29,7 @@ require_once(__DIR__ . '/../class/HtmlUtility.php');
 class syntax_plugin_combo_navbarcollapse extends DokuWiki_Syntax_Plugin
 {
     const TAG = 'collapse';
-
+    const COMPONENT = 'navbarcollapse';
 
     /**
      * Syntax Type.
@@ -214,11 +213,11 @@ class syntax_plugin_combo_navbarcollapse extends DokuWiki_Syntax_Plugin
 
                     case DOKU_LEXER_MATCHED:
 
-                        $linkAttributes = $payload;
-                        $html = LinkUtility::renderHTML($renderer, $linkAttributes);
-                        $html = HtmlUtility::addAttributeValue($html,"class","nav-link");
-                        $html = '<div class="navbar-nav">'.$html.'</div>';
-                        $renderer->doc .= $html;
+                        /**
+                         * Shortcut for a link in a {@link syntax_plugin_combo_navbargroup}
+                         */
+                        $html = LinkUtility::renderHTML($renderer,$payload);
+                        $renderer->doc .= '<div class="navbar-nav">'.NavBarUtility::switchDokuwiki2BootstrapClass($html).'</div>';
                         break;
 
                     case DOKU_LEXER_EXIT :

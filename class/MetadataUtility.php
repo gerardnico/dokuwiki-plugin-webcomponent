@@ -81,7 +81,7 @@ class MetadataUtility
             "font-style" => "italic"
         );
 
-        $content .= '<div style="' . PluginUtility::array2InlineStyle($referenceStyle) . '">' . $plugin->getLang('message_come_from') . PluginUtility::getUrl("metadata:viewer", "ComboStrap Metdata Viewer") . '</div>';
+        $content .= '<div style="' . PluginUtility::array2InlineStyle($referenceStyle) . '">' . $plugin->getLang('message_come_from') . PluginUtility::getUrl("metadata:viewer", "ComboStrap Metadata Viewer") . '</div>';
         $content .= '</div>';
         return $content;
     }

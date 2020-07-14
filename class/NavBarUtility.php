@@ -24,4 +24,16 @@ class NavBarUtility
     {
         return '<span class="navbar-text">'.$text.'</span>';
     }
+
+    /**
+     * Delete the dokuwiki class and add the bootstrap one
+     * @param $html
+     * @return bool|false|string
+     */
+    public static function switchDokuwiki2BootstrapClass($html)
+    {
+        $html = HtmlUtility::addAttributeValue($html,"class","nav-link");
+        $html = LinkUtility::deleteDokuWikiClass($html);
+        return $html;
+    }
 }

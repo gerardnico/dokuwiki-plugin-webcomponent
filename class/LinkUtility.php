@@ -45,6 +45,11 @@ class LinkUtility
     const ATTRIBUTE_IMAGE = 'image';
     const ATTRIBUTE_TYPE = 'type';
 
+    /**
+     * Is a constant to be able to use it in the test
+     */
+    const STYLE_VALUE = ";background-color:inherit;border-color:inherit;color:inherit";
+
 
     /**
      * Parse the match of a syntax {@link DokuWiki_Syntax_Plugin} handle function
@@ -184,9 +189,17 @@ class LinkUtility
         /**
          * The extra style for the link
          */
-        $styleValue = ";background-color:inherit;border-color:inherit;color:inherit";
-        return HtmlUtility::addAttributeValue($htmlLink,"style", $styleValue);
+        return HtmlUtility::addAttributeValue($htmlLink,"style", self::STYLE_VALUE);
 
+    }
+
+    /**
+     * Delete wikilink1 from the link
+     * @param $htmlLink
+     * @return bool|false|string
+     */
+    public static function deleteDokuWikiClass($htmlLink){
+        return HtmlUtility::deleteClassValue($htmlLink,"wikilink1");
     }
 
 }
