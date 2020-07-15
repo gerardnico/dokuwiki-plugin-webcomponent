@@ -1,10 +1,14 @@
 <?php
 
+use ComboStrap\LogUtility;
 use ComboStrap\PluginUtility;
+use ComboStrap\StringUtility;
 use ComboStrap\TestUtility;
 
 require_once(__DIR__ . '/../class/PluginUtility.php');
 require_once(__DIR__ . '/../class/TestUtility.php');
+require_once(__DIR__ . '/../class/StringUtility.php');
+require_once(__DIR__ . '/../class/LogUtility.php');
 
 /**
  * Test the front matter component plugin
@@ -83,21 +87,46 @@ class plugin_combo_frontmatter_test extends DokuWikiTest
 
     }
 
-    /**
-     * From
-     * https://www.dokuwiki.org/devel:unittesting
-     */
-    function metaGeneratorTest()
+    public function test_frontmatter_not_valid_object()
     {
-        // make a request
+
+
+
+        $pageId = 'frontMatterTestNotValid';
+        $text = DOKU_LF . '---json' . DOKU_LF
+            . '{' . DOKU_LF
+            . '   "key":"value\'\'' . DOKU_LF
+            . '}' . DOKU_LF
+            . '---' . DOKU_LF
+            . 'Content';
+
+        saveWikiText($pageId, $text, 'Created');
+
+
         $request = new TestRequest();
-        $response = $request->execute();
+        TestUtility::becomeSuperUser($request);
+        $response = $request->get(
+            array(
+                'id'=>$pageId,
+                'loglevel'=> "-1"
+            ),
+            '/doku.php');
 
         // get the generator name from the meta tag.
-        $generator = $response->queryHTML('meta[name="generator"]')->attr('content');
+        $div = $response->queryHTML('.error');
 
+        $text = $div->text();
+        $result = StringUtility::contain("is not valid",$text);
         // check the result
-        $this->assertEquals('DokuWiki', $generator);
+        $this->assertTrue($result,"The json error message is not in ({$text})");
+        /**
+         * We use a bigger below because
+         * when running in debug mode, there is two messages
+         * but not in normal mode, there is 4
+         */
+        $this->assertTrue($div->count()>=2,"There is 2 errors message (sqlite and json) in {$text}");
+
+
     }
 
 

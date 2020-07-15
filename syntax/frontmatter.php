@@ -73,7 +73,7 @@ class syntax_plugin_combo_frontmatter extends DokuWiki_Syntax_Plugin
     {
         if ($mode == "base") {
             // only from the top
-            $this->Lexer->addSpecialPattern('---json.*?---', $mode, 'plugin_' . PluginUtility::PLUGIN_BASE_NAME . '_' . $this->getPluginComponent());
+            $this->Lexer->addSpecialPattern('---json.*?---', $mode, PluginUtility::getModeForComponent($this->getPluginComponent()));
         }
     }
 
@@ -181,7 +181,7 @@ class syntax_plugin_combo_frontmatter extends DokuWiki_Syntax_Plugin
             global $ID;
 
             /** @var Doku_Renderer_metadata $renderer */
-            list($state) = $data;
+            $state = $data["state"];
             if ($state == self::PARSING_STATE_ERROR) {
                 LogUtility::msg("Front Matter: The json object for the page ($ID) is not valid", LogUtility::LVL_MSG_ERROR);
             }

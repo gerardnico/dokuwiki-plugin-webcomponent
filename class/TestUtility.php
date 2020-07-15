@@ -2,6 +2,8 @@
 
 namespace ComboStrap;
 
+use TestRequest;
+
 /**
  * Class TestUtility
  * @package ComboStrap
@@ -95,6 +97,15 @@ class TestUtility
     public static function getMeta($pageId, $key)
     {
         return p_get_metadata($pageId,$key);
+    }
+
+    /**
+     * @param TestRequest $request
+     */
+    public static function becomeSuperUser(&$request)
+    {
+        global $conf;
+        $request->setServer('REMOTE_USER',$conf['superuser']);
     }
 
     /**

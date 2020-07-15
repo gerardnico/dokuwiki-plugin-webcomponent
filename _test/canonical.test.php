@@ -94,7 +94,6 @@ class plugin_combo_canonical_test extends DokuWikiTest
      * Actually it just add the og
      * When the rendering of the canonical value will be supported by
      * 404 manager, we can switch
-     * TODO: move this to 404 manager ?
      */
     public function test_canonical_meta()
     {

@@ -84,7 +84,7 @@ class PluginUtility
         if ($sqlite == null) {
             # TODO: Man we cannot get the message anymore ['SqliteMandatory'];
             $sqliteMandatoryMessage = "The Sqlite Plugin is mandatory. Some functionalities of the Combostraps Plugin may not work.";
-            msg($sqliteMandatoryMessage, LogUtility::LVL_MSG_ERROR, $allow = MSG_MANAGERS_ONLY);
+            msg($sqliteMandatoryMessage, LogUtility::LVL_MSG_ERROR);
             return null;
         }
         $sqlite->getAdapter()->setUseNativeAlter(true);

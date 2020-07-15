@@ -36,6 +36,7 @@ class LogUtility
      */
     public static function msg($message, $level = self::LVL_MSG_ERROR, $canonical = null)
     {
+
         self::log2FrontEnd($message,$level,$canonical);
         /**
          * Print to a log file
@@ -47,7 +48,18 @@ class LogUtility
         }
         $msg = $prefix . ' - ' . $message;
         self::log2file($msg);
-        if (defined('DOKU_UNITTEST') && ($level == self::LVL_MSG_WARNING || $level == self::LVL_MSG_ERROR)) {
+
+
+        $loglevel = self::LVL_MSG_INFO;
+        global $INPUT;
+        $loglevelProp = $INPUT->str("loglevel",null);
+        if ($loglevelProp!=null){
+            $loglevel = $loglevelProp;
+        }
+        if (defined('DOKU_UNITTEST')
+            && ($level == self::LVL_MSG_WARNING || $level == self::LVL_MSG_ERROR)
+            && ( $loglevel != self::LVL_MSG_ERROR )
+        ) {
             throw new \RuntimeException($msg);
         }
     }
@@ -96,7 +108,7 @@ class LogUtility
 
         $htmlMsg = $prefix . " - " . $message;
         if ($level != self::LVL_MSG_DEBUG) {
-            msg($htmlMsg, $level, '', '', MSG_MANAGERS_ONLY);
+            msg($htmlMsg, $level, '', '', MSG_USERS_ONLY);
         }
 
     }

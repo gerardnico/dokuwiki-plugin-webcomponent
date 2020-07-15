@@ -7,6 +7,10 @@
   * Change the snapshot value to the date in the changes page
   * Commit and push
   * Upload to ComboStrap.com
+```bash
+cd combo
+upssh
+```
   * Check that [Travis](https://travis-ci.org/github/gerardnico/dokuwiki-plugin-webcomponent/branches) is green
   * Create the Zip
 ```bash

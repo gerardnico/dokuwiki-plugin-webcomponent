@@ -35,4 +35,19 @@ class StringUtility
     {
         return str_replace("\n","", $string);
     }
+
+    /**
+     * @param $needle
+     * @param $haystack
+     * @return bool
+     */
+    public static function contain($needle, $haystack)
+    {
+        $pos = strpos($haystack,$needle);
+        if ($pos === FALSE){
+            return false;
+        } else {
+            return true;
+        }
+    }
 }
