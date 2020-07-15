@@ -326,17 +326,21 @@ class  renderer_plugin_combo_renderer extends Doku_Renderer_xhtml
         global $conf;
 
         // check if enabled
-        if (!$conf['youarehere']) return;
+        if (!$conf['youarehere']) return "";
 
         // print intermediate namespace links
         $htmlOutput = '<p class="branch rplus">' . PHP_EOL;
 
-        // Print the home page
-        $htmlOutput .= '<span>' . PHP_EOL;
+        // Breadcrumb head
+        $htmlOutput .= '<nav aria-label="breadcrumb">' . PHP_EOL;
+        $htmlOutput .= '<ol class="breadcrumb">' .PHP_EOL;
+
+        // Home
+        $htmlOutput .= '<li class="breadcrumb-item">' .PHP_EOL;
         $page = $conf['start'];
         $pageTitle = tpl_pagetitle($page, true);
-        $htmlOutput .= tpl_link(wl($page), '<span class="nicon_home" aria-hidden="true"></span>', 'title="' . $pageTitle . '"', $return = true);
-        $htmlOutput .= '</span>' . PHP_EOL;
+        $htmlOutput .= tpl_link(wl($page), 'Home', 'title="' . $pageTitle . '"', $return = true);
+        $htmlOutput .= '</li>' . PHP_EOL;
 
         // Print the parts if there is more than one
         global $ID;
@@ -358,25 +362,20 @@ class  renderer_plugin_combo_renderer extends Doku_Renderer_xhtml
 
                 $pageTitle = tpl_pagetitle($page, true);
                 $linkContent = $pageTitle;
-                if ($i < $countPart - 1) {
-                    $linkContent = " > " . $linkContent;
-                }
-                $htmlOutput .= '<span>';
+                $htmlOutput .= '<li class="breadcrumb-item">';
                 // html_wikilink because the page has the form pagename: and not pagename:pagename
-                $htmlOutput .= tpl_link(wl($page), $linkContent, 'title="' . $pageTitle . '" class="navlink"', $return = true);
-                $htmlOutput .= '</span>' . PHP_EOL;
+                $htmlOutput .= tpl_link(wl($page), $linkContent, 'title="' . $pageTitle . '"', $return = true);
+                $htmlOutput .= '</li>' . PHP_EOL;
 
             }
         }
 
-
-        // print current page
-        //    print '<li>';
-        //    tpl_link(wl($page), tpl_pagetitle($page,true), 'title="' . $page . '"');
-        //$htmlOutput .= '</li>' . PHP_EOL;
-
         // close the breadcrumb
-        $htmlOutput .= '</p>' . PHP_EOL;
+        $htmlOutput .= '</ol>' .PHP_EOL;
+        $htmlOutput .= '</nav>' . PHP_EOL;
+
+
+
         return $htmlOutput;
 
     }
