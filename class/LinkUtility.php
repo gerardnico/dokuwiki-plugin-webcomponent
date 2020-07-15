@@ -46,9 +46,10 @@ class LinkUtility
     const ATTRIBUTE_TYPE = 'type';
 
     /**
+     * Style to cancel the dokuwiki styling
      * Is a constant to be able to use it in the test
      */
-    const STYLE_VALUE = ";background-color:inherit;border-color:inherit;color:inherit";
+    const STYLE_VALUE = ";background-color:inherit;border-color:inherit;color:inherit;background-image:unset;padding:unset";
 
 
     /**
@@ -128,6 +129,18 @@ class LinkUtility
                 $urlQuery = null;
                 $html = $renderer->internallink($id, $title, $urlQuery, $returnOnly);
                 break;
+        }
+
+        /**
+         * The html may be just a text, for instance with an interwiki that does not exist
+         * or is not configured
+         * if this is the case, add a span to make it xml valid
+         */
+        if (!XmlUtility::isXml($html)){
+            $html = "<span>$html</span>";
+            if (!XmlUtility::isXml($html)){
+                LogUtility::msg("The link ($id) could not be transformed as valid XML");
+            }
         }
         return $html;
 

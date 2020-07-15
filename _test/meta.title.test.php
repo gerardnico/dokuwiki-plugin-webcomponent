@@ -19,7 +19,7 @@ class plugin_combo_meta_title_test extends DokuWikiTest
     public function setUp()
     {
 
-        $this->pluginsEnabled[] = PluginUtility::$PLUGIN_BASE_NAME;
+        $this->pluginsEnabled[] = PluginUtility::PLUGIN_BASE_NAME;
 
         global $conf;
         parent::setUp();

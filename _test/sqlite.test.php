@@ -8,7 +8,7 @@ class dokuwiki_plugin_combo_sqlite_test extends DokuWikiTest
 
     public function setUp()
     {
-        $this->pluginsEnabled[] = PluginUtility::$PLUGIN_BASE_NAME;
+        $this->pluginsEnabled[] = PluginUtility::PLUGIN_BASE_NAME;
 
         parent::setUp();
 

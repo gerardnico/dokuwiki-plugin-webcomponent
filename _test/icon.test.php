@@ -8,6 +8,7 @@
  * @group plugins
  */
 
+use ComboStrap\IconUtility;
 use ComboStrap\PluginUtility;
 use ComboStrap\TestUtility;
 
@@ -20,7 +21,7 @@ final class plugin_combo_icon_test extends DokuWikiTest
     public function setUp()
     {
 
-        $this->pluginsEnabled[] = PluginUtility::$PLUGIN_BASE_NAME;
+        $this->pluginsEnabled[] = PluginUtility::PLUGIN_BASE_NAME;
         global $conf;
         parent::setUp();
 
@@ -41,10 +42,13 @@ final class plugin_combo_icon_test extends DokuWikiTest
         $expectedStyleValue = "color:red";
         $widthValue = '96px';
         $heightValue = '64px';
+        $mediaDir = dirname(DOKU_CONF) . '/data/media';
+        TestUtils::rcopy($mediaDir, PluginUtility::$DIR_RESOURCES . '/logo.svg');
+
         TestUtility::addPage($iconPage, '<icon name="logo.svg" width="' . $widthValue . '" height="' . $heightValue . '" class="' .$expectedClassValue.'" style="'.$expectedStyleValue.'"/>', '');
 
 
-        TestUtils::rcopy(dirname(DOKU_CONF).'/data/media', PluginUtility::$DIR_RESOURCES . '/logo.svg');
+
 
         $request = new TestRequest();
         $response = $request->get(array('id' => $iconPage), '/doku.php');
@@ -83,7 +87,7 @@ final class plugin_combo_icon_test extends DokuWikiTest
 
         // The file should exist
         global $conf;
-        $iconNameSpace = $conf['plugin'][PluginUtility::$PLUGIN_BASE_NAME][syntax_plugin_combo_icon::CONF_ICONS_MEDIA_NAMESPACE];
+        $iconNameSpace = $conf['plugin'][PluginUtility::PLUGIN_BASE_NAME][IconUtility::CONF_ICONS_MEDIA_NAMESPACE];
         $mediaId = $iconNameSpace . ":" . $name . ".svg";
         $mediaFile = mediaFN($mediaId);
         $fileExist = file_exists($mediaFile);

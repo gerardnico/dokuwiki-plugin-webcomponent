@@ -107,7 +107,7 @@ class syntax_plugin_combo_navbarcollapse extends DokuWiki_Syntax_Plugin
         // Only inside a navbar
         if ($mode == PluginUtility::getModeForComponent(syntax_plugin_combo_navbar::TAG)) {
             $pattern = PluginUtility::getContainerTagPattern(self::TAG);
-            $this->Lexer->addEntryPattern($pattern, $mode, 'plugin_' . PluginUtility::$PLUGIN_BASE_NAME . '_' . $this->getPluginComponent());
+            $this->Lexer->addEntryPattern($pattern, $mode, 'plugin_' . PluginUtility::PLUGIN_BASE_NAME . '_' . $this->getPluginComponent());
             $this->Lexer->addPattern(LinkUtility::LINK_PATTERN, PluginUtility::getModeForComponent($this->getPluginComponent()));
         }
 
@@ -116,7 +116,7 @@ class syntax_plugin_combo_navbarcollapse extends DokuWiki_Syntax_Plugin
     public function postConnect()
     {
 
-        $this->Lexer->addExitPattern('</' . self::TAG . '>', 'plugin_' . PluginUtility::$PLUGIN_BASE_NAME . '_' . $this->getPluginComponent());
+        $this->Lexer->addExitPattern('</' . self::TAG . '>', 'plugin_' . PluginUtility::PLUGIN_BASE_NAME . '_' . $this->getPluginComponent());
 
     }
 

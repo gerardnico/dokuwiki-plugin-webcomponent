@@ -1,5 +1,6 @@
 <?php
 
+use ComboStrap\IconUtility;
 use ComboStrap\MetadataUtility;
 use ComboStrap\UrlManagerBestEndPage;
 
@@ -50,7 +51,7 @@ $meta[action_plugin_combo_metacanonical::CANONICAL_LAST_NAMES_COUNT_CONF]= array
  * Icon namespace where the downloaded icon are stored
  */
 require_once(__DIR__ . '/../syntax/icon.php');
-$meta[syntax_plugin_combo_icon::CONF_ICONS_MEDIA_NAMESPACE]=array('string');
+$meta[IconUtility::CONF_ICONS_MEDIA_NAMESPACE]=array('string');
 
 /**
  * Css optimization

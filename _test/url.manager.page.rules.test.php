@@ -22,7 +22,7 @@ class plugin_combo_url_manager_page_rules_test extends DokuWikiTest
 
     public function setUp()
     {
-        $this->pluginsEnabled[] = PluginUtility::$PLUGIN_BASE_NAME;
+        $this->pluginsEnabled[] = PluginUtility::PLUGIN_BASE_NAME;
         $this->pluginsEnabled[] = 'sqlite';
         parent::setUp();
     }
@@ -100,7 +100,7 @@ class plugin_combo_url_manager_page_rules_test extends DokuWikiTest
 
 
         // Set to search engine first but because of order of precedence, this should not happens
-        $conf ['plugin'][PluginUtility::$PLUGIN_BASE_NAME]['ActionReaderFirst'] = action_plugin_combo_urlmanager::GO_TO_SEARCH_ENGINE;
+        $conf ['plugin'][PluginUtility::PLUGIN_BASE_NAME]['ActionReaderFirst'] = action_plugin_combo_urlmanager::GO_TO_SEARCH_ENGINE;
 
         // Read only otherwise, you go in edit mode
         global $AUTH_ACL;
@@ -147,7 +147,7 @@ class plugin_combo_url_manager_page_rules_test extends DokuWikiTest
 
 
         // Set to search engine first but because of order of precedence, this should not happens
-        $conf ['plugin'][PluginUtility::$PLUGIN_BASE_NAME]['ActionReaderFirst'] = action_plugin_combo_urlmanager::GO_TO_SEARCH_ENGINE;
+        $conf ['plugin'][PluginUtility::PLUGIN_BASE_NAME]['ActionReaderFirst'] = action_plugin_combo_urlmanager::GO_TO_SEARCH_ENGINE;
 
         // Read only otherwise, you go in edit mode
         global $AUTH_ACL;
@@ -193,7 +193,7 @@ class plugin_combo_url_manager_page_rules_test extends DokuWikiTest
 
 
         // Set to search engine first but because of order of precedence, this should not happens
-        $conf ['plugin'][PluginUtility::$PLUGIN_BASE_NAME]['ActionReaderFirst'] = action_plugin_combo_urlmanager::GO_TO_SEARCH_ENGINE;
+        $conf ['plugin'][PluginUtility::PLUGIN_BASE_NAME]['ActionReaderFirst'] = action_plugin_combo_urlmanager::GO_TO_SEARCH_ENGINE;
 
         // Read only otherwise, you go in edit mode
         global $AUTH_ACL;

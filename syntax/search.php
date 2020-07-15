@@ -31,7 +31,7 @@ class syntax_plugin_combo_search extends DokuWiki_Syntax_Plugin {
 
     function connectTo($mode) {
 
-        $this->Lexer->addSpecialPattern('<' . self::getTag() . '[^>]*>',$mode,'plugin_' . PluginUtility::$PLUGIN_BASE_NAME . '_' . $this->getPluginComponent());
+        $this->Lexer->addSpecialPattern('<' . self::getTag() . '[^>]*>',$mode,'plugin_' . PluginUtility::PLUGIN_BASE_NAME . '_' . $this->getPluginComponent());
 
     }
 

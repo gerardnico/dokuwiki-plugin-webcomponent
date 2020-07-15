@@ -17,7 +17,7 @@ class dokuwiki_plugin_combo_related_test extends DokuWikiTest
 
     public function setUp()
     {
-        $this->pluginsEnabled[] = PluginUtility::$PLUGIN_BASE_NAME;
+        $this->pluginsEnabled[] = PluginUtility::PLUGIN_BASE_NAME;
 
         // Config changes have only effect in function setUpBeforeClass()
         global $conf;
@@ -29,7 +29,7 @@ class dokuwiki_plugin_combo_related_test extends DokuWikiTest
         $_SERVER['REMOTE_USER'] = $conf['superuser'];
 
         //
-        $conf ['plugin'][PluginUtility::$PLUGIN_BASE_NAME][syntax_plugin_combo_related::EXTRA_PATTERN_CONF] = self::EXTRA_PATTERN_VALUE;
+        $conf ['plugin'][PluginUtility::PLUGIN_BASE_NAME][syntax_plugin_combo_related::EXTRA_PATTERN_CONF] = self::EXTRA_PATTERN_VALUE;
 
 
     }
@@ -89,7 +89,7 @@ class dokuwiki_plugin_combo_related_test extends DokuWikiTest
 
 
 
-        dbglog("\nTest Plugin" . PluginUtility::$PLUGIN_BASE_NAME .".".syntax_plugin_combo_related::getElementName() . ': Start Page was created at ' . wikiFN($startId));
+        dbglog("\nTest Plugin" . PluginUtility::PLUGIN_BASE_NAME .".".syntax_plugin_combo_related::getElementName() . ': Start Page was created at ' . wikiFN($startId));
 
 
     }
@@ -147,11 +147,11 @@ class dokuwiki_plugin_combo_related_test extends DokuWikiTest
 
         // With a max via the conf
         global $conf;
-        $oldMaxLinksValue = $conf ['plugin'][PluginUtility::$PLUGIN_BASE_NAME][syntax_plugin_combo_related::MAX_LINKS_CONF];
-        $conf ['plugin'][PluginUtility::$PLUGIN_BASE_NAME][syntax_plugin_combo_related::MAX_LINKS_CONF] = $max;
+        $oldMaxLinksValue = $conf ['plugin'][PluginUtility::PLUGIN_BASE_NAME][syntax_plugin_combo_related::MAX_LINKS_CONF];
+        $conf ['plugin'][PluginUtility::PLUGIN_BASE_NAME][syntax_plugin_combo_related::MAX_LINKS_CONF] = $max;
         $referrers = $relatedPlugin->related($referentPageId);
         $this->assertEquals($expected, sizeof($referrers));
-        $conf ['plugin'][PluginUtility::$PLUGIN_BASE_NAME][syntax_plugin_combo_related::MAX_LINKS_CONF] = $oldMaxLinksValue;
+        $conf ['plugin'][PluginUtility::PLUGIN_BASE_NAME][syntax_plugin_combo_related::MAX_LINKS_CONF] = $oldMaxLinksValue;
 
     }
 

@@ -19,7 +19,7 @@ class dokuwiki_plugin_combo_plugin_test extends DokuWikiTest
 
     public function setUp()
     {
-        $this->pluginsEnabled[] = PluginUtility::$PLUGIN_BASE_NAME;
+        $this->pluginsEnabled[] = PluginUtility::PLUGIN_BASE_NAME;
         $this->pluginsEnabled[] = 'config';
         parent::setUp();
     }
@@ -36,7 +36,7 @@ class dokuwiki_plugin_combo_plugin_test extends DokuWikiTest
         $info = confToHash($file);
 
         $this->assertArrayHasKey('base', $info);
-        $this->assertEquals(PluginUtility::$PLUGIN_BASE_NAME, $info['base']);
+        $this->assertEquals(PluginUtility::PLUGIN_BASE_NAME, $info['base']);
 
         $this->assertArrayHasKey('author', $info);
         $this->assertArrayHasKey('name', $info);
@@ -64,9 +64,9 @@ class dokuwiki_plugin_combo_plugin_test extends DokuWikiTest
         global $plugin_controller;
         $this->assertTrue(
             in_array(
-                PluginUtility::$PLUGIN_BASE_NAME,
+                PluginUtility::PLUGIN_BASE_NAME,
                 $plugin_controller->getList()),
-            PluginUtility::$PLUGIN_BASE_NAME . " plugin is loaded"
+            PluginUtility::PLUGIN_BASE_NAME . " plugin is loaded"
         );
     }
 

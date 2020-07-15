@@ -83,4 +83,21 @@ class XmlUtility
         return $domXml->ownerDocument->saveXML($domXml->ownerDocument->documentElement);
     }
 
+    /**
+     * Check of the text is a valid XML
+     * @param $text
+     * @return bool
+     */
+    public static function isXml($text)
+    {
+        $valid = true;
+        try {
+            /** @noinspection PhpComposerExtensionStubsInspection */
+            new SimpleXMLElement($text);
+        } catch (\Exception $e) {
+            $valid = false;
+        }
+        return $valid;
+    }
+
 }

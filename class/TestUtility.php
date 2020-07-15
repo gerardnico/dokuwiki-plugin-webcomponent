@@ -71,7 +71,7 @@ class TestUtility
         $file = dirname(DOKU_CONF) . '/conf/local.php';
         $text = DOKU_LF;
         foreach ($configurations as $key => $value) {
-            $text .= '$conf[\'plugin\'][\'' . PluginUtility::$PLUGIN_BASE_NAME . '\'][\'' . $key . '\'] = \'' . $value . '\';  ' . DOKU_LF;
+            $text .= '$conf[\'plugin\'][\'' . PluginUtility::PLUGIN_BASE_NAME . '\'][\'' . $key . '\'] = \'' . $value . '\';  ' . DOKU_LF;
         }
         file_put_contents($file, $text, FILE_APPEND);
 

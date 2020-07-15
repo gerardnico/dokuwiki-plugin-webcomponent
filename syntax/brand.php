@@ -59,13 +59,13 @@ class syntax_plugin_combo_brand extends DokuWiki_Syntax_Plugin {
     function connectTo($mode) {
 
         $pattern = PluginUtility::getContainerTagPattern(self::getTag());
-        $this->Lexer->addEntryPattern($pattern, $mode, 'plugin_' . PluginUtility::$PLUGIN_BASE_NAME . '_' . $this->getPluginComponent());
+        $this->Lexer->addEntryPattern($pattern, $mode, 'plugin_' . PluginUtility::PLUGIN_BASE_NAME . '_' . $this->getPluginComponent());
 
     }
 
     function postConnect() {
 
-        $this->Lexer->addExitPattern('</' . self::getTag() . '>', 'plugin_' . PluginUtility::$PLUGIN_BASE_NAME . '_' . $this->getPluginComponent());
+        $this->Lexer->addExitPattern('</' . self::getTag() . '>', 'plugin_' . PluginUtility::PLUGIN_BASE_NAME . '_' . $this->getPluginComponent());
 
     }
 

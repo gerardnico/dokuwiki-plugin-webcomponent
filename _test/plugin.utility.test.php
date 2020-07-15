@@ -75,7 +75,7 @@ class plugin_combo_plugin_utility_test extends DokuWikiTest
 
     }
 
-    public function test_get_url_property()
+    public function test_get_property()
     {
 
         // A call to the web server set that
@@ -92,6 +92,17 @@ class plugin_combo_plugin_utility_test extends DokuWikiTest
 
 
     }
+
+    public function test_get_url()
+    {
+        global $conf;
+        $conf['template']='strap';
+        $html = PluginUtility::getUrl("", PluginUtility::$PLUGIN_NAME);
+        $strpos = strpos($html,"<svg");
+        $this->assertNotFalse($strpos,"There is an icon");
+
+    }
+
 
     public function test_parse_parameters_type()
     {

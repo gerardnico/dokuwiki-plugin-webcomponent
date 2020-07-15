@@ -49,7 +49,7 @@ class syntax_plugin_combo_related extends DokuWiki_Syntax_Plugin
 
     public static function getElementId()
     {
-        return PluginUtility::$PLUGIN_BASE_NAME . "_" . self::getElementName();
+        return PluginUtility::PLUGIN_BASE_NAME . "_" . self::getElementName();
     }
 
 
@@ -89,12 +89,12 @@ class syntax_plugin_combo_related extends DokuWiki_Syntax_Plugin
     function connectTo($mode)
     {
         // The basic
-        $this->Lexer->addSpecialPattern('<' . self::getElementName() . '[^>]*>', $mode, 'plugin_' . PluginUtility::$PLUGIN_BASE_NAME . '_' . $this->getPluginComponent());
+        $this->Lexer->addSpecialPattern('<' . self::getElementName() . '[^>]*>', $mode, 'plugin_' . PluginUtility::PLUGIN_BASE_NAME . '_' . $this->getPluginComponent());
 
         // To replace backlinks, you may add it in the configuration
         $extraPattern = $this->getConf(self::EXTRA_PATTERN_CONF);
         if ($extraPattern != "") {
-            $this->Lexer->addSpecialPattern($extraPattern, $mode, 'plugin_' . PluginUtility::$PLUGIN_BASE_NAME . '_' . $this->getPluginComponent());
+            $this->Lexer->addSpecialPattern($extraPattern, $mode, 'plugin_' . PluginUtility::PLUGIN_BASE_NAME . '_' . $this->getPluginComponent());
         }
 
     }
@@ -177,7 +177,7 @@ class syntax_plugin_combo_related extends DokuWiki_Syntax_Plugin
 
                 // Dokuwiki debug
                 dbglog("No Backlinks", "Related plugins: all backlinks for page: $id");
-                $renderer->doc .= "<strong>Plugin " . PluginUtility::$PLUGIN_BASE_NAME . " - Component " . self::getElementName() . ": " . $lang['nothingfound'] . "</strong>" . DOKU_LF;
+                $renderer->doc .= "<strong>Plugin " . PluginUtility::PLUGIN_BASE_NAME . " - Component " . self::getElementName() . ": " . $lang['nothingfound'] . "</strong>" . DOKU_LF;
 
             } else {
 

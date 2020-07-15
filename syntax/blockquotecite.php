@@ -41,7 +41,7 @@ class syntax_plugin_combo_blockquotecite extends DokuWiki_Syntax_Plugin
     {
         if ($mode == "plugin_combo_blockquote") {
             $pattern = '<' . self::getTag() . '.*?>(?=.*?</' . self::getTag() . '>)';
-            $this->Lexer->addEntryPattern($pattern, $mode, 'plugin_' . PluginUtility::$PLUGIN_BASE_NAME . '_' . $this->getPluginComponent());
+            $this->Lexer->addEntryPattern($pattern, $mode, 'plugin_' . PluginUtility::PLUGIN_BASE_NAME . '_' . $this->getPluginComponent());
         }
     }
 
@@ -49,7 +49,7 @@ class syntax_plugin_combo_blockquotecite extends DokuWiki_Syntax_Plugin
     function postConnect()
     {
 
-        $this->Lexer->addExitPattern('</' . self::getTag() . '>', 'plugin_' . PluginUtility::$PLUGIN_BASE_NAME . '_' . $this->getPluginComponent());
+        $this->Lexer->addExitPattern('</' . self::getTag() . '>', 'plugin_' . PluginUtility::PLUGIN_BASE_NAME . '_' . $this->getPluginComponent());
 
     }
 

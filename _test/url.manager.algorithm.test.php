@@ -20,7 +20,7 @@ class plugin_combo_url_manager_test extends DokuWikiTest
 
     public function setUp()
     {
-        $this->pluginsEnabled[] = PluginUtility::$PLUGIN_BASE_NAME;
+        $this->pluginsEnabled[] = PluginUtility::PLUGIN_BASE_NAME;
         $this->pluginsEnabled[] = 'sqlite';
         parent::setUp();
     }
@@ -33,7 +33,7 @@ class plugin_combo_url_manager_test extends DokuWikiTest
 
 
         global $conf;
-        $conf['plugin'][PluginUtility::$PLUGIN_BASE_NAME]['ActionReaderFirst'] = action_plugin_combo_urlmanager::GO_TO_SEARCH_ENGINE;
+        $conf['plugin'][PluginUtility::PLUGIN_BASE_NAME]['ActionReaderFirst'] = action_plugin_combo_urlmanager::GO_TO_SEARCH_ENGINE;
 
         global $AUTH_ACL;
         $aclReadOnlyFile = PluginUtility::$DIR_RESOURCES . '/acl.auth.read_only.php';
@@ -73,10 +73,10 @@ class plugin_combo_url_manager_test extends DokuWikiTest
     {
 
         global $conf;
-        $conf['plugin'][PluginUtility::$PLUGIN_BASE_NAME]['ActionReaderFirst'] = action_plugin_combo_urlmanager::GO_TO_BEST_PAGE_NAME;
-        $conf['plugin'][PluginUtility::$PLUGIN_BASE_NAME]['WeightFactorForSamePageName'] = 4;
-        $conf['plugin'][PluginUtility::$PLUGIN_BASE_NAME]['WeightFactorForStartPage'] = 3;
-        $conf['plugin'][PluginUtility::$PLUGIN_BASE_NAME]['WeightFactorForSameNamespace'] = 5;
+        $conf['plugin'][PluginUtility::PLUGIN_BASE_NAME]['ActionReaderFirst'] = action_plugin_combo_urlmanager::GO_TO_BEST_PAGE_NAME;
+        $conf['plugin'][PluginUtility::PLUGIN_BASE_NAME]['WeightFactorForSamePageName'] = 4;
+        $conf['plugin'][PluginUtility::PLUGIN_BASE_NAME]['WeightFactorForStartPage'] = 3;
+        $conf['plugin'][PluginUtility::PLUGIN_BASE_NAME]['WeightFactorForSameNamespace'] = 5;
 
 
         // The page path component
@@ -136,11 +136,11 @@ class plugin_combo_url_manager_test extends DokuWikiTest
     {
 
         global $conf;
-        $conf['plugin'][PluginUtility::$PLUGIN_BASE_NAME]['ActionReaderFirst'] = action_plugin_combo_urlmanager::GO_TO_BEST_NAMESPACE;
-        $conf['plugin'][PluginUtility::$PLUGIN_BASE_NAME]['WeightFactorForSamePageName'] = 4;
-        $conf['plugin'][PluginUtility::$PLUGIN_BASE_NAME]['WeightFactorForStartPage'] = 3;
-        $conf['plugin'][PluginUtility::$PLUGIN_BASE_NAME]['WeightFactorForSameNamespace'] = 5;
-        $conf['plugin'][PluginUtility::$PLUGIN_BASE_NAME]['WordsSeparator'] = ':';
+        $conf['plugin'][PluginUtility::PLUGIN_BASE_NAME]['ActionReaderFirst'] = action_plugin_combo_urlmanager::GO_TO_BEST_NAMESPACE;
+        $conf['plugin'][PluginUtility::PLUGIN_BASE_NAME]['WeightFactorForSamePageName'] = 4;
+        $conf['plugin'][PluginUtility::PLUGIN_BASE_NAME]['WeightFactorForStartPage'] = 3;
+        $conf['plugin'][PluginUtility::PLUGIN_BASE_NAME]['WeightFactorForSameNamespace'] = 5;
+        $conf['plugin'][PluginUtility::PLUGIN_BASE_NAME]['WordsSeparator'] = ':';
 
 
         // Set of 3 pages, when a page has an homonym (same page name) but within another completly differents path (the name of the path have nothing in common)
@@ -199,7 +199,7 @@ class plugin_combo_url_manager_test extends DokuWikiTest
 
 
         global $conf;
-        $conf['plugin'][PluginUtility::$PLUGIN_BASE_NAME]['ActionReaderFirst'] = action_plugin_combo_urlmanager::GO_TO_BEST_END_PAGE_NAME;
+        $conf['plugin'][PluginUtility::PLUGIN_BASE_NAME]['ActionReaderFirst'] = action_plugin_combo_urlmanager::GO_TO_BEST_END_PAGE_NAME;
 
         global $AUTH_ACL;
         $aclReadOnlyFile = PluginUtility::$DIR_RESOURCES . '/acl.auth.read_only.php';
@@ -238,12 +238,12 @@ class plugin_combo_url_manager_test extends DokuWikiTest
 
         global $conf;
         $pathSeparator = ':';
-        $conf['plugin'][PluginUtility::$PLUGIN_BASE_NAME]['ActionReaderFirst'] = action_plugin_combo_urlmanager::GO_TO_BEST_PAGE_NAME;
-        $conf['plugin'][PluginUtility::$PLUGIN_BASE_NAME]['WeightFactorForSamePageName'] = 4;
-        $conf['plugin'][PluginUtility::$PLUGIN_BASE_NAME]['WeightFactorForStartPage'] = 3;
-        $conf['plugin'][PluginUtility::$PLUGIN_BASE_NAME]['WeightFactorForSameNamespace'] = 5;
-        $conf['plugin'][PluginUtility::$PLUGIN_BASE_NAME]['WordsSeparator'] = $pathSeparator;
-        $conf['plugin'][PluginUtility::$PLUGIN_BASE_NAME]['ShowPageNameIsNotUnique'] = 1;
+        $conf['plugin'][PluginUtility::PLUGIN_BASE_NAME]['ActionReaderFirst'] = action_plugin_combo_urlmanager::GO_TO_BEST_PAGE_NAME;
+        $conf['plugin'][PluginUtility::PLUGIN_BASE_NAME]['WeightFactorForSamePageName'] = 4;
+        $conf['plugin'][PluginUtility::PLUGIN_BASE_NAME]['WeightFactorForStartPage'] = 3;
+        $conf['plugin'][PluginUtility::PLUGIN_BASE_NAME]['WeightFactorForSameNamespace'] = 5;
+        $conf['plugin'][PluginUtility::PLUGIN_BASE_NAME]['WordsSeparator'] = $pathSeparator;
+        $conf['plugin'][PluginUtility::PLUGIN_BASE_NAME]['ShowPageNameIsNotUnique'] = 1;
 
 
         // Set of 3 pages, when a page has an homonym (same page name) but within another completly differents path (the name of the path have nothing in common)

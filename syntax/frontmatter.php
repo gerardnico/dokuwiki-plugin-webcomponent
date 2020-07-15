@@ -73,7 +73,7 @@ class syntax_plugin_combo_frontmatter extends DokuWiki_Syntax_Plugin
     {
         if ($mode == "base") {
             // only from the top
-            $this->Lexer->addSpecialPattern('---json.*?---', $mode, 'plugin_' . PluginUtility::$PLUGIN_BASE_NAME . '_' . $this->getPluginComponent());
+            $this->Lexer->addSpecialPattern('---json.*?---', $mode, 'plugin_' . PluginUtility::PLUGIN_BASE_NAME . '_' . $this->getPluginComponent());
         }
     }
 

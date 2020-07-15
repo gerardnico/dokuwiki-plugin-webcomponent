@@ -30,7 +30,7 @@ class action_plugin_combo_toolbar extends DokuWiki_Action_Plugin {
         $event->data[] = array(
             'type'   => 'format',
             'title'  => $this->getLang('DocBlockButtonTitle').' ('.$this->getLang('AccessKey').': '.$unitShortcutKey.')',
-            'icon'   => '../../plugins/'. PluginUtility::$PLUGIN_BASE_NAME .'/images/unit-doc-block.png',
+            'icon'   => '../../plugins/'. PluginUtility::PLUGIN_BASE_NAME .'/images/unit-doc-block.png',
             'open'   => '<unit name="default">\n<file lang path>\n</file>\n\t<code lang>',
             'close'  => '\n\t</code>\n\tt<console>\n\t</console></unit>\n',
             'key'    => $unitShortcutKey

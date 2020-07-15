@@ -19,7 +19,7 @@ class plugin_combo_canonical_test extends DokuWikiTest
     // Needed otherwise the plugin is not enabled
     public function setUp()
     {
-        $this->pluginsEnabled[] = PluginUtility::$PLUGIN_BASE_NAME;
+        $this->pluginsEnabled[] = PluginUtility::PLUGIN_BASE_NAME;
         $this->pluginsEnabled[] = 'sqlite';
         parent::setUp();
     }
@@ -176,7 +176,7 @@ class plugin_combo_canonical_test extends DokuWikiTest
          * Set it on, a canonical should have been created
          */
         global $conf;
-        $conf['plugin'][PluginUtility::$PLUGIN_BASE_NAME][action_plugin_combo_metacanonical::CANONICAL_LAST_NAMES_COUNT_CONF] = 2;
+        $conf['plugin'][PluginUtility::PLUGIN_BASE_NAME][action_plugin_combo_metacanonical::CANONICAL_LAST_NAMES_COUNT_CONF] = 2;
         $request = new TestRequest(); // initialize the request
         $request->get(array('id' => $pageId), '/doku.php');
         $canonicalMeta = p_get_metadata($pageId, $canonicalKey, METADATA_RENDER_UNLIMITED);
@@ -192,7 +192,7 @@ class plugin_combo_canonical_test extends DokuWikiTest
         $startPageCanonical = "web";
         $startPageId = $startPageCanonical . ':start';
         TestUtility::addPage($startPageId, "Non empty", 'Created');
-        $conf['plugin'][PluginUtility::$PLUGIN_BASE_NAME][action_plugin_combo_metacanonical::CANONICAL_LAST_NAMES_COUNT_CONF] = 2;
+        $conf['plugin'][PluginUtility::PLUGIN_BASE_NAME][action_plugin_combo_metacanonical::CANONICAL_LAST_NAMES_COUNT_CONF] = 2;
         $request = new TestRequest(); // initialize the request
         $request->get(array('id' => $startPageId), '/doku.php');
         $canonicalMeta = p_get_metadata($startPageId, $canonicalKey, METADATA_RENDER_UNLIMITED);
@@ -206,7 +206,7 @@ class plugin_combo_canonical_test extends DokuWikiTest
         $canonical = "acanonical";
         p_set_metadata($pageIdWithCanonical, array($canonicalKey => $canonical));
         TestUtility::addPage($pageIdWithCanonical, "Non empty", 'Created');
-        $conf['plugin'][PluginUtility::$PLUGIN_BASE_NAME][action_plugin_combo_metacanonical::CANONICAL_LAST_NAMES_COUNT_CONF] = 2;
+        $conf['plugin'][PluginUtility::PLUGIN_BASE_NAME][action_plugin_combo_metacanonical::CANONICAL_LAST_NAMES_COUNT_CONF] = 2;
         $request = new TestRequest(); // initialize the request
         $request->get(array('id' => $pageIdWithCanonical), '/doku.php');
         $canonicalMeta = p_get_metadata($pageIdWithCanonical, $canonicalKey, METADATA_RENDER_UNLIMITED);

@@ -7,6 +7,8 @@ namespace ComboStrap;
 use RuntimeException;
 use TestRequest;
 
+require_once(__DIR__ . '/LogUtility.php');
+require_once(__DIR__ . '/IconUtility.php');
 /**
  * Are used everywhere in the plugin and the last upgrade just kill them
  * I just add them here
@@ -38,8 +40,11 @@ class PluginUtility
 
     /**
      * @var string - the plugin base name (ie the directory)
+     * ie $INFO_PLUGIN['base'];
+     * This is a constant because it permits code analytics
+     * such as verification of a path
      */
-    static $PLUGIN_BASE_NAME;
+    const PLUGIN_BASE_NAME = "combo";
 
     /**
      * @var array
@@ -85,7 +90,7 @@ class PluginUtility
         $sqlite->getAdapter()->setUseNativeAlter(true);
 
         // The name of the database (on windows, it should be
-        $dbname = strtolower(self::$PLUGIN_BASE_NAME);
+        $dbname = strtolower(self::PLUGIN_BASE_NAME);
         global $conf;
 
         $oldDbName = '404manager';
@@ -95,7 +100,7 @@ class PluginUtility
             $dbname = $oldDbName;
         }
 
-        $init = $sqlite->init($dbname, DOKU_PLUGIN . PluginUtility::$PLUGIN_BASE_NAME . '/db/');
+        $init = $sqlite->init($dbname, DOKU_PLUGIN . PluginUtility::PLUGIN_BASE_NAME . '/db/');
         if (!$init) {
             # TODO: Message 'SqliteUnableToInitialize'
             $message = "Unable to initialize Sqlite";
@@ -115,10 +120,9 @@ class PluginUtility
 
         $pluginInfoFile = __DIR__ . '/../plugin.info.txt';
         self::$INFO_PLUGIN = confToHash($pluginInfoFile);
-        self::$PLUGIN_BASE_NAME = self::$INFO_PLUGIN['base'];
         self::$PLUGIN_NAME = 'ComboStrap';
         global $lang;
-        self::$PLUGIN_LANG = $lang[self::$PLUGIN_BASE_NAME];
+        self::$PLUGIN_LANG = $lang[self::PLUGIN_BASE_NAME];
         self::$DIR_RESOURCES = __DIR__ . '/../_testResources';
         self::$URL_BASE = "https://" . parse_url(self::$INFO_PLUGIN['url'], PHP_URL_HOST);
 
@@ -146,7 +150,7 @@ class PluginUtility
      */
     public static function getModeForComponent($component)
     {
-        return "plugin_" . strtolower(PluginUtility::$PLUGIN_BASE_NAME) . "_" . $component;
+        return "plugin_" . strtolower(PluginUtility::PLUGIN_BASE_NAME) . "_" . $component;
     }
 
     /**
@@ -335,7 +339,7 @@ class PluginUtility
     public static function getNameSpace()
     {
         // No : at the begin of the namespace please
-        return self::$PLUGIN_BASE_NAME . ':';
+        return self::PLUGIN_BASE_NAME . ':';
     }
 
     /**
@@ -515,13 +519,26 @@ class PluginUtility
     /**
      * Create an URL to the documentation website
      * @param $canonical - canonical id or slug
-     * @param $text
+     * @param $text -  the text of the link
+     * @param bool $withIcon - used to break the recursion with the message in the {@link IconUtility}
      * @return string - an url
      */
-    public static function getUrl($canonical, $text)
+    public static function getUrl($canonical, $text, $withIcon = true)
     {
         /** @noinspection SpellCheckingInspection */
-        return '<a href="'.self::$URL_BASE.'/'. str_replace(":","/",$canonical).'" class="urlextern" title="'.$text.'">'.$text.'</a>';
+
+        $icon = "";
+        if ($withIcon) {
+            global $conf;
+            $icon = "";
+            if ($conf['template'] === 'strap') {
+                $logo = tpl_incdir() . 'images/logo.svg';
+                if (file_exists($logo)) {
+                    $icon = IconUtility::renderFileIcon($logo);
+                }
+            }
+        }
+        return $icon .'<a href="'.self::$URL_BASE.'/'. str_replace(":","/",$canonical).'" title="'.$text.'">'.$text.'</a>';
     }
 
     /**

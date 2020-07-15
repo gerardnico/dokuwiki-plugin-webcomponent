@@ -90,7 +90,7 @@ class UrlManagerBestEndPage
 
         $return = array();
         global $conf;
-        $minimalScoreForARedirect = $conf['plugin'][PluginUtility::$PLUGIN_BASE_NAME][self::CONF_MINIMAL_SCORE_FOR_REDIRECT];
+        $minimalScoreForARedirect = $conf['plugin'][PluginUtility::PLUGIN_BASE_NAME][self::CONF_MINIMAL_SCORE_FOR_REDIRECT];
 
         list($bestPageId, $bestScore) = self::getBestEndPageId($pageId);
         if ($bestPageId != null) {

@@ -107,7 +107,7 @@ class syntax_plugin_combo_navbargroup extends DokuWiki_Syntax_Plugin
 
     public function postConnect()
     {
-        $this->Lexer->addExitPattern('</' . self::TAG . '>', 'plugin_' . PluginUtility::$PLUGIN_BASE_NAME . '_' . $this->getPluginComponent());
+        $this->Lexer->addExitPattern('</' . self::TAG . '>', 'plugin_' . PluginUtility::PLUGIN_BASE_NAME . '_' . $this->getPluginComponent());
 
     }
 

@@ -20,7 +20,7 @@ class plugin_combo_test_utility_test extends DokuWikiTest
 
     public function setUp()
     {
-        $this->pluginsEnabled[] = PluginUtility::$PLUGIN_BASE_NAME;
+        $this->pluginsEnabled[] = PluginUtility::PLUGIN_BASE_NAME;
 
         TestUtility::setConf(array(self::KEY_TEST => self::VALUE_TEST));
         parent::setUp();
@@ -47,7 +47,7 @@ class plugin_combo_test_utility_test extends DokuWikiTest
         $this->assertTrue(file_exists($file));
 
         global $conf;
-        $value = $conf['plugin'][PluginUtility::$PLUGIN_BASE_NAME][self::KEY_TEST];
+        $value = $conf['plugin'][PluginUtility::PLUGIN_BASE_NAME][self::KEY_TEST];
         $this->assertEquals(self::VALUE_TEST,$value,"The configuration should have been set");
 
     }
@@ -58,7 +58,7 @@ class plugin_combo_test_utility_test extends DokuWikiTest
     public function test_css_query_string()
     {
         global $conf;
-        $conf['plugin'][PluginUtility::$PLUGIN_BASE_NAME][action_plugin_combo_css::CONF_ENABLE_MINIMAL_FRONTEND_STYLESHEET]=1;
+        $conf['plugin'][PluginUtility::PLUGIN_BASE_NAME][action_plugin_combo_css::CONF_ENABLE_MINIMAL_FRONTEND_STYLESHEET]=1;
 
         $pageId = "cssQueryStringPage";
         TestUtility::addPage($pageId, "A page that should exist to be able to make a query", "Summary");
@@ -79,7 +79,7 @@ class plugin_combo_test_utility_test extends DokuWikiTest
         $pageId = "cssDisableDokuwikiStyleSheet";
         TestUtility::addPage($pageId, "A page that should exist to be able to make a query", "Summary");
         global $conf;
-        $conf['plugin'][PluginUtility::$PLUGIN_BASE_NAME][action_plugin_combo_css::CONF_DISABLE_DOKUWIKI_STYLESHEET]=1;
+        $conf['plugin'][PluginUtility::PLUGIN_BASE_NAME][action_plugin_combo_css::CONF_DISABLE_DOKUWIKI_STYLESHEET]=1;
 
         $testRequest = new TestRequest();
         $testResponse = $testRequest->get(array('id' => $pageId),"/doku.php");

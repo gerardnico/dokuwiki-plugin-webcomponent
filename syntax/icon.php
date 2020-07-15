@@ -4,13 +4,14 @@
  *
  */
 
+use ComboStrap\IconUtility;
 use ComboStrap\LogUtility;
 use ComboStrap\PluginUtility;
 use ComboStrap\XmlUtility;
 
 
 require_once(__DIR__ . '/../class/PluginUtility.php');
-require_once (__DIR__."/../class/XmlUtility.php");
+require_once(__DIR__ . '/../class/IconUtility.php');
 
 /**
  * All DokuWiki plugins to extend the parser/rendering mechanism
@@ -27,9 +28,6 @@ require_once (__DIR__."/../class/XmlUtility.php");
  */
 class syntax_plugin_combo_icon extends DokuWiki_Syntax_Plugin
 {
-
-    const CONF_ICONS_MEDIA_NAMESPACE = "icons_namespace";
-    const CONF_ICONS_MEDIA_NAMESPACE_DEFAULT = ":combostrap:icons";
 
 
     /**
@@ -52,7 +50,7 @@ class syntax_plugin_combo_icon extends DokuWiki_Syntax_Plugin
      */
     public function getAllowedTypes()
     {
-        // You can put anything in a icon
+        // You can't put anything in a icon
         return array();
     }
 
@@ -92,7 +90,7 @@ class syntax_plugin_combo_icon extends DokuWiki_Syntax_Plugin
     {
 
         $pattern = PluginUtility::getLeafTagPattern(self::getTag());
-        $this->Lexer->addSpecialPattern($pattern, $mode, 'plugin_' . PluginUtility::$PLUGIN_BASE_NAME . '_' . $this->getPluginComponent());
+        $this->Lexer->addSpecialPattern($pattern, $mode, PluginUtility::getModeForComponent($this->getPluginComponent()));
 
     }
 
@@ -120,7 +118,6 @@ class syntax_plugin_combo_icon extends DokuWiki_Syntax_Plugin
 
                 // Get the parameters
                 $parameters = PluginUtility::getTagAttributes($match);
-                // TODO ? Download the icon
                 return array($state, $parameters);
 
 
@@ -154,148 +151,8 @@ class syntax_plugin_combo_icon extends DokuWiki_Syntax_Plugin
                         return false;
                     }
 
-                    $name = "name";
-                    if (!array_key_exists($name, $attributes)) {
-                        LogUtility::msg("The name attribute is mandatory for an icon.", LogUtility::LVL_MSG_ERROR);
-                        return false;
-                    }
-                    $iconName = $attributes[$name];
 
-                    // If the name have an extension, it's a file
-                    // Otherwise, it's an icon from the library
-                    $path = pathinfo($iconName);
-                    if ($path['extension']!=""){
-                        // loop through candidates until a match was found:
-                        $mediaFile = mediaFN($iconName);
-                        // May be an icon from the templates
-                        if (!file_exists($mediaFile)){
-                            $mediaTplFile  = tpl_incdir().'images/'.$iconName;
-                            if (!file_exists($mediaTplFile)){
-                                // Trying to see if it's not in the template images directory
-                                LogUtility::msg("The media file could not be found in the media or template library . If you want an icon from the material design icon library, indicate a name without extension.", LogUtility::LVL_MSG_ERROR);
-                                LogUtility::msg("Media File Library tested: $mediaFile", LogUtility::LVL_MSG_ERROR);
-                                LogUtility::msg("Media Template Library tested: $mediaTplFile", LogUtility::LVL_MSG_ERROR);
-                                return false;
-                            } else {
-                                $mediaFile = $mediaTplFile;
-                            }
-                        }
-
-                    } else {
-
-                        // It may be a icon name from material design
-                        $iconNameSpace = $this->getConf(self::CONF_ICONS_MEDIA_NAMESPACE);
-                        $mediaId = $iconNameSpace . ":" . $iconName . ".svg";
-                        $mediaFile = mediaFN($mediaId);
-                        if (!file_exists($mediaFile)) {
-
-                            // The icon was may be not downloaded ?
-
-                            // Create the target directory if it does not exist
-                            $pathinfo = pathinfo($mediaFile);
-                            $iconDir = $pathinfo['dirname'];
-                            if (!file_exists($iconDir)) {
-                                $return = mkdir($iconDir, $mode = 0770, $recursive = true);
-                                if ($return == false) {
-                                    LogUtility::msg("The icon directory ($iconDir) could not be created.", LogUtility::LVL_MSG_ERROR);
-                                    return false;
-                                }
-                            }
-
-                            // First try on github
-                            $gitUrl = "https://raw.githubusercontent.com/Templarian/MaterialDesign/master/svg/$iconName.svg";
-                            $return = file_put_contents($mediaFile, fopen($gitUrl, 'r'));
-                            if ($return != false) {
-                                LogUtility::msg("The material design icon ($attributes[$name]) was downloaded to ($mediaId)", LogUtility::LVL_MSG_INFO);
-                            } else {
-
-                                LogUtility::msg("The file ($gitUrl) could not be downloaded from ($mediaFile)", LogUtility::LVL_MSG_INFO);
-
-                                // Try the official API
-                                // Read the icon meta of
-                                // Meta Json file got all icons
-                                //
-                                //   * Available at: https://raw.githubusercontent.com/Templarian/MaterialDesign/master/meta.json
-                                //   * See doc: https://github.com/Templarian/MaterialDesign-Site/blob/master/src/content/api.md)
-                                $arrayFormat = true;
-                                $iconMetaJson = json_decode(file_get_contents(__DIR__ . '/icon-meta.json'), $arrayFormat);
-                                $iconId = null;
-                                foreach ($iconMetaJson as $key => $value) {
-                                    if ($value['name'] == $iconName) {
-                                        $iconId = $value['id'];
-                                        break;
-                                    }
-                                }
-                                if ($iconId != null) {
-
-
-                                    // Download
-                                    // Call to the API
-                                    // https://dev.materialdesignicons.com/contribute/site/api
-                                    $downloadUrl = "https://materialdesignicons.com/api/download/icon/svg/$iconId";
-                                    $return = file_put_contents($mediaFile, fopen($downloadUrl, 'r'));
-                                    if ($return == false) {
-                                        LogUtility::msg("The file ($downloadUrl) could not be downloaded to ($mediaFile)", LogUtility::LVL_MSG_ERROR);
-                                        return false;
-                                    } else {
-                                        LogUtility::msg("The material design icon ($attributes[$name]) was downloaded to ($mediaId)", LogUtility::LVL_MSG_INFO);
-                                    }
-
-                                }
-
-                            }
-
-
-                        }
-
-                    }
-
-
-                    // Build the svg Element
-                    try {
-                        /** @noinspection PhpComposerExtensionStubsInspection */
-                        /** @noinspection PhpUndefinedVariableInspection */
-                        $mediaSvgXml = simplexml_load_file($mediaFile);
-                    } catch (Exception $e) {
-                        LogUtility::msg("The icon file ($mediaFile) could not be loaded as a XML SVG. The error returned is $e", LogUtility::LVL_MSG_ERROR);
-                        return false;
-                    }
-
-                    // Unset the name attribute
-                    unset($attributes[$name]);
-                    $mediaSvgXml->addAttribute('data-name', $iconName);
-
-
-                    // Width
-                    $widthName = "width";
-                    $widthValue = "24px";
-                    if (array_key_exists($widthName, $attributes)) {
-                        $widthValue = $attributes[$widthName];
-                        unset($attributes[$widthName]);
-                    }
-                    XmlUtility::setAttribute($widthName, $widthValue, $mediaSvgXml);
-
-                    // Height
-                    $heightName = "height";
-                    $heightValue = "24px";
-                    if (array_key_exists($heightName, $attributes)) {
-                        $heightValue = $attributes[$heightName];
-                        unset($attributes[$heightName]);
-                    }
-                    XmlUtility::setAttribute($heightName, $heightValue, $mediaSvgXml);
-
-                    // Add fill="currentColor"
-                    $pathXml = $mediaSvgXml->{'path'};
-                    XmlUtility::setAttribute("fill", "currentColor", $pathXml);
-
-                    // Process the style
-                    PluginUtility::processStyle($attributes);
-
-                    foreach ($attributes as $name => $value) {
-                        $mediaSvgXml->addAttribute($name, $value);
-                    }
-
-                    $renderer->doc .= $mediaSvgXml->asXML();
+                    $renderer->doc .= IconUtility::renderIconByAttributes($attributes);
 
                     return true;
                 }

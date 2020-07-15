@@ -17,7 +17,7 @@ class plugin_combo_metaviewer_test extends DokuWikiTest
 
     public function setUp()
     {
-        $this->pluginsEnabled[] = PluginUtility::$PLUGIN_BASE_NAME;
+        $this->pluginsEnabled[] = PluginUtility::PLUGIN_BASE_NAME;
         parent::setUp();
     }
 
@@ -34,7 +34,7 @@ class plugin_combo_metaviewer_test extends DokuWikiTest
         $this->assertEquals(1,$box,"The box is present");
 
         global $conf;
-        $conf['plugin'][PluginUtility::$PLUGIN_BASE_NAME][MetadataUtility::CONF_ENABLE_WHEN_EDITING]=0;
+        $conf['plugin'][PluginUtility::PLUGIN_BASE_NAME][MetadataUtility::CONF_ENABLE_WHEN_EDITING]=0;
         $request = new TestRequest();
         $response = $request->get(array('do'=>'edit','id' => "ApageToEdit"), '/doku.php');
         $box = $response->queryHTML('#'. MetadataUtility::META_MESSAGE_BOX_ID)->count();

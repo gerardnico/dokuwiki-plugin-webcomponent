@@ -19,7 +19,7 @@ class plugin_combo_setting_test extends DokuWikiTest
 
     public function setUp()
     {
-        $this->pluginsEnabled[] = PluginUtility::$PLUGIN_BASE_NAME;
+        $this->pluginsEnabled[] = PluginUtility::PLUGIN_BASE_NAME;
         parent::setUp();
     }
 
@@ -39,7 +39,7 @@ class plugin_combo_setting_test extends DokuWikiTest
         $response = $request->get(array('do' => 'admin', 'page' => "config"),'/doku.php');
 
         // Simple
-        $countListContainer = $response->queryHTML("#plugin____".PluginUtility::$PLUGIN_BASE_NAME."____plugin_settings_name")->count();
+        $countListContainer = $response->queryHTML("#plugin____".PluginUtility::PLUGIN_BASE_NAME."____plugin_settings_name")->count();
         $this->assertEquals(1, $countListContainer, "There should an element");
 
     }
@@ -130,7 +130,7 @@ class plugin_combo_setting_test extends DokuWikiTest
         $parser = new ConfigParser();
         $loader = new Loader($parser);
         $defaultConf = $loader->loadDefaults();
-        $keyPrefix = "plugin____".PluginUtility::$PLUGIN_BASE_NAME."____";
+        $keyPrefix = "plugin____".PluginUtility::PLUGIN_BASE_NAME."____";
         $this->assertTrue(is_array($defaultConf));
 
         // plugin defaults

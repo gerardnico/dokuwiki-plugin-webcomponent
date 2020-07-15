@@ -31,6 +31,19 @@ class plugin_combo_xml_test extends DokuWikiTest
 
     }
 
+    /**
+     * Test the internal link
+     */
+    public function test_isXml()
+    {
+
+        $text = "hello";
+        $this->assertFalse(XmlUtility::isXml($text), "The string is not xml");
+
+        $html = "<span>{$text}</span>";
+        $this->assertTrue(XmlUtility::isXml($html), "The string with span is xml");
+
+    }
 
 
 

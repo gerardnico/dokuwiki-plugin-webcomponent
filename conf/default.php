@@ -18,6 +18,7 @@
  */
 
 
+use ComboStrap\IconUtility;
 use ComboStrap\MetadataUtility;
 
 $conf['UnitShortCutKey'] = 'u';
@@ -66,8 +67,8 @@ $conf['MinimalNamesCountForAutomaticCanonical'] = 0;
 
 /**
  * Icon Namespace
- * See {@link syntax_plugin_combo_icon::CONF_ICONS_MEDIA_NAMESPACE}
- * See {@link syntax_plugin_combo_icon::CONF_ICONS_MEDIA_NAMESPACE_DEFAULT}
+ * See {@link IconUtility::CONF_ICONS_MEDIA_NAMESPACE}
+ * See {@link IconUtility::CONF_ICONS_MEDIA_NAMESPACE_DEFAULT}
  */
 $conf['icons_namespace']=":combostrap:icons";
 

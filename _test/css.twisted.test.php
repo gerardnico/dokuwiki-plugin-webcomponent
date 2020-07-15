@@ -22,7 +22,7 @@ class plugin_combo_css_twisted_test extends DokuWikiTest
 
     public function setUp()
     {
-        $this->pluginsEnabled[] = PluginUtility::$PLUGIN_BASE_NAME;
+        $this->pluginsEnabled[] = PluginUtility::PLUGIN_BASE_NAME;
 
         /**
          * {@link DokuWikiTest} set the environment at set up to front

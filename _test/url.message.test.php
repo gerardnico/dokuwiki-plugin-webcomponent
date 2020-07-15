@@ -19,7 +19,7 @@ class plugin_combo_url_message_test extends DokuWikiTest
 
     public function setUp()
     {
-        $this->pluginsEnabled[] = PluginUtility::$PLUGIN_BASE_NAME;
+        $this->pluginsEnabled[] = PluginUtility::PLUGIN_BASE_NAME;
         //$this->pluginsEnabled[] = 'sqlite';
         parent::setUp();
     }

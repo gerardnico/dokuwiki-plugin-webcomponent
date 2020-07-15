@@ -36,14 +36,7 @@ class LogUtility
      */
     public static function msg($message, $level = self::LVL_MSG_ERROR, $canonical = null)
     {
-        $prefix = PluginUtility::getUrl("", PluginUtility::$PLUGIN_NAME);
-        if ($canonical != null) {
-            $prefix = PluginUtility::getUrl($canonical, ucfirst(str_replace(":", " ", $canonical)));
-        }
-        $htmlMsg = $prefix . " - " . $message;
-        if ($level != self::LVL_MSG_DEBUG) {
-            msg($htmlMsg, $level, '', '', MSG_MANAGERS_ONLY);
-        }
+        self::log2FrontEnd($message,$level,$canonical);
         /**
          * Print to a log file
          * Note: {@link dbg()} dbg print to the web page
@@ -55,33 +48,55 @@ class LogUtility
         $msg = $prefix . ' - ' . $message;
         self::log2file($msg);
         if (defined('DOKU_UNITTEST') && ($level == self::LVL_MSG_WARNING || $level == self::LVL_MSG_ERROR)) {
-            throw new RuntimeException($msg);
+            throw new \RuntimeException($msg);
         }
     }
 
     /**
-     * Print info to a log file
+     * Print log to a  file
      *
      * Adapted from {@link dbglog}
      *
      * @param string $msg
-     * @param string $header
      */
-    function log2file($msg){
+    static function log2file($msg)
+    {
 
         /* @var Input $INPUT */
         global $INPUT;
         global $conf;
 
-        if(is_object($msg) || is_array($msg)){
-            $msg = print_r($msg,true);
+        if (is_object($msg) || is_array($msg)) {
+            $msg = print_r($msg, true);
         }
 
-        $file = $conf['cachedir'].'/debug.log';
-        $fh = fopen($file,'a');
-        if($fh){
-            fwrite($fh,date('H:i:s ').$INPUT->server->str('REMOTE_ADDR').': '.$msg."\n");
+        $file = $conf['cachedir'] . '/debug.log';
+        $fh = fopen($file, 'a');
+        if ($fh) {
+            fwrite($fh, date('H:i:s ') . $INPUT->server->str('REMOTE_ADDR') . ': ' . $msg . "\n");
             fclose($fh);
+        }
+
+    }
+
+    /**
+     * @param $message
+     * @param $level
+     * @param $canonical
+     * @param $withIconURL
+     */
+    public static function log2FrontEnd($message, $level, $canonical, $withIconURL = true)
+    {
+
+
+        $prefix = PluginUtility::getUrl("", PluginUtility::$PLUGIN_NAME, $withIconURL);
+        if ($canonical != null) {
+            $prefix = PluginUtility::getUrl($canonical, ucfirst(str_replace(":", " ", $canonical)));
+        }
+
+        $htmlMsg = $prefix . " - " . $message;
+        if ($level != self::LVL_MSG_DEBUG) {
+            msg($htmlMsg, $level, '', '', MSG_MANAGERS_ONLY);
         }
 
     }
