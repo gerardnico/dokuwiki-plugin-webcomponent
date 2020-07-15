@@ -3,7 +3,7 @@
 ## Steps
 
   * Check a [detail page](http://localhost:81/_detail/strap/strap_heightfixedtopnavbar.png)
-  * Change the date in the info plugin file
+  * Change the date in the [info plugin file](../plugin.info.txt) and [info template file](../../../tpl/strap/template.info.txt)
   * Change the snapshot value to the date in the changes page
   * Commit and push
   * Upload to ComboStrap.com

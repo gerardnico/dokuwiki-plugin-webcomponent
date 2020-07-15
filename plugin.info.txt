@@ -1,7 +1,7 @@
 base    combo
 author  ComboStrap
 email   support@combostrap.com
-date    2020-07-14
+date    2020-07-15
 name    Combo Plugin
 desc    A collection of Dokuwiki Plugins from UI to SEO via Url management
 url     https://combostrap.com/combo
