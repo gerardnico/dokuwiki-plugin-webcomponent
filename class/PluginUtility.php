@@ -478,6 +478,9 @@ class PluginUtility
         $heightName = "height";
         if (array_key_exists($heightName, $attributes)) {
             $styleProperties[$heightName] = trim($attributes[$heightName]);
+            if (!array_key_exists("overflow",$attributes)){
+                $styleProperties["overflow"] = "auto";
+            }
             unset($attributes[$heightName]);
         }
 
