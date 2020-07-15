@@ -26,15 +26,6 @@ if (!defined("DOKU_LEXER_ENTER")) {
 class PluginUtility
 {
 
-    /**
-     * Constant for the function {@link msg()}
-     * -1 = error, 0 = info, 1 = success, 2 = notify
-     */
-    const LVL_MSG_ERROR = -1;
-    const LVL_MSG_INFO = 0;
-    const LVL_MSG_SUCCESS = 1;
-    const LVL_MSG_WARNING = 2;
-    const LVL_MSG_DEBUG = 3;
     const DOKU_DATA_DIR = '/dokudata/pages';
     const DOKU_CACHE_DIR = '/dokudata/cache';
 
@@ -88,7 +79,7 @@ class PluginUtility
         if ($sqlite == null) {
             # TODO: Man we cannot get the message anymore ['SqliteMandatory'];
             $sqliteMandatoryMessage = "The Sqlite Plugin is mandatory. Some functionalities of the Combostraps Plugin may not work.";
-            msg($sqliteMandatoryMessage, self::LVL_MSG_ERROR, $allow = MSG_MANAGERS_ONLY);
+            msg($sqliteMandatoryMessage, LogUtility::LVL_MSG_ERROR, $allow = MSG_MANAGERS_ONLY);
             return null;
         }
         $sqlite->getAdapter()->setUseNativeAlter(true);
@@ -108,7 +99,7 @@ class PluginUtility
         if (!$init) {
             # TODO: Message 'SqliteUnableToInitialize'
             $message = "Unable to initialize Sqlite";
-            self::msg($message, MSG_MANAGERS_ONLY);
+            LogUtility::msg($message, MSG_MANAGERS_ONLY);
         }
         return $sqlite;
 
@@ -147,38 +138,6 @@ class PluginUtility
         $regularExpressionPattern = "/(\\/.*\\/[gmixXsuUAJ]?)/";
         return preg_match($regularExpressionPattern, $inputExpression);
 
-    }
-
-    /**
-     * Send a message to a manager and log it
-     * Fail if in test
-     * @param string $message
-     * @param int $level - the level see LVL constant
-     * @param string $canonical - the canonical
-     */
-    public static function msg($message, $level = self::LVL_MSG_ERROR, $canonical = null)
-    {
-        $prefix = self::getUrl("",self::$PLUGIN_NAME);
-        if ($canonical!=null){
-            $prefix = self::getUrl($canonical,ucfirst(str_replace(":"," ",$canonical)));
-        }
-        $htmlMsg =  $prefix. " - ".$message;
-        if ($level!=self::LVL_MSG_DEBUG) {
-            msg($htmlMsg, $level, $allow = MSG_MANAGERS_ONLY);
-        }
-        /**
-         * Print to a log file
-         * Note: {@link dbg()} dbg print to the web page
-         */
-        $prefix = self::$PLUGIN_NAME;
-        if ($canonical!=null){
-            $prefix .= ' - '.$canonical;
-        }
-        $msg = $prefix . ' - ' . $message;
-        dbglog($msg);
-        if (defined('DOKU_UNITTEST') && ($level == self::LVL_MSG_WARNING || $level == self::LVL_MSG_ERROR)) {
-            throw new RuntimeException($msg);
-        }
     }
 
     /**
@@ -258,7 +217,7 @@ class PluginUtility
         // Until the first >
         $pos = strpos($match,">");
         if ($pos == false){
-            self::msg("The match does not contain any tag. Match: {$match}",self::LVL_MSG_ERROR);
+            LogUtility::msg("The match does not contain any tag. Match: {$match}", LogUtility::LVL_MSG_ERROR);
             return array();
         }
         $match = substr($match,0,$pos);
@@ -522,7 +481,7 @@ class PluginUtility
             $scriptPath = $_SERVER["SCRIPT_NAME"];
         }
         if ($scriptPath == null) {
-            msg("Unable to find the main script", self::LVL_MSG_ERROR);
+            msg("Unable to find the main script", LogUtility::LVL_MSG_ERROR);
         }
         $path_parts = pathinfo($scriptPath);
         return $path_parts['basename'];
@@ -602,19 +561,19 @@ class PluginUtility
         // From the first >
         $start = strpos($match,">");
         if ($start == false){
-            self::msg("The match does not contain any opening tag. Match: {$match}",self::LVL_MSG_ERROR);
+            LogUtility::msg("The match does not contain any opening tag. Match: {$match}", LogUtility::LVL_MSG_ERROR);
             return "";
         }
         $match = substr($match, $start + 1);
         // If this is the last character, we get a false
         if ($match == false){
-            self::msg("The match does not contain any closing tag. Match: {$match}",self::LVL_MSG_ERROR);
+            LogUtility::msg("The match does not contain any closing tag. Match: {$match}", LogUtility::LVL_MSG_ERROR);
             return "";
         }
 
         $end = strpos($match,"</");
         if ($end == false){
-            self::msg("The match does not contain any closing tag. Match: {$match}",self::LVL_MSG_ERROR);
+            LogUtility::msg("The match does not contain any closing tag. Match: {$match}", LogUtility::LVL_MSG_ERROR);
             return "";
         }
 

@@ -44,7 +44,7 @@ class PageRules
 
         $res = $this->sqlite->query('delete from PAGE_RULES where id = ?', $ruleId);
         if (!$res) {
-            PluginUtility::msg("Something went wrong when deleting the redirections");
+            LogUtility::msg("Something went wrong when deleting the redirections");
         }
         $this->sqlite->res_close($res);
 
@@ -132,7 +132,7 @@ class PageRules
 
         $res = $this->sqlite->storeEntry('PAGE_RULES', $entry);
         if (!$res) {
-            PluginUtility::msg("There was a problem during insertion");
+            LogUtility::msg("There was a problem during insertion");
         }
         $lastInsertId = $this->sqlite->getAdapter()->getDb()->lastInsertId();
         $this->sqlite->res_close($res);
@@ -155,7 +155,7 @@ class PageRules
         $statement = 'update PAGE_RULES set matcher = ?, target = ?, priority = ?, timestamp = ? where id = ?';
         $res = $this->sqlite->query($statement, $entry);
         if (!$res) {
-            PluginUtility::msg("There was a problem during the update");
+            LogUtility::msg("There was a problem during the update");
         }
         $this->sqlite->res_close($res);
 
@@ -171,7 +171,7 @@ class PageRules
 
         $res = $this->sqlite->query("delete from PAGE_RULES");
         if (!$res) {
-            PluginUtility::msg('Errors during delete of all redirections');
+            LogUtility::msg('Errors during delete of all redirections');
         }
         $this->sqlite->res_close($res);
 
@@ -186,7 +186,7 @@ class PageRules
 
         $res = $this->sqlite->query("select count(1) from PAGE_RULES");
         if (!$res) {
-            PluginUtility::msg('Errors during delete of all redirections');
+            LogUtility::msg('Errors during delete of all redirections');
         }
         $value = $this->sqlite->res2single($res);
         $this->sqlite->res_close($res);

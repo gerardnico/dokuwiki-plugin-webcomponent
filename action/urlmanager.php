@@ -1,5 +1,6 @@
 <?php
 
+use ComboStrap\LogUtility;
 use ComboStrap\PageRules;
 use ComboStrap\PluginUtility;
 use ComboStrap\UrlCanonical;
@@ -143,7 +144,7 @@ class action_plugin_combo_urlmanager extends DokuWiki_Action_Plugin
                 $this->IdRedirect($targetPage, self::TARGET_ORIGIN_CANONICAL);
                 return true;
             } else {
-                PluginUtility::msg("The canonical page ({$targetPage}) from the ID ({$ID}) does not exist",PluginUtility::LVL_MSG_WARNING);
+                LogUtility::msg("The canonical page ({$targetPage}) from the ID ({$ID}) does not exist", LogUtility::LVL_MSG_WARNING);
             }
 
         }
@@ -593,7 +594,7 @@ class action_plugin_combo_urlmanager extends DokuWiki_Action_Plugin
         $res = $this->sqlite->storeEntry('redirections_log', $row);
 
         if (!$res) {
-            PluginUtility::msg("An error occurred");
+            LogUtility::msg("An error occurred");
         }
 
     }
@@ -659,7 +660,7 @@ class action_plugin_combo_urlmanager extends DokuWiki_Action_Plugin
 
         } else {
 
-            PluginUtility::msg("The calculated target page ($calculatedTarget) (for the non-existent page `$ID` with the matcher `$ruleMatcher`) does not exist",PluginUtility::LVL_MSG_ERROR);
+            LogUtility::msg("The calculated target page ($calculatedTarget) (for the non-existent page `$ID` with the matcher `$ruleMatcher`) does not exist", LogUtility::LVL_MSG_ERROR);
             return false;
 
         }

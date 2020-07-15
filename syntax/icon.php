@@ -4,6 +4,7 @@
  *
  */
 
+use ComboStrap\LogUtility;
 use ComboStrap\PluginUtility;
 use ComboStrap\XmlUtility;
 
@@ -155,7 +156,7 @@ class syntax_plugin_combo_icon extends DokuWiki_Syntax_Plugin
 
                     $name = "name";
                     if (!array_key_exists($name, $attributes)) {
-                        PluginUtility::msg("The name attribute is mandatory for an icon.", PluginUtility::LVL_MSG_ERROR);
+                        LogUtility::msg("The name attribute is mandatory for an icon.", LogUtility::LVL_MSG_ERROR);
                         return false;
                     }
                     $iconName = $attributes[$name];
@@ -171,9 +172,9 @@ class syntax_plugin_combo_icon extends DokuWiki_Syntax_Plugin
                             $mediaTplFile  = tpl_incdir().'images/'.$iconName;
                             if (!file_exists($mediaTplFile)){
                                 // Trying to see if it's not in the template images directory
-                                PluginUtility::msg("The media file could not be found in the media or template library . If you want an icon from the material design icon library, indicate a name without extension.", PluginUtility::LVL_MSG_ERROR);
-                                PluginUtility::msg("Media File Library tested: $mediaFile", PluginUtility::LVL_MSG_ERROR);
-                                PluginUtility::msg("Media Template Library tested: $mediaTplFile", PluginUtility::LVL_MSG_ERROR);
+                                LogUtility::msg("The media file could not be found in the media or template library . If you want an icon from the material design icon library, indicate a name without extension.", LogUtility::LVL_MSG_ERROR);
+                                LogUtility::msg("Media File Library tested: $mediaFile", LogUtility::LVL_MSG_ERROR);
+                                LogUtility::msg("Media Template Library tested: $mediaTplFile", LogUtility::LVL_MSG_ERROR);
                                 return false;
                             } else {
                                 $mediaFile = $mediaTplFile;
@@ -196,7 +197,7 @@ class syntax_plugin_combo_icon extends DokuWiki_Syntax_Plugin
                             if (!file_exists($iconDir)) {
                                 $return = mkdir($iconDir, $mode = 0770, $recursive = true);
                                 if ($return == false) {
-                                    PluginUtility::msg("The icon directory ($iconDir) could not be created.", PluginUtility::LVL_MSG_ERROR);
+                                    LogUtility::msg("The icon directory ($iconDir) could not be created.", LogUtility::LVL_MSG_ERROR);
                                     return false;
                                 }
                             }
@@ -205,10 +206,10 @@ class syntax_plugin_combo_icon extends DokuWiki_Syntax_Plugin
                             $gitUrl = "https://raw.githubusercontent.com/Templarian/MaterialDesign/master/svg/$iconName.svg";
                             $return = file_put_contents($mediaFile, fopen($gitUrl, 'r'));
                             if ($return != false) {
-                                PluginUtility::msg("The material design icon ($attributes[$name]) was downloaded to ($mediaId)", PluginUtility::LVL_MSG_INFO);
+                                LogUtility::msg("The material design icon ($attributes[$name]) was downloaded to ($mediaId)", LogUtility::LVL_MSG_INFO);
                             } else {
 
-                                PluginUtility::msg("The file ($gitUrl) could not be downloaded from ($mediaFile)", PluginUtility::LVL_MSG_INFO);
+                                LogUtility::msg("The file ($gitUrl) could not be downloaded from ($mediaFile)", LogUtility::LVL_MSG_INFO);
 
                                 // Try the official API
                                 // Read the icon meta of
@@ -234,10 +235,10 @@ class syntax_plugin_combo_icon extends DokuWiki_Syntax_Plugin
                                     $downloadUrl = "https://materialdesignicons.com/api/download/icon/svg/$iconId";
                                     $return = file_put_contents($mediaFile, fopen($downloadUrl, 'r'));
                                     if ($return == false) {
-                                        PluginUtility::msg("The file ($downloadUrl) could not be downloaded to ($mediaFile)", PluginUtility::LVL_MSG_ERROR);
+                                        LogUtility::msg("The file ($downloadUrl) could not be downloaded to ($mediaFile)", LogUtility::LVL_MSG_ERROR);
                                         return false;
                                     } else {
-                                        PluginUtility::msg("The material design icon ($attributes[$name]) was downloaded to ($mediaId)", PluginUtility::LVL_MSG_INFO);
+                                        LogUtility::msg("The material design icon ($attributes[$name]) was downloaded to ($mediaId)", LogUtility::LVL_MSG_INFO);
                                     }
 
                                 }
@@ -256,7 +257,7 @@ class syntax_plugin_combo_icon extends DokuWiki_Syntax_Plugin
                         /** @noinspection PhpUndefinedVariableInspection */
                         $mediaSvgXml = simplexml_load_file($mediaFile);
                     } catch (Exception $e) {
-                        PluginUtility::msg("The icon file ($mediaFile) could not be loaded as a XML SVG. The error returned is $e", PluginUtility::LVL_MSG_ERROR);
+                        LogUtility::msg("The icon file ($mediaFile) could not be loaded as a XML SVG. The error returned is $e", LogUtility::LVL_MSG_ERROR);
                         return false;
                     }
 

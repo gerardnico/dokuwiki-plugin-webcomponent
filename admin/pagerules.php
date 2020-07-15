@@ -1,5 +1,6 @@
 <?php
 // must be run within Dokuwiki
+use ComboStrap\LogUtility;
 use ComboStrap\PageRules;
 use ComboStrap\PluginUtility;
 
@@ -126,29 +127,29 @@ class admin_plugin_combo_pagerules extends DokuWiki_Admin_Plugin
             $priority = $_POST[PageRules::PRIORITY_NAME];
 
             if ($matcher == null) {
-                msg('Matcher can not be null', PluginUtility::LVL_MSG_ERROR);
+                msg('Matcher can not be null', LogUtility::LVL_MSG_ERROR);
                 return;
             }
             if ($target == null) {
-                msg('Target can not be null', PluginUtility::LVL_MSG_ERROR);
+                msg('Target can not be null', LogUtility::LVL_MSG_ERROR);
                 return;
             }
 
             if ($matcher == $target) {
-                msg($this->lang['SameSourceAndTargetAndPage'] . ': ' . $matcher . '', PluginUtility::LVL_MSG_ERROR);
+                msg($this->lang['SameSourceAndTargetAndPage'] . ': ' . $matcher . '', LogUtility::LVL_MSG_ERROR);
                 return;
             }
 
             if ($id == null) {
                 if (!$this->pageRuleManager->patternExists($matcher)) {
                     $this->pageRuleManager->addRule($matcher, $target, $priority);
-                    msg($this->lang['Saved'], PluginUtility::LVL_MSG_INFO);
+                    msg($this->lang['Saved'], LogUtility::LVL_MSG_INFO);
                 } else {
-                    msg("The matcher pattern ($matcher) already exists. The page rule was not inserted.", PluginUtility::LVL_MSG_ERROR);
+                    msg("The matcher pattern ($matcher) already exists. The page rule was not inserted.", LogUtility::LVL_MSG_ERROR);
                 }
             } else {
                 $this->pageRuleManager->updateRule($id, $matcher, $target, $priority);
-                msg($this->lang['Saved'], PluginUtility::LVL_MSG_INFO);
+                msg($this->lang['Saved'], LogUtility::LVL_MSG_INFO);
             }
 
 
@@ -159,7 +160,7 @@ class admin_plugin_combo_pagerules extends DokuWiki_Admin_Plugin
 
             $ruleId = $_POST[PageRules::ID_NAME];
             $this->pageRuleManager->deleteRule($ruleId);
-            msg($this->lang['Deleted'], PluginUtility::LVL_MSG_INFO);
+            msg($this->lang['Deleted'], LogUtility::LVL_MSG_INFO);
 
         }
 

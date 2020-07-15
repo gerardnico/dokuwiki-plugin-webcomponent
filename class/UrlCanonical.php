@@ -87,7 +87,7 @@ class UrlCanonical
 
         $res = $this->sqlite->query('delete from pages where id = ?', $id);
         if (!$res) {
-            PluginUtility::msg("Something went wrong when deleting a page");
+            LogUtility::msg("Something went wrong when deleting a page");
         }
 
     }
@@ -127,7 +127,7 @@ class UrlCanonical
 
             $res = $this->sqlite->storeEntry('pages_alias', $row);
             if (!$res) {
-                PluginUtility::msg("There was a problem during pages_alias insertion");
+                LogUtility::msg("There was a problem during pages_alias insertion");
             }
         }
 
@@ -143,7 +143,7 @@ class UrlCanonical
         // Canonical
         $res = $this->sqlite->query("select * from pages where CANONICAL = ? ", $canonical);
         if (!$res) {
-            PluginUtility::msg("An exception has occurred with the pages selection query");
+            LogUtility::msg("An exception has occurred with the pages selection query");
         }
         $res2arr = $this->sqlite->res2arr($res);
         $this->sqlite->res_close($res);
@@ -190,7 +190,7 @@ class UrlCanonical
             // Do we have a page attached to this canonical
             $res = $this->sqlite->query("select ID from pages where CANONICAL = ?", $canonical);
             if (!$res) {
-                PluginUtility::msg("An exception has occurred with the search id from canonical");
+                LogUtility::msg("An exception has occurred with the search id from canonical");
             }
             $idInDb = $this->sqlite->res2single($res);
             $this->sqlite->res_close($res);
@@ -199,12 +199,12 @@ class UrlCanonical
                 if (!page_exists($idInDb)) {
                     $res = $this->sqlite->query("delete from pages where ID = ?", $idInDb);
                     if (!$res) {
-                        PluginUtility::msg("An exception has occurred during the deletion of the page");
+                        LogUtility::msg("An exception has occurred during the deletion of the page");
                     }
                     $this->sqlite->res_close($res);
 
                 } else {
-                    PluginUtility::msg("The page ($ID) and the page ($idInDb) have the same canonical ($canonical)",PluginUtility::LVL_MSG_ERROR,"url:manager");
+                    LogUtility::msg("The page ($ID) and the page ($idInDb) have the same canonical ($canonical)", LogUtility::LVL_MSG_ERROR, "url:manager");
                 }
                 $this->persistPageAlias($canonical, $idInDb);
             }
@@ -212,7 +212,7 @@ class UrlCanonical
             // Do we have a canonical on this page
             $res = $this->sqlite->query("select canonical from pages where ID = ?", $ID);
             if (!$res) {
-                PluginUtility::msg("An exception has occurred with the query");
+                LogUtility::msg("An exception has occurred with the query");
             }
             $canonicalInDb = $this->sqlite->res2single($res);
             $this->sqlite->res_close($res);
@@ -230,7 +230,7 @@ class UrlCanonical
                 $statement = 'update pages set canonical = ? where id = ?';
                 $res = $this->sqlite->query($statement, $row);
                 if (!$res) {
-                    PluginUtility::msg("There was a problem during page update");
+                    LogUtility::msg("There was a problem during page update");
                 }
                 $this->sqlite->res_close($res);
 
@@ -239,7 +239,7 @@ class UrlCanonical
                 if ($canonicalInDb == false) {
                     $res = $this->sqlite->storeEntry('pages', $row);
                     if (!$res) {
-                        PluginUtility::msg("There was a problem during pages insertion");
+                        LogUtility::msg("There was a problem during pages insertion");
                     }
                     $this->sqlite->res_close($res);
                 }

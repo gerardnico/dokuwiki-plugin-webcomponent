@@ -1,5 +1,6 @@
 <?php
 
+use ComboStrap\LogUtility;
 use ComboStrap\PluginUtility;
 use ComboStrap\UrlCanonical;
 
@@ -121,7 +122,7 @@ class syntax_plugin_combo_disqus extends DokuWiki_Syntax_Plugin
                 $attributes = PluginUtility::mergeAttributes($attributes, $default);
                 $forumShortName = $attributes[self::ATTRIBUTE_SHORTNAME];
                 if (empty($forumShortName)) {
-                    PluginUtility::msg("The disqus forum shortName should not be empty", PluginUtility::LVL_MSG_ERROR, self::TAG);
+                    LogUtility::msg("The disqus forum shortName should not be empty", LogUtility::LVL_MSG_ERROR, self::TAG);
                     return false;
                 }
                 $forumShortName = hsc($forumShortName);

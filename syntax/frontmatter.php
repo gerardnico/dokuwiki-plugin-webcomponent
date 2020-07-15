@@ -20,6 +20,7 @@
  *
  */
 
+use ComboStrap\LogUtility;
 use ComboStrap\PluginUtility;
 use ComboStrap\UrlCanonical;
 
@@ -133,7 +134,7 @@ class syntax_plugin_combo_frontmatter extends DokuWiki_Syntax_Plugin
 
                 // Not modifiable metadata
                 if (in_array($key, $notModifiableMeta)) {
-                    PluginUtility::msg("Front Matter: The metadata ($key) is a protected metadata and cannot be modified", PluginUtility::LVL_MSG_WARNING);
+                    LogUtility::msg("Front Matter: The metadata ($key) is a protected metadata and cannot be modified", LogUtility::LVL_MSG_WARNING);
                     continue;
                 }
 
@@ -182,7 +183,7 @@ class syntax_plugin_combo_frontmatter extends DokuWiki_Syntax_Plugin
             /** @var Doku_Renderer_metadata $renderer */
             list($state) = $data;
             if ($state == self::PARSING_STATE_ERROR) {
-                PluginUtility::msg("Front Matter: The json object for the page ($ID) is not valid", PluginUtility::LVL_MSG_ERROR);
+                LogUtility::msg("Front Matter: The json object for the page ($ID) is not valid", LogUtility::LVL_MSG_ERROR);
             }
 
 

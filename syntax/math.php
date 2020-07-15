@@ -1,5 +1,6 @@
 <?php
 
+use ComboStrap\LogUtility;
 use ComboStrap\PluginUtility;
 
 if (!defined('DOKU_INC')) die();
@@ -38,7 +39,7 @@ EOD;
      */
     public function __construct()
     {
-        PluginUtility::msg("The math syntax object was instantiated",PluginUtility::LVL_MSG_DEBUG);
+        LogUtility::msg("The math syntax object was instantiated", LogUtility::LVL_MSG_DEBUG);
     }
 
 

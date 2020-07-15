@@ -1,5 +1,6 @@
 <?php
 
+use ComboStrap\LogUtility;
 use ComboStrap\PagesIndex;
 use ComboStrap\PluginUtility;
 
@@ -330,7 +331,7 @@ class action_plugin_combo_urlmessage extends DokuWiki_Action_Plugin
         if (!$result) {
             // Session is really not a well known mechanism
             // Set this error in a info level to not fail the test
-            PluginUtility::msg("Failure to write the session", PluginUtility::LVL_MSG_INFO);
+            LogUtility::msg("Failure to write the session", LogUtility::LVL_MSG_INFO);
         }
 
     }

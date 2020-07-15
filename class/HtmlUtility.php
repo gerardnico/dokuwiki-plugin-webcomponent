@@ -38,7 +38,7 @@ class HtmlUtility
             /** @noinspection PhpUndefinedVariableInspection */
             $domElement = new SimpleXMLElement ($html);
         } catch (\Exception $e) {
-            PluginUtility::msg("The HTML ($html) is not a valid HTML element. The error returned is $e", PluginUtility::LVL_MSG_ERROR);
+            LogUtility::msg("The HTML ($html) is not a valid HTML element. The error returned is $e", LogUtility::LVL_MSG_ERROR);
             return false;
         }
         XmlUtility::addAttributeValue($attributeName, $attributeValue, $domElement);
@@ -58,7 +58,7 @@ class HtmlUtility
             /** @noinspection PhpUndefinedVariableInspection */
             $domElement = new SimpleXMLElement ($html);
         } catch (\Exception $e) {
-            PluginUtility::msg("The HTML ($html) is not a valid HTML element. The error returned is $e", PluginUtility::LVL_MSG_ERROR);
+            LogUtility::msg("The HTML ($html) is not a valid HTML element. The error returned is $e", LogUtility::LVL_MSG_ERROR);
             return false;
         }
         XmlUtility::deleteClass($classValue, $domElement);

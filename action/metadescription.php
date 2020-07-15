@@ -1,5 +1,6 @@
 <?php
 
+use ComboStrap\LogUtility;
 use ComboStrap\PluginUtility;
 use ComboStrap\TestUtility;
 
@@ -85,7 +86,7 @@ class action_plugin_combo_metadescription extends DokuWiki_Action_Plugin
             global $INPUT;
             $showActions = ["show", ""]; // Empty for the test
             if (in_array($INPUT->str("do"), $showActions)) {
-                PluginUtility::msg("Page ($ID): The description should never be null when rendering the page", PluginUtility::LVL_MSG_INFO);
+                LogUtility::msg("Page ($ID): The description should never be null when rendering the page", LogUtility::LVL_MSG_INFO);
             }
         }
     }
