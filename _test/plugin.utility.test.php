@@ -1,9 +1,11 @@
 <?php
 
 use ComboStrap\PluginUtility;
+use ComboStrap\StringUtility;
 use ComboStrap\TestUtility;
 
 require_once(__DIR__ . '/../class/PluginUtility.php');
+require_once(__DIR__ . '/../class/StringUtility.php');
 
 /**
  * Test the component plugin {@link ComboStrap\PluginUtility} class
@@ -15,6 +17,11 @@ class plugin_combo_plugin_utility_test extends DokuWikiTest
 {
 
 
+    public function setUp()
+    {
+        $this->pluginsEnabled[] = PluginUtility::PLUGIN_BASE_NAME;
+        parent::setUp();
+    }
 
     public function test_parse_parameters_base()
     {
@@ -152,6 +159,14 @@ class plugin_combo_plugin_utility_test extends DokuWikiTest
         $this->assertEquals($style, $parameters["style"]);
         $this->assertEquals("yolo", $parameters["whatever"]);
 
+
+        /**
+         * No attributes
+         */
+        $attributes = PluginUtility::getTagAttributes('<cite>');
+        $this->assertEquals(0, sizeof($attributes),"No attributes, array is null");
+
+
     }
 
     public function test_get_content()
@@ -208,6 +223,16 @@ class plugin_combo_plugin_utility_test extends DokuWikiTest
         $isRegularExpression = PluginUtility::isRegularExpression($inputExpression);
         /** @noinspection PhpUndefinedMethodInspection */
         $this->assertEquals(true,$isRegularExpression,"The term (" . $inputExpression . ") is a regular expression");
+
+    }
+
+    /**
+     *
+     */
+    public function test_render_inside_tag(){
+
+        $render = PluginUtility::renderInsideTag("blockquote","Before<cite>MyQuote</cite>");
+        $this->assertEquals("<footer class=\"blockquote-footer\"><cite ></cite></footer>",StringUtility::normalized($render));
 
     }
 

@@ -41,6 +41,7 @@ class syntax_plugin_combo_badge extends DokuWiki_Syntax_Plugin
      *  * 'stack'  - Special case. Plugin wraps other paragraphs. - Stacks can contain paragraphs
      *
      * @see DokuWiki_Syntax_Plugin::getPType()
+     * @see https://www.dokuwiki.org/devel:syntax_plugins#ptype
      */
     function getPType()
     {

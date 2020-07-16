@@ -5,6 +5,7 @@
  *
  */
 
+use ComboStrap\HeaderUtility;
 use ComboStrap\PluginUtility;
 
 if (!defined('DOKU_INC')) {
@@ -12,6 +13,7 @@ if (!defined('DOKU_INC')) {
 }
 
 require_once(__DIR__ . '/../class/PluginUtility.php');
+require_once(__DIR__ . '/../class/HeaderUtility.php');
 
 /**
  * All DokuWiki plugins to extend the parser/rendering mechanism
@@ -25,7 +27,20 @@ class syntax_plugin_combo_blockquote extends DokuWiki_Syntax_Plugin
 {
 
     const TAG = "blockquote";
-    const IMAGE_PATTERN = "\{\{(?:[^\}]|(?:\}[^\}]))+\}\}";
+
+
+    /**
+     * @var mixed|string
+     */
+    static public $type = "card";
+    /**
+     * @var bool
+     */
+    static public $blockQuoteOpen = false;
+    /**
+     * @var bool
+     */
+    static public $cardBodyOpen = false;
 
 
     /**
@@ -50,7 +65,7 @@ class syntax_plugin_combo_blockquote extends DokuWiki_Syntax_Plugin
      */
     public function getAllowedTypes()
     {
-        return array('container', 'baseonly', 'formatting', 'substition', 'protected', 'disabled', 'paragraphs');
+        return array('container', 'formatting', 'substition', 'protected', 'disabled', 'paragraphs');
     }
 
 
@@ -98,8 +113,6 @@ class syntax_plugin_combo_blockquote extends DokuWiki_Syntax_Plugin
 
         $this->Lexer->addExitPattern('</' . self::TAG . '>', PluginUtility::getModeForComponent($this->getPluginComponent()));
 
-        // Receive the image
-        $this->Lexer->addPattern(self::IMAGE_PATTERN, PluginUtility::getModeForComponent($this->getPluginComponent()));
 
     }
 
@@ -123,21 +136,11 @@ class syntax_plugin_combo_blockquote extends DokuWiki_Syntax_Plugin
 
             case DOKU_LEXER_ENTER:
                 // Suppress the component name
-
                 $tagAttributes = PluginUtility::getTagAttributes($match);
                 return array($state, $tagAttributes);
 
             case DOKU_LEXER_UNMATCHED :
                 return array($state, $match);
-
-            case DOKU_LEXER_MATCHED :
-
-                $tagAttributes = array ();
-                if (preg_match('/' . self::IMAGE_PATTERN . '/msSi', $match, $matches)) {
-                    // We have an image, we parse it (Doku_Handler_Parse_Media in handler.php)
-                    $tagAttributes['image'] = Doku_Handler_Parse_Media($match);
-                }
-                return array($state, $tagAttributes);
 
 
             case DOKU_LEXER_EXIT :
@@ -165,68 +168,74 @@ class syntax_plugin_combo_blockquote extends DokuWiki_Syntax_Plugin
         if ($format == 'xhtml') {
 
             /** @var Doku_Renderer_xhtml $renderer */
-            list($state, $payload) = $data;
+            list($state, $payload, $tag) = $data;
             switch ($state) {
 
                 case DOKU_LEXER_ENTER :
-                    if (array_key_exists("class", $payload)) {
-                        $payload["class"] .= "card";
+
+                    if (array_key_exists("type", $payload)) {
+                        self::$type = $payload["type"];
+                        unset($payload["type"]);
+                        $class = "blockquote";
                     } else {
-                        $payload["class"] ="card";
+                        $class = "card";
                     }
+
+                    if (array_key_exists("class", $payload)) {
+                        $payload["class"] .= " ".$class;
+                    } else {
+                        $payload["class"] = $class;
+                    }
+
                     $inlineAttributes = PluginUtility::array2HTMLAttributes($payload);
-                    $renderer->doc .= "<div {$inlineAttributes}>" . DOKU_LF
-                        . DOKU_TAB . '<div class="card-body">' . DOKU_LF
-                        . DOKU_TAB . DOKU_TAB . '<' . self::TAG . ' class="' . self::TAG . ' m-0"';
-                    // m-0 on the blockquote element is to correct a bottom margin from bootstrap of 1em that we don't want
-                    $renderer->doc .= '>' . DOKU_LF;
-                    break;
-
-                case DOKU_LEXER_UNMATCHED :
-
-                    $renderer->doc .= DOKU_TAB . DOKU_TAB . hsc($payload) . DOKU_LF;
-                    break;
-
-                case DOKU_LEXER_MATCHED:
-
-                    if (array_key_exists('cite', $payload)) {
-                        $content = $payload['cite']['content'];
-                        $renderer->doc .= DOKU_TAB . DOKU_TAB . '<footer class="blockquote-footer text-right"><cite>';
-                        $renderer->doc .= hsc($content); //webcomponent::render($content);
-                        $renderer->doc .= "</cite></footer>" . DOKU_LF;
-                    }
-
-                    if (array_key_exists('image', $payload)) {
-                        $src = $payload['image']['src'];
-                        $width = $payload['image']['width'];
-                        $height = $payload['image']['height'];
-                        $title = $payload['image']['title'];
-                        //Snippet taken from $renderer->doc .= $renderer->internalmedia($src, $linking = 'nolink');
-                        $renderer->doc .= '<img class="media my-3" src="' . ml($src, array('w' => $width, 'h' => $height, 'cache' => true)) . '" alt="' . hsc($title) . '" width="' . hsc($width) . '">';
+                    if (self::$type == "typo") {
+                        $renderer->doc .= "<blockquote {$inlineAttributes}>" . DOKU_LF;
+                        self::$blockQuoteOpen = true;
+                    } else {
+                        $renderer->doc .= "<div {$inlineAttributes}>" . DOKU_LF;
                     }
                     break;
+
+                case DOKU_LEXER_UNMATCHED:
+
+                    if (self::$type == "card" && self::$cardBodyOpen != true) {
+                        $renderer->doc .= "<div class=\"card-body\">" . DOKU_LF;
+                        self::$cardBodyOpen = "true";
+                    }
+                    if (self::$blockQuoteOpen == false) {
+                        $renderer->doc .= "<blockquote class=\"blockquote mb-0\">" . DOKU_LF;
+                        self::$blockQuoteOpen = true;
+                    }
+
+                    $renderer->doc .= PluginUtility::render($payload) . DOKU_LF;
+                    break;
+
 
                 case DOKU_LEXER_EXIT :
 
-                    // Close the blockquote
-                    $renderer->doc .= DOKU_TAB . DOKU_TAB . '</' . $this->getPluginComponent() . '>' . DOKU_LF
-                        . DOKU_TAB . '</div>' . DOKU_LF;
+                    if (self::$blockQuoteOpen) {
+                        $renderer->doc .= "</blockquote>" . DOKU_LF;
+                        self::$blockQuoteOpen = false;
+                    }
 
-                    // Close the card
-                    $renderer->doc .= '</div>';
+                    if (self::$cardBodyOpen) {
+                        $renderer->doc .= "</div>" . DOKU_LF;
+                        self::$cardBodyOpen = false;
+                    }
+
+                    if (self::$type == "card") {
+                        $renderer->doc .= '</div>' . DOKU_LF;
+                    }
 
                     // Reinit
-                    $this->content = "";
-                    $this->img = "";
-                    $this->cite = "";
+                    self::$type = "card";
+
                     break;
             }
             return true;
         }
         return true;
     }
-
-
 
 
 }

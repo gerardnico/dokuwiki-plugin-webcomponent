@@ -147,6 +147,9 @@ class PluginUtility
     /**
      * @param $component
      * @return string
+     *
+     * A mode is just a name for a class
+     * Example: $Parser->addMode('listblock',new Doku_Parser_Mode_ListBlock());
      */
     public static function getModeForComponent($component)
     {
@@ -177,6 +180,20 @@ class PluginUtility
     {
         // Process the style attributes if any
         self::processStyle($attributes);
+
+        // The class shortcut
+        $align = "align";
+        if (array_key_exists($align, $attributes)) {
+            $alignValue = $attributes[$align];
+            unset($attributes[$align]);
+            if ($alignValue == "center") {
+                if (array_key_exists("class", $attributes)) {
+                    $attributes["class"] .= " mx-auto";
+                } else {
+                    $attributes["class"] = " mx-auto";
+                }
+            }
+        }
 
         // Then transform
         $tagAttributeString = "";
@@ -362,14 +379,30 @@ class PluginUtility
      */
     public static function render($pageContent)
     {
-        $instructions = p_get_instructions($pageContent);
-        $lastPBlockPosition = sizeof($instructions) - 2;
-        if ($instructions[1][0] == 'p_open') {
-            unset($instructions[1]);
-        }
-        if ($instructions[$lastPBlockPosition][0] == 'p_close') {
-            unset($instructions[$lastPBlockPosition]);
-        }
+        $instructions = self::getInstructions($pageContent);
+        return p_render('xhtml', $instructions, $info);
+    }
+
+    /**
+     * Render a text inside a text in order to give context to the
+     * below component
+     * @param $tag
+     * @param $pageContent
+     * @return string|null
+     */
+    public static function renderInsideTag($tag, $pageContent)
+    {
+        // Add the tag
+        $text = "<$tag>$pageContent</$tag>";
+
+        // Retrieve the instructions
+        $instructions = self::getInstructions($text);
+
+        // Delete the tag instructions
+        unset($instructions[1]);
+        unset($instructions[sizeof($instructions)-1]);
+
+        // Render
         return p_render('xhtml', $instructions, $info);
     }
 
@@ -446,6 +479,7 @@ class PluginUtility
             }
             unset($attributes[$heightName]);
         }
+
 
         if (sizeof($styleProperties) != 0) {
             $attributes[$styleAttributeName] = PluginUtility::array2InlineStyle($styleProperties);
@@ -666,6 +700,23 @@ class PluginUtility
     public static function escape($payload)
     {
         return hsc($payload);
+    }
+
+    /**
+     * @param $pageContent
+     * @return array
+     */
+    private static function getInstructions($pageContent)
+    {
+        $instructions = p_get_instructions($pageContent);
+        $lastPBlockPosition = sizeof($instructions) - 2;
+        if ($instructions[1][0] == 'p_open') {
+            unset($instructions[1]);
+        }
+        if ($instructions[$lastPBlockPosition][0] == 'p_close') {
+            unset($instructions[$lastPBlockPosition]);
+        }
+        return $instructions;
     }
 
 

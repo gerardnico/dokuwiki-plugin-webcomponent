@@ -12,12 +12,11 @@ use ComboStrap\PluginUtility;
 if (!defined('DOKU_INC')) die();
 
 /**
- * Class syntax_plugin_combo_buttonlink
- * A link pattern to take over the link in the button
- * because the a element got a color
- * and can't therefore inherit the value of the button
+ *
+ * A link pattern to take over the link of Dokuwiki
+ * and transform it as a bootstrap link
  */
-class syntax_plugin_combo_buttonlink extends DokuWiki_Syntax_Plugin
+class syntax_plugin_combo_bootstraplink extends DokuWiki_Syntax_Plugin
 {
 
 
@@ -71,8 +70,14 @@ class syntax_plugin_combo_buttonlink extends DokuWiki_Syntax_Plugin
 
     function connectTo($mode)
     {
-        // Only inside a button
-        if ($mode == PluginUtility::getModeForComponent(syntax_plugin_combo_button::getTag())) {
+        // Only inside the following component
+        $authorizedMode =
+            [
+                PluginUtility::getModeForComponent(syntax_plugin_combo_button::getTag()),
+                PluginUtility::getModeForComponent("blockquotecite"),
+                PluginUtility::getModeForComponent(syntax_plugin_combo_dropdown::TAG)
+                ];
+        if (in_array($mode,$authorizedMode)) {
             $this->Lexer->addSpecialPattern(LinkUtility::LINK_PATTERN, $mode, PluginUtility::getModeForComponent($this->getPluginComponent()));
         }
     }

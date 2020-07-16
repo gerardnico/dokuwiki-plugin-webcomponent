@@ -39,9 +39,9 @@ class syntax_plugin_combo_blockquotecite extends DokuWiki_Syntax_Plugin
 
     function connectTo($mode)
     {
-        if ($mode == "plugin_combo_blockquote") {
-            $pattern = '<' . self::getTag() . '.*?>(?=.*?</' . self::getTag() . '>)';
-            $this->Lexer->addEntryPattern($pattern, $mode, 'plugin_' . PluginUtility::PLUGIN_BASE_NAME . '_' . $this->getPluginComponent());
+        if ($mode == PluginUtility::getModeForComponent(syntax_plugin_combo_blockquote::TAG)) {
+            $pattern = PluginUtility::getContainerTagPattern(syntax_plugin_combo_cite::TAG);
+            $this->Lexer->addEntryPattern($pattern, $mode, PluginUtility::getModeForComponent($this->getPluginComponent()));
         }
     }
 
@@ -49,7 +49,7 @@ class syntax_plugin_combo_blockquotecite extends DokuWiki_Syntax_Plugin
     function postConnect()
     {
 
-        $this->Lexer->addExitPattern('</' . self::getTag() . '>', 'plugin_' . PluginUtility::PLUGIN_BASE_NAME . '_' . $this->getPluginComponent());
+        $this->Lexer->addExitPattern('</' . syntax_plugin_combo_cite::TAG . '>', PluginUtility::getModeForComponent($this->getPluginComponent()));
 
     }
 
@@ -59,9 +59,9 @@ class syntax_plugin_combo_blockquotecite extends DokuWiki_Syntax_Plugin
         switch ($state) {
 
             case DOKU_LEXER_ENTER :
-                return array($state, '');
+                $tagAttributes = PluginUtility::getTagAttributes($match);
+                return array($state, $tagAttributes);
 
-            // As this is a container, this cannot happens but yeah, now, you know
             case DOKU_LEXER_UNMATCHED :
                 return array($state, $match);
 
@@ -92,14 +92,30 @@ class syntax_plugin_combo_blockquotecite extends DokuWiki_Syntax_Plugin
         if ($format == 'xhtml') {
 
             /** @var Doku_Renderer_xhtml $renderer */
-            list($state, $parameters) = $data;
+            list($state, $payload) = $data;
             switch ($state) {
                 case DOKU_LEXER_ENTER :
-                    $renderer->doc .= DOKU_TAB . DOKU_TAB . '<footer class="blockquote-footer text-right"><cite>';
+
+                    /**
+                     * Hack in case there is no unmatched text in a blockquote
+                     */
+                    if (syntax_plugin_combo_blockquote::$cardBodyOpen == false && syntax_plugin_combo_blockquote::$type=="card") {
+                        $renderer->doc .= '<div class="card-body">' . DOKU_LF;
+                        $renderer->doc .= '<blockquote class="blockquote mb-0">' . DOKU_LF;
+                        syntax_plugin_combo_blockquote::$cardBodyOpen = true;
+                        syntax_plugin_combo_blockquote::$blockQuoteOpen = true;
+                    }
+                    $renderer->doc .= "<footer class=\"blockquote-footer\"><cite";
+                    if (sizeof($payload)>0){
+                        $inlineAttributes = PluginUtility::array2HTMLAttributes($payload);
+                        $renderer->doc .= $inlineAttributes.'>';
+                    } else {
+                        $renderer->doc .= '>';
+                    }
                     break;
 
                 case DOKU_LEXER_UNMATCHED :
-                    $renderer->doc .= $renderer->_xmlEntities($parameters);
+                    $renderer->doc .= PluginUtility::escape($payload);
                     break;
 
                 case DOKU_LEXER_EXIT :
@@ -113,11 +129,7 @@ class syntax_plugin_combo_blockquotecite extends DokuWiki_Syntax_Plugin
         return false;
     }
 
-    public
-    static function getTag()
-    {
-        return 'cite';
-    }
+
 
 }
 

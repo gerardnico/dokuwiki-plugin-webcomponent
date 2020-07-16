@@ -33,10 +33,11 @@ class syntax_plugin_combo_card extends DokuWiki_Syntax_Plugin
     // https://github.com/cosmocode/changes/blob/master/syntax.php
     const IMAGE_PATTERN = "\{\{(?:[^>\}]|(?:\}[^\}]))+\}\}";
 
+    const TAG = 'card';
 
     // The elements of a teaser
     // because they are assembled at the end
-    const body_html = DOKU_TAB . '<div class="card-body">';
+    const body_html = '<div class="card-body">';
 
 
     /**
@@ -191,9 +192,9 @@ class syntax_plugin_combo_card extends DokuWiki_Syntax_Plugin
 
                     $attributes = $payload;
                     if (array_key_exists("class", $attributes)) {
-                        $attributes["class"].=" card";
+                        $attributes["class"] .= " card";
                     } else {
-                        $attributes["class"]="card";
+                        $attributes["class"] = "card";
                     }
                     $renderer->doc .= '<div '.PluginUtility::array2HTMLAttributes($attributes).'>' . DOKU_LF;
                     $renderer->doc .= self::body_html . DOKU_LF;
@@ -201,7 +202,7 @@ class syntax_plugin_combo_card extends DokuWiki_Syntax_Plugin
 
                 case DOKU_LEXER_UNMATCHED :
 
-                    $renderer->doc .= $renderer->_xmlEntities($payload);
+                    $renderer->doc .= PluginUtility::escape($payload);
 
                     break;
 
@@ -216,14 +217,14 @@ class syntax_plugin_combo_card extends DokuWiki_Syntax_Plugin
                         $height = $payload['image']['height'];
                         $title = $payload['image']['title'];
                         //Snippet taken from $renderer->doc .= $renderer->internalmedia($src, $linking = 'nolink');
-                        $renderer->doc .= DOKU_TAB . '<img class="card-img-top" src="' . ml($src, array('w' => $width, 'h' => $height, 'cache' => true)) . '" alt="' . $title . '" width="' . $width . '">' . DOKU_LF;
+                        $renderer->doc .= '<img class="card-img-top" src="' . ml($src, array('w' => $width, 'h' => $height, 'cache' => true)) . '" alt="' . $title . '" width="' . $width . '">' . DOKU_LF;
                         $renderer->doc .= self::body_html;
                     }
                     break;
 
                 case DOKU_LEXER_EXIT :
 
-                    $renderer->doc .= DOKU_TAB . '</div>' . DOKU_LF;
+                    $renderer->doc .= '</div>' . DOKU_LF;
                     $renderer->doc .= "</div>" . DOKU_LF;
 
                     break;
@@ -234,16 +235,11 @@ class syntax_plugin_combo_card extends DokuWiki_Syntax_Plugin
     }
 
 
-    public static function getTag()
-    {
-        list(/* $t */, /* $p */, /* $n */, $c) = explode('_', get_called_class(), 4);
-        return (isset($c) ? $c : '');
-    }
 
     public
     static function getTags()
     {
-        $elements[] = PluginUtility::getTagName(get_called_class());
+        $elements[] = self::TAG;
         $elements[] = 'teaser';
         return $elements;
     }

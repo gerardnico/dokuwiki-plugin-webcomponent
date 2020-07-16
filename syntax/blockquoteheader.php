@@ -7,14 +7,13 @@
 use ComboStrap\HeaderUtility;
 use ComboStrap\PluginUtility;
 
-require_once(__DIR__ . '/../class/HeaderUtility.php');
-
 if (!defined('DOKU_INC')) die();
 
+require_once(__DIR__ . '/../class/HeaderUtility.php');
 
-class syntax_plugin_combo_cardheader extends DokuWiki_Syntax_Plugin
+
+class syntax_plugin_combo_blockquoteheader extends DokuWiki_Syntax_Plugin
 {
-
 
 
     function getType()
@@ -33,7 +32,10 @@ class syntax_plugin_combo_cardheader extends DokuWiki_Syntax_Plugin
      */
     function getPType()
     {
-        return 'block';
+        /**
+         * We just don't want the p
+         */
+        return 'normal';
     }
 
     function getAllowedTypes()
@@ -49,8 +51,7 @@ class syntax_plugin_combo_cardheader extends DokuWiki_Syntax_Plugin
 
     function connectTo($mode)
     {
-        // Only inside a card
-        if ($mode == PluginUtility::getModeForComponent(syntax_plugin_combo_card::TAG) ) {
+        if ($mode == PluginUtility::getModeForComponent(syntax_plugin_combo_blockquote::TAG)) {
             $this->Lexer->addSpecialPattern(HeaderUtility::HEADER_PATTERN, $mode, PluginUtility::getModeForComponent($this->getPluginComponent()));
         }
     }
@@ -62,11 +63,9 @@ class syntax_plugin_combo_cardheader extends DokuWiki_Syntax_Plugin
 
         switch ($state) {
 
-            // As this is a container, this cannot happens but yeah, now, you know
             case DOKU_LEXER_SPECIAL :
-
-                $parameters = HeaderUtility::parse($match);
-                return array($state, $parameters);
+                $tagAttributes = HeaderUtility::parse($match);
+                return array($state, $tagAttributes);
 
         }
         return array();
@@ -89,21 +88,22 @@ class syntax_plugin_combo_cardheader extends DokuWiki_Syntax_Plugin
         if ($format == 'xhtml') {
 
             /** @var Doku_Renderer_xhtml $renderer */
-            list($state, $parameters) = $data;
+            list($state, $payload) = $data;
             switch ($state) {
 
                 case DOKU_LEXER_SPECIAL :
 
-                    $title = $parameters['header']['title'];
-                    $level = $parameters['header']['level'];
-                    $renderer->doc .= '<h' . $level . ' class="card-title" ' . HeaderUtility::COMPONENT_TITLE_STYLE . '>';
-                    $renderer->doc .= PluginUtility::escape($title);
-                    $renderer->doc .= "</h$level>";
+                    $title = $payload['header']['title'];
+                    $renderer->doc .= '<div class="card-header">' . DOKU_LF;
+                    $renderer->doc .= PluginUtility::escape($title) . DOKU_LF;
+                    $renderer->doc .= "</div>";
 
                     break;
 
             }
+            return true;
         }
+
         // unsupported $mode
         return false;
     }
