@@ -236,12 +236,12 @@ class PluginUtility
     {
 
         // Until the first >
-        $pos = strpos($match,">");
-        if ($pos == false){
+        $pos = strpos($match, ">");
+        if ($pos == false) {
             LogUtility::msg("The match does not contain any tag. Match: {$match}", LogUtility::LVL_MSG_ERROR);
             return array();
         }
-        $match = substr($match,0,$pos);
+        $match = substr($match, 0, $pos);
 
 
         // Trim to start clean
@@ -400,7 +400,7 @@ class PluginUtility
 
         // Delete the tag instructions
         unset($instructions[1]);
-        unset($instructions[sizeof($instructions)-1]);
+        unset($instructions[sizeof($instructions) - 1]);
 
         // Render
         return p_render('xhtml', $instructions, $info);
@@ -454,9 +454,9 @@ class PluginUtility
             if (array_key_exists($colorAttribute, $attributes)) {
                 $colorValue = $attributes[$colorAttribute];
                 $gradientPrefix = 'gradient-';
-                if (strpos($colorValue, $gradientPrefix) === 0){
-                    $mainColorValue = substr($colorValue,strlen($gradientPrefix));
-                    $styleProperties['background-image'] = 'linear-gradient(to top,#fff 0,'.self::getColorValue($mainColorValue).' 100%)';
+                if (strpos($colorValue, $gradientPrefix) === 0) {
+                    $mainColorValue = substr($colorValue, strlen($gradientPrefix));
+                    $styleProperties['background-image'] = 'linear-gradient(to top,#fff 0,' . self::getColorValue($mainColorValue) . ' 100%)';
                     $styleProperties['background-color'] = 'unset!important';
                 } else {
                     $styleProperties[$colorAttribute] = self::getColorValue($colorValue);
@@ -474,7 +474,7 @@ class PluginUtility
         $heightName = "height";
         if (array_key_exists($heightName, $attributes)) {
             $styleProperties[$heightName] = trim($attributes[$heightName]);
-            if (!array_key_exists("overflow",$attributes)){
+            if (!array_key_exists("overflow", $attributes)) {
                 $styleProperties["overflow"] = "auto";
             }
             unset($attributes[$heightName]);
@@ -572,7 +572,7 @@ class PluginUtility
                 }
             }
         }
-        return $icon .'<a href="'.self::$URL_BASE.'/'. str_replace(":","/",$canonical).'" title="'.$text.'">'.$text.'</a>';
+        return $icon . '<a href="' . self::$URL_BASE . '/' . str_replace(":", "/", $canonical) . '" title="' . $text . '">' . $text . '</a>';
     }
 
     /**
@@ -583,7 +583,7 @@ class PluginUtility
      */
     public static function mergeAttributes(array $inlineAttributes, array $defaultAttributes = array())
     {
-        return array_merge($defaultAttributes,$inlineAttributes);
+        return array_merge($defaultAttributes, $inlineAttributes);
     }
 
     /**
@@ -610,25 +610,25 @@ class PluginUtility
     public static function getTagContent($match)
     {
         // From the first >
-        $start = strpos($match,">");
-        if ($start == false){
+        $start = strpos($match, ">");
+        if ($start == false) {
             LogUtility::msg("The match does not contain any opening tag. Match: {$match}", LogUtility::LVL_MSG_ERROR);
             return "";
         }
         $match = substr($match, $start + 1);
         // If this is the last character, we get a false
-        if ($match == false){
+        if ($match == false) {
             LogUtility::msg("The match does not contain any closing tag. Match: {$match}", LogUtility::LVL_MSG_ERROR);
             return "";
         }
 
-        $end = strpos($match,"</");
-        if ($end == false){
+        $end = strpos($match, "</");
+        if ($end == false) {
             LogUtility::msg("The match does not contain any closing tag. Match: {$match}", LogUtility::LVL_MSG_ERROR);
             return "";
         }
 
-        return substr($match,0,$end);
+        return substr($match, 0, $end);
     }
 
     /**
@@ -642,18 +642,18 @@ class PluginUtility
     public static function htmlSnippetAlreadyAdded(&$indicators)
     {
         global $ID;
-        if (isset($_SERVER['REQUEST_TIME_FLOAT'])){
+        if (isset($_SERVER['REQUEST_TIME_FLOAT'])) {
             // since php 5.4
             $requestTime = $_SERVER['REQUEST_TIME_FLOAT'];
         } else {
             // DokuWiki test framework use this
             $requestTime = $_SERVER['REQUEST_TIME'];
         }
-        $uniqueId = hash( 'crc32b', $_SERVER['REMOTE_ADDR']. $_SERVER['REMOTE_PORT']. $requestTime . $ID);
-        if (array_key_exists($uniqueId, $indicators)){
+        $uniqueId = hash('crc32b', $_SERVER['REMOTE_ADDR'] . $_SERVER['REMOTE_PORT'] . $requestTime . $ID);
+        if (array_key_exists($uniqueId, $indicators)) {
             return true;
         } else {
-            $indicators[$uniqueId]=$requestTime;
+            $indicators[$uniqueId] = $requestTime;
             return false;
         }
     }
@@ -684,7 +684,7 @@ class PluginUtility
      */
     public static function getMeta($key)
     {
-        return p_get_metadata(PluginUtility::getPageId(),$key);
+        return p_get_metadata(PluginUtility::getPageId(), $key);
     }
 
     /**
@@ -694,7 +694,7 @@ class PluginUtility
      */
     public static function setMeta($key, $value)
     {
-        p_set_metadata(self::getPageId(),array ($key=>$value));
+        p_set_metadata(self::getPageId(), array($key => $value));
     }
 
     public static function escape($payload)
@@ -717,6 +717,20 @@ class PluginUtility
             unset($instructions[$lastPBlockPosition]);
         }
         return $instructions;
+    }
+
+    /**
+     * Add a class
+     * @param $classValue
+     * @param array $attributes
+     */
+    public static function addClass2Attributes($classValue, array &$attributes)
+    {
+        if (array_key_exists("class", $attributes) && $attributes["class"] !== "") {
+            $attributes["class"] .= " {$classValue}";
+        } else {
+            $attributes["class"] = "{$classValue}";
+        }
     }
 
 

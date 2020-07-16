@@ -28,17 +28,14 @@ class syntax_plugin_combo_card extends DokuWiki_Syntax_Plugin
 {
 
 
-    // The > in the pattern below is to be able to handle pluggin
-    // that uses a pattern such as {{changes>.}} from the change plugin
-    // https://github.com/cosmocode/changes/blob/master/syntax.php
-    const IMAGE_PATTERN = "\{\{(?:[^>\}]|(?:\}[^\}]))+\}\}";
-
     const TAG = 'card';
 
-    // The elements of a teaser
-    // because they are assembled at the end
-    const body_html = '<div class="card-body">';
 
+
+    /**
+     * @var bool
+     */
+    static public $cardBodyOpen = false;
 
     /**
      * Syntax Type.
@@ -100,7 +97,6 @@ class syntax_plugin_combo_card extends DokuWiki_Syntax_Plugin
     {
 
         foreach (self::getTags() as $tag) {
-
             $pattern = PluginUtility::getContainerTagPattern($tag);
             $this->Lexer->addEntryPattern($pattern, $mode, PluginUtility::getModeForComponent($this->getPluginComponent()));
         }
@@ -115,8 +111,8 @@ class syntax_plugin_combo_card extends DokuWiki_Syntax_Plugin
             $this->Lexer->addExitPattern('</' . $tag . '>', PluginUtility::getModeForComponent($this->getPluginComponent()));
         }
 
-        // Image
-        $this->Lexer->addPattern(self::IMAGE_PATTERN, PluginUtility::getModeForComponent($this->getPluginComponent()));
+
+
 
     }
 
@@ -147,16 +143,6 @@ class syntax_plugin_combo_card extends DokuWiki_Syntax_Plugin
 
                 return array($state, $match);
 
-            case DOKU_LEXER_MATCHED :
-
-                $attributes = array();
-
-                if (preg_match('/' . self::IMAGE_PATTERN . '/msSi', $match . DOKU_LF)) {
-                    // We have an image, we parse it (Doku_Handler_Parse_Media in handler.php)
-                    $attributes['image'] = Doku_Handler_Parse_Media($match);
-                }
-
-                return array($state, $attributes);
 
             case DOKU_LEXER_EXIT :
 
@@ -191,42 +177,28 @@ class syntax_plugin_combo_card extends DokuWiki_Syntax_Plugin
                 case DOKU_LEXER_ENTER :
 
                     $attributes = $payload;
-                    if (array_key_exists("class", $attributes)) {
-                        $attributes["class"] .= " card";
-                    } else {
-                        $attributes["class"] = "card";
-                    }
+                    PluginUtility::addClass2Attributes("card",$attributes);
                     $renderer->doc .= '<div '.PluginUtility::array2HTMLAttributes($attributes).'>' . DOKU_LF;
-                    $renderer->doc .= self::body_html . DOKU_LF;
                     break;
 
                 case DOKU_LEXER_UNMATCHED :
 
+                    if (self::$cardBodyOpen==false){
+                        $renderer->doc .= '<div class="card-body">'. DOKU_LF;
+                        self::$cardBodyOpen=true;
+                    }
                     $renderer->doc .= PluginUtility::escape($payload);
 
                     break;
 
-                case DOKU_LEXER_MATCHED:
-
-
-                    if (array_key_exists('image', $payload)) {
-
-                        $renderer->doc = substr($renderer->doc, 0, strlen($renderer->doc) - strlen(self::body_html) - strlen(DOKU_LF));
-                        $src = $payload['image']['src'];
-                        $width = $payload['image']['width'];
-                        $height = $payload['image']['height'];
-                        $title = $payload['image']['title'];
-                        //Snippet taken from $renderer->doc .= $renderer->internalmedia($src, $linking = 'nolink');
-                        $renderer->doc .= '<img class="card-img-top" src="' . ml($src, array('w' => $width, 'h' => $height, 'cache' => true)) . '" alt="' . $title . '" width="' . $width . '">' . DOKU_LF;
-                        $renderer->doc .= self::body_html;
-                    }
-                    break;
 
                 case DOKU_LEXER_EXIT :
 
                     $renderer->doc .= '</div>' . DOKU_LF;
                     $renderer->doc .= "</div>" . DOKU_LF;
 
+                    // Reset
+                    self::$cardBodyOpen = false;
                     break;
             }
             return true;

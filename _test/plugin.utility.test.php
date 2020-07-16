@@ -226,14 +226,6 @@ class plugin_combo_plugin_utility_test extends DokuWikiTest
 
     }
 
-    /**
-     *
-     */
-    public function test_render_inside_tag(){
 
-        $render = PluginUtility::renderInsideTag("blockquote","Before<cite>MyQuote</cite>");
-        $this->assertEquals("<footer class=\"blockquote-footer\"><cite ></cite></footer>",StringUtility::normalized($render));
-
-    }
 
 }

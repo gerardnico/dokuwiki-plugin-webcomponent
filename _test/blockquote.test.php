@@ -1,6 +1,8 @@
 <?php
 
 require_once(__DIR__ . '/../class/PluginUtility.php');
+
+use ComboStrap\HeadingUtility;
 use ComboStrap\PluginUtility;
 
 
@@ -63,12 +65,37 @@ class plugin_combo_blockquote_test extends DokuWikiTest
 
     }
 
-    public function test_card_with_header()
+    public function test_card_with_heading()
     {
 
         $element = syntax_plugin_combo_blockquote::TAG;
         $dokuContent = '<' . $element . '>'.DOKU_LF
             .'=== Header ==='.DOKU_LF
+            .'MyQuote'
+            .'</' . $element . '>';
+        $expected = '<div class="card">'.DOKU_LF
+            .'<div class="card-body">'.DOKU_LF
+            . "<h4 class=\"card-title\" ".HeadingUtility::COMPONENT_TITLE_STYLE.">Header</h4>".DOKU_LF
+            .'<blockquote class="blockquote mb-0">'.DOKU_LF
+            .'MyQuote'.DOKU_LF
+            .'</blockquote>'.DOKU_LF
+            .'</div>'.DOKU_LF
+            .'</div>'.DOKU_LF
+            ;
+
+
+        $instructions = p_get_instructions($dokuContent);
+        $xhtml = p_render('xhtml', $instructions, $info);
+        $this->assertEquals($expected, $xhtml);
+
+    }
+
+    public function test_card_with_header()
+    {
+
+        $element = syntax_plugin_combo_blockquote::TAG;
+        $dokuContent = '<' . $element . '>'.DOKU_LF
+            .'<header>Header</header>'.DOKU_LF
             .'MyQuote'
             .'</' . $element . '>';
         $expected = '<div class="card">'.DOKU_LF
@@ -81,7 +108,7 @@ class plugin_combo_blockquote_test extends DokuWikiTest
             .'</blockquote>'.DOKU_LF
             .'</div>'.DOKU_LF
             .'</div>'.DOKU_LF
-            ;
+        ;
 
 
         $instructions = p_get_instructions($dokuContent);
@@ -135,6 +162,29 @@ class plugin_combo_blockquote_test extends DokuWikiTest
             .'<div class="card-body">'.DOKU_LF
             .'<blockquote class="blockquote mb-0">'.DOKU_LF
             .'MyQuote'.DOKU_LF
+            .'</blockquote>'.DOKU_LF
+            .'</div>'.DOKU_LF
+            .'</div>'.DOKU_LF;
+
+        $instructions = p_get_instructions($doku_text);
+        $xhtml = p_render('xhtml', $instructions, $info);
+        $this->assertEquals($expected, $xhtml);
+
+    }
+
+    public function test_blockquote_heading()
+    {
+
+        $element = syntax_plugin_combo_blockquote::TAG;
+        $doku_text = '<' . $element . ' >'.DOKU_LF
+          .'=== Title ==='.DOKU_LF
+          .'MyQuote'.DOKU_LF
+          .'</' . $element . '>';
+        $expected = '<div class="card">'.DOKU_LF
+            .'<div class="card-body">'.DOKU_LF
+            .'<h4 class="card-title" '.HeadingUtility::COMPONENT_TITLE_STYLE.'>Title</h4>'.DOKU_LF
+            .'<blockquote class="blockquote mb-0">'.DOKU_LF
+            .'MyQuote'.DOKU_LF.DOKU_LF
             .'</blockquote>'.DOKU_LF
             .'</div>'.DOKU_LF
             .'</div>'.DOKU_LF;

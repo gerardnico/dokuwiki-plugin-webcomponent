@@ -16,27 +16,5 @@ namespace ComboStrap;
 class HeaderUtility
 {
 
-    /**
-     * Header pattern that we expect in a card (teaser) ie  ==== Hello =====
-     * Found in {@link \dokuwiki\Parsing\ParserMode\Header}
-     */
-    const HEADER_PATTERN = '[ \t]*={2,}[^\n]+={2,}[ \t]*(?=\n)';
-
-    /**
-     * The fix top menu strike again
-     */
-    const COMPONENT_TITLE_STYLE = 'style="color: inherit!important;margin-top:unset!important;margin-left:unset!important;padding-top:unset!important"';
-
-    public static function parse($match)
-    {
-        $title = trim($match);
-        $level = 7 - strspn($title, '=');
-        if ($level < 1) $level = 1;
-        $title = trim($title, '=');
-        $title = trim($title);
-        $parameters['header']['title'] = $title;
-        $parameters['header']['level'] = $level;
-        return $parameters;
-    }
-
+    const HEADER = "header";
 }

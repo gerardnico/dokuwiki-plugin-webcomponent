@@ -1,6 +1,6 @@
 <?php
 
-use ComboStrap\HeaderUtility;
+use ComboStrap\HeadingUtility;
 use ComboStrap\PluginUtility;
 
 require_once(__DIR__ . '/../class/PluginUtility.php');
@@ -46,16 +46,14 @@ class plugin_combo_cardcolumns_test extends DokuWikiTest
         $instructions = p_get_instructions($doku_text);
         $xhtml = p_render('xhtml', $instructions, $info);
 
-        $expected = '<div class="card-columns">'.DOKU_LF.
-            '<div style="width: 18rem" class="card">'.DOKU_LF.
-            DOKU_TAB.'<div class="card-body">'.DOKU_LF.
-            DOKU_TAB.DOKU_TAB.'<h2 class="card-title" '. HeaderUtility::COMPONENT_TITLE_STYLE .'>Title</h2>'.DOKU_LF.
-            '<p>'.DOKU_LF.
-            'Teaser Text'.DOKU_LF.
-            '</p>'.DOKU_LF.
-            DOKU_TAB.'</div>'.DOKU_LF.
-            '</div>'.DOKU_LF.
-            '</div>'.DOKU_LF;
+        $expected = '<div class="card-columns">'.DOKU_LF
+            .'<div style="width: 18rem" class="card">'.DOKU_LF
+            .'<div class="card-body">'.DOKU_LF
+            .'<h2 class="card-title" '. HeadingUtility::COMPONENT_TITLE_STYLE .'>Title</h2>'.DOKU_LF
+            .'Teaser Text'.DOKU_LF
+            .'</div>'.DOKU_LF
+            .'</div>'.DOKU_LF
+            .'</div>'.DOKU_LF;
 
 
         $this->assertEquals($expected, $xhtml);

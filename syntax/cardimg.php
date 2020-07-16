@@ -6,16 +6,24 @@
 // must be run within Dokuwiki
 use ComboStrap\HeaderUtility;
 use ComboStrap\HeadingUtility;
+use ComboStrap\ImgUtility;
 use ComboStrap\PluginUtility;
 
-require_once(__DIR__ . '/../class/HeaderUtility.php');
+require_once(__DIR__ . '/../class/ImgUtility.php');
 
 if (!defined('DOKU_INC')) die();
 
 
-class syntax_plugin_combo_cardheader extends DokuWiki_Syntax_Plugin
+/**
+ * Card image
+ * Title
+ */
+class syntax_plugin_combo_cardimg extends DokuWiki_Syntax_Plugin
 {
 
+    // The > in the pattern below is to be able to handle pluggin
+    // that uses a pattern such as {{changes>.}} from the change plugin
+    // https://github.com/cosmocode/changes/blob/master/syntax.php
 
 
     function getType()
@@ -53,34 +61,24 @@ class syntax_plugin_combo_cardheader extends DokuWiki_Syntax_Plugin
         // Only inside a card
         $modes = [
             PluginUtility::getModeForComponent(syntax_plugin_combo_card::TAG),
-            PluginUtility::getModeForComponent(syntax_plugin_combo_blockquote::TAG)
-            ];
+        ];
         if (in_array($mode, $modes)) {
-            $this->Lexer->addEntryPattern(PluginUtility::getContainerTagPattern(HeaderUtility::HEADER), $mode, PluginUtility::getModeForComponent($this->getPluginComponent()));
+            $this->Lexer->addSpecialPattern(ImgUtility::IMAGE_PATTERN, $mode, PluginUtility::getModeForComponent($this->getPluginComponent()));
         }
     }
 
-    public function postConnect()
-    {
-        $this->Lexer->addExitPattern('</' . HeaderUtility::HEADER . '>', PluginUtility::getModeForComponent($this->getPluginComponent()));
-    }
 
     function handle($match, $state, $pos, Doku_Handler $handler)
     {
 
         switch ($state) {
 
-            case DOKU_LEXER_ENTER:
-                $tagAttributes = PluginUtility::getTagAttributes($match);
-                return array($state, $tagAttributes);
 
-            case DOKU_LEXER_UNMATCHED :
-                return array($state, $match);
+            // As this is a container, this cannot happens but yeah, now, you know
+            case DOKU_LEXER_SPECIAL :
 
-            case DOKU_LEXER_EXIT :
-                // Important otherwise we don't get an exit in the render
-                return array($state, '');
-
+                $attributes = ImgUtility::parse($match);
+                return array($state, $attributes);
 
         }
         return array();
@@ -106,27 +104,16 @@ class syntax_plugin_combo_cardheader extends DokuWiki_Syntax_Plugin
             list($state, $payload) = $data;
             switch ($state) {
 
-                case DOKU_LEXER_ENTER:
-                    PluginUtility::addClass2Attributes("card-header",$payload);
-                    $inlineAttributes = PluginUtility::array2HTMLAttributes($payload);
-                    $renderer->doc .= "<div {$inlineAttributes}>" . DOKU_LF;
-                    break;
+                case DOKU_LEXER_SPECIAL :
 
-                case DOKU_LEXER_UNMATCHED :
-                    $renderer->doc .= PluginUtility::escape($payload).DOKU_LF;
+                    $renderer->doc .= ImgUtility::render($payload,"card-img-top");
                     break;
-
-                case DOKU_LEXER_EXIT:
-                    $renderer->doc .= "</div>";
-                    break;
-
 
             }
         }
         // unsupported $mode
         return false;
     }
-
 
 
 }

@@ -5,7 +5,7 @@
  *
  */
 
-use ComboStrap\HeaderUtility;
+use ComboStrap\HeadingUtility;
 use ComboStrap\PluginUtility;
 
 if (!defined('DOKU_INC')) {
@@ -13,7 +13,7 @@ if (!defined('DOKU_INC')) {
 }
 
 require_once(__DIR__ . '/../class/PluginUtility.php');
-require_once(__DIR__ . '/../class/HeaderUtility.php');
+require_once(__DIR__ . '/../class/HeadingUtility.php');
 
 /**
  * All DokuWiki plugins to extend the parser/rendering mechanism
@@ -181,11 +181,7 @@ class syntax_plugin_combo_blockquote extends DokuWiki_Syntax_Plugin
                         $class = "card";
                     }
 
-                    if (array_key_exists("class", $payload)) {
-                        $payload["class"] .= " ".$class;
-                    } else {
-                        $payload["class"] = $class;
-                    }
+                    PluginUtility::addClass2Attributes($class, $payload);
 
                     $inlineAttributes = PluginUtility::array2HTMLAttributes($payload);
                     if (self::$type == "typo") {
@@ -207,7 +203,7 @@ class syntax_plugin_combo_blockquote extends DokuWiki_Syntax_Plugin
                         self::$blockQuoteOpen = true;
                     }
 
-                    $renderer->doc .= PluginUtility::render($payload) . DOKU_LF;
+                    $renderer->doc .= PluginUtility::render($payload).DOKU_LF;
                     break;
 
 

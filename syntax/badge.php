@@ -142,11 +142,7 @@ class syntax_plugin_combo_badge extends DokuWiki_Syntax_Plugin
                         }
                     }
 
-                    if (array_key_exists("class", $attributes)) {
-                        $attributes["class"] .= " {$classValue}";
-                    } else {
-                        $attributes["class"] = "{$classValue}";
-                    }
+                    PluginUtility::addClass2Attributes($classValue,$attributes);
 
                     $rounded = $attributes[self::ATTRIBUTE_ROUNDED];
                     if (!empty($rounded)){
