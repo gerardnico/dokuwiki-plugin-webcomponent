@@ -65,6 +65,18 @@ class plugin_combo_blockquote_test extends DokuWikiTest
 
     }
 
+    public function test_blockquote_cite()
+    {
+        $text = '<blockquote typo><cite></cite></blockquote>';
+        $html = PluginUtility::render($text);
+        $expected = "<blockquote class=\"blockquote\">".DOKU_LF
+            ."<footer class=\"blockquote-footer\"><cite></cite></footer>".DOKU_LF
+            ."</blockquote>".DOKU_LF;
+        $this->assertEquals($expected,$html);
+
+
+    }
+
     public function test_card_with_heading()
     {
 

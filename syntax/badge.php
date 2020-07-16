@@ -83,6 +83,19 @@ class syntax_plugin_combo_badge extends DokuWiki_Syntax_Plugin
 
     }
 
+    /**
+     *
+     * The handle function goal is to parse the matched syntax through the pattern function
+     * and to return the result for use in the renderer
+     * This result is always cached until the page is modified.
+     * @param string $match
+     * @param int $state
+     * @param int $pos - byte position in the original source file
+     * @param Doku_Handler $handler
+     * @return array|bool
+     * @see DokuWiki_Syntax_Plugin::handle()
+     *
+     */
     function handle($match, $state, $pos, Doku_Handler $handler)
     {
 

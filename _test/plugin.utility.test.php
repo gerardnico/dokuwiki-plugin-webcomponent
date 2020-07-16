@@ -228,4 +228,5 @@ class plugin_combo_plugin_utility_test extends DokuWikiTest
 
 
 
+
 }

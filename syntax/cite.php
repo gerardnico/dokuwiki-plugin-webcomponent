@@ -6,33 +6,26 @@
 // must be run within Dokuwiki
 use ComboStrap\PluginUtility;
 
-if(!defined('DOKU_INC')) die();
+if (!defined('DOKU_INC')) die();
 
 
-class syntax_plugin_combo_cite extends DokuWiki_Syntax_Plugin {
+class syntax_plugin_combo_cite extends DokuWiki_Syntax_Plugin
+{
+    const TAG = "cite";
 
-    CONST TAG = "cite";
 
     /**
-     * Syntax Type.
-     *
-     * Needs to return one of the mode types defined in $PARSER_MODES in parser.php
-     * @see https://www.dokuwiki.org/devel:syntax_plugins#syntax_types
+     * @var mixed
      */
-    function getType() {
+    private $closingTag;
+
+    function getType()
+    {
         return 'formatting';
     }
 
-    /**
-     * How Dokuwiki will add P element
-     *
-     * * 'normal' - The plugin can be used inside paragraphs
-     *  * 'block'  - Open paragraphs need to be closed before plugin output - block should not be inside paragraphs
-     *  * 'stack'  - Special case. Plugin wraps other paragraphs. - Stacks can contain paragraphs
-     *
-     * @see DokuWiki_Syntax_Plugin::getPType()
-     */
-    function getPType() {
+    function getPType()
+    {
         return 'block';
     }
 
@@ -40,56 +33,53 @@ class syntax_plugin_combo_cite extends DokuWiki_Syntax_Plugin {
      * @return array
      * Allow which kind of plugin inside
      *
-     * No one of array('container', 'formatting', 'substition', 'protected', 'disabled', 'paragraphs')
+     * No one of array('baseonly','container', 'formatting', 'substition', 'protected', 'disabled', 'paragraphs')
      * because we manage self the content and we call self the parser
-     */
-    function getAllowedTypes() {
-        return array('container', 'formatting', 'substition', 'protected', 'disabled', 'paragraphs');
-    }
-
-    function getSort() {
-        return 201;
-    }
-
-
-
-    function connectTo($mode) {
-
-        $pattern = PluginUtility::getContainerTagPattern(self::TAG);
-        $this->Lexer->addEntryPattern($pattern, $mode, PluginUtility::getModeForComponent($this->getPluginComponent()));
-
-    }
-
-    function postConnect() {
-
-        $this->Lexer->addExitPattern('</' . self::TAG . '>', PluginUtility::getModeForComponent($this->getPluginComponent()));
-
-    }
-
-    /**
      *
-     * The handle function goal is to parse the matched syntax through the pattern function
-     * and to return the result for use in the renderer
-     * This result is always cached until the page is modified.
-     * @see DokuWiki_Syntax_Plugin::handle()
-     *
-     * @param string $match
-     * @param int $state
-     * @param int $pos
-     * @param Doku_Handler $handler
-     * @return array|bool
+     * Return an array of one or more of the mode types {@link $PARSER_MODES} in Parser.php
      */
-    function handle($match, $state, $pos, Doku_Handler $handler) {
+    function getAllowedTypes()
+    {
+        return array('baseonly','container', 'formatting', 'substition', 'protected', 'disabled', 'paragraphs');
+    }
+
+    function getSort()
+    {
+        /**
+         * Should be less than the cite syntax plugin
+         **/
+        return 200;
+    }
+
+
+    function connectTo($mode)
+    {
+        if ($mode == PluginUtility::getModeForComponent(syntax_plugin_combo_blockquote::TAG)) {
+            $pattern = PluginUtility::getContainerTagPattern(self::TAG);
+            $this->Lexer->addEntryPattern($pattern, $mode, PluginUtility::getModeForComponent($this->getPluginComponent()));
+        }
+    }
+
+
+    function postConnect()
+    {
+
+        $this->Lexer->addExitPattern('</' . syntax_plugin_combo_cite::TAG . '>', PluginUtility::getModeForComponent($this->getPluginComponent()));
+
+    }
+
+    function handle($match, $state, $pos, Doku_Handler $handler)
+    {
 
         switch ($state) {
 
             case DOKU_LEXER_ENTER :
-
-                $attributes = PluginUtility::getTagAttributes($match);
-                return array($state, $attributes);
+                $parentTag = PluginUtility::getParentTag($handler);
+                $tagAttributes = PluginUtility::getTagAttributes($match);
+                return array($state, $tagAttributes,$parentTag);
 
             case DOKU_LEXER_UNMATCHED :
-                return array ($state, $match);
+                return array($state, $match);
 
             case DOKU_LEXER_EXIT :
 
@@ -114,27 +104,56 @@ class syntax_plugin_combo_cite extends DokuWiki_Syntax_Plugin {
      */
     function render($format, Doku_Renderer $renderer, $data)
     {
+
         if ($format == 'xhtml') {
 
             /** @var Doku_Renderer_xhtml $renderer */
-            list($state, $payload) = $data;
+            list($state, $payload, $parent) = $data;
             switch ($state) {
                 case DOKU_LEXER_ENTER :
 
-                    $renderer->doc .= "<cite";
-                    if (sizeof($payload)>0) {
-                        $inlineAttributes = PluginUtility::array2HTMLAttributes($payload);
-                        $renderer->doc .= " $inlineAttributes";
+                    if ($parent["tag"] == "blockquote") {
+                        $parentAttributes = $parent["attributes"];
+                        /**
+                         * Hack in case there is no unmatched text in a blockquote
+                         */
+                        $type = "card";
+                        if (isset($parentAttributes["type"])){
+                            $type = $parentAttributes["type"];
+                        }
+                        if ($type == "card") {
+                            $renderer->doc .= '<div class="card-body">' . DOKU_LF;
+                            $this->closingTag = "</div>".DOKU_LF;
+                            $renderer->doc .= '<blockquote class="blockquote mb-0">' . DOKU_LF;
+                            $this->closingTag = "</blockquote>".DOKU_LF.$this->closingTag;
+                        }
+                        $renderer->doc .= "<footer class=\"blockquote-footer\"><cite";
+                        if (sizeof($payload) > 0) {
+                            $inlineAttributes = PluginUtility::array2HTMLAttributes($payload);
+                            $renderer->doc .= $inlineAttributes . '>';
+                        } else {
+                            $renderer->doc .= '>';
+                        }
+                        $this->closingTag = "</footer>".DOKU_LF.$this->closingTag;
+                    } else {
+                        $renderer->doc .= "<cite";
+                        if (sizeof($payload)>0) {
+                            $inlineAttributes = PluginUtility::array2HTMLAttributes($payload);
+                            $renderer->doc .= " $inlineAttributes";
+                        }
+                        $renderer->doc .= ">";
                     }
-                    $renderer->doc .= ">";
                     break;
 
                 case DOKU_LEXER_UNMATCHED :
-                    $renderer->doc .= $renderer->_xmlEntities($payload);
+                    $renderer->doc .= PluginUtility::escape($payload);
                     break;
 
                 case DOKU_LEXER_EXIT :
-                    $renderer->doc .= '</cite>';
+
+                    $renderer->doc .= '</cite>'.$this->closingTag;
+                    $this->closingTag = "";
+
                     break;
             }
             return true;

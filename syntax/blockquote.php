@@ -123,7 +123,7 @@ class syntax_plugin_combo_blockquote extends DokuWiki_Syntax_Plugin
      * This result is always cached until the page is modified.
      * @param string $match
      * @param int $state
-     * @param int $pos
+     * @param int $pos - byte position in the original source file
      * @param Doku_Handler $handler
      * @return array|bool
      * @see DokuWiki_Syntax_Plugin::handle()

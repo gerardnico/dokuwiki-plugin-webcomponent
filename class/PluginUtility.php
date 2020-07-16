@@ -733,6 +733,32 @@ class PluginUtility
         }
     }
 
+    public static function getParentTag(\Doku_Handler $handler)
+    {
+        $callsCount = sizeof($handler->calls);
+
+        for ($i = $callsCount - 1; $i >= 0; $i--) {
+            $call = $handler->calls[$i];
+            if ($call[0]=="plugin"){
+                if ($call[1][2]==DOKU_LEXER_ENTER) {
+                    $parent = $call;
+                    break;
+                }
+            }
+        }
+        if (isset($parent)) {
+            $component = $parent[1][0];
+            $componentNames = explode("_", $component);
+            return
+                array(
+                    "tag" => $componentNames[sizeof($componentNames) - 1],
+                    "attributes" => PluginUtility::getTagAttributes($parent[1][3])
+                );
+        } else {
+            return array();
+        }
+    }
+
 
 }
 
