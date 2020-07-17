@@ -36,22 +36,52 @@ class plugin_combo_node_test extends DokuWikiTest
         parent::setUp();
     }
 
+    /**
+     * Test node without siblings
+     */
     public function test_node()
     {
-        $text = "<card><button warning><node important></node></button></card>";
+        $text = '<card><blockquote warning>'.DOKU_LF
+            . ' '.DOKU_LF
+            . '<node important></node></blockquote></card>';
         $id = "idTestNode";
         TestUtility::addPage($id,$text);
         $testRequest = new TestRequest();
         $response = $testRequest->get(array("id"=>$id));
         $node =  $response->queryHTML("node");
         $this->assertEquals("node", $node->attr("name"),"name test");
-        $this->assertEquals("button", $node->attr("parent"),"parent test");
+        $this->assertEquals("blockquote", $node->attr("parent"),"parent test");
         $this->assertEquals("warning", $node->attr("parent-type"),"parent-type test");
-        $this->assertEquals("1", $node->attr("child-of-button"),"child of test");
+        $this->assertEquals("1", $node->attr("child-of-blockquote"),"child of test");
         $this->assertEquals("0", $node->attr("has-siblings"),"has siblings test");
+        $this->assertEquals("1", $node->attr("descendant-of-card"),"descendant test");
 
 
     }
 
+    /**
+     * Test node with sibling (ie a direct sibling in ascendant order)
+     */
+    public function test_sibling_node()
+    {
+        $text = '<card>'.DOKU_LF
+            . '<blockquote warning>'.DOKU_LF
+            . '<header></header>'.DOKU_LF
+            . '<node important></node>'.DOKU_LF
+            . '</blockquote></card>';
+        $id = "idTestSibling";
+        TestUtility::addPage($id,$text);
+        $testRequest = new TestRequest();
+        $response = $testRequest->get(array("id"=>$id));
+        $node =  $response->queryHTML("node");
+        $this->assertEquals("node", $node->attr("name"),"name test");
+        $this->assertEquals("blockquote", $node->attr("parent"),"parent test");
+        $this->assertEquals("warning", $node->attr("parent-type"),"parent-type test");
+        $this->assertEquals("1", $node->attr("child-of-blockquote"),"child of test");
+        $this->assertEquals("1", $node->attr("descendant-of-card"),"descendant test");
+        $this->assertEquals("1", $node->attr("has-siblings"),"has siblings test");
+        $this->assertEquals("header", $node->attr("first-sibling"),"has siblings test");
 
+
+    }
 }

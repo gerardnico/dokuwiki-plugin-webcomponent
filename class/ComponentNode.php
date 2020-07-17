@@ -22,6 +22,7 @@ class ComponentNode
 
     /**
      * ComponentTree constructor.
+     * @param $name
      * @param $attributes
      * @param $calls
      */
@@ -30,6 +31,30 @@ class ComponentNode
         $this->name = $name;
         $this->attributes = $attributes;
         $this->calls = $calls;
+    }
+
+    /**
+     * From a call to a node
+     * @param $call
+     * @param $position - the position in the call stack
+     * @return ComponentNode
+     */
+    private function call2Node($call, $position)
+    {
+        $attributes = $call[1][1][PluginUtility::ATTRIBUTES];
+        $name = self::getTagName($call);
+        $calls = array_slice($this->calls, 0, $position);
+        return new ComponentNode($name, $attributes, $calls);
+    }
+
+    /**
+     * The parser state
+     * @param $call
+     * @return mixed
+     */
+    private static function getState($call)
+    {
+        return $call[1][2];
     }
 
     public function isChildOf($tag)
@@ -44,13 +69,26 @@ class ComponentNode
      */
     public function hasSiblings()
     {
+        $counter = sizeof($this->calls);
+        while ($counter>0) {
 
-        $call = $this->calls[sizeof($this->calls) - 1];
-        if ($call[1][2] == DOKU_LEXER_ENTER) {
-            return 0;
-        } else {
-            return 1;
+            $call = $this->calls[$counter - 1];
+            if ($call[0]=="eol"){
+                $counter = $counter -1;
+                continue;
+            } else {
+                break;
+            }
+
         }
+        if (isset($call)) {
+            if ($call[1][2] == DOKU_LEXER_ENTER) {
+                return false;
+            } else {
+                return true;
+            }
+        }
+        return false;
 
     }
 
@@ -60,12 +98,35 @@ class ComponentNode
      */
     public function getParent()
     {
-        if (sizeof($this->calls) > 0) {
-            $parentCall = $this->calls[sizeof($this->calls) - 1];
-            $attributes = $parentCall[1][1][PluginUtility::ATTRIBUTES];
-            $name = self::getTagName($parentCall);
-            $calls = array_slice($this->calls, 0, sizeof($this->calls) - 1);
-            return new ComponentNode($name, $attributes, $calls);
+        $counter = sizeof($this->calls);
+        $treeLevel = 0;
+        while ($counter > 0) {
+
+            $parentCall = $this->calls[$counter - 1];
+            $parentName = $parentCall[0];
+            $state = self::getState($parentCall);
+
+            // No sibling
+            if ($state == DOKU_LEXER_EXIT ){
+                $treeLevel =+ 1;
+            }
+
+            if ($parentName == "eol" || $state != DOKU_LEXER_ENTER || $treeLevel != 0) {
+                $counter = $counter - 1;
+                unset($parentCall);
+            } else {
+                break;
+            }
+
+            // After the condition, otherwise a sibling would become a parent
+            // on its enter state
+            if ($state == DOKU_LEXER_ENTER ){
+                $treeLevel = $treeLevel - 1;
+            }
+
+        }
+        if (isset($parentCall)) {
+            return $this->call2Node($parentCall,$counter);
         } else {
             return false;
         }
@@ -98,25 +159,47 @@ class ComponentNode
         return $componentNames[sizeof($componentNames) - 1];
     }
 
-    public static function getParentTag(\Doku_Handler $handler)
-    {
-        $callsCount = sizeof($handler->calls);
-
-        for ($i = $callsCount - 1; $i >= 0; $i--) {
-            $call = $handler->calls[$i];
-            if ($call[0] == "plugin") {
-                if ($call[1][2] == DOKU_LEXER_ENTER) {
-                    $parent = $call;
-                    break;
-                }
-            }
-        }
-
-    }
 
     public function getType()
     {
-        return $this->attributes["type"];
+        return $this->getAttribute("type");
+    }
+
+    /**
+     * @param $tag
+     * @return int
+     */
+    public function isDescendantOf($tag)
+    {
+
+        for ($i = sizeof($this->calls) - 1; $i >= 0; $i--) {
+            if (self::getTagName($this->calls[$i]) == "$tag") {
+                return true;
+            }
+
+        }
+        return false;
+
+    }
+
+    public function getFirstSibling()
+    {
+        $counter = sizeof($this->calls);
+        while ($counter > 0) {
+            $parentCall = $this->calls[$counter - 1];
+            if ($parentCall[0] == "eol") {
+                $counter = $counter - 1;
+                unset($parentCall);
+            } else {
+                break;
+            }
+        }
+        if (isset($parentCall)) {
+            return self::call2Node($parentCall,$counter);
+        } else {
+            return false;
+        }
+
     }
 
 }

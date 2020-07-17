@@ -238,6 +238,7 @@ class PluginUtility
      * Return the attribute of a tag
      * Because they are users input, they are all escaped
      * @param $match
+     * @param $defaultType
      * @return array
      */
     public static function getTagAttributes($match)
@@ -293,8 +294,9 @@ class PluginUtility
         // Parse the remaining attributes
         $parsedAttributes = self::parse2HTMLAttributes($match);
 
-        // Merge and return
+        // Merge
         $attributes = array_merge($attributes, $parsedAttributes);;
+
         return $attributes;
 
     }

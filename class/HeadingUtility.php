@@ -26,6 +26,8 @@ class HeadingUtility
      * The fix top menu strike again
      */
     const COMPONENT_TITLE_STYLE = 'style="color: inherit!important;margin-top:unset!important;margin-left:unset!important;padding-top:unset!important"';
+    const TITLE = 'title';
+    const LEVEL = 'level';
 
     public static function parse($match)
     {
@@ -34,8 +36,8 @@ class HeadingUtility
         if ($level < 1) $level = 1;
         $title = trim($title, '=');
         $title = trim($title);
-        $parameters['header']['title'] = $title;
-        $parameters['header']['level'] = $level;
+        $parameters[self::TITLE] = $title;
+        $parameters[self::LEVEL] = $level;
         return $parameters;
     }
 

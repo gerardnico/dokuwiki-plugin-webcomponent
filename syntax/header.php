@@ -13,9 +13,8 @@ require_once(__DIR__ . '/../class/HeaderUtility.php');
 if (!defined('DOKU_INC')) die();
 
 
-class syntax_plugin_combo_blockquoteheader extends DokuWiki_Syntax_Plugin
+class syntax_plugin_combo_header extends DokuWiki_Syntax_Plugin
 {
-
 
 
     function getType()

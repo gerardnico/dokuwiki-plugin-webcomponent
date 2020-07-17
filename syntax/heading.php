@@ -1,6 +1,7 @@
 <?php
 
 
+use ComboStrap\ComponentNode;
 use ComboStrap\HeaderUtility;
 use ComboStrap\HeadingUtility;
 use ComboStrap\PluginUtility;
@@ -10,9 +11,12 @@ require_once(__DIR__ . '/../class/HeadingUtility.php');
 if (!defined('DOKU_INC')) die();
 
 
-class syntax_plugin_combo_blockquoteheading extends DokuWiki_Syntax_Plugin
+class syntax_plugin_combo_heading extends DokuWiki_Syntax_Plugin
 {
 
+
+    // Could be also title
+    const TAG = "heading";
 
     function getType()
     {
@@ -62,11 +66,14 @@ class syntax_plugin_combo_blockquoteheading extends DokuWiki_Syntax_Plugin
         switch ($state) {
 
 
-            // As this is a container, this cannot happens but yeah, now, you know
             case DOKU_LEXER_SPECIAL :
 
                 $parameters = HeadingUtility::parse($match);
-                return array($state, $parameters);
+                return array(
+                    PluginUtility::STATE=> $state,
+                    PluginUtility::ATTRIBUTES=> $parameters,
+                    PluginUtility::TREE=> $handler->calls
+                );
 
         }
         return array();
@@ -89,18 +96,22 @@ class syntax_plugin_combo_blockquoteheading extends DokuWiki_Syntax_Plugin
         if ($format == 'xhtml') {
 
             /** @var Doku_Renderer_xhtml $renderer */
-            list($state, $payload) = $data;
+            $state= $data[PluginUtility::STATE];
             switch ($state) {
 
                 case DOKU_LEXER_SPECIAL :
 
-                    if (syntax_plugin_combo_blockquote::$cardBodyOpen == false) {
+                    $attributes = $data[PluginUtility::ATTRIBUTES];
+                    $tree = $data[PluginUtility::TREE];
+                    $node = new ComponentNode(self::TAG,$attributes,$tree);
+                    $class = "";
+                    if ($node->getParent()->getType()=="card") {
                         $renderer->doc .= "<div class=\"card-body\">".DOKU_LF;
-                        syntax_plugin_combo_blockquote::$cardBodyOpen = true;
+                        $class = "card-title";
                     }
-                    $title = $payload['header']['title'];
-                    $level = $payload['header']['level'];
-                    $renderer->doc .= '<h' . $level . ' class="card-title" ' . HeadingUtility::COMPONENT_TITLE_STYLE . '>';
+                    $title = $attributes[HeadingUtility::TITLE];
+                    $level = $attributes[HeadingUtility::LEVEL];
+                    $renderer->doc .= '<h' . $level . ' class="'.$class.'" ' . HeadingUtility::COMPONENT_TITLE_STYLE . '>';
                     $renderer->doc .= PluginUtility::escape($title);
                     $renderer->doc .= "</h$level>";
 

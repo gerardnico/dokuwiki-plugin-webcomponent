@@ -167,6 +167,7 @@ class plugin_combo_plugin_utility_test extends DokuWikiTest
         $this->assertEquals(0, sizeof($attributes),"No attributes, array is null");
 
 
+
     }
 
     public function test_get_content()

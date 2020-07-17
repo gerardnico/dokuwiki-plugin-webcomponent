@@ -5,6 +5,7 @@
  *
  */
 
+use ComboStrap\ComponentNode;
 use ComboStrap\HeadingUtility;
 use ComboStrap\PluginUtility;
 
@@ -14,6 +15,7 @@ if (!defined('DOKU_INC')) {
 
 require_once(__DIR__ . '/../class/PluginUtility.php');
 require_once(__DIR__ . '/../class/HeadingUtility.php');
+require_once(__DIR__ . '/../class/ComponentNode.php');
 
 /**
  * All DokuWiki plugins to extend the parser/rendering mechanism
@@ -136,16 +138,26 @@ class syntax_plugin_combo_blockquote extends DokuWiki_Syntax_Plugin
 
             case DOKU_LEXER_ENTER:
                 // Suppress the component name
+                $defaultAttributes = array("type"=>"card");
                 $tagAttributes = PluginUtility::getTagAttributes($match);
-                return array($state, $tagAttributes);
+                $tagAttributes = PluginUtility::mergeAttributes($tagAttributes,$defaultAttributes);
+                return array(
+                    PluginUtility::STATE=> $state,
+                    PluginUtility::ATTRIBUTES => $tagAttributes);
 
             case DOKU_LEXER_UNMATCHED :
-                return array($state, $match);
+                return array(
+                    PluginUtility::STATE => $state,
+                    PluginUtility::PAYLOAD => $match,
+                    PluginUtility::TREE => $handler->calls);
 
 
             case DOKU_LEXER_EXIT :
                 // Important to get an exit in the render phase
-                return array($state, '');
+                return array(
+                    PluginUtility::STATE => $state,
+                    PluginUtility::TREE => $handler->calls
+                );
 
         }
 
@@ -168,22 +180,27 @@ class syntax_plugin_combo_blockquote extends DokuWiki_Syntax_Plugin
         if ($format == 'xhtml') {
 
             /** @var Doku_Renderer_xhtml $renderer */
-            list($state, $payload, $tag) = $data;
+            $state = $data[PluginUtility::STATE];
             switch ($state) {
 
                 case DOKU_LEXER_ENTER :
 
-                    if (array_key_exists("type", $payload)) {
-                        self::$type = $payload["type"];
-                        unset($payload["type"]);
-                        $class = "blockquote";
+                    $attributes = $data[PluginUtility::ATTRIBUTES];
+                    if (array_key_exists("type", $attributes)) {
+                        self::$type = $attributes["type"];
+                        unset($attributes["type"]);
+                        if (self::$type=="typo") {
+                            $class = "blockquote";
+                        } else {
+                            $class = "card";
+                        }
                     } else {
                         $class = "card";
                     }
 
-                    PluginUtility::addClass2Attributes($class, $payload);
+                    PluginUtility::addClass2Attributes($class, $attributes);
 
-                    $inlineAttributes = PluginUtility::array2HTMLAttributes($payload);
+                    $inlineAttributes = PluginUtility::array2HTMLAttributes($attributes);
                     if (self::$type == "typo") {
                         $renderer->doc .= "<blockquote {$inlineAttributes}>" . DOKU_LF;
                         self::$blockQuoteOpen = true;
@@ -194,37 +211,35 @@ class syntax_plugin_combo_blockquote extends DokuWiki_Syntax_Plugin
 
                 case DOKU_LEXER_UNMATCHED:
 
-                    if (self::$type == "card" && self::$cardBodyOpen != true) {
-                        $renderer->doc .= "<div class=\"card-body\">" . DOKU_LF;
-                        self::$cardBodyOpen = "true";
-                    }
-                    if (self::$blockQuoteOpen == false) {
+                    $node = new ComponentNode("cdata",array(),$data[PluginUtility::TREE]);
+                    if ($node->getParent()->getType()=="card"){
+                        $previousTags = ["heading"];
+                        if (!in_array($node->getFirstSibling()->getName(),$previousTags)) {
+                            $renderer->doc .= "<div class=\"card-body\">" . DOKU_LF;
+                        }
                         $renderer->doc .= "<blockquote class=\"blockquote mb-0\">" . DOKU_LF;
-                        self::$blockQuoteOpen = true;
                     }
 
+                    $payload = $data[PluginUtility::PAYLOAD];
                     $renderer->doc .= PluginUtility::render($payload).DOKU_LF;
                     break;
 
 
                 case DOKU_LEXER_EXIT :
 
-                    if (self::$blockQuoteOpen) {
+                    $node = new ComponentNode("cdata",array(),$data[PluginUtility::TREE]);
+                    if ($node->getParent()->getType()=="card"){
+
                         $renderer->doc .= "</blockquote>" . DOKU_LF;
-                        self::$blockQuoteOpen = false;
-                    }
-
-                    if (self::$cardBodyOpen) {
                         $renderer->doc .= "</div>" . DOKU_LF;
-                        self::$cardBodyOpen = false;
+                        $renderer->doc .= "</div>" . DOKU_LF;
+
+                    } else {
+
+                        $renderer->doc .= "</blockquote>" . DOKU_LF;
+
                     }
 
-                    if (self::$type == "card") {
-                        $renderer->doc .= '</div>' . DOKU_LF;
-                    }
-
-                    // Reinit
-                    self::$type = "card";
 
                     break;
             }

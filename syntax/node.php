@@ -142,8 +142,10 @@ class syntax_plugin_combo_node extends DokuWiki_Syntax_Plugin
                     $renderer->doc .= 'type="' . $node->getType() .'"' . DOKU_LF;
                     $renderer->doc .= 'parent="' . $node->getParent()->getName() .'"'. DOKU_LF;
                     $renderer->doc .= 'parent-type="' . $node->getParent()->getType() .'"'. DOKU_LF;
-                    $renderer->doc .= 'child-of-button="' . $node->isChildOf("button") .'"'. DOKU_LF;
-                    $renderer->doc .= 'has-siblings="' . $node->hasSiblings() .'"'. DOKU_LF;
+                    $renderer->doc .= 'child-of-blockquote="' . ($node->isChildOf("blockquote")===true?1:0) .'"'. DOKU_LF;
+                    $renderer->doc .= 'descendant-of-card="' . ($node->isDescendantOf("card")===true?1:0) .'"'. DOKU_LF;
+                    $renderer->doc .= 'has-siblings="' . ($node->hasSiblings()===true?1:0) .'"'. DOKU_LF;
+                    $renderer->doc .= 'first-sibling="' . $node->getFirstSibling()->getName() .'"'. DOKU_LF;
                     $renderer->doc .= '>';
                     break;
 

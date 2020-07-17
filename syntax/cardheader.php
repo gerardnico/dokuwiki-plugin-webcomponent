@@ -53,7 +53,6 @@ class syntax_plugin_combo_cardheader extends DokuWiki_Syntax_Plugin
         // Only inside a card
         $modes = [
             PluginUtility::getModeForComponent(syntax_plugin_combo_card::TAG),
-            PluginUtility::getModeForComponent(syntax_plugin_combo_blockquote::TAG)
             ];
         if (in_array($mode, $modes)) {
             $this->Lexer->addEntryPattern(PluginUtility::getContainerTagPattern(HeaderUtility::HEADER), $mode, PluginUtility::getModeForComponent($this->getPluginComponent()));
