@@ -15,10 +15,6 @@ class syntax_plugin_combo_cite extends DokuWiki_Syntax_Plugin
     const TAG = "cite";
 
 
-    /**
-     * @var mixed
-     */
-    private $closingTag;
 
     function getType()
     {
@@ -90,7 +86,9 @@ class syntax_plugin_combo_cite extends DokuWiki_Syntax_Plugin
             case DOKU_LEXER_EXIT :
 
                 // Important otherwise we don't get an exit in the render
-                return array(PluginUtility::STATE => $state);
+                return array(
+                    PluginUtility::STATE => $state,
+                    PluginUtility::TREE => $handler->calls);
 
 
         }
@@ -120,14 +118,13 @@ class syntax_plugin_combo_cite extends DokuWiki_Syntax_Plugin
 
                     $attributes = $data[PluginUtility::ATTRIBUTES];
                     $node = new ComponentNode(self::TAG, $attributes, $data[PluginUtility::TREE]);
-                    if ($node->isChildOf("blockquote")) {
+                    if ($node->isChildOf(syntax_plugin_combo_blockquote::TAG)) {
                         if (!$node->hasSiblings()) {
                             $parent = $node->getParent();
                             if ($parent->getType() == "card") {
                                 $renderer->doc .= '<div class="card-body">' . DOKU_LF;
                                 $this->closingTag = "</div>" . DOKU_LF;
                                 $renderer->doc .= '<blockquote class="blockquote mb-0">' . DOKU_LF;
-                                $this->closingTag = "</blockquote>" . DOKU_LF . $this->closingTag;
                             }
                         }
                         $renderer->doc .= "<footer class=\"blockquote-footer\"><cite";
@@ -137,7 +134,7 @@ class syntax_plugin_combo_cite extends DokuWiki_Syntax_Plugin
                         } else {
                             $renderer->doc .= '>';
                         }
-                        $this->closingTag = "</footer>" . DOKU_LF . $this->closingTag;
+
                     } else {
                         $renderer->doc .= "<cite";
                         if (sizeof($attributes) > 0) {
@@ -154,10 +151,16 @@ class syntax_plugin_combo_cite extends DokuWiki_Syntax_Plugin
 
                 case DOKU_LEXER_EXIT :
 
-                    $renderer->doc .= '</cite>' . $this->closingTag;
-                    $this->closingTag = "";
+                    $renderer->doc .= '</cite>';
+                    $node = new ComponentNode("cite",array(), $data[PluginUtility::TREE]);
 
+                    if (in_array($node->getParent()->getName(), ["card","blockquote"])) {
+                        $renderer->doc .= '</footer>'.DOKU_LF;
+                    } else {
+                        $renderer->doc .= DOKU_LF;
+                    }
                     break;
+
             }
             return true;
         }

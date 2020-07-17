@@ -59,7 +59,8 @@ class ComponentNode
 
     public function isChildOf($tag)
     {
-        return $this->getParent()->getName() === $tag;
+        $componentNode = $this->getParent();
+        return $componentNode !== false ? $componentNode->getName() === $tag : false;
     }
 
     /**
@@ -70,11 +71,11 @@ class ComponentNode
     public function hasSiblings()
     {
         $counter = sizeof($this->calls);
-        while ($counter>0) {
+        while ($counter > 0) {
 
             $call = $this->calls[$counter - 1];
-            if ($call[0]=="eol"){
-                $counter = $counter -1;
+            if ($call[0] == "eol") {
+                $counter = $counter - 1;
                 continue;
             } else {
                 break;
@@ -98,21 +99,32 @@ class ComponentNode
      */
     public function getParent()
     {
-        $counter = sizeof($this->calls);
+        $descendantCounter = sizeof($this->calls) - 1;
         $treeLevel = 0;
-        while ($counter > 0) {
+        $i = 0;
+        while ($descendantCounter > 0) {
 
-            $parentCall = $this->calls[$counter - 1];
-            $parentName = $parentCall[0];
+            $parentCall = $this->calls[$descendantCounter];
+
+            $parentCallName = $parentCall[0];
             $state = self::getState($parentCall);
 
-            // No sibling
-            if ($state == DOKU_LEXER_EXIT ){
-                $treeLevel =+ 1;
+            /**
+             * Case when we start from the same element
+             * We put -1 in the level to not get the start tag
+             */
+            $i++;
+            if ($i == 1 && self::getTagName($parentCall) == $this->name) {
+                $treeLevel = +1;
+            } else {
+                // No sibling
+                if ($state == DOKU_LEXER_EXIT) {
+                    $treeLevel = +1;
+                }
             }
 
-            if ($parentName == "eol" || $state != DOKU_LEXER_ENTER || $treeLevel != 0) {
-                $counter = $counter - 1;
+            if ($parentCallName == "eol" || $state != DOKU_LEXER_ENTER || $treeLevel != 0) {
+                $descendantCounter = $descendantCounter - 1;
                 unset($parentCall);
             } else {
                 break;
@@ -120,13 +132,13 @@ class ComponentNode
 
             // After the condition, otherwise a sibling would become a parent
             // on its enter state
-            if ($state == DOKU_LEXER_ENTER ){
+            if ($state == DOKU_LEXER_ENTER) {
                 $treeLevel = $treeLevel - 1;
             }
 
         }
         if (isset($parentCall)) {
-            return $this->call2Node($parentCall,$counter);
+            return $this->call2Node($parentCall, $descendantCounter);
         } else {
             return false;
         }
@@ -195,11 +207,39 @@ class ComponentNode
             }
         }
         if (isset($parentCall)) {
-            return self::call2Node($parentCall,$counter);
+            return self::call2Node($parentCall, $counter);
         } else {
             return false;
         }
 
+    }
+
+    public function hasParent()
+    {
+        return $this->getParent() !== false;
+    }
+
+    public function getOpeningTag()
+    {
+        $descendantCounter = sizeof($this->calls) - 1;
+        while ($descendantCounter > 0) {
+
+            $parentCall = $this->calls[$descendantCounter];
+            $parentTagName = self::getTagName($parentCall);
+            $state = self::getState($parentCall);
+            if ($state === DOKU_LEXER_ENTER && $parentTagName === $this->getName()) {
+                break;
+            } else {
+                $descendantCounter = $descendantCounter - 1;
+                unset($parentCall);
+            }
+
+        }
+        if (isset($parentCall)) {
+            return $this->call2Node($parentCall, $descendantCounter);
+        } else {
+            return false;
+        }
     }
 
 }

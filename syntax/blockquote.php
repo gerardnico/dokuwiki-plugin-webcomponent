@@ -35,14 +35,7 @@ class syntax_plugin_combo_blockquote extends DokuWiki_Syntax_Plugin
      * @var mixed|string
      */
     static public $type = "card";
-    /**
-     * @var bool
-     */
-    static public $blockQuoteOpen = false;
-    /**
-     * @var bool
-     */
-    static public $cardBodyOpen = false;
+
 
 
     /**
@@ -203,7 +196,6 @@ class syntax_plugin_combo_blockquote extends DokuWiki_Syntax_Plugin
                     $inlineAttributes = PluginUtility::array2HTMLAttributes($attributes);
                     if (self::$type == "typo") {
                         $renderer->doc .= "<blockquote {$inlineAttributes}>" . DOKU_LF;
-                        self::$blockQuoteOpen = true;
                     } else {
                         $renderer->doc .= "<div {$inlineAttributes}>" . DOKU_LF;
                     }
@@ -227,8 +219,8 @@ class syntax_plugin_combo_blockquote extends DokuWiki_Syntax_Plugin
 
                 case DOKU_LEXER_EXIT :
 
-                    $node = new ComponentNode("cdata",array(),$data[PluginUtility::TREE]);
-                    if ($node->getParent()->getType()=="card"){
+                    $node = new ComponentNode(self::TAG,array(),$data[PluginUtility::TREE]);
+                    if ($node->getOpeningTag()->getType()=="card"){
 
                         $renderer->doc .= "</blockquote>" . DOKU_LF;
                         $renderer->doc .= "</div>" . DOKU_LF;
