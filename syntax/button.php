@@ -137,16 +137,21 @@ class syntax_plugin_combo_button extends DokuWiki_Syntax_Plugin
             case DOKU_LEXER_ENTER:
 
                 $attributes = PluginUtility::getTagAttributes($match);
-                return array($state, $attributes);
+                return array(
+                    PluginUtility::STATE=>$state,
+                    PluginUtility::ATTRIBUTES=>$attributes
+                );
 
             case DOKU_LEXER_UNMATCHED :
 
-                return array($state, $match);
+                return array(
+                    PluginUtility::STATE => $state,
+                    PluginUtility::PAYLOAD => $match);
 
 
             case DOKU_LEXER_EXIT :
 
-                return array($state, '');
+                return array(PluginUtility::STATE => $state, '');
 
 
         }
@@ -174,16 +179,12 @@ class syntax_plugin_combo_button extends DokuWiki_Syntax_Plugin
 
                 /** @var Doku_Renderer_xhtml $renderer */
 
-                list($state, $payload) = $data;
+                $state = $data["state"];
                 switch ($state) {
 
                     case DOKU_LEXER_ENTER :
-                        $attributes = $payload;
-                        if (array_key_exists("class", $attributes)) {
-                            $attributes["class"] .= " btn";
-                        } else {
-                            $attributes["class"] .= "btn";
-                        }
+                        $attributes = $data["attributes"];
+                        PluginUtility::addClass2Attributes("btn",$attributes);
                         if (array_key_exists("type", $attributes)) {
                             $type = $attributes["type"];
                             $attributes["class"] .= " btn-".$type;
@@ -197,7 +198,7 @@ class syntax_plugin_combo_button extends DokuWiki_Syntax_Plugin
 
                     case DOKU_LEXER_UNMATCHED :
 
-                        $renderer->doc .= $renderer->_xmlEntities($payload);
+                        $renderer->doc .= PluginUtility::escape($data["payload"]);
                         break;
 
 

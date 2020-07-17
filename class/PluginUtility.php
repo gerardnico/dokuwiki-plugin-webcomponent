@@ -31,6 +31,14 @@ class PluginUtility
     const DOKU_DATA_DIR = '/dokudata/pages';
     const DOKU_CACHE_DIR = '/dokudata/cache';
 
+    /**
+     * Key in the data array between handle and render function
+     */
+    const STATE = "state";
+    const PAYLOAD = "payload";
+    const ATTRIBUTES = "attributes";
+    const TREE = "tree";
+
 
     /**
      * The URL base of the documentation
@@ -733,31 +741,7 @@ class PluginUtility
         }
     }
 
-    public static function getParentTag(\Doku_Handler $handler)
-    {
-        $callsCount = sizeof($handler->calls);
 
-        for ($i = $callsCount - 1; $i >= 0; $i--) {
-            $call = $handler->calls[$i];
-            if ($call[0]=="plugin"){
-                if ($call[1][2]==DOKU_LEXER_ENTER) {
-                    $parent = $call;
-                    break;
-                }
-            }
-        }
-        if (isset($parent)) {
-            $component = $parent[1][0];
-            $componentNames = explode("_", $component);
-            return
-                array(
-                    "tag" => $componentNames[sizeof($componentNames) - 1],
-                    "attributes" => PluginUtility::getTagAttributes($parent[1][3])
-                );
-        } else {
-            return array();
-        }
-    }
 
 
 }

@@ -4,6 +4,7 @@
 // https://developer.mozilla.org/en-US/docs/Web/HTML/Element/cite
 
 // must be run within Dokuwiki
+use ComboStrap\ComponentNode;
 use ComboStrap\PluginUtility;
 
 if (!defined('DOKU_INC')) die();
@@ -40,7 +41,7 @@ class syntax_plugin_combo_cite extends DokuWiki_Syntax_Plugin
      */
     function getAllowedTypes()
     {
-        return array('baseonly','container', 'formatting', 'substition', 'protected', 'disabled', 'paragraphs');
+        return array('baseonly', 'container', 'formatting', 'substition', 'protected', 'disabled', 'paragraphs');
     }
 
     function getSort()
@@ -54,10 +55,10 @@ class syntax_plugin_combo_cite extends DokuWiki_Syntax_Plugin
 
     function connectTo($mode)
     {
-        if ($mode == PluginUtility::getModeForComponent(syntax_plugin_combo_blockquote::TAG)) {
-            $pattern = PluginUtility::getContainerTagPattern(self::TAG);
-            $this->Lexer->addEntryPattern($pattern, $mode, PluginUtility::getModeForComponent($this->getPluginComponent()));
-        }
+
+        $pattern = PluginUtility::getContainerTagPattern(self::TAG);
+        $this->Lexer->addEntryPattern($pattern, $mode, PluginUtility::getModeForComponent($this->getPluginComponent()));
+
     }
 
 
@@ -74,17 +75,22 @@ class syntax_plugin_combo_cite extends DokuWiki_Syntax_Plugin
         switch ($state) {
 
             case DOKU_LEXER_ENTER :
-                $parentTag = PluginUtility::getParentTag($handler);
                 $tagAttributes = PluginUtility::getTagAttributes($match);
-                return array($state, $tagAttributes,$parentTag);
+                return array(
+                    PluginUtility::STATE => $state,
+                    PluginUtility::ATTRIBUTES => $tagAttributes,
+                    PluginUtility::TREE => $handler->calls);
 
             case DOKU_LEXER_UNMATCHED :
-                return array($state, $match);
+                return array(
+                    PluginUtility::STATE => $state,
+                    PluginUtility::PAYLOAD => $match
+                );
 
             case DOKU_LEXER_EXIT :
 
                 // Important otherwise we don't get an exit in the render
-                return array($state, '');
+                return array(PluginUtility::STATE => $state);
 
 
         }
@@ -108,37 +114,34 @@ class syntax_plugin_combo_cite extends DokuWiki_Syntax_Plugin
         if ($format == 'xhtml') {
 
             /** @var Doku_Renderer_xhtml $renderer */
-            list($state, $payload, $parent) = $data;
+            $state = $data [PluginUtility::STATE];
             switch ($state) {
                 case DOKU_LEXER_ENTER :
 
-                    if ($parent["tag"] == "blockquote") {
-                        $parentAttributes = $parent["attributes"];
-                        /**
-                         * Hack in case there is no unmatched text in a blockquote
-                         */
-                        $type = "card";
-                        if (isset($parentAttributes["type"])){
-                            $type = $parentAttributes["type"];
-                        }
-                        if ($type == "card") {
-                            $renderer->doc .= '<div class="card-body">' . DOKU_LF;
-                            $this->closingTag = "</div>".DOKU_LF;
-                            $renderer->doc .= '<blockquote class="blockquote mb-0">' . DOKU_LF;
-                            $this->closingTag = "</blockquote>".DOKU_LF.$this->closingTag;
+                    $attributes = $data[PluginUtility::ATTRIBUTES];
+                    $node = new ComponentNode(self::TAG, $attributes, $data[PluginUtility::TREE]);
+                    if ($node->isChildOf("blockquote")) {
+                        if (!$node->hasSiblings()) {
+                            $parent = $node->getParent();
+                            if ($parent->getType() == "card") {
+                                $renderer->doc .= '<div class="card-body">' . DOKU_LF;
+                                $this->closingTag = "</div>" . DOKU_LF;
+                                $renderer->doc .= '<blockquote class="blockquote mb-0">' . DOKU_LF;
+                                $this->closingTag = "</blockquote>" . DOKU_LF . $this->closingTag;
+                            }
                         }
                         $renderer->doc .= "<footer class=\"blockquote-footer\"><cite";
-                        if (sizeof($payload) > 0) {
-                            $inlineAttributes = PluginUtility::array2HTMLAttributes($payload);
+                        if (sizeof($attributes) > 0) {
+                            $inlineAttributes = PluginUtility::array2HTMLAttributes($attributes);
                             $renderer->doc .= $inlineAttributes . '>';
                         } else {
                             $renderer->doc .= '>';
                         }
-                        $this->closingTag = "</footer>".DOKU_LF.$this->closingTag;
+                        $this->closingTag = "</footer>" . DOKU_LF . $this->closingTag;
                     } else {
                         $renderer->doc .= "<cite";
-                        if (sizeof($payload)>0) {
-                            $inlineAttributes = PluginUtility::array2HTMLAttributes($payload);
+                        if (sizeof($attributes) > 0) {
+                            $inlineAttributes = PluginUtility::array2HTMLAttributes($attributes);
                             $renderer->doc .= " $inlineAttributes";
                         }
                         $renderer->doc .= ">";
@@ -146,12 +149,12 @@ class syntax_plugin_combo_cite extends DokuWiki_Syntax_Plugin
                     break;
 
                 case DOKU_LEXER_UNMATCHED :
-                    $renderer->doc .= PluginUtility::escape($payload);
+                    $renderer->doc .= PluginUtility::escape($data[PluginUtility::PAYLOAD]);
                     break;
 
                 case DOKU_LEXER_EXIT :
 
-                    $renderer->doc .= '</cite>'.$this->closingTag;
+                    $renderer->doc .= '</cite>' . $this->closingTag;
                     $this->closingTag = "";
 
                     break;
@@ -162,7 +165,6 @@ class syntax_plugin_combo_cite extends DokuWiki_Syntax_Plugin
         // unsupported $mode
         return false;
     }
-
 
 
 }
