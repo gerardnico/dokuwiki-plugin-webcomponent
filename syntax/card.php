@@ -147,7 +147,7 @@ class syntax_plugin_combo_card extends DokuWiki_Syntax_Plugin
 
                 $tag = new Tag(self::TAG, array(), $state, $handler->calls);
 
-                $sibling = $tag->getFirstSibling();
+                $sibling = $tag->getSibling();
                 $withCardBody = false;
                 if ($sibling == false){
                     $withCardBody = true;

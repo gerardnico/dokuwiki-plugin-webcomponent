@@ -121,26 +121,11 @@ class Tag
      */
     public function hasSiblings()
     {
-        $counter = sizeof($this->calls);
-        while ($counter > 0) {
-
-            $call = $this->calls[$counter - 1];
-            if ($call[0] == "eol") {
-                $counter = $counter - 1;
-                continue;
-            } else {
-                break;
-            }
-
+        if ($this->getSibling()===false) {
+            return false;
+        } else {
+            return true;
         }
-        if (isset($call)) {
-            if ($call[1][2] == DOKU_LEXER_ENTER) {
-                return false;
-            } else {
-                return true;
-            }
-        }
-        return false;
 
     }
 
@@ -257,27 +242,32 @@ class Tag
 
     /**
      *
-     * @return bool|Tag - a sibling tag or false
+     * @return bool|Tag - the sibling tag (in ascendant order) or false
      */
-    public function getFirstSibling()
+    public function getSibling()
     {
         $counter = sizeof($this->calls);
         while ($counter > 0) {
-            $parentCall = $this->calls[$counter - 1];
-            if ($parentCall[0] == "eol" ||
-                $this->getName() == self::getTagName($parentCall) // In case of an unmatched tag, we may be still in the same element
-            ) {
+
+            $call = $this->calls[$counter - 1];
+            if ($call[0] == "eol") {
                 $counter = $counter - 1;
-                unset($parentCall);
+                unset($call);
+                continue;
             } else {
                 break;
             }
+
         }
-        if (isset($parentCall)) {
-            return self::call2Node($parentCall, $counter);
-        } else {
-            return false;
+        if (isset($call)) {
+            if (self::getStateFromCall($call) == DOKU_LEXER_ENTER) {
+                return false;
+            } else {
+                return self::call2Node($call, $counter);
+            }
         }
+        return false;
+
 
     }
 

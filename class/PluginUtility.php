@@ -173,18 +173,13 @@ class PluginUtility
      *
      * The attribute name and value are escaped
      *
-     * @param $attributes
+     * @param $attributes - combo attributes
      * @return string
      */
     public static function array2HTMLAttributes($attributes)
     {
         // Process the style attributes if any
         self::processStyle($attributes);
-
-        // No type
-        if (isset($attributes["type"])){
-            unset($attributes["type"]);
-        }
 
         // The class shortcut
         $align = "align";
@@ -204,7 +199,10 @@ class PluginUtility
         $tagAttributeString = "";
         foreach ($attributes as $name => $value) {
 
-            $tagAttributeString .= hsc($name) . '="' . self::escape(StringUtility::toString($value)) . '" ';
+            if ($name !== "type") {
+                $tagAttributeString .= hsc($name) . '="' . self::escape(StringUtility::toString($value)) . '" ';
+            }
+
         }
         return trim($tagAttributeString);
     }

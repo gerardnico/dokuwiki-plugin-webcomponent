@@ -26,7 +26,6 @@ require_once(__DIR__ . '/../class/PluginUtility.php');
 require_once(__DIR__ . '/../class/TestUtility.php');
 
 
-
 class plugin_combo_tag_test extends DokuWikiTest
 {
 
@@ -42,25 +41,25 @@ class plugin_combo_tag_test extends DokuWikiTest
      */
     public function test_enter_tag_without_sibling()
     {
-        $text = '<card><blockquote warning>'.DOKU_LF
-            . ' '.DOKU_LF
+        $text = '<card><blockquote warning>' . DOKU_LF
+            . ' ' . DOKU_LF
             . '<tag important></tag></blockquote></card>';
         $id = "idTestNode";
-        TestUtility::addPage($id,$text);
+        TestUtility::addPage($id, $text);
         $testRequest = new TestRequest();
-        $response = $testRequest->get(array("id"=>$id));
-        $node =  $response->queryHTML("tag-enter");
-        $this->assertEquals(syntax_plugin_combo_tag::TAG, $node->attr("name"),"name test");
-        $this->assertEquals("blockquote", $node->attr("parent"),"parent test");
-        $this->assertEquals("warning", $node->attr("parent-type"),"parent-type test");
-        $this->assertEquals("true", $node->attr("child-of-blockquote"),"child of test");
-        $this->assertEquals("false", $node->attr("has-siblings"),"has siblings test");
-        $this->assertEquals("true", $node->attr("descendant-of-card"),"descendant test");
+        $response = $testRequest->get(array("id" => $id));
+        $node = $response->queryHTML("tag-enter");
+        $this->assertEquals(syntax_plugin_combo_tag::TAG, $node->attr("name"), "name test");
+        $this->assertEquals("blockquote", $node->attr("parent"), "parent test");
+        $this->assertEquals("warning", $node->attr("parent-type"), "parent-type test");
+        $this->assertEquals("true", $node->attr("child-of-blockquote"), "child of test");
+        $this->assertEquals("false", $node->attr("has-siblings"), "has siblings test");
+        $this->assertEquals("true", $node->attr("descendant-of-card"), "descendant test");
 
-        $node =  $response->queryHTML("tag-unmatched");
-        $this->assertEquals(0, $node->count(),"no unmatched");
-        $node =  $response->queryHTML("tag-special");
-        $this->assertEquals(0, $node->count(),"no special");
+        $node = $response->queryHTML("tag-unmatched");
+        $this->assertEquals(0, $node->count(), "no unmatched");
+        $node = $response->queryHTML("tag-special");
+        $this->assertEquals(0, $node->count(), "no special");
 
 
     }
@@ -71,24 +70,24 @@ class plugin_combo_tag_test extends DokuWikiTest
      */
     public function test_enter_tag_with_sibling()
     {
-        $text = '<card>'.DOKU_LF
-            . '<blockquote warning>'.DOKU_LF
-            . '<header></header>'.DOKU_LF
-            . '<tag important></tag>'.DOKU_LF
+        $text = '<card>' . DOKU_LF
+            . '<blockquote warning>' . DOKU_LF
+            . '<header></header>' . DOKU_LF
+            . '<tag important></tag>' . DOKU_LF
             . '</blockquote></card>';
         $id = "idTestSibling";
-        TestUtility::addPage($id,$text);
+        TestUtility::addPage($id, $text);
         $testRequest = new TestRequest();
-        $response = $testRequest->get(array("id"=>$id));
-        $node =  $response->queryHTML("tag-enter");
-        $this->assertEquals("tag", $node->attr("name"),"name test");
-        $this->assertEquals("important", $node->attr("type"),"name test");
-        $this->assertEquals("blockquote", $node->attr("parent"),"parent test");
-        $this->assertEquals("warning", $node->attr("parent-type"),"parent-type test");
-        $this->assertEquals("true", $node->attr("child-of-blockquote"),"child of test");
-        $this->assertEquals("true", $node->attr("descendant-of-card"),"descendant test");
-        $this->assertEquals("true", $node->attr("has-siblings"),"has siblings test");
-        $this->assertEquals("header", $node->attr("first-sibling"),"has siblings test");
+        $response = $testRequest->get(array("id" => $id));
+        $node = $response->queryHTML("tag-enter");
+        $this->assertEquals("tag", $node->attr("name"), "name test");
+        $this->assertEquals("important", $node->attr("type"), "name test");
+        $this->assertEquals("blockquote", $node->attr("parent"), "parent test");
+        $this->assertEquals("warning", $node->attr("parent-type"), "parent-type test");
+        $this->assertEquals("true", $node->attr("child-of-blockquote"), "child of test");
+        $this->assertEquals("true", $node->attr("descendant-of-card"), "descendant test");
+        $this->assertEquals("true", $node->attr("has-siblings"), "has siblings test");
+        $this->assertEquals("header", $node->attr("first-sibling"), "has siblings test");
 
 
     }
@@ -98,33 +97,33 @@ class plugin_combo_tag_test extends DokuWikiTest
      */
     public function test_unmatched_tag()
     {
-        $text = '<card>'.DOKU_LF
-            . '<blockquote warning>'.DOKU_LF
-            . '<header></header>'.DOKU_LF
-            . '<tag important>Unmatched</tag>'.DOKU_LF
+        $text = '<card>' . DOKU_LF
+            . '<blockquote warning>' . DOKU_LF
+            . '<header></header>' . DOKU_LF
+            . '<tag important>Unmatched</tag>' . DOKU_LF
             . '</blockquote></card>';
         $id = "idTestSibling";
-        TestUtility::addPage($id,$text);
+        TestUtility::addPage($id, $text);
         $testRequest = new TestRequest();
-        $response = $testRequest->get(array("id"=>$id));
-        $node =  $response->queryHTML("tag-enter");
-        $this->assertEquals(syntax_plugin_combo_tag::TAG, $node->attr("name"),"enter name test");
-        $this->assertEquals("important", $node->attr("type"),"enter type");
-        $this->assertEquals("blockquote", $node->attr("parent"),"enter parent test");
-        $this->assertEquals("warning", $node->attr("parent-type"),"enter parent-type test");
-        $this->assertEquals("true", $node->attr("child-of-blockquote"),"enter child of test");
-        $this->assertEquals("true", $node->attr("descendant-of-card"),"enter descendant test");
-        $this->assertEquals("true", $node->attr("has-siblings"),"enter has siblings test");
-        $this->assertEquals("header", $node->attr("first-sibling"),"has siblings test");
-        $node =  $response->queryHTML("tag-unmatched");
-        $this->assertEquals(syntax_plugin_combo_tag::TAG, $node->attr("name"),"unmatched name test");
-        $this->assertEquals("important", $node->attr("type"),"unmatched type");
-        $this->assertEquals("blockquote", $node->attr("parent"),"unmatched parent test");
-        $this->assertEquals("warning", $node->attr("parent-type"),"unmatched parent-type test");
-        $this->assertEquals("true", $node->attr("child-of-blockquote"),"unmatched child of test");
-        $this->assertEquals("true", $node->attr("descendant-of-card"),"unmatched descendant test");
-        $this->assertEquals("false", $node->attr("has-siblings"),"unmatched has siblings test");
-        $this->assertEquals("header", $node->attr("first-sibling"),"unmatched first siblings test");
+        $response = $testRequest->get(array("id" => $id));
+        $node = $response->queryHTML("tag-enter");
+        $this->assertEquals(syntax_plugin_combo_tag::TAG, $node->attr("name"), "enter name test");
+        $this->assertEquals("important", $node->attr("type"), "enter type");
+        $this->assertEquals("blockquote", $node->attr("parent"), "enter parent test");
+        $this->assertEquals("warning", $node->attr("parent-type"), "enter parent-type test");
+        $this->assertEquals("true", $node->attr("child-of-blockquote"), "enter child of test");
+        $this->assertEquals("true", $node->attr("descendant-of-card"), "enter descendant test");
+        $this->assertEquals("true", $node->attr("has-siblings"), "enter has siblings test");
+        $this->assertEquals("header", $node->attr("first-sibling"), "has siblings test");
+        $node = $response->queryHTML("tag-unmatched");
+        $this->assertEquals(syntax_plugin_combo_tag::TAG, $node->attr("name"), "unmatched name test");
+        $this->assertEquals("important", $node->attr("type"), "unmatched type");
+        $this->assertEquals("blockquote", $node->attr("parent"), "unmatched parent test");
+        $this->assertEquals("warning", $node->attr("parent-type"), "unmatched parent-type test");
+        $this->assertEquals("true", $node->attr("child-of-blockquote"), "unmatched child of test");
+        $this->assertEquals("true", $node->attr("descendant-of-card"), "unmatched descendant test");
+        $this->assertEquals("false", $node->attr("has-siblings"), "unmatched has siblings test");
+        $this->assertEquals("false", $node->attr("first-sibling"), "unmatched first siblings test");
 
 
     }
@@ -134,25 +133,29 @@ class plugin_combo_tag_test extends DokuWikiTest
      */
     public function test_special_tag()
     {
-        $text = '<card>'.DOKU_LF
-            . '<blockquote warning>'.DOKU_LF
-            . '<header></header>'.DOKU_LF
-            . '<tag important />'.DOKU_LF
-            . '</blockquote>'.DOKU_LF
+        $text = '<card>' . DOKU_LF
+            . '<blockquote warning>' . DOKU_LF
+            . '<header></header>' . DOKU_LF
+            . '<tag important />' . DOKU_LF
+            . '</blockquote>' . DOKU_LF
             . '</card>';
         $id = "idTestSibling";
-        TestUtility::addPage($id,$text);
+        TestUtility::addPage($id, $text);
         $testRequest = new TestRequest();
-        $response = $testRequest->get(array("id"=>$id));
-        $node =  $response->queryHTML("tag-special");
-        $this->assertEquals(syntax_plugin_combo_tag::TAG, $node->attr("name"),"special name test");
-        $this->assertEquals("important", $node->attr("type"),"special type");
-        $this->assertEquals("blockquote", $node->attr("parent"),"special parent test");
-        $this->assertEquals("warning", $node->attr("parent-type"),"special parent-type test");
-        $this->assertEquals("true", $node->attr("child-of-blockquote"),"special child of test");
-        $this->assertEquals("true", $node->attr("descendant-of-card"),"special descendant test");
-        $this->assertEquals("true", $node->attr("has-siblings"),"special has siblings test");
-        $this->assertEquals("header", $node->attr("first-sibling"),"special siblings test");
+        $response = $testRequest->get(array("id" => $id));
+        $node = $response->queryHTML("tag-special");
+        $this->assertEquals(syntax_plugin_combo_tag::TAG, $node->attr("name"), "special name test");
+        $this->assertEquals("important", $node->attr("type"), "special type");
+        $this->assertEquals("blockquote", $node->attr("parent"), "special parent test");
+        $this->assertEquals("warning", $node->attr("parent-type"), "special parent-type test");
+        $this->assertEquals("true", $node->attr("child-of-blockquote"), "special child of test");
+        $this->assertEquals("true", $node->attr("descendant-of-card"), "special descendant test");
+        $this->assertEquals("true", $node->attr("has-siblings"), "special has siblings test");
+        $this->assertEquals("header", $node->attr("first-sibling"), "special siblings test");
 
     }
+
+
+
+
 }

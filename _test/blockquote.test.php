@@ -251,12 +251,31 @@ class plugin_combo_blockquote_test extends DokuWikiTest
     }
 
     /**
-     * Add a space
-     * if you want to have a real card
-     * in case for instance that you use
-     * a component inside such as math
      */
     public function test_blockquote_typo_in_card()
+    {
+
+        $element = syntax_plugin_combo_blockquote::TAG;
+        $doku_text = '<card><' . $element . ' typo>' . DOKU_LF
+            . ' ' . DOKU_LF
+            . '<cite>Nico</cite></' . $element . '>'
+            . '</card>';
+        $expected = '<div class="card">' . DOKU_LF
+            . '<div class="card-body">' . DOKU_LF
+            . '<blockquote class="blockquote mb-0">' . DOKU_LF
+            . '<footer class="blockquote-footer"><cite>Nico</cite></footer>' . DOKU_LF
+            . '</blockquote>' . DOKU_LF
+            . '</div>' . DOKU_LF
+            . '</div>' . DOKU_LF;
+
+        $xhtml = PluginUtility::render($doku_text);
+        $this->assertEquals($expected, $xhtml);
+
+    }
+
+    /**
+     */
+    public function test_blockquote_typo_in_card_with_cite()
     {
 
         $element = syntax_plugin_combo_blockquote::TAG;

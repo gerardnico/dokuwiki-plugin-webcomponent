@@ -173,7 +173,7 @@ class syntax_plugin_combo_blockquote extends DokuWiki_Syntax_Plugin
                 /**
                  * First or second unmatched tag ?
                  */
-                $firstSibling = $node->getFirstSibling();
+                $firstSibling = $node->getSibling();
                 if (empty($firstSibling)) {
                     // That's the first unmatched tag
                     if ($node->getOpeningTag()->getType() == "card") {
