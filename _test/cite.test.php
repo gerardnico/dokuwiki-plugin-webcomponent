@@ -1,9 +1,10 @@
 <?php
 
 use ComboStrap\PluginUtility;
+use ComboStrap\StringUtility;
 
 require_once(__DIR__ . '/../class/PluginUtility.php');
-require_once(__DIR__ . '/../class/PluginUtility.php');
+require_once(__DIR__ . '/../class/StringUtility.php');
 
 /**
  * Test the component plugin
@@ -39,7 +40,7 @@ class plugin_combo_cite_test extends DokuWikiTest
         $expected = '<cite><a href="/./doku.php?id='.$id.'#section" class="wikilink2" title="namespace:page" rel="nofollow" data-wiki-id="'.$id.'">bla</a></cite>';
         $instructions = p_get_instructions($doku_text);
         $xhtml = p_render('xhtml', $instructions, $info);
-        $this->assertEquals($expected, $xhtml);
+        $this->assertEquals($expected, StringUtility::normalized($xhtml));
 
     }
 

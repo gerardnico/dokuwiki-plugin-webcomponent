@@ -3,3 +3,7 @@
 # the files installed
 syntax/group.php
 syntax/collapse.php
+syntax/cardheader.php
+syntax/cardheading.php
+syntax/blockquoteheading.php
+syntax/blockquoteheader.php

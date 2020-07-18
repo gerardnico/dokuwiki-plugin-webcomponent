@@ -9,17 +9,9 @@ use TestRequest;
 
 require_once(__DIR__ . '/LogUtility.php');
 require_once(__DIR__ . '/IconUtility.php');
-/**
- * Are used everywhere in the plugin and the last upgrade just kill them
- * I just add them here
- */
-if (!defined("DOKU_LEXER_ENTER")) {
-    define("DOKU_LEXER_ENTER", 1);
-    define("DOKU_LEXER_MATCHED", 2);
-    define("DOKU_LEXER_UNMATCHED", 3);
-    define("DOKU_LEXER_EXIT", 4);
-    define("DOKU_LEXER_SPECIAL", 5);
-}
+require_once(__DIR__ . '/StringUtility.php');
+
+
 
 /**
  * Class url static
@@ -35,7 +27,7 @@ class PluginUtility
      * Key in the data array between handle and render function
      */
     const STATE = "state";
-    const PAYLOAD = "payload";
+    const PAYLOAD = "payload"; // The html or text
     const ATTRIBUTES = "attributes";
     const TREE = "tree";
 
@@ -206,7 +198,8 @@ class PluginUtility
         // Then transform
         $tagAttributeString = "";
         foreach ($attributes as $name => $value) {
-            $tagAttributeString .= hsc($name) . '="' . hsc($value) . '" ';
+
+            $tagAttributeString .= hsc($name) . '="' . self::escape(StringUtility::toString($value)) . '" ';
         }
         return trim($tagAttributeString);
     }

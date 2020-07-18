@@ -5,7 +5,7 @@
  *
  */
 
-use ComboStrap\ComponentNode;
+use ComboStrap\Tag;
 use ComboStrap\HeadingUtility;
 use ComboStrap\PluginUtility;
 
@@ -15,7 +15,7 @@ if (!defined('DOKU_INC')) {
 
 require_once(__DIR__ . '/../class/PluginUtility.php');
 require_once(__DIR__ . '/../class/HeadingUtility.php');
-require_once(__DIR__ . '/../class/ComponentNode.php');
+require_once(__DIR__ . '/../class/Tag.php');
 
 /**
  * All DokuWiki plugins to extend the parser/rendering mechanism
@@ -139,17 +139,44 @@ class syntax_plugin_combo_blockquote extends DokuWiki_Syntax_Plugin
                     PluginUtility::ATTRIBUTES => $tagAttributes);
 
             case DOKU_LEXER_UNMATCHED :
+                $node = new Tag(self::TAG,array(),$state, $handler->calls);
+                $doc = "";
+                if ($node->getOpeningTag()->getType()=="card"){
+                    $firstSibling = $node->getFirstSibling();
+                    if (!empty($firstSibling)) {
+                        $previousTags = ["heading"];
+                        if (!in_array($firstSibling->getName(), $previousTags)) {
+                            $doc .= "<div class=\"card-body\">" . DOKU_LF;
+                        }
+                    } else {
+                        $doc .= "<div class=\"card-body\">" . DOKU_LF;
+                    }
+                    $doc .= "<blockquote class=\"blockquote mb-0\">" . DOKU_LF;
+                }
+                $doc .= PluginUtility::escape($match).DOKU_LF;
+
                 return array(
                     PluginUtility::STATE => $state,
-                    PluginUtility::PAYLOAD => $match,
-                    PluginUtility::TREE => $handler->calls);
+                    PluginUtility::PAYLOAD => $doc);
 
 
             case DOKU_LEXER_EXIT :
                 // Important to get an exit in the render phase
+                $node = new Tag(self::TAG,array(),$state,$handler->calls);
+                if ($node->getOpeningTag()->getType()=="card"){
+
+                    $doc = "</blockquote>" . DOKU_LF;
+                    $doc .= "</div>" . DOKU_LF;
+                    $doc .= "</div>" . DOKU_LF;
+
+                } else {
+
+                    $doc = "</blockquote>" . DOKU_LF;
+
+                }
                 return array(
                     PluginUtility::STATE => $state,
-                    PluginUtility::TREE => $handler->calls
+                    PluginUtility::PAYLOAD => $doc
                 );
 
         }
@@ -201,39 +228,13 @@ class syntax_plugin_combo_blockquote extends DokuWiki_Syntax_Plugin
                     }
                     break;
 
+                case DOKU_LEXER_EXIT:
                 case DOKU_LEXER_UNMATCHED:
 
-                    $node = new ComponentNode("cdata",array(),$data[PluginUtility::TREE]);
-                    if ($node->getParent()->getType()=="card"){
-                        $previousTags = ["heading"];
-                        if (!in_array($node->getFirstSibling()->getName(),$previousTags)) {
-                            $renderer->doc .= "<div class=\"card-body\">" . DOKU_LF;
-                        }
-                        $renderer->doc .= "<blockquote class=\"blockquote mb-0\">" . DOKU_LF;
-                    }
-
-                    $payload = $data[PluginUtility::PAYLOAD];
-                    $renderer->doc .= PluginUtility::render($payload).DOKU_LF;
+                    $renderer->doc .= $data[PluginUtility::PAYLOAD];
                     break;
 
 
-                case DOKU_LEXER_EXIT :
-
-                    $node = new ComponentNode(self::TAG,array(),$data[PluginUtility::TREE]);
-                    if ($node->getOpeningTag()->getType()=="card"){
-
-                        $renderer->doc .= "</blockquote>" . DOKU_LF;
-                        $renderer->doc .= "</div>" . DOKU_LF;
-                        $renderer->doc .= "</div>" . DOKU_LF;
-
-                    } else {
-
-                        $renderer->doc .= "</blockquote>" . DOKU_LF;
-
-                    }
-
-
-                    break;
             }
             return true;
         }

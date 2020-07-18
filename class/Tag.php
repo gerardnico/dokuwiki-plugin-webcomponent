@@ -13,38 +13,76 @@
 namespace ComboStrap;
 
 
-class ComponentNode
+use Doku_Handler;
+
+class Tag
 {
     private $calls;
     private $attributes;
     private $name;
+    private $state;
 
 
     /**
-     * ComponentTree constructor.
+     * Token constructor
+     * A token represent a call of {@link \Doku_Handler}
+     * It can be seen as a the counter part of the HTML tag.
+     *
+     * It has a state of:
+     *   * {@link DOKU_LEXER_ENTER} (open),
+     *   * {@link DOKU_LEXER_UNMATCHED} (unmatched content),
+     *   * {@link DOKU_LEXER_EXIT} (closed)
+     *
      * @param $name
      * @param $attributes
-     * @param $calls
+     * @param $state
+     * @param $calls - The dokuwiki call stack - ie {@link Doku_Handler->calls} or a subset
      */
-    public function __construct($name, $attributes, $calls)
+    public function __construct($name, $attributes, $state, $calls)
     {
         $this->name = $name;
         $this->attributes = $attributes;
+        $this->state = $state;
         $this->calls = $calls;
+    }
+
+    private static function getMatchFromCall($call)
+    {
+        return $call[1][3];
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getState()
+    {
+        return $this->state;
     }
 
     /**
      * From a call to a node
      * @param $call
      * @param $position - the position in the call stack
-     * @return ComponentNode
+     * @return Tag
      */
     private function call2Node($call, $position)
     {
+
         $attributes = $call[1][1][PluginUtility::ATTRIBUTES];
+        /**
+         * If we don't have already the attributes
+         * in the returned array of the handler,
+         * (ie the full HTML was given for instance)
+         * we parse the match again
+         */
+        if ($attributes == null) {
+            $match = self::getMatchFromCall($call);
+            $attributes = PluginUtility::getTagAttributes($match);
+        }
         $name = self::getTagName($call);
-        $calls = array_slice($this->calls, 0, $position);
-        return new ComponentNode($name, $attributes, $calls);
+        $calls = array_slice($this->calls, 0, $position); // reduce the call stack
+        $state = self::getStateFromCall($call);
+        return new Tag($name, $attributes, $state, $calls);
     }
 
     /**
@@ -52,7 +90,7 @@ class ComponentNode
      * @param $call
      * @return mixed
      */
-    private static function getState($call)
+    private static function getStateFromCall($call)
     {
         return $call[1][2];
     }
@@ -95,7 +133,7 @@ class ComponentNode
 
     /**
      * Return the parent node or false if root
-     * @return bool|ComponentNode
+     * @return bool|Tag
      */
     public function getParent()
     {
@@ -107,7 +145,7 @@ class ComponentNode
             $parentCall = $this->calls[$descendantCounter];
 
             $parentCallName = $parentCall[0];
-            $state = self::getState($parentCall);
+            $state = self::getStateFromCall($parentCall);
 
             /**
              * Case when we start from the same element
@@ -154,6 +192,9 @@ class ComponentNode
         return $this->attributes[$name];
     }
 
+    /**
+     * @return mixed - the name of the element (ie the opening tag)
+     */
     public function getName()
     {
         return $this->name;
@@ -172,9 +213,16 @@ class ComponentNode
     }
 
 
+    /**
+     * @return string - the type attribute of the opening tag
+     */
     public function getType()
     {
-        return $this->getAttribute("type");
+        if ($this->getState() == DOKU_LEXER_UNMATCHED) {
+            return $this->getOpeningTag()->getType();
+        } else {
+            return $this->getAttribute("type");
+        }
     }
 
     /**
@@ -199,7 +247,9 @@ class ComponentNode
         $counter = sizeof($this->calls);
         while ($counter > 0) {
             $parentCall = $this->calls[$counter - 1];
-            if ($parentCall[0] == "eol") {
+            if ($parentCall[0] == "eol" ||
+                $this->getName() == self::getTagName($parentCall) // In case of an unmatched tag, we may be still in the same element
+            ) {
                 $counter = $counter - 1;
                 unset($parentCall);
             } else {
@@ -226,7 +276,7 @@ class ComponentNode
 
             $parentCall = $this->calls[$descendantCounter];
             $parentTagName = self::getTagName($parentCall);
-            $state = self::getState($parentCall);
+            $state = self::getStateFromCall($parentCall);
             if ($state === DOKU_LEXER_ENTER && $parentTagName === $this->getName()) {
                 break;
             } else {

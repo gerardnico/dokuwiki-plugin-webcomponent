@@ -1,10 +1,10 @@
 <?php
 
 
-use ComboStrap\ComponentNode;
+use ComboStrap\Tag;
 use ComboStrap\PluginUtility;
 
-require_once(__DIR__ . '/../class/ComponentNode.php');
+require_once(__DIR__ . '/../class/Tag.php');
 
 /**
  * Just a node to test
@@ -95,16 +95,43 @@ class syntax_plugin_combo_node extends DokuWiki_Syntax_Plugin
         switch ($state) {
 
             case DOKU_LEXER_ENTER :
+                $attributes = PluginUtility::getTagAttributes($match);
+                $node = new Tag(self::TAG, $attributes, $state, $handler->calls);
+                $attributes['name'] = $node->getName();
+                $attributes['type'] = $node->getType();
+                $attributes['parent'] =  $node->getParent()->getName() ;;
+                $attributes['parent-type'] =  $node->getParent()->getType() ;;
+                $attributes['child-of-blockquote'] = $node->isChildOf("blockquote");
+                $attributes['descendant-of-card'] =  $node->isDescendantOf("card");
+                $attributes['has-siblings'] =  $node->hasSiblings() ;
+                $attributes['first-sibling'] =  $node->getFirstSibling()->getName() ;
 
+                $payload = '<enter '.PluginUtility::array2HTMLAttributes($attributes).'></enter>';
+
+                /**
+                 * Attributes needs to be given
+                 * in order to save it in the call stack
+                 */
                 return array(
                     PluginUtility::STATE => $state,
-                    PluginUtility::ATTRIBUTES => PluginUtility::getTagAttributes($match),
-                    "calls" => $handler->calls);
+                    PluginUtility::PAYLOAD => $payload
+                );
 
             case DOKU_LEXER_UNMATCHED :
+                $node = new Tag(self::TAG, array(),$state, $handler->calls);
+                $attributes['name'] = $node->getName();
+                $attributes['type'] = $node->getType();
+                $attributes['parent'] =  $node->getParent()->getName() ;;
+                $attributes['parent-type'] =  $node->getParent()->getType() ;;
+                $attributes['child-of-blockquote'] = $node->isChildOf("blockquote");
+                $attributes['descendant-of-card'] =  $node->isDescendantOf("card");
+                $attributes['has-siblings'] =  $node->hasSiblings() ;
+                $attributes['first-sibling'] =  $node->getFirstSibling()->getName() ;
+                $payload = '<unmatched '.PluginUtility::array2HTMLAttributes($attributes).'></unmatched>';
                 return array(
                     PluginUtility::STATE => $state,
-                    PluginUtility::PAYLOAD => $match);
+                    PluginUtility::PAYLOAD => $payload
+                );
 
             case DOKU_LEXER_EXIT :
 
@@ -134,27 +161,13 @@ class syntax_plugin_combo_node extends DokuWiki_Syntax_Plugin
             /** @var Doku_Renderer_xhtml $renderer */
             $state = $data["state"];
             switch ($state) {
+                case DOKU_LEXER_UNMATCHED:
                 case DOKU_LEXER_ENTER :
-
-                    $node = new ComponentNode(self::TAG, $data[PluginUtility::ATTRIBUTES], $data["calls"]);
-                    $renderer->doc .= "<node ".DOKU_LF;
-                    $renderer->doc .= 'name="' . $node->getName() .'"'. DOKU_LF;
-                    $renderer->doc .= 'type="' . $node->getType() .'"' . DOKU_LF;
-                    $renderer->doc .= 'parent="' . $node->getParent()->getName() .'"'. DOKU_LF;
-                    $renderer->doc .= 'parent-type="' . $node->getParent()->getType() .'"'. DOKU_LF;
-                    $renderer->doc .= 'child-of-blockquote="' . ($node->isChildOf("blockquote")===true?1:0) .'"'. DOKU_LF;
-                    $renderer->doc .= 'descendant-of-card="' . ($node->isDescendantOf("card")===true?1:0) .'"'. DOKU_LF;
-                    $renderer->doc .= 'has-siblings="' . ($node->hasSiblings()===true?1:0) .'"'. DOKU_LF;
-                    $renderer->doc .= 'first-sibling="' . $node->getFirstSibling()->getName() .'"'. DOKU_LF;
-                    $renderer->doc .= '>';
-                    break;
-
-                case DOKU_LEXER_UNMATCHED :
-                    $renderer->doc .= PluginUtility::escape($data[PluginUtility::PAYLOAD]);
+                    $renderer->doc .= $data[PluginUtility::PAYLOAD];
                     break;
 
                 case DOKU_LEXER_EXIT :
-                    $renderer->doc = '</node>';
+                    $renderer->doc = '';
                     break;
             }
             return true;
@@ -163,10 +176,6 @@ class syntax_plugin_combo_node extends DokuWiki_Syntax_Plugin
         // unsupported $mode
         return false;
     }
-
-
-
-
 
 
 }

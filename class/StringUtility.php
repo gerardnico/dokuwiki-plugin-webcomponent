@@ -50,4 +50,17 @@ class StringUtility
             return true;
         }
     }
+
+    public static function toString($value)
+    {
+        $string = var_export($value,true);
+
+        // An array value gets command in var_export
+        $lastCharacterIndex = strlen($string) - 1;
+        if ($string[0]==="'" && $string[$lastCharacterIndex]==="'"){
+            $string = substr($string,1, strlen($string)-2);
+        }
+        return $string;
+
+    }
 }

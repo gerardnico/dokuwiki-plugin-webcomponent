@@ -4,7 +4,7 @@
 // https://developer.mozilla.org/en-US/docs/Web/HTML/Element/cite
 
 // must be run within Dokuwiki
-use ComboStrap\ComponentNode;
+use ComboStrap\Tag;
 use ComboStrap\PluginUtility;
 
 if (!defined('DOKU_INC')) die();
@@ -117,7 +117,7 @@ class syntax_plugin_combo_cite extends DokuWiki_Syntax_Plugin
                 case DOKU_LEXER_ENTER :
 
                     $attributes = $data[PluginUtility::ATTRIBUTES];
-                    $node = new ComponentNode(self::TAG, $attributes, $data[PluginUtility::TREE]);
+                    $node = new Tag(self::TAG, $attributes, $state, $data[PluginUtility::TREE]);
                     if ($node->isChildOf(syntax_plugin_combo_blockquote::TAG)) {
                         if (!$node->hasSiblings()) {
                             $parent = $node->getParent();
@@ -152,7 +152,7 @@ class syntax_plugin_combo_cite extends DokuWiki_Syntax_Plugin
                 case DOKU_LEXER_EXIT :
 
                     $renderer->doc .= '</cite>';
-                    $node = new ComponentNode("cite",array(), $data[PluginUtility::TREE]);
+                    $node = new Tag(self::TAG,array(), $state, $data[PluginUtility::TREE]);
 
                     if (in_array($node->getParent()->getName(), ["card","blockquote"])) {
                         $renderer->doc .= '</footer>'.DOKU_LF;

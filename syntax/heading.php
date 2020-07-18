@@ -1,7 +1,7 @@
 <?php
 
 
-use ComboStrap\ComponentNode;
+use ComboStrap\Tag;
 use ComboStrap\HeaderUtility;
 use ComboStrap\HeadingUtility;
 use ComboStrap\PluginUtility;
@@ -52,7 +52,8 @@ class syntax_plugin_combo_heading extends DokuWiki_Syntax_Plugin
     {
         // Only inside a card
         $modes = [
-            PluginUtility::getModeForComponent(syntax_plugin_combo_blockquote::TAG)
+            PluginUtility::getModeForComponent(syntax_plugin_combo_blockquote::TAG),
+            PluginUtility::getModeForComponent(syntax_plugin_combo_card::TAG)
         ];
         if (in_array($mode, $modes)) {
             $this->Lexer->addSpecialPattern(HeadingUtility::HEADING_PATTERN, $mode, PluginUtility::getModeForComponent($this->getPluginComponent()));
@@ -103,7 +104,7 @@ class syntax_plugin_combo_heading extends DokuWiki_Syntax_Plugin
 
                     $attributes = $data[PluginUtility::ATTRIBUTES];
                     $tree = $data[PluginUtility::TREE];
-                    $node = new ComponentNode(self::TAG,$attributes,$tree);
+                    $node = new Tag(self::TAG,$attributes,$state, $tree);
                     $class = "";
                     if ($node->getParent()->getType()=="card") {
                         $renderer->doc .= "<div class=\"card-body\">".DOKU_LF;
