@@ -69,11 +69,24 @@ class syntax_plugin_combo_heading extends DokuWiki_Syntax_Plugin
 
             case DOKU_LEXER_SPECIAL :
 
-                $parameters = HeadingUtility::parse($match);
+                $attributes = HeadingUtility::parse($match);
+                $node = new Tag(self::TAG,$attributes,$state, $handler->calls);
+                $html = "";
+                $linkClass = "";
+                if ($node->getParent()->getType()=="card" || $node->getParent()->getName() == "card") {
+                    $html .= "<div class=\"card-body\">".DOKU_LF;
+                    $linkClass = "card-title";
+                }
+                $title = $attributes[HeadingUtility::TITLE];
+                $level = $attributes[HeadingUtility::LEVEL];
+                $html .= '<h' . $level . ' class="'.$linkClass.'" ' . HeadingUtility::COMPONENT_TITLE_STYLE . '>';
+                $html .= PluginUtility::escape($title);
+                $html .= "</h$level>";
+
                 return array(
                     PluginUtility::STATE=> $state,
-                    PluginUtility::ATTRIBUTES=> $parameters,
-                    PluginUtility::TREE=> $handler->calls
+                    PluginUtility::ATTRIBUTES=> $attributes,
+                    PluginUtility::PAYLOAD=> $html
                 );
 
         }
@@ -102,20 +115,7 @@ class syntax_plugin_combo_heading extends DokuWiki_Syntax_Plugin
 
                 case DOKU_LEXER_SPECIAL :
 
-                    $attributes = $data[PluginUtility::ATTRIBUTES];
-                    $tree = $data[PluginUtility::TREE];
-                    $node = new Tag(self::TAG,$attributes,$state, $tree);
-                    $class = "";
-                    if ($node->getParent()->getType()=="card") {
-                        $renderer->doc .= "<div class=\"card-body\">".DOKU_LF;
-                        $class = "card-title";
-                    }
-                    $title = $attributes[HeadingUtility::TITLE];
-                    $level = $attributes[HeadingUtility::LEVEL];
-                    $renderer->doc .= '<h' . $level . ' class="'.$class.'" ' . HeadingUtility::COMPONENT_TITLE_STYLE . '>';
-                    $renderer->doc .= PluginUtility::escape($title);
-                    $renderer->doc .= "</h$level>";
-
+                    $renderer->doc .= $data[PluginUtility::PAYLOAD];
                     break;
 
             }

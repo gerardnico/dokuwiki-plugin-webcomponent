@@ -318,7 +318,8 @@ class PluginUtility
      * ie
      * <br/>
      * <icon/>
-     * This is generatlly used with a subtition plugin
+     * This is generally used with a subtition plugin
+     * and a {@link Lexer::addSpecialPattern} state
      * where the tag is just replaced
      */
     public static function getLeafTagPattern($tag)

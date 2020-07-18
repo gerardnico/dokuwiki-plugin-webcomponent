@@ -5,6 +5,7 @@
  */
 
 use ComboStrap\PluginUtility;
+use ComboStrap\Tag;
 
 if (!defined('DOKU_INC')) {
     die();
@@ -29,7 +30,6 @@ class syntax_plugin_combo_card extends DokuWiki_Syntax_Plugin
 
 
     const TAG = 'card';
-
 
 
     /**
@@ -112,8 +112,6 @@ class syntax_plugin_combo_card extends DokuWiki_Syntax_Plugin
         }
 
 
-
-
     }
 
     /**
@@ -137,16 +135,47 @@ class syntax_plugin_combo_card extends DokuWiki_Syntax_Plugin
             case DOKU_LEXER_ENTER:
 
                 $attributes = PluginUtility::getTagAttributes($match);
-                return array($state, $attributes);
+                PluginUtility::addClass2Attributes("card", $attributes);
+                $html = '<div ' . PluginUtility::array2HTMLAttributes($attributes) . '>' . DOKU_LF;
+                return array(
+                    PluginUtility::STATE => $state,
+                    PluginUtility::ATTRIBUTES => $attributes,
+                    PluginUtility::PAYLOAD => $html
+                );
 
             case DOKU_LEXER_UNMATCHED :
 
-                return array($state, $match);
+                $tag = new Tag(self::TAG, array(), $state, $handler->calls);
+
+                $sibling = $tag->getFirstSibling();
+                $withCardBody = false;
+                if ($sibling == false){
+                    $withCardBody = true;
+                } else {
+                    if ($sibling->getName()=="header"){
+                        $withCardBody = true;
+                    }
+                }
+
+                $html = "";
+                if ($withCardBody) {
+                    $html = '<div class="card-body">' . DOKU_LF;
+                }
+                $html .= PluginUtility::escape($match);
+
+                return array(
+                    PluginUtility::STATE => $state,
+                    PluginUtility::PAYLOAD => $html
+                );
 
 
             case DOKU_LEXER_EXIT :
-
-                return array($state, '');
+                $html = '</div>' . DOKU_LF;
+                $html .= "</div>" . DOKU_LF;
+                return array(
+                    PluginUtility::STATE => $state,
+                    PluginUtility::PAYLOAD => $html
+                );
 
 
         }
@@ -171,41 +200,11 @@ class syntax_plugin_combo_card extends DokuWiki_Syntax_Plugin
         if ($format == 'xhtml') {
 
             /** @var Doku_Renderer_xhtml $renderer */
-            list($state, $payload) = $data;
-            switch ($state) {
-
-                case DOKU_LEXER_ENTER :
-
-                    $attributes = $payload;
-                    PluginUtility::addClass2Attributes("card",$attributes);
-                    $renderer->doc .= '<div '.PluginUtility::array2HTMLAttributes($attributes).'>' . DOKU_LF;
-                    break;
-
-                case DOKU_LEXER_UNMATCHED :
-
-                    if (self::$cardBodyOpen==false){
-                        $renderer->doc .= '<div class="card-body">'. DOKU_LF;
-                        self::$cardBodyOpen=true;
-                    }
-                    $renderer->doc .= PluginUtility::escape($payload);
-
-                    break;
-
-
-                case DOKU_LEXER_EXIT :
-
-                    $renderer->doc .= '</div>' . DOKU_LF;
-                    $renderer->doc .= "</div>" . DOKU_LF;
-
-                    // Reset
-                    self::$cardBodyOpen = false;
-                    break;
-            }
+            $renderer->doc .= $data[PluginUtility::PAYLOAD];
             return true;
         }
         return false;
     }
-
 
 
     public

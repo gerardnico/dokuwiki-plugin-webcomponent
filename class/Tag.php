@@ -46,6 +46,15 @@ class Tag
         $this->calls = $calls;
     }
 
+    /**
+     * @param $call
+     * @return mixed the data returned from the {@link DokuWiki_Syntax_Plugin::handle}
+     */
+    private static function getDataFromCall($call)
+    {
+        return $call[1][1];
+    }
+
     private static function getMatchFromCall($call)
     {
         return $call[1][3];
@@ -67,15 +76,19 @@ class Tag
      */
     private function call2Node($call, $position)
     {
+        $attributes = null;
+        $data = self::getDataFromCall($call);
+        if(isset($data[PluginUtility::ATTRIBUTES])){
+            $attributes = $data[PluginUtility::ATTRIBUTES];
+        }
 
-        $attributes = $call[1][1][PluginUtility::ATTRIBUTES];
         /**
          * If we don't have already the attributes
          * in the returned array of the handler,
          * (ie the full HTML was given for instance)
          * we parse the match again
          */
-        if ($attributes == null) {
+        if ($attributes == null && self::getStateFromCall($call)==DOKU_LEXER_ENTER) {
             $match = self::getMatchFromCall($call);
             $attributes = PluginUtility::getTagAttributes($match);
         }
@@ -242,6 +255,10 @@ class Tag
 
     }
 
+    /**
+     *
+     * @return bool|Tag - a sibling tag or false
+     */
     public function getFirstSibling()
     {
         $counter = sizeof($this->calls);

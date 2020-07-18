@@ -49,13 +49,8 @@ class syntax_plugin_combo_header extends DokuWiki_Syntax_Plugin
 
     function connectTo($mode)
     {
-        // Only inside a card
-        $modes = [
-            PluginUtility::getModeForComponent(syntax_plugin_combo_blockquote::TAG)
-            ];
-        if (in_array($mode, $modes)) {
-            $this->Lexer->addEntryPattern(PluginUtility::getContainerTagPattern(HeaderUtility::HEADER), $mode, PluginUtility::getModeForComponent($this->getPluginComponent()));
-        }
+
+        $this->Lexer->addEntryPattern(PluginUtility::getContainerTagPattern(HeaderUtility::HEADER), $mode, PluginUtility::getModeForComponent($this->getPluginComponent()));
     }
 
     public function postConnect()
@@ -105,13 +100,13 @@ class syntax_plugin_combo_header extends DokuWiki_Syntax_Plugin
             switch ($state) {
 
                 case DOKU_LEXER_ENTER:
-                    PluginUtility::addClass2Attributes("card-header",$payload);
+                    PluginUtility::addClass2Attributes("card-header", $payload);
                     $inlineAttributes = PluginUtility::array2HTMLAttributes($payload);
                     $renderer->doc .= "<div {$inlineAttributes}>" . DOKU_LF;
                     break;
 
                 case DOKU_LEXER_UNMATCHED :
-                    $renderer->doc .= PluginUtility::escape($payload).DOKU_LF;
+                    $renderer->doc .= PluginUtility::escape($payload) . DOKU_LF;
                     break;
 
                 case DOKU_LEXER_EXIT:
@@ -124,7 +119,6 @@ class syntax_plugin_combo_header extends DokuWiki_Syntax_Plugin
         // unsupported $mode
         return false;
     }
-
 
 
 }

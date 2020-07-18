@@ -7,11 +7,12 @@ use ComboStrap\PluginUtility;
 require_once(__DIR__ . '/../class/Tag.php');
 
 /**
- * Just a node to test
+ * Just a node to test the {@link Tag} context
  */
-class syntax_plugin_combo_node extends DokuWiki_Syntax_Plugin
+class syntax_plugin_combo_tag extends DokuWiki_Syntax_Plugin
 {
-    const TAG = "node";
+
+    const TAG = "tag";
 
 
     /**
@@ -66,6 +67,7 @@ class syntax_plugin_combo_node extends DokuWiki_Syntax_Plugin
 
         $pattern = PluginUtility::getContainerTagPattern(self::TAG);
         $this->Lexer->addEntryPattern($pattern, $mode, PluginUtility::getModeForComponent($this->getPluginComponent()));
+        $this->Lexer->addSpecialPattern(PluginUtility::getLeafTagPattern(self::TAG), $mode, PluginUtility::getModeForComponent($this->getPluginComponent()));
 
     }
 
@@ -99,14 +101,14 @@ class syntax_plugin_combo_node extends DokuWiki_Syntax_Plugin
                 $node = new Tag(self::TAG, $attributes, $state, $handler->calls);
                 $attributes['name'] = $node->getName();
                 $attributes['type'] = $node->getType();
-                $attributes['parent'] =  $node->getParent()->getName() ;;
-                $attributes['parent-type'] =  $node->getParent()->getType() ;;
+                $attributes['parent'] = $node->getParent()->getName();;
+                $attributes['parent-type'] = $node->getParent()->getType();;
                 $attributes['child-of-blockquote'] = $node->isChildOf("blockquote");
-                $attributes['descendant-of-card'] =  $node->isDescendantOf("card");
-                $attributes['has-siblings'] =  $node->hasSiblings() ;
-                $attributes['first-sibling'] =  $node->getFirstSibling()->getName() ;
+                $attributes['descendant-of-card'] = $node->isDescendantOf("card");
+                $attributes['has-siblings'] = $node->hasSiblings();
+                $attributes['first-sibling'] = $node->getFirstSibling()->getName();
 
-                $payload = '<enter '.PluginUtility::array2HTMLAttributes($attributes).'></enter>';
+                $payload = '<tag-enter ' . PluginUtility::array2HTMLAttributes($attributes) . '></tag-enter>';
 
                 /**
                  * Attributes needs to be given
@@ -118,16 +120,33 @@ class syntax_plugin_combo_node extends DokuWiki_Syntax_Plugin
                 );
 
             case DOKU_LEXER_UNMATCHED :
-                $node = new Tag(self::TAG, array(),$state, $handler->calls);
+                $node = new Tag(self::TAG, array(), $state, $handler->calls);
                 $attributes['name'] = $node->getName();
                 $attributes['type'] = $node->getType();
-                $attributes['parent'] =  $node->getParent()->getName() ;;
-                $attributes['parent-type'] =  $node->getParent()->getType() ;;
+                $attributes['parent'] = $node->getParent()->getName();;
+                $attributes['parent-type'] = $node->getParent()->getType();;
                 $attributes['child-of-blockquote'] = $node->isChildOf("blockquote");
-                $attributes['descendant-of-card'] =  $node->isDescendantOf("card");
-                $attributes['has-siblings'] =  $node->hasSiblings() ;
-                $attributes['first-sibling'] =  $node->getFirstSibling()->getName() ;
-                $payload = '<unmatched '.PluginUtility::array2HTMLAttributes($attributes).'></unmatched>';
+                $attributes['descendant-of-card'] = $node->isDescendantOf("card");
+                $attributes['has-siblings'] = $node->hasSiblings();
+                $attributes['first-sibling'] = $node->getFirstSibling()->getName();
+                $payload = '<tag-unmatched ' . PluginUtility::array2HTMLAttributes($attributes) . '></tag-unmatched>';
+                return array(
+                    PluginUtility::STATE => $state,
+                    PluginUtility::PAYLOAD => $payload
+                );
+
+            case DOKU_LEXER_SPECIAL :
+
+                $node = new Tag(self::TAG, PluginUtility::getTagAttributes($match), $state, $handler->calls);
+                $attributes['name'] = $node->getName();
+                $attributes['type'] = $node->getType();
+                $attributes['parent'] = $node->getParent()->getName();;
+                $attributes['parent-type'] = $node->getParent()->getType();;
+                $attributes['child-of-blockquote'] = $node->isChildOf("blockquote");
+                $attributes['descendant-of-card'] = $node->isDescendantOf("card");
+                $attributes['has-siblings'] = $node->hasSiblings();
+                $attributes['first-sibling'] = $node->getFirstSibling()->getName();
+                $payload = '<tag-special ' . PluginUtility::array2HTMLAttributes($attributes) . '></tag-special>';
                 return array(
                     PluginUtility::STATE => $state,
                     PluginUtility::PAYLOAD => $payload
@@ -163,6 +182,7 @@ class syntax_plugin_combo_node extends DokuWiki_Syntax_Plugin
             switch ($state) {
                 case DOKU_LEXER_UNMATCHED:
                 case DOKU_LEXER_ENTER :
+                case DOKU_LEXER_SPECIAL:
                     $renderer->doc .= $data[PluginUtility::PAYLOAD];
                     break;
 
