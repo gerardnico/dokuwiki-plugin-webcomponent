@@ -181,6 +181,11 @@ class PluginUtility
         // Process the style attributes if any
         self::processStyle($attributes);
 
+        // No type
+        if (isset($attributes["type"])){
+            unset($attributes["type"]);
+        }
+
         // The class shortcut
         $align = "align";
         if (array_key_exists($align, $attributes)) {
@@ -736,8 +741,6 @@ class PluginUtility
             $attributes["class"] = "{$classValue}";
         }
     }
-
-
 
 
 }

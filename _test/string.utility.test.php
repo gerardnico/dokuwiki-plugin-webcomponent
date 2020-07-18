@@ -47,11 +47,13 @@ class plugin_combo_string_utility_test extends DokuWikiTest
         $this->assertEquals($expected, StringUtility::toString($value));
     }
 
+    public function test_addEol()
+    {
+        $doc = "Hallo";
+        StringUtility::addEolIfNotPresent($doc);
+        $this->assertEquals("Hallo".DOKU_LF,$doc);
 
-
-
-
-
+    }
 
 
 }

@@ -4,8 +4,11 @@
 // https://developer.mozilla.org/en-US/docs/Web/HTML/Element/cite
 
 // must be run within Dokuwiki
+use ComboStrap\StringUtility;
 use ComboStrap\Tag;
 use ComboStrap\PluginUtility;
+
+require_once(__DIR__ . '/../class/StringUtility.php');
 
 if (!defined('DOKU_INC')) die();
 
@@ -127,6 +130,7 @@ class syntax_plugin_combo_cite extends DokuWiki_Syntax_Plugin
                                 $renderer->doc .= '<blockquote class="blockquote mb-0">' . DOKU_LF;
                             }
                         }
+                        StringUtility::addEolIfNotPresent($renderer->doc);
                         $renderer->doc .= "<footer class=\"blockquote-footer\"><cite";
                         if (sizeof($attributes) > 0) {
                             $inlineAttributes = PluginUtility::array2HTMLAttributes($attributes);

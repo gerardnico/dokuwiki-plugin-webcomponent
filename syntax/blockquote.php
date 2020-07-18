@@ -5,6 +5,7 @@
  *
  */
 
+use ComboStrap\StringUtility;
 use ComboStrap\Tag;
 use ComboStrap\HeadingUtility;
 use ComboStrap\PluginUtility;
@@ -15,6 +16,7 @@ if (!defined('DOKU_INC')) {
 
 require_once(__DIR__ . '/../class/PluginUtility.php');
 require_once(__DIR__ . '/../class/HeadingUtility.php');
+require_once(__DIR__ . '/../class/StringUtility.php');
 require_once(__DIR__ . '/../class/Tag.php');
 
 /**
@@ -35,7 +37,6 @@ class syntax_plugin_combo_blockquote extends DokuWiki_Syntax_Plugin
      * @var mixed|string
      */
     static public $type = "card";
-
 
 
     /**
@@ -131,29 +132,68 @@ class syntax_plugin_combo_blockquote extends DokuWiki_Syntax_Plugin
 
             case DOKU_LEXER_ENTER:
                 // Suppress the component name
-                $defaultAttributes = array("type"=>"card");
+                $defaultAttributes = array("type" => "card");
                 $tagAttributes = PluginUtility::getTagAttributes($match);
-                $tagAttributes = PluginUtility::mergeAttributes($tagAttributes,$defaultAttributes);
+                $tagAttributes = PluginUtility::mergeAttributes($tagAttributes, $defaultAttributes);
+
+
+                $type = $tagAttributes["type"];
+                if ($type == "typo") {
+                    $class = "blockquote";
+                } else {
+                    $class = "card";
+                }
+                PluginUtility::addClass2Attributes($class, $tagAttributes);
+
+
+                $html = "";
+                if ($type == "typo") {
+                    $tag = new Tag(self::TAG, $tagAttributes, $state, $handler->calls);
+                    if ($tag->hasParent() && $tag->getParent()->getName() == "card") {
+                        $html = "<div class=\"card-body\">" . DOKU_LF;
+                        PluginUtility::addClass2Attributes("mb-0", $tagAttributes);
+                    }
+                    $inlineAttributes = PluginUtility::array2HTMLAttributes($tagAttributes);
+                    $html .= "<blockquote {$inlineAttributes}>" . DOKU_LF;
+                } else {
+                    $inlineAttributes = PluginUtility::array2HTMLAttributes($tagAttributes);
+                    $html = "<div {$inlineAttributes}>" . DOKU_LF;
+                }
+
                 return array(
-                    PluginUtility::STATE=> $state,
-                    PluginUtility::ATTRIBUTES => $tagAttributes);
+                    PluginUtility::STATE => $state,
+                    PluginUtility::ATTRIBUTES => $tagAttributes,
+                    PluginUtility::PAYLOAD => $html);
+
 
             case DOKU_LEXER_UNMATCHED :
-                $node = new Tag(self::TAG,array(),$state, $handler->calls);
+                $node = new Tag(self::TAG, array(), $state, $handler->calls);
                 $doc = "";
-                if ($node->getOpeningTag()->getType()=="card"){
-                    $firstSibling = $node->getFirstSibling();
-                    if (!empty($firstSibling)) {
-                        $previousTags = ["heading"];
-                        if (!in_array($firstSibling->getName(), $previousTags)) {
-                            $doc .= "<div class=\"card-body\">" . DOKU_LF;
-                        }
-                    } else {
+
+                /**
+                 * First or second unmatched tag ?
+                 */
+                $firstSibling = $node->getFirstSibling();
+                if (empty($firstSibling)) {
+                    // That's the first unmatched tag
+                    if ($node->getOpeningTag()->getType() == "card") {
                         $doc .= "<div class=\"card-body\">" . DOKU_LF;
+                        $doc .= "<blockquote class=\"blockquote mb-0\">" . DOKU_LF;
                     }
-                    $doc .= "<blockquote class=\"blockquote mb-0\">" . DOKU_LF;
+                } else {
+                    // That's not the first one
+                    $previousTags = ["header"];
+                    if (in_array($firstSibling->getName(), $previousTags)) {
+                        $doc .= "<div class=\"card-body\">" . DOKU_LF;
+                        $doc .= "<blockquote class=\"blockquote mb-0\">" . DOKU_LF;
+                    }
+                    $previousTags = ["heading"];
+                    if (in_array($firstSibling->getName(), $previousTags)) {
+                        $doc .= "<blockquote class=\"blockquote mb-0\">" . DOKU_LF;
+                    }
                 }
-                $doc .= PluginUtility::escape($match).DOKU_LF;
+
+                $doc .= PluginUtility::escape($match);
 
                 return array(
                     PluginUtility::STATE => $state,
@@ -162,8 +202,8 @@ class syntax_plugin_combo_blockquote extends DokuWiki_Syntax_Plugin
 
             case DOKU_LEXER_EXIT :
                 // Important to get an exit in the render phase
-                $node = new Tag(self::TAG,array(),$state,$handler->calls);
-                if ($node->getOpeningTag()->getType()=="card"){
+                $node = new Tag(self::TAG, array(), $state, $handler->calls);
+                if ($node->getOpeningTag()->getType() == "card") {
 
                     $doc = "</blockquote>" . DOKU_LF;
                     $doc .= "</div>" . DOKU_LF;
@@ -204,35 +244,16 @@ class syntax_plugin_combo_blockquote extends DokuWiki_Syntax_Plugin
             switch ($state) {
 
                 case DOKU_LEXER_ENTER :
-
-                    $attributes = $data[PluginUtility::ATTRIBUTES];
-                    if (array_key_exists("type", $attributes)) {
-                        self::$type = $attributes["type"];
-                        unset($attributes["type"]);
-                        if (self::$type=="typo") {
-                            $class = "blockquote";
-                        } else {
-                            $class = "card";
-                        }
-                    } else {
-                        $class = "card";
-                    }
-
-                    PluginUtility::addClass2Attributes($class, $attributes);
-
-                    $inlineAttributes = PluginUtility::array2HTMLAttributes($attributes);
-                    if (self::$type == "typo") {
-                        $renderer->doc .= "<blockquote {$inlineAttributes}>" . DOKU_LF;
-                    } else {
-                        $renderer->doc .= "<div {$inlineAttributes}>" . DOKU_LF;
-                    }
-                    break;
-
-                case DOKU_LEXER_EXIT:
                 case DOKU_LEXER_UNMATCHED:
-
                     $renderer->doc .= $data[PluginUtility::PAYLOAD];
                     break;
+                case DOKU_LEXER_EXIT:
+                    // Because we can have several unmatched on a line we don't know if
+                    // there is a eol
+                    StringUtility::addEolIfNotPresent($renderer->doc);
+                    $renderer->doc .= $data[PluginUtility::PAYLOAD];
+                    break;
+
 
 
             }

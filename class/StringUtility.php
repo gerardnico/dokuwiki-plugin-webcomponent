@@ -63,4 +63,15 @@ class StringUtility
         return $string;
 
     }
+
+    /**
+     * Add an EOL if not present at the end of the string
+     * @param $doc
+     */
+    public static function addEolIfNotPresent(&$doc)
+    {
+        if ($doc[strlen($doc) - 1] != DOKU_LF) {
+            $doc .= DOKU_LF;
+        }
+    }
 }
