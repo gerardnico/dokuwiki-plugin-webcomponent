@@ -122,14 +122,6 @@ class syntax_plugin_combo_cite extends DokuWiki_Syntax_Plugin
                     $attributes = $data[PluginUtility::ATTRIBUTES];
                     $node = new Tag(self::TAG, $attributes, $state, $data[PluginUtility::TREE]);
                     if ($node->isChildOf(syntax_plugin_combo_blockquote::TAG)) {
-                        if (!$node->hasSiblings()) {
-                            $parent = $node->getParent();
-                            if ($parent->getType() == "card") {
-                                $renderer->doc .= '<div class="card-body">' . DOKU_LF;
-                                $this->closingTag = "</div>" . DOKU_LF;
-                                $renderer->doc .= '<blockquote class="blockquote mb-0">' . DOKU_LF;
-                            }
-                        }
                         StringUtility::addEolIfNotPresent($renderer->doc);
                         $renderer->doc .= "<footer class=\"blockquote-footer\"><cite";
                         if (sizeof($attributes) > 0) {

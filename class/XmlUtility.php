@@ -4,6 +4,7 @@
 namespace ComboStrap;
 
 
+use DOMDocument;
 use SimpleXMLElement;
 
 /**
@@ -15,6 +16,9 @@ use SimpleXMLElement;
  */
 class XmlUtility
 {
+    const OPEN = "open";
+    const CLOSED = "closed";
+    const NORMAL = "normal";
 
 
     /**
@@ -45,7 +49,7 @@ class XmlUtility
             if (($key = array_search($classValue, $classValues)) !== false) {
                 unset($classValues[$key]);
             }
-            $xml["class"] = implode(" ",$classValues);
+            $xml["class"] = implode(" ", $classValues);
         }
     }
 
@@ -60,15 +64,15 @@ class XmlUtility
      *
      * @param $attName
      * @param $attValue
-     * @param SimpleXMLElement $mediaSvgXml
+     * @param SimpleXMLElement $xml
      */
-    public static function addAttributeValue($attName, $attValue, SimpleXMLElement $mediaSvgXml)
+    public static function addAttributeValue($attName, $attValue, SimpleXMLElement $xml)
     {
-        $actualWidthValue = (string)$mediaSvgXml[$attName];
+        $actualWidthValue = (string)$xml[$attName];
         if ($actualWidthValue != "") {
-            $mediaSvgXml[$attName] .= " $attValue";
+            $xml[$attName] .= " $attValue";
         } else {
-            $mediaSvgXml->addAttribute($attName, $attValue);
+            $xml->addAttribute($attName, $attValue);
         }
     }
 
@@ -99,5 +103,6 @@ class XmlUtility
         }
         return $valid;
     }
+
 
 }

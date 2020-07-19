@@ -13,6 +13,7 @@
 namespace ComboStrap;
 
 
+use DOMDocument;
 use SimpleXMLElement;
 require_once(__DIR__ . '/../class/PluginUtility.php');
 require_once(__DIR__ . '/../class/XmlUtility.php');
@@ -64,6 +65,41 @@ class HtmlUtility
         XmlUtility::deleteClass($classValue, $domElement);
 
         return XmlUtility::asHtml($domElement);
+
+    }
+
+    /**
+     * Return a formatted HTML that does take into account the {@link DOKU_LF}
+     * @param $text
+     * @return mixed
+     */
+    public static function normalize($text)
+    {
+        $text = str_replace(DOKU_LF, "", $text);
+        return self::format($text);
+    }
+
+    /**
+     * Return a formatted HTML
+     * @param $text
+     * @return mixed
+     * DOMDocument supports formatted XML while SimpleXMLElement does not.
+     */
+    public static function format($text)
+    {
+
+        $doc = new DOMDocument();
+        /**
+         * The @ is to suppress the error because of HTML5 tag such as footer
+         * https://stackoverflow.com/questions/6090667/php-domdocument-errors-warnings-on-html5-tags
+         */
+        @$doc->loadHTML($text);
+        $doc->normalize();
+        $doc->formatOutput = true;
+        $domNode = $doc->getElementsByTagName("body")->item(0)->childNodes->item(0);
+        // Type doc can also be reach with $domNode->ownerDocument
+        return $doc->saveXML($domNode);
+
 
     }
 }

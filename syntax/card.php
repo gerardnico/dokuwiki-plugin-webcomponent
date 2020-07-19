@@ -30,6 +30,7 @@ class syntax_plugin_combo_card extends DokuWiki_Syntax_Plugin
 
 
     const TAG = 'card';
+    const CARD_BODY = '<div class="card-body">' . DOKU_LF;
 
 
     /**
@@ -137,6 +138,7 @@ class syntax_plugin_combo_card extends DokuWiki_Syntax_Plugin
                 $attributes = PluginUtility::getTagAttributes($match);
                 PluginUtility::addClass2Attributes("card", $attributes);
                 $html = '<div ' . PluginUtility::array2HTMLAttributes($attributes) . '>' . DOKU_LF;
+                $html .= self::CARD_BODY;
                 return array(
                     PluginUtility::STATE => $state,
                     PluginUtility::ATTRIBUTES => $attributes,
@@ -145,23 +147,7 @@ class syntax_plugin_combo_card extends DokuWiki_Syntax_Plugin
 
             case DOKU_LEXER_UNMATCHED :
 
-                $tag = new Tag(self::TAG, array(), $state, $handler->calls);
-
-                $sibling = $tag->getSibling();
-                $withCardBody = false;
-                if ($sibling == false){
-                    $withCardBody = true;
-                } else {
-                    if ($sibling->getName()=="header"){
-                        $withCardBody = true;
-                    }
-                }
-
-                $html = "";
-                if ($withCardBody) {
-                    $html = '<div class="card-body">' . DOKU_LF;
-                }
-                $html .= PluginUtility::escape($match);
+                $html = PluginUtility::escape($match);
 
                 return array(
                     PluginUtility::STATE => $state,

@@ -3,6 +3,7 @@
 require_once(__DIR__ . '/../class/PluginUtility.php');
 
 use ComboStrap\HeadingUtility;
+use ComboStrap\HtmlUtility;
 use ComboStrap\PluginUtility;
 
 
@@ -97,7 +98,7 @@ class plugin_combo_blockquote_test extends DokuWikiTest
 
         $instructions = p_get_instructions($dokuContent);
         $xhtml = p_render('xhtml', $instructions, $info);
-        $this->assertEquals($expected, $xhtml);
+        $this->assertEquals(HtmlUtility::normalize($expected), HtmlUtility::normalize($xhtml));
 
     }
 
@@ -123,7 +124,7 @@ class plugin_combo_blockquote_test extends DokuWikiTest
 
         $instructions = p_get_instructions($dokuContent);
         $xhtml = p_render('xhtml', $instructions, $info);
-        $this->assertEquals($expected, $xhtml);
+        $this->assertEquals(HtmlUtility::normalize($expected), HtmlUtility::normalize($xhtml));
 
     }
 
@@ -161,7 +162,7 @@ class plugin_combo_blockquote_test extends DokuWikiTest
 
         $instructions = p_get_instructions($dokuContent);
         $xhtml = p_render('xhtml', $instructions, $info);
-        $this->assertEquals($expected, $xhtml);
+        $this->assertEquals(HtmlUtility::normalize($expected), HtmlUtility::normalize($xhtml));
 
     }
 
@@ -219,7 +220,7 @@ class plugin_combo_blockquote_test extends DokuWikiTest
 
         $instructions = p_get_instructions($doku_text);
         $xhtml = p_render('xhtml', $instructions, $info);
-        $this->assertEquals($expected, $xhtml);
+        $this->assertEquals(HtmlUtility::normalize($expected), HtmlUtility::normalize($xhtml));
 
     }
 
@@ -246,7 +247,9 @@ class plugin_combo_blockquote_test extends DokuWikiTest
             . '</div>' . DOKU_LF;
 
         $xhtml = PluginUtility::render($doku_text);
-        $this->assertEquals($expected, $xhtml);
+        $actual = HtmlUtility::normalize($xhtml);
+        $expected = HtmlUtility::normalize($expected);
+        $this->assertEquals($expected, $actual,"The html are the same");
 
     }
 

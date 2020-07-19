@@ -72,9 +72,6 @@ class syntax_plugin_combo_header extends DokuWiki_Syntax_Plugin
                 $inlineAttributes = PluginUtility::array2HTMLAttributes($tagAttributes);
                 $html = "<div {$inlineAttributes}>" . DOKU_LF;
                 $parent = $tag->getParent()->getName();
-                if ($parent == syntax_plugin_combo_blockquote::TAG) {
-                    $html .= syntax_plugin_combo_blockquote::CARD_BODY_BLOCKQUOTE_OPEN_TAG;
-                }
                 return array(
                     PluginUtility::STATE => $state,
                     PluginUtility::ATTRIBUTES => $tagAttributes,
@@ -88,9 +85,14 @@ class syntax_plugin_combo_header extends DokuWiki_Syntax_Plugin
                     PluginUtility::PAYLOAD => $match);
 
             case DOKU_LEXER_EXIT :
-                // Important otherwise we don't get an exit in the render
+                $html = "</div>";
+                $tag = new Tag(HeaderUtility::HEADER, array(), $state, $handler->calls);
+                if ($tag->getParent()->getName() == syntax_plugin_combo_blockquote::TAG) {
+                    $html .= syntax_plugin_combo_blockquote::CARD_BODY_BLOCKQUOTE_OPEN_TAG;
+                }
                 return array(
-                    PluginUtility::STATE => $state
+                    PluginUtility::STATE => $state,
+                    PluginUtility::PAYLOAD=>$html
                 );
 
 
@@ -131,7 +133,7 @@ class syntax_plugin_combo_header extends DokuWiki_Syntax_Plugin
                     break;
 
                 case DOKU_LEXER_EXIT:
-                    $renderer->doc .= "</div>";
+                    $renderer->doc .= $data[PluginUtility::PAYLOAD];
                     break;
 
 

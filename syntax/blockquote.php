@@ -152,7 +152,6 @@ class syntax_plugin_combo_blockquote extends DokuWiki_Syntax_Plugin
                 if ($type == "typo") {
                     $tag = new Tag(self::TAG, $tagAttributes, $state, $handler->calls);
                     if ($tag->hasParent() && $tag->getParent()->getName() == "card") {
-                        $html = self::CARD_BODY_BLOCKQUOTE_OPEN_TAG . DOKU_LF;
                         PluginUtility::addClass2Attributes("mb-0", $tagAttributes);
                     }
                     $inlineAttributes = PluginUtility::array2HTMLAttributes($tagAttributes);
