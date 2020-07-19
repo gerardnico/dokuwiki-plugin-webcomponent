@@ -8,6 +8,8 @@ use ComboStrap\HeaderUtility;
 use ComboStrap\HeadingUtility;
 use ComboStrap\ImgUtility;
 use ComboStrap\PluginUtility;
+use ComboStrap\StringUtility;
+use ComboStrap\Tag;
 
 require_once(__DIR__ . '/../class/ImgUtility.php');
 
@@ -18,13 +20,15 @@ if (!defined('DOKU_INC')) die();
  * Card image
  * Title
  */
-class syntax_plugin_combo_cardimg extends DokuWiki_Syntax_Plugin
+class syntax_plugin_combo_img extends DokuWiki_Syntax_Plugin
 {
 
     // The > in the pattern below is to be able to handle pluggin
     // that uses a pattern such as {{changes>.}} from the change plugin
     // https://github.com/cosmocode/changes/blob/master/syntax.php
 
+
+    const TAG = "img";
 
     function getType()
     {
@@ -76,9 +80,21 @@ class syntax_plugin_combo_cardimg extends DokuWiki_Syntax_Plugin
 
             // As this is a container, this cannot happens but yeah, now, you know
             case DOKU_LEXER_SPECIAL :
-
                 $attributes = ImgUtility::parse($match);
-                return array($state, $attributes);
+                $tag = new Tag(self::TAG, $attributes, $state, $handler->calls);
+
+                $html = "";
+                $parentTag = $tag->getParent()->getName();
+                if ($parentTag == syntax_plugin_combo_card::TAG) {
+                    $html = ImgUtility::render($attributes, "card-img-top");
+                }
+                return array(
+                    PluginUtility::STATE => $state,
+                    PluginUtility::ATTRIBUTES => $attributes,
+                    PluginUtility::PAYLOAD => $html,
+                    PluginUtility::PARENT_TAG => $parentTag
+                );
+
 
         }
         return array();
@@ -101,12 +117,19 @@ class syntax_plugin_combo_cardimg extends DokuWiki_Syntax_Plugin
         if ($format == 'xhtml') {
 
             /** @var Doku_Renderer_xhtml $renderer */
-            list($state, $payload) = $data;
+            $state = $data[PluginUtility::STATE];
             switch ($state) {
 
                 case DOKU_LEXER_SPECIAL :
 
-                    $renderer->doc .= ImgUtility::render($payload,"card-img-top");
+                    if ($data[PluginUtility::PARENT_TAG]===syntax_plugin_combo_card::TAG ){
+                        StringUtility::deleteFromEnd($renderer->doc,syntax_plugin_combo_card::CARD_BODY);
+                        $renderer->doc .= $data[PluginUtility::PAYLOAD];
+                        $renderer->doc .= syntax_plugin_combo_card::CARD_BODY;
+                    } else {
+                        $renderer->doc .= $data[PluginUtility::PAYLOAD];
+                    }
+
                     break;
 
             }

@@ -33,7 +33,7 @@ class StringUtility
      */
     public static function normalized($string)
     {
-        return str_replace("\n","", $string);
+        return str_replace("\n", "", $string);
     }
 
     /**
@@ -43,8 +43,8 @@ class StringUtility
      */
     public static function contain($needle, $haystack)
     {
-        $pos = strpos($haystack,$needle);
-        if ($pos === FALSE){
+        $pos = strpos($haystack, $needle);
+        if ($pos === FALSE) {
             return false;
         } else {
             return true;
@@ -53,12 +53,12 @@ class StringUtility
 
     public static function toString($value)
     {
-        $string = var_export($value,true);
+        $string = var_export($value, true);
 
         // An array value gets command in var_export
         $lastCharacterIndex = strlen($string) - 1;
-        if ($string[0]==="'" && $string[$lastCharacterIndex]==="'"){
-            $string = substr($string,1, strlen($string)-2);
+        if ($string[0] === "'" && $string[$lastCharacterIndex] === "'") {
+            $string = substr($string, 1, strlen($string) - 2);
         }
         return $string;
 
@@ -76,17 +76,21 @@ class StringUtility
     }
 
     /**
-     * Delete the Length from the end
+     * Delete the string from the end
+     * This is used generally to delete the previous opening tag of an header or a blockquote
      * @param $doc
-     * @param $var
+     * @param $string
      */
-    public static function deleteFromEnd(&$doc, $var)
+    public static function deleteFromEnd(&$doc, $string)
     {
-        if (is_numeric($var)){
-            $length = strlen($doc)-$var;
-        } else {
-            $length = strlen($doc)-strlen($var);
-        }
-        $doc = substr($doc,0,$length);
+
+        /**
+         * We trim because in the process, we may get extra {@link DOKU_LF} at the end
+         */
+        $doc = trim($doc);
+        $string = trim($string);
+        $length = strlen($doc) - strlen($string);
+        $doc = substr($doc, 0, $length);
+
     }
 }

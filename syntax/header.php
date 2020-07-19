@@ -87,12 +87,17 @@ class syntax_plugin_combo_header extends DokuWiki_Syntax_Plugin
             case DOKU_LEXER_EXIT :
                 $html = "</div>";
                 $tag = new Tag(HeaderUtility::HEADER, array(), $state, $handler->calls);
-                if ($tag->getParent()->getName() == syntax_plugin_combo_blockquote::TAG) {
-                    $html .= syntax_plugin_combo_blockquote::CARD_BODY_BLOCKQUOTE_OPEN_TAG;
+                switch ($tag->getParent()->getName()) {
+                    case syntax_plugin_combo_blockquote::TAG:
+                        $html .= syntax_plugin_combo_blockquote::CARD_BODY_BLOCKQUOTE_OPEN_TAG;
+                        break;
+                    case syntax_plugin_combo_card::TAG:
+                        $html .= syntax_plugin_combo_card::CARD_BODY;
+                        break;
                 }
                 return array(
                     PluginUtility::STATE => $state,
-                    PluginUtility::PAYLOAD=>$html
+                    PluginUtility::PAYLOAD => $html
                 );
 
 
@@ -122,14 +127,19 @@ class syntax_plugin_combo_header extends DokuWiki_Syntax_Plugin
 
                 case DOKU_LEXER_ENTER:
                     $parent = $data[PluginUtility::PARENT_TAG];
-                    if ($parent == syntax_plugin_combo_blockquote::TAG) {
-                        StringUtility::deleteFromEnd($renderer->doc, strlen(syntax_plugin_combo_blockquote::CARD_BODY_BLOCKQUOTE_OPEN_TAG));
+                    switch ($parent) {
+                        case syntax_plugin_combo_blockquote::TAG:
+                            StringUtility::deleteFromEnd($renderer->doc, syntax_plugin_combo_blockquote::CARD_BODY_BLOCKQUOTE_OPEN_TAG);
+                            break;
+                        case syntax_plugin_combo_card::TAG:
+                            StringUtility::deleteFromEnd($renderer->doc, syntax_plugin_combo_card::CARD_BODY);
+                            break;
                     }
                     $renderer->doc .= $data[PluginUtility::PAYLOAD];
                     break;
 
                 case DOKU_LEXER_UNMATCHED :
-                    $renderer->doc .= PluginUtility::escape($data[PluginUtility::PAYLOAD]) . DOKU_LF;
+                    $renderer->doc .= PluginUtility::escape($data[PluginUtility::PAYLOAD]);
                     break;
 
                 case DOKU_LEXER_EXIT:

@@ -1,6 +1,7 @@
 <?php
 
 use ComboStrap\HeadingUtility;
+use ComboStrap\HtmlUtility;
 use ComboStrap\PluginUtility;
 
 require_once(__DIR__ . '/../class/PluginUtility.php');
@@ -47,7 +48,7 @@ class plugin_combo_teaser_test extends DokuWikiTest
             . '</div>'.DOKU_LF
             . '</div>'.DOKU_LF;
 
-        $this->assertEquals($expected, $xhtml);
+        $this->assertEquals(HtmlUtility::normalize($expected), HtmlUtility::normalize($xhtml));
 
     }
 
@@ -69,11 +70,11 @@ class plugin_combo_teaser_test extends DokuWikiTest
             . '</div>'.DOKU_LF
             . '</div>'.DOKU_LF;
 
-        $this->assertEquals($expected, $xhtml);
+        $this->assertEquals(HtmlUtility::normalize($expected), HtmlUtility::normalize($xhtml));
 
     }
 
-    public function test_base()
+    public function test_with_image()
     {
 
         $tag = syntax_plugin_combo_card::TAG;
@@ -97,7 +98,7 @@ class plugin_combo_teaser_test extends DokuWikiTest
             '</div>' . DOKU_LF;
 
 
-        $this->assertEquals($expected, $xhtml);
+        $this->assertEquals(HtmlUtility::normalize($expected), HtmlUtility::normalize($xhtml));
 
     }
 

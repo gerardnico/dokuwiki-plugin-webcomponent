@@ -488,6 +488,12 @@ class PluginUtility
             unset($attributes[$heightName]);
         }
 
+        $textAlign = "text-align";
+        if (array_key_exists($textAlign, $attributes)) {
+            $styleProperties[$textAlign] = trim($attributes[$textAlign]);
+            unset($attributes[$textAlign]);
+        }
+
 
         if (sizeof($styleProperties) != 0) {
             $attributes[$styleAttributeName] = PluginUtility::array2InlineStyle($styleProperties);

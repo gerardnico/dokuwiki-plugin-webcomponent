@@ -32,7 +32,7 @@ class syntax_plugin_combo_blockquote extends DokuWiki_Syntax_Plugin
 
     const TAG = "blockquote";
     const BLOCKQUOTE_OPEN_TAG = "<blockquote class=\"blockquote mb-0\">" . DOKU_LF;
-    const CARD_BODY_BLOCKQUOTE_OPEN_TAG = "<div class=\"card-body\">".DOKU_LF.self::BLOCKQUOTE_OPEN_TAG;
+    const CARD_BODY_BLOCKQUOTE_OPEN_TAG = syntax_plugin_combo_card::CARD_BODY.self::BLOCKQUOTE_OPEN_TAG;
 
 
     /**
