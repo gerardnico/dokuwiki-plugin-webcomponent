@@ -123,7 +123,7 @@ class plugin_combo_teaser_test extends DokuWikiTest
 
         $instructions = p_get_instructions($doku_text . $doku_text);
         $xhtml = p_render('xhtml', $instructions, $info);
-        $this->assertEquals($expected . $expected, $xhtml);
+        $this->assertEquals(HtmlUtility::normalize($expected . $expected), HtmlUtility::normalize($xhtml));
 
     }
 

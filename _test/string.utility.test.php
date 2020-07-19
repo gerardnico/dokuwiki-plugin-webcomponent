@@ -58,7 +58,7 @@ class plugin_combo_string_utility_test extends DokuWikiTest
     {
 
         $doc = "Hallo";
-        StringUtility::deleteFromEnd($doc,strlen("lo"));
+        StringUtility::deleteFromEnd($doc,"lo");
         $this->assertEquals("Hal", $doc);
 
     }

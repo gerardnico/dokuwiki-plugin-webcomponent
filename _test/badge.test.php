@@ -1,5 +1,6 @@
 <?php
 
+use ComboStrap\HtmlUtility;
 use ComboStrap\PluginUtility;
 use ComboStrap\StringUtility;
 use ComboStrap\TestUtility;
@@ -31,8 +32,8 @@ class plugin_combo_note_test extends DokuWikiTest
         $instructions = p_get_instructions($content);
         $xhtml = p_render('xhtml', $instructions, $info);
 
-        $expected = '<p><span type="info" class="my_class badge alert-info badge-pill" style="my_style:">Badge</span></p>';
-        $this->assertEquals($expected, StringUtility::normalized($xhtml));
+        $expected = '<p><span class="my_class badge alert-info badge-pill" style="my_style:">Badge</span></p>';
+        $this->assertEquals(HtmlUtility::normalize($expected), HtmlUtility::normalize($xhtml));
 
 
     }

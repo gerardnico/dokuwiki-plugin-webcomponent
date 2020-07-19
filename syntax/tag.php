@@ -108,7 +108,7 @@ class syntax_plugin_combo_tag extends DokuWiki_Syntax_Plugin
                 $attributes['has-siblings'] = $node->hasSiblings();
                 $attributes['first-sibling'] = $node->getSibling()!==false?$node->getSibling()->getName():false;
 
-                $payload = '<tag-enter ' . PluginUtility::array2HTMLAttributes($attributes) . '></tag-enter>';
+                $payload = '<tag-enter type="'.$attributes['type'].'" ' . PluginUtility::array2HTMLAttributes($attributes) . '></tag-enter>';
 
                 /**
                  * Attributes needs to be given
@@ -129,7 +129,7 @@ class syntax_plugin_combo_tag extends DokuWiki_Syntax_Plugin
                 $attributes['descendant-of-card'] = $node->isDescendantOf("card");
                 $attributes['has-siblings'] = $node->hasSiblings();
                 $attributes['first-sibling'] = $node->getSibling()!==false?$node->getSibling():false;
-                $payload = '<tag-unmatched ' . PluginUtility::array2HTMLAttributes($attributes) . '></tag-unmatched>';
+                $payload = '<tag-unmatched type="'.$attributes['type'].'" ' . PluginUtility::array2HTMLAttributes($attributes) . '></tag-unmatched>';
                 return array(
                     PluginUtility::STATE => $state,
                     PluginUtility::PAYLOAD => $payload
@@ -146,7 +146,7 @@ class syntax_plugin_combo_tag extends DokuWiki_Syntax_Plugin
                 $attributes['descendant-of-card'] = $node->isDescendantOf("card");
                 $attributes['has-siblings'] = $node->hasSiblings();
                 $attributes['first-sibling'] = $node->getSibling()->getName();
-                $payload = '<tag-special ' . PluginUtility::array2HTMLAttributes($attributes) . '></tag-special>';
+                $payload = '<tag-special type="'.$attributes['type'].'" ' . PluginUtility::array2HTMLAttributes($attributes) . '></tag-special>';
                 return array(
                     PluginUtility::STATE => $state,
                     PluginUtility::PAYLOAD => $payload

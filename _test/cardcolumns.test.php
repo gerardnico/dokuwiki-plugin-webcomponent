@@ -1,6 +1,7 @@
 <?php
 
 use ComboStrap\HeadingUtility;
+use ComboStrap\HtmlUtility;
 use ComboStrap\PluginUtility;
 
 require_once(__DIR__ . '/../class/PluginUtility.php');
@@ -56,7 +57,7 @@ class plugin_combo_cardcolumns_test extends DokuWikiTest
             .'</div>'.DOKU_LF;
 
 
-        $this->assertEquals($expected, $xhtml);
+        $this->assertEquals(HtmlUtility::normalize($expected), HtmlUtility::normalize($xhtml));
 
     }
 

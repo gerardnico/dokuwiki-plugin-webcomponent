@@ -6,6 +6,7 @@ use ComboStrap\PluginUtility;
 use ComboStrap\XmlUtility;
 
 require_once(__DIR__ . '/../class/XmlUtility.php');
+require_once(__DIR__ . '/../class/HtmlUtility.php');
 
 
 /**
@@ -68,7 +69,8 @@ class plugin_combo_html_test extends DokuWikiTest
 
         $text = "<div><span></span></div>";
         $text = HtmlUtility::format($text);
-        $this->assertEquals("",$text, "The HTML is formatted");
+        $expected = "<div>".DOKU_LF."  <span/>".DOKU_LF."</div>";
+        $this->assertEquals($expected,$text, "The HTML is formatted");
 
 
     }
