@@ -30,6 +30,7 @@ class PluginUtility
     const PAYLOAD = "payload"; // The html or text
     const ATTRIBUTES = "attributes";
     const TREE = "tree";
+    const PARENT_TAG = 'parent';
 
 
     /**

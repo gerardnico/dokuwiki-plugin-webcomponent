@@ -31,6 +31,8 @@ class syntax_plugin_combo_blockquote extends DokuWiki_Syntax_Plugin
 {
 
     const TAG = "blockquote";
+    const BLOCKQUOTE_OPEN_TAG = "<blockquote class=\"blockquote mb-0\">" . DOKU_LF;
+    const CARD_BODY_BLOCKQUOTE_OPEN_TAG = "<div class=\"card-body\">".DOKU_LF.self::BLOCKQUOTE_OPEN_TAG;
 
 
     /**
@@ -150,7 +152,7 @@ class syntax_plugin_combo_blockquote extends DokuWiki_Syntax_Plugin
                 if ($type == "typo") {
                     $tag = new Tag(self::TAG, $tagAttributes, $state, $handler->calls);
                     if ($tag->hasParent() && $tag->getParent()->getName() == "card") {
-                        $html = "<div class=\"card-body\">" . DOKU_LF;
+                        $html = self::CARD_BODY_BLOCKQUOTE_OPEN_TAG . DOKU_LF;
                         PluginUtility::addClass2Attributes("mb-0", $tagAttributes);
                     }
                     $inlineAttributes = PluginUtility::array2HTMLAttributes($tagAttributes);
@@ -158,6 +160,14 @@ class syntax_plugin_combo_blockquote extends DokuWiki_Syntax_Plugin
                 } else {
                     $inlineAttributes = PluginUtility::array2HTMLAttributes($tagAttributes);
                     $html = "<div {$inlineAttributes}>" . DOKU_LF;
+                    /**
+                     * Add the card body directly,
+                     * the {@link syntax_plugin_combo_header} will delete it if present
+                     * We use this methodology because a blockquote may have as direct
+                     * child another combo/dokuwiki syntax that is not aware
+                     * of where it lives and will then not open the body of the card
+                     */
+                    $html .= self::CARD_BODY_BLOCKQUOTE_OPEN_TAG;
                 }
 
                 return array(
@@ -167,33 +177,7 @@ class syntax_plugin_combo_blockquote extends DokuWiki_Syntax_Plugin
 
 
             case DOKU_LEXER_UNMATCHED :
-                $node = new Tag(self::TAG, array(), $state, $handler->calls);
-                $doc = "";
-
-                /**
-                 * First or second unmatched tag ?
-                 */
-                $firstSibling = $node->getSibling();
-                if (empty($firstSibling)) {
-                    // That's the first unmatched tag
-                    if ($node->getOpeningTag()->getType() == "card") {
-                        $doc .= "<div class=\"card-body\">" . DOKU_LF;
-                        $doc .= "<blockquote class=\"blockquote mb-0\">" . DOKU_LF;
-                    }
-                } else {
-                    // That's not the first one
-                    $previousTags = ["header"];
-                    if (in_array($firstSibling->getName(), $previousTags)) {
-                        $doc .= "<div class=\"card-body\">" . DOKU_LF;
-                        $doc .= "<blockquote class=\"blockquote mb-0\">" . DOKU_LF;
-                    }
-                    $previousTags = ["heading"];
-                    if (in_array($firstSibling->getName(), $previousTags)) {
-                        $doc .= "<blockquote class=\"blockquote mb-0\">" . DOKU_LF;
-                    }
-                }
-
-                $doc .= PluginUtility::escape($match);
+                $doc = PluginUtility::escape($match);
 
                 return array(
                     PluginUtility::STATE => $state,

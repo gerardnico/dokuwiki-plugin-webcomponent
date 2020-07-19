@@ -7,6 +7,8 @@
 use ComboStrap\HeaderUtility;
 use ComboStrap\HeadingUtility;
 use ComboStrap\PluginUtility;
+use ComboStrap\StringUtility;
+use ComboStrap\Tag;
 
 require_once(__DIR__ . '/../class/HeaderUtility.php');
 
@@ -65,14 +67,31 @@ class syntax_plugin_combo_header extends DokuWiki_Syntax_Plugin
 
             case DOKU_LEXER_ENTER:
                 $tagAttributes = PluginUtility::getTagAttributes($match);
-                return array($state, $tagAttributes);
+                $tag = new Tag(HeaderUtility::HEADER, $tagAttributes, $state, $handler->calls);
+                PluginUtility::addClass2Attributes("card-header", $tagAttributes);
+                $inlineAttributes = PluginUtility::array2HTMLAttributes($tagAttributes);
+                $html = "<div {$inlineAttributes}>" . DOKU_LF;
+                $parent = $tag->getParent()->getName();
+                if ($parent == syntax_plugin_combo_blockquote::TAG) {
+                    $html .= syntax_plugin_combo_blockquote::CARD_BODY_BLOCKQUOTE_OPEN_TAG;
+                }
+                return array(
+                    PluginUtility::STATE => $state,
+                    PluginUtility::ATTRIBUTES => $tagAttributes,
+                    PluginUtility::PAYLOAD => $html,
+                    PluginUtility::PARENT_TAG => $parent
+                );
 
             case DOKU_LEXER_UNMATCHED :
-                return array($state, $match);
+                return array(
+                    PluginUtility::STATE => $state,
+                    PluginUtility::PAYLOAD => $match);
 
             case DOKU_LEXER_EXIT :
                 // Important otherwise we don't get an exit in the render
-                return array($state, '');
+                return array(
+                    PluginUtility::STATE => $state
+                );
 
 
         }
@@ -96,17 +115,19 @@ class syntax_plugin_combo_header extends DokuWiki_Syntax_Plugin
         if ($format == 'xhtml') {
 
             /** @var Doku_Renderer_xhtml $renderer */
-            list($state, $payload) = $data;
+            $state = $data[PluginUtility::STATE];
             switch ($state) {
 
                 case DOKU_LEXER_ENTER:
-                    PluginUtility::addClass2Attributes("card-header", $payload);
-                    $inlineAttributes = PluginUtility::array2HTMLAttributes($payload);
-                    $renderer->doc .= "<div {$inlineAttributes}>" . DOKU_LF;
+                    $parent = $data[PluginUtility::PARENT_TAG];
+                    if ($parent == syntax_plugin_combo_blockquote::TAG) {
+                        StringUtility::deleteFromEnd($renderer->doc, strlen(syntax_plugin_combo_blockquote::CARD_BODY_BLOCKQUOTE_OPEN_TAG));
+                    }
+                    $renderer->doc .= $data[PluginUtility::PAYLOAD];
                     break;
 
                 case DOKU_LEXER_UNMATCHED :
-                    $renderer->doc .= PluginUtility::escape($payload) . DOKU_LF;
+                    $renderer->doc .= PluginUtility::escape($data[PluginUtility::PAYLOAD]) . DOKU_LF;
                     break;
 
                 case DOKU_LEXER_EXIT:

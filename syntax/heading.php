@@ -1,6 +1,7 @@
 <?php
 
 
+use ComboStrap\StringUtility;
 use ComboStrap\Tag;
 use ComboStrap\HeaderUtility;
 use ComboStrap\HeadingUtility;
@@ -70,23 +71,29 @@ class syntax_plugin_combo_heading extends DokuWiki_Syntax_Plugin
             case DOKU_LEXER_SPECIAL :
 
                 $attributes = HeadingUtility::parse($match);
-                $node = new Tag(self::TAG,$attributes,$state, $handler->calls);
-                $html = "";
-                $linkClass = "";
-                if ($node->getParent()->getType()=="card" || $node->getParent()->getName() == "card") {
-                    $html .= "<div class=\"card-body\">".DOKU_LF;
+                $tag = new Tag(self::TAG, $attributes, $state, $handler->calls);
+                $parentTag = $tag->getParent()->getName();
+                if (in_array($parentTag,[syntax_plugin_combo_blockquote::TAG, syntax_plugin_combo_card::TAG])){
                     $linkClass = "card-title";
                 }
                 $title = $attributes[HeadingUtility::TITLE];
                 $level = $attributes[HeadingUtility::LEVEL];
-                $html .= '<h' . $level . ' class="'.$linkClass.'" ' . HeadingUtility::COMPONENT_TITLE_STYLE . '>';
+                $html = '<h' . $level;
+                if (isset($linkClass)) {
+                    $html .= ' class="' . $linkClass . '"';
+                }
+                $html .= ' '.HeadingUtility::COMPONENT_TITLE_STYLE . '>';
                 $html .= PluginUtility::escape($title);
-                $html .= "</h$level>";
+                $html .= "</h$level>".DOKU_LF;
+                if ($parentTag == syntax_plugin_combo_blockquote::TAG){
+                    $html .= syntax_plugin_combo_blockquote::BLOCKQUOTE_OPEN_TAG;
+                }
 
                 return array(
                     PluginUtility::STATE=> $state,
                     PluginUtility::ATTRIBUTES=> $attributes,
-                    PluginUtility::PAYLOAD=> $html
+                    PluginUtility::PAYLOAD=> $html,
+                    PluginUtility::PARENT_TAG => $parentTag
                 );
 
         }
@@ -114,7 +121,9 @@ class syntax_plugin_combo_heading extends DokuWiki_Syntax_Plugin
             switch ($state) {
 
                 case DOKU_LEXER_SPECIAL :
-
+                    if($data[PluginUtility::PARENT_TAG]== syntax_plugin_combo_blockquote::TAG){
+                        StringUtility::deleteFromEnd($renderer->doc,syntax_plugin_combo_blockquote::BLOCKQUOTE_OPEN_TAG);
+                    }
                     $renderer->doc .= $data[PluginUtility::PAYLOAD];
                     break;
 

@@ -74,4 +74,19 @@ class StringUtility
             $doc .= DOKU_LF;
         }
     }
+
+    /**
+     * Delete the Length from the end
+     * @param $doc
+     * @param $var
+     */
+    public static function deleteFromEnd(&$doc, $var)
+    {
+        if (is_numeric($var)){
+            $length = strlen($doc)-$var;
+        } else {
+            $length = strlen($doc)-strlen($var);
+        }
+        $doc = substr($doc,0,$length);
+    }
 }

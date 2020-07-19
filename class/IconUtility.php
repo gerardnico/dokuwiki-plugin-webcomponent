@@ -20,6 +20,9 @@ require_once(__DIR__ . '/../class/ConfUtility.php');
  * Class IconUtility
  * @package ComboStrap
  * @see https://combostrap.com/icon
+ *
+ * TODO: Add Feather ? https://github.com/feathericons/feather/tree/master/icons
+ *
  */
 class IconUtility
 {
@@ -81,6 +84,8 @@ class IconUtility
         // Add fill="currentColor"
         $pathXml = $mediaSvgXml->{'path'};
         XmlUtility::setAttribute("fill", "currentColor", $pathXml);
+        // for line item such as feather (https://github.com/feathericons/feather#2-use)
+        // fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
 
         // Process the style
         PluginUtility::processStyle($attributes);
@@ -145,7 +150,7 @@ class IconUtility
                 if (!file_exists($iconDir)) {
                     $return = mkdir($iconDir, $mode = 0770, $recursive = true);
                     if ($return == false) {
-                        LogUtility::msg("The icon directory ($iconDir) could not be created.", LogUtility::LVL_MSG_ERROR,self::NAME, $log2FrontEnd);
+                        LogUtility::msg("The icon directory ($iconDir) could not be created.", LogUtility::LVL_MSG_ERROR,self::NAME);
                         return false;
                     }
                 }

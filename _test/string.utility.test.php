@@ -17,7 +17,6 @@ class plugin_combo_string_utility_test extends DokuWikiTest
 {
 
 
-
     public function test_to_string()
     {
         /**
@@ -32,7 +31,7 @@ class plugin_combo_string_utility_test extends DokuWikiTest
          * has commas around the value
          */
         $array = array(
-            "key"=>"value"
+            "key" => "value"
         );
         $value = $array["key"];
 
@@ -47,11 +46,20 @@ class plugin_combo_string_utility_test extends DokuWikiTest
         $this->assertEquals($expected, StringUtility::toString($value));
     }
 
-    public function test_addEol()
+    public function test_addEolIfNotPresent()
     {
         $doc = "Hallo";
         StringUtility::addEolIfNotPresent($doc);
-        $this->assertEquals("Hallo".DOKU_LF,$doc);
+        $this->assertEquals("Hallo" . DOKU_LF, $doc);
+
+    }
+
+    public function test_deleteFromEnd()
+    {
+
+        $doc = "Hallo";
+        StringUtility::deleteFromEnd($doc,strlen("lo"));
+        $this->assertEquals("Hal", $doc);
 
     }
 
