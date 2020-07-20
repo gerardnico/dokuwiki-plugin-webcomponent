@@ -138,12 +138,19 @@ class syntax_plugin_combo_button extends DokuWiki_Syntax_Plugin
 
                 $attributes = PluginUtility::getTagAttributes($match);
                 PluginUtility::addClass2Attributes("btn", $attributes);
+
                 if (array_key_exists("type", $attributes)) {
                     $type = $attributes["type"];
                     $attributes["class"] .= " btn-" . $type;
                     unset($attributes["type"]);
                 } else {
                     $attributes["class"] .= " btn-primary";
+                }
+                if (array_key_exists("align", $attributes)) {
+                    $align=$attributes["align"];
+                    if ($align=="center"){
+                        PluginUtility::addStyleProperty("display","block",$attributes);
+                    }
                 }
                 $sizeAttribute = "size";
                 if (array_key_exists($sizeAttribute, $attributes)) {

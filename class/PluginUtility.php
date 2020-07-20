@@ -771,6 +771,22 @@ class PluginUtility
 
     }
 
+    /**
+     * Add a style property to the attributes
+     * @param $property
+     * @param $value
+     * @param array $attributes
+     */
+    public static function addStyleProperty($property, $value, array &$attributes)
+    {
+        if (isset($attributes["style"])){
+            $attributes["style"] .= ";$property:$value";
+        } else {
+            $attributes["style"] = "$property:$value";
+        }
+
+    }
+
 
 }
 
