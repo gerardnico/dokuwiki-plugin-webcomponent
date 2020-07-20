@@ -54,7 +54,8 @@ class syntax_plugin_combo_heading extends DokuWiki_Syntax_Plugin
         // Only inside a card
         $modes = [
             PluginUtility::getModeForComponent(syntax_plugin_combo_blockquote::TAG),
-            PluginUtility::getModeForComponent(syntax_plugin_combo_card::TAG)
+            PluginUtility::getModeForComponent(syntax_plugin_combo_card::TAG),
+            PluginUtility::getModeForComponent(syntax_plugin_combo_note::TAG)
         ];
         if (in_array($mode, $modes)) {
             $this->Lexer->addSpecialPattern(HeadingUtility::HEADING_PATTERN, $mode, PluginUtility::getModeForComponent($this->getPluginComponent()));

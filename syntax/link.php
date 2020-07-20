@@ -16,7 +16,7 @@ if (!defined('DOKU_INC')) die();
  * A link pattern to take over the link of Dokuwiki
  * and transform it as a bootstrap link
  */
-class syntax_plugin_combo_bootstraplink extends DokuWiki_Syntax_Plugin
+class syntax_plugin_combo_link extends DokuWiki_Syntax_Plugin
 {
 
 
@@ -74,7 +74,7 @@ class syntax_plugin_combo_bootstraplink extends DokuWiki_Syntax_Plugin
         $authorizedMode =
             [
                 PluginUtility::getModeForComponent(syntax_plugin_combo_button::getTag()),
-                PluginUtility::getModeForComponent("blockquotecite"),
+                PluginUtility::getModeForComponent(syntax_plugin_combo_cite::TAG),
                 PluginUtility::getModeForComponent(syntax_plugin_combo_dropdown::TAG)
                 ];
         if (in_array($mode,$authorizedMode)) {
@@ -125,9 +125,6 @@ class syntax_plugin_combo_bootstraplink extends DokuWiki_Syntax_Plugin
 
                 $htmlLink = LinkUtility::renderHTML($renderer, $data);
                 $htmlLink = LinkUtility::inheritColorFromParent($htmlLink);
-
-
-
                 $renderer->doc .= $htmlLink;
 
                 return true;

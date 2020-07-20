@@ -1,9 +1,15 @@
 <?php
 
-if (!defined('DOKU_INC')) die('meh.');
+use ComboStrap\BreadcrumbHierarchical;
+use ComboStrap\PageUtility;
+use ComboStrap\TableUtility;
+use ComboStrap\TocUtility;
 
 
-require_once DOKU_INC . 'inc/parser/xhtml.php';
+require_once(__DIR__ . '/../class/PageUtility.php');
+require_once(__DIR__ . '/../class/TableUtility.php');
+require_once(__DIR__ . '/../class/TocUtility.php');
+require_once(__DIR__ . '/../class/BreadcrumbHierarchical.php');
 
 /**
  * Class renderer_plugin_combo_renderer
@@ -28,28 +34,28 @@ class  renderer_plugin_combo_renderer extends Doku_Renderer_xhtml
     protected $sections = [];
 
     /**
-     * @var the section number
+     * @var int the section number
      */
     protected $sectionNumber = 0;
 
     /**
-     * @var variable that permits to carry the header text of a previous section
+     * @var string variable that permits to carry the header text of a previous section
      */
     protected $previousSectionTextHeader = '';
 
 
     /**
-     * @var variable that permits to carry the position of a previous section
+     * @var int variable that permits to carry the position of a previous section
      */
     protected $previousNodePosition = 0;
 
     /**
-     * @var variable that permits to carry the position of a previous section
+     * @var int variable that permits to carry the position of a previous section
      */
     protected $previousNodeLevel = 0;
 
     /**
-     * @var variable that permits to carry the number of words
+     * @var int variable that permits to carry the number of words
      */
     protected $lineCounter = 0;
 
@@ -144,7 +150,7 @@ class  renderer_plugin_combo_renderer extends Doku_Renderer_xhtml
         // Add the page detail after the first header
         if ($level == 1 and $nodePosition == 1) {
 
-            $this->doc .= $this->breadcrumb();
+            $this->doc .= BreadcrumbHierarchical::render();
 
         }
 
@@ -155,28 +161,12 @@ class  renderer_plugin_combo_renderer extends Doku_Renderer_xhtml
     function document_end()
     {
 
-        global $INFO;
         global $ID;
         // The id of the page (not of the sidebar)
         $id = $ID;
-        $isSidebar = FALSE;
-        if ($INFO != null) {
-            $id = $INFO['id'];
-            if ($ID != $id){
-                $isSidebar = TRUE;
-            }
-        }
+        $isSidebar = PageUtility::isSideBar();
 
 
-
-        // TOC init
-        // Dow we need to show the toc ?
-        $showToc = $this->getShowToc();
-        global $TOC;
-        // If the TOC is null (The toc may be initialized by a plugin)
-        if (!is_array($TOC) or count($TOC) == 0) {
-            $TOC = $this->toc;
-        }
 
         // Pump the last doc
         $this->sections[$this->sectionNumber] = array('level' => $this->previousNodeLevel, 'position' => $this->previousNodePosition, 'content' => $this->doc, 'text' => $this->previousSectionTextHeader);
@@ -193,33 +183,21 @@ class  renderer_plugin_combo_renderer extends Doku_Renderer_xhtml
 
             if ($section['level'] == 1 and $section['position'] == 1) {
 
-                if ($showToc) {
-                    $toc = tpl_toc($return = true);
-                    global $ACT;
-                    switch ($ACT){
-                        case 'admin':
-                            $sectionContent .= $toc;
-                            break;
-                        default:
-                            global $conf;
-                            if (count($TOC) > $conf['tocminheads']) {
-                                $sectionContent .= $toc;
-                            }
-                            break;
-                    }
+                if (TocUtility::showToc($this)) {
+                    $sectionContent .= TocUtility::renderToc($this);
                 }
 
             }
 
             # Split by element line
             # element p, h, br, tr, li, pre (one line for pre)
-            $localCount = count(preg_split("/<\/p>|<\/h[1-9]{1}>|<br|<\/tr>|<\/li>|<\/pre>/",$sectionContent)) - 1;
+            $localCount = count(preg_split("/<\/p>|<\/h[1-9]{1}>|<br|<\/tr>|<\/li>|<\/pre>/", $sectionContent)) - 1;
             $lineCounter += $localCount;
             $rollingLineCount += $localCount;
 
             // The content
-            if ($this->getConf('ShowCount') == 1 && $isSidebar == FALSE ){
-                $this->doc .= "<p>Section ".$sectionNumber.": (".$localCount."|".$lineCounter."|".$rollingLineCount.")</p>";
+            if ($this->getConf('ShowCount') == 1 && $isSidebar == FALSE) {
+                $this->doc .= "<p>Section " . $sectionNumber . ": (" . $localCount . "|" . $lineCounter . "|" . $rollingLineCount . ")</p>";
             }
             $this->doc .= $sectionContent;
 
@@ -234,36 +212,36 @@ class  renderer_plugin_combo_renderer extends Doku_Renderer_xhtml
                 isHiddenPage($id) == FALSE && // No ads on hidden pages
                 (
                     (
-                    $localCount > $this->getConf('AdsMinLocalLine') && // Doesn't show any ad if the section does not contains this minimun number of line
-                    $lineCounter > $this->getConf('AdsLineBetween') && // Every N line,
-                    $sectionNumber > $this->getConf('AdsMinSectionNumber') // Doesn't show any ad before
+                        $localCount > $this->getConf('AdsMinLocalLine') && // Doesn't show any ad if the section does not contains this minimum number of line
+                        $lineCounter > $this->getConf('AdsLineBetween') && // Every N line,
+                        $sectionNumber > $this->getConf('AdsMinSectionNumber') // Doesn't show any ad before
                     )
                     or
                     // Show always an ad after a number of section
                     (
-                    $adsCounter == 0 && // Still not ads
-                    $sectionNumber > $this->getConf('AdsMinSectionNumber') && // Above the mininum number of section
-                    $localCount > $this->getConf('AdsMinLocalLine') // Minimum line in the current section (to avoid a pub below a header)
+                        $adsCounter == 0 && // Still not ads
+                        $sectionNumber > $this->getConf('AdsMinSectionNumber') && // Above the minimum number of section
+                        $localCount > $this->getConf('AdsMinLocalLine') // Minimum line in the current section (to avoid a pub below a header)
                     )
                     or
                     // Sometimes the last section (reference) has not so much line and it avoids to show an ads at the end
                     // even if the number of line (space) was enough
                     (
-                    $sectionNumber == count($this->sections) - 1 && // The last section
-                    $lineCounter > $this->getConf('AdsLineBetween')  // Every N line,
+                        $sectionNumber == count($this->sections) - 1 && // The last section
+                        $lineCounter > $this->getConf('AdsLineBetween')  // Every N line,
                     )
                 )
-               ){
+            ) {
 
                 // Counter
                 $adsCounter += 1;
                 $lineCounter = 0;
 
-                if ($this->getConf('ShowPlaceholder') == 1 ){
-                    $this->doc .= '<div align="center" style="border:1px solid;padding:30px;height:90px">Placeholder'.$adsCounter.'</div>';
+                if ($this->getConf('ShowPlaceholder') == 1) {
+                    $this->doc .= '<div align="center" style="border:1px solid;padding:30px;height:90px">Placeholder' . $adsCounter . '</div>';
                 } else {
-                    if ( $adsCounter <= 6){
-                        $this->doc .= $this->getConf('Ads'.$adsCounter);
+                    if ($adsCounter <= 6) {
+                        $this->doc .= $this->getConf('Ads' . $adsCounter);
                     }
                 }
 
@@ -286,154 +264,11 @@ class  renderer_plugin_combo_renderer extends Doku_Renderer_xhtml
      */
     function table_open($maxcols = null, $numrows = null, $pos = null, $classes = NULL)
     {
-        // initialize the row counter used for classes
-        $this->_counter['row_counter'] = 0;
-        $class = 'table';
-        if ($pos !== null) {
-            $sectionEditStartData = ['target' => 'table'];
-            if (!defined('SEC_EDIT_PATTERN')) {
-                // backwards-compatibility for Frusterick Manners (2017-02-19)
-                $sectionEditStartData = 'table';
-            }
-            $class .= ' ' . $this->startSectionEdit($pos, $sectionEditStartData);
-        }
-        // table-responsive and
-        $bootResponsiveClass = 'table-responsive';
-        $bootTableClass = 'table table-hover table-striped';
-
-        $this->doc .= '<div class="' . $class . ' ' . $bootResponsiveClass . '"><table class="inline ' . $bootTableClass . '">' . DOKU_LF;
-
+        TableUtility::render($this,$pos);
     }
 
 
-    /**
-     * Hierarchical breadcrumbs (you are here)
-     *
-     * This will return the Hierarchical breadcrumbs.
-     *
-     * Config:
-     *    - $conf['youarehere'] must be true
-     *    - add $lang['youarehere'] if $printPrefix is true
-     *
-     * Metadata comes from here
-     * https://developers.google.com/search/docs/data-types/breadcrumb
-     *
-     * @return string
-     */
-    function breadcrumb()
-    {
 
-        global $conf;
-
-        // check if enabled
-        if (!$conf['youarehere']) return "";
-
-        // print intermediate namespace links
-        $htmlOutput = '<p class="branch rplus">' . PHP_EOL;
-
-        // Breadcrumb head
-        $htmlOutput .= '<nav aria-label="breadcrumb">' . PHP_EOL;
-        $htmlOutput .= '<ol class="breadcrumb">' .PHP_EOL;
-
-        // Home
-        $htmlOutput .= '<li class="breadcrumb-item">' .PHP_EOL;
-        $page = $conf['start'];
-        $pageTitle = tpl_pagetitle($page, true);
-        $htmlOutput .= tpl_link(wl($page), 'Home', 'title="' . $pageTitle . '"', $return = true);
-        $htmlOutput .= '</li>' . PHP_EOL;
-
-        // Print the parts if there is more than one
-        global $ID;
-        $idParts = explode(':', $ID);
-        $countPart = count($idParts);
-        if ($countPart > 1) {
-
-            // Print the parts without the last one ($count -1)
-            $pagePart = "";
-            for ($i = 0; $i < $countPart - 1; $i++) {
-
-                $pagePart .= $idParts[$i] . ':';
-
-                // We pass the value to the page variable
-                // because the resolve part will change it
-                $page = $pagePart;
-                $exist = null;
-                resolve_pageid(getNS($ID), $page, $exist, "", true);
-
-                $pageTitle = tpl_pagetitle($page, true);
-                $linkContent = $pageTitle;
-                $htmlOutput .= '<li class="breadcrumb-item">';
-                // html_wikilink because the page has the form pagename: and not pagename:pagename
-                $htmlOutput .= tpl_link(wl($page), $linkContent, 'title="' . $pageTitle . '"', $return = true);
-                $htmlOutput .= '</li>' . PHP_EOL;
-
-            }
-        }
-
-        // close the breadcrumb
-        $htmlOutput .= '</ol>' .PHP_EOL;
-        $htmlOutput .= '</nav>' . PHP_EOL;
-
-
-
-        return $htmlOutput;
-
-    }
-
-    /**
-     * @return bool if the toc need to be shown
-     */
-    private function getShowToc()
-    {
-        // No TOC or bar for an admin page
-        global $ACT;
-        $showToc = null;
-
-        if ($ACT == 'search') {
-
-            $showToc = false;
-
-        }
-
-        if ($ACT == 'admin' and $showToc == null) {
-
-            global $INPUT;
-            $plugin = null;
-            $class = $INPUT->str('page');
-            if (!empty($class)) {
-
-                $pluginlist = plugin_list('admin');
-
-                if (in_array($class, $pluginlist)) {
-                    // attempt to load the plugin
-                    /** @var $plugin DokuWiki_Admin_Plugin */
-                    $plugin = plugin_load('admin', $class);
-                }
-
-                if ($plugin !== null) {
-                    global $TOC;
-                    if (!is_array($TOC)) $TOC = $plugin->getTOC(); //if TOC wasn't requested yet
-                    if (!is_array($TOC)) {
-                        $showToc = false;
-                    } else {
-                        $showToc = true;
-                    }
-
-                }
-
-            }
-
-        }
-
-        // Default True
-        if ($showToc == null) {
-            $showToc = true;
-        }
-
-
-        return $showToc;
-
-    }
 
 
 }

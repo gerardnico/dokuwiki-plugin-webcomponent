@@ -1,10 +1,12 @@
 <?php
 
+use ComboStrap\HtmlUtility;
 use ComboStrap\LinkUtility;
 use ComboStrap\PluginUtility;
 use ComboStrap\TestUtility;
 
 require_once(__DIR__ . '/../class/PluginUtility.php');
+require_once(__DIR__ . '/../class/HtmlUtility.php');
 
 /**
  * Test the component plugin
@@ -109,6 +111,16 @@ class plugin_combo_button_test extends DokuWikiTest
         $backLinks = ft_backlinks($pageIdReferent);
         $expected = 1;
         $this->assertEquals($expected, sizeof($backLinks),"There should be 2 link in the backlinks");
+
+
+    }
+
+    public function test_size()
+    {
+
+        $rendered = PluginUtility::render("<btn size=\"lg\">Large button</btn>");
+        $expected = "<button type=\"button\" class=\"btn btn-primary btn-lg\">Large button</button>";
+        $this->assertEquals(HtmlUtility::normalize($expected), HtmlUtility::normalize($rendered));
 
 
     }

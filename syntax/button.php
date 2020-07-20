@@ -64,7 +64,7 @@ class syntax_plugin_combo_button extends DokuWiki_Syntax_Plugin
     /**
      * How Dokuwiki will add P element
      *
-     * * 'normal' - The plugin can be used inside paragraphs
+     *  * 'normal' - The plugin can be used inside paragraphs
      *  * 'block'  - Open paragraphs need to be closed before plugin output - block should not be inside paragraphs
      *  * 'stack'  - Special case. Plugin wraps other paragraphs. - Stacks can contain paragraphs
      *
@@ -72,7 +72,7 @@ class syntax_plugin_combo_button extends DokuWiki_Syntax_Plugin
      */
     function getPType()
     {
-        return 'block';
+        return 'normal';
     }
 
     /**
@@ -90,8 +90,8 @@ class syntax_plugin_combo_button extends DokuWiki_Syntax_Plugin
     /**
      * Create a pattern that will called this plugin
      *
-     * @see Doku_Parser_Mode::connectTo()
      * @param string $mode
+     * @see Doku_Parser_Mode::connectTo()
      */
     function connectTo($mode)
     {
@@ -137,16 +137,42 @@ class syntax_plugin_combo_button extends DokuWiki_Syntax_Plugin
             case DOKU_LEXER_ENTER:
 
                 $attributes = PluginUtility::getTagAttributes($match);
+                PluginUtility::addClass2Attributes("btn", $attributes);
+                if (array_key_exists("type", $attributes)) {
+                    $type = $attributes["type"];
+                    $attributes["class"] .= " btn-" . $type;
+                    unset($attributes["type"]);
+                } else {
+                    $attributes["class"] .= " btn-primary";
+                }
+                $sizeAttribute = "size";
+                if (array_key_exists($sizeAttribute, $attributes)) {
+                    $size = $attributes[$sizeAttribute];
+                    unset($attributes[$sizeAttribute]);
+                    switch ($size) {
+                        case "lg":
+                        case "large":
+                            PluginUtility::addClass2Attributes("btn-lg", $attributes);
+                            break;
+                        case "sm":
+                        case "small":
+                            PluginUtility::addClass2Attributes("btn-sm", $attributes);
+                            break;
+                    }
+                }
+                $inlineAttributes = PluginUtility::array2HTMLAttributes($attributes);
+                $html = '<button type="button" ' . $inlineAttributes . '>';
                 return array(
-                    PluginUtility::STATE=>$state,
-                    PluginUtility::ATTRIBUTES=>$attributes
+                    PluginUtility::STATE => $state,
+                    PluginUtility::ATTRIBUTES => $attributes,
+                    PluginUtility::PAYLOAD => $html
                 );
 
             case DOKU_LEXER_UNMATCHED :
 
                 return array(
                     PluginUtility::STATE => $state,
-                    PluginUtility::PAYLOAD => $match);
+                    PluginUtility::PAYLOAD => PluginUtility::escape($match));
 
 
             case DOKU_LEXER_EXIT :
@@ -175,30 +201,17 @@ class syntax_plugin_combo_button extends DokuWiki_Syntax_Plugin
 
         switch ($format) {
 
-            case 'xhtml': {
+            case 'xhtml':
+            {
 
                 /** @var Doku_Renderer_xhtml $renderer */
 
                 $state = $data["state"];
                 switch ($state) {
 
+                    case DOKU_LEXER_UNMATCHED:
                     case DOKU_LEXER_ENTER :
-                        $attributes = $data["attributes"];
-                        PluginUtility::addClass2Attributes("btn",$attributes);
-                        if (array_key_exists("type", $attributes)) {
-                            $type = $attributes["type"];
-                            $attributes["class"] .= " btn-".$type;
-                            unset($attributes["type"]);
-                        } else {
-                            $attributes["class"] .= " btn-primary";
-                        }
-                        $inlineAttributes = PluginUtility::array2HTMLAttributes($attributes);
-                        $renderer->doc .= '<button type="button" '.$inlineAttributes.'>';
-                        break;
-
-                    case DOKU_LEXER_UNMATCHED :
-
-                        $renderer->doc .= PluginUtility::escape($data["payload"]);
+                        $renderer->doc .= $data["payload"];
                         break;
 
 
@@ -233,12 +246,12 @@ class syntax_plugin_combo_button extends DokuWiki_Syntax_Plugin
      */
     public static function getTagInString($string)
     {
-        foreach (self::getTags() as $tag){
-            if (strpos($string, $tag) !== false){
+        foreach (self::getTags() as $tag) {
+            if (strpos($string, $tag) !== false) {
                 return $tag;
             }
         }
-        throw new Exception('No tag was found in the string ('.$string.')');
+        throw new Exception('No tag was found in the string (' . $string . ')');
 
     }
 

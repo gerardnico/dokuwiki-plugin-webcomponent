@@ -7,3 +7,6 @@ syntax/cardheader.php
 syntax/cardheading.php
 syntax/blockquoteheading.php
 syntax/blockquoteheader.php
+syntax/blockquotecite.php
+syntax/noteheader.php
+syntax/buttonlink.php

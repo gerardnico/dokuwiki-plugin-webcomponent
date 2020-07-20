@@ -16,7 +16,7 @@ class syntax_plugin_combo_search extends DokuWiki_Syntax_Plugin {
     }
 
     function getPType() {
-        return 'block';
+        return 'normal';
     }
 
     function getAllowedTypes() {
