@@ -129,10 +129,10 @@ class syntax_plugin_combo_header extends DokuWiki_Syntax_Plugin
                     $parent = $data[PluginUtility::PARENT_TAG];
                     switch ($parent) {
                         case syntax_plugin_combo_blockquote::TAG:
-                            StringUtility::deleteFromEnd($renderer->doc, syntax_plugin_combo_blockquote::CARD_BODY_BLOCKQUOTE_OPEN_TAG);
+                            StringUtility::rtrim($renderer->doc, syntax_plugin_combo_blockquote::CARD_BODY_BLOCKQUOTE_OPEN_TAG);
                             break;
                         case syntax_plugin_combo_card::TAG:
-                            StringUtility::deleteFromEnd($renderer->doc, syntax_plugin_combo_card::CARD_BODY);
+                            StringUtility::rtrim($renderer->doc, syntax_plugin_combo_card::CARD_BODY);
                             break;
                     }
                     $renderer->doc .= $data[PluginUtility::PAYLOAD];

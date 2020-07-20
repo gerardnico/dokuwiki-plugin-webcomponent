@@ -6,7 +6,8 @@ use ComboStrap\PluginUtility;
 use ComboStrap\TestUtility;
 
 require_once(__DIR__ . '/../class/PluginUtility.php');
-require_once(__DIR__ . '/../class/HtmlUtility.php');
+require_once(__DIR__ . '/../class/TestUtility.php');
+require_once(__DIR__ . '/../class/LinkUtility.php');
 
 /**
  * Test the component plugin
@@ -46,7 +47,10 @@ class plugin_combo_button_test extends DokuWikiTest
             $doku_text = '<' . $element . '>' . '[['.$id.'#section|' . $link_content . ']]' . '</' . $element . '>';
             $instructions = p_get_instructions($doku_text);
             $xhtml = p_render('xhtml', $instructions, $info);
-            $this->assertEquals($expected, $xhtml);
+            $this->assertEquals(
+                TestUtility::normalizeDokuWikiHtml($expected),
+                TestUtility::normalizeDokuWikiHtml($xhtml)
+            );
         }
 
     }
@@ -67,7 +71,10 @@ class plugin_combo_button_test extends DokuWikiTest
             $doku_text = '<' . $element . ' class="mbt-3" >' . '[['.$id.'#section|' . $link_content . ']]' . '</' . $element . '>';
             $instructions = p_get_instructions($doku_text);
             $xhtml = p_render('xhtml', $instructions, $info);
-            $this->assertEquals($expected, $xhtml);
+            $this->assertEquals(
+                TestUtility::normalizeDokuWikiHtml($expected),
+                TestUtility::normalizeDokuWikiHtml($xhtml)
+            );
         }
 
     }
@@ -85,7 +92,10 @@ class plugin_combo_button_test extends DokuWikiTest
             $doku_text = '<' . $element . '>' . '[['.$external.'|' . $link_content . ']]' . '</' . $element . '>';
             $instructions = p_get_instructions($doku_text);
             $xhtml = p_render('xhtml', $instructions, $info);
-            $this->assertEquals($expected, $xhtml);
+            $this->assertEquals(
+                TestUtility::normalizeDokuWikiHtml($expected),
+                TestUtility::normalizeDokuWikiHtml($xhtml)
+            );
         }
 
     }

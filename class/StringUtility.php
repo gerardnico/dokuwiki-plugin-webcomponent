@@ -81,7 +81,7 @@ class StringUtility
      * @param $doc
      * @param $string
      */
-    public static function deleteFromEnd(&$doc, $string)
+    public static function rtrim(&$doc, $string)
     {
 
         /**
@@ -90,7 +90,27 @@ class StringUtility
         $doc = trim($doc);
         $string = trim($string);
         $length = strlen($doc) - strlen($string);
-        $doc = substr($doc, 0, $length);
+        if (substr($doc, $length)===$string) {
+            $doc = substr($doc, 0, $length);
+        }
+
+    }
+
+    /**
+     * Delete the string from the beginning
+     * This is used to delete a tag for instance
+     * @param $doc
+     * @param $string
+     */
+    public static function ltrim(&$doc, $string)
+    {
+
+        $doc = trim($doc);
+        $string = trim($string);
+        $length = strlen($string);
+        if (substr($doc, 0, $length)===$string) {
+            $doc = substr($doc, $length);
+        }
 
     }
 }

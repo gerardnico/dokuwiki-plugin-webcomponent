@@ -1,5 +1,6 @@
 <?php
 
+use ComboStrap\HtmlUtility;
 use ComboStrap\TestUtility;
 
 /**
@@ -9,6 +10,7 @@ use ComboStrap\TestUtility;
  * @group plugins
  */
 require_once(__DIR__ . '/../class/TestUtility.php');
+
 
 class plugin_combo_dokuwiki_test extends DokuWikiTest
 {
@@ -52,5 +54,16 @@ class plugin_combo_dokuwiki_test extends DokuWikiTest
         $this->assertFalse($INFO['exists']);
 
     }
+
+    public function test_p_tag()
+    {
+
+        $content = "yolo";
+        $instructions = p_get_instructions($content);
+        $xhtml = p_render('xhtml', $instructions, $info);
+        $this->assertEquals(HtmlUtility::normalize("<p>yolo</p>"), HtmlUtility::normalize($xhtml));
+
+    }
+
 
 }

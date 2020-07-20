@@ -123,7 +123,7 @@ class syntax_plugin_combo_heading extends DokuWiki_Syntax_Plugin
 
                 case DOKU_LEXER_SPECIAL :
                     if($data[PluginUtility::PARENT_TAG]== syntax_plugin_combo_blockquote::TAG){
-                        StringUtility::deleteFromEnd($renderer->doc,syntax_plugin_combo_blockquote::BLOCKQUOTE_OPEN_TAG);
+                        StringUtility::rtrim($renderer->doc,syntax_plugin_combo_blockquote::BLOCKQUOTE_OPEN_TAG);
                     }
                     $renderer->doc .= $data[PluginUtility::PAYLOAD];
                     break;

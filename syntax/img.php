@@ -123,7 +123,7 @@ class syntax_plugin_combo_img extends DokuWiki_Syntax_Plugin
                 case DOKU_LEXER_SPECIAL :
 
                     if ($data[PluginUtility::PARENT_TAG]===syntax_plugin_combo_card::TAG ){
-                        StringUtility::deleteFromEnd($renderer->doc,syntax_plugin_combo_card::CARD_BODY);
+                        StringUtility::rtrim($renderer->doc,syntax_plugin_combo_card::CARD_BODY);
                         $renderer->doc .= $data[PluginUtility::PAYLOAD];
                         $renderer->doc .= syntax_plugin_combo_card::CARD_BODY;
                     } else {

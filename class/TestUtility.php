@@ -4,6 +4,8 @@ namespace ComboStrap;
 
 use TestRequest;
 
+require_once(__DIR__ . '/../class/HtmlUtility.php');
+
 /**
  * Class TestUtility
  * @package ComboStrap
@@ -162,5 +164,22 @@ class TestUtility
         idx_addPage($pageId);
 
 
+    }
+
+    /**
+     * Format an HTML in order to be able to compare it
+     * @param $text
+     * @return mixed
+     */
+    static function normalizeDokuWikiHtml($text){
+
+        /**
+         * By default, Dokuwiki instruction wraps the output with a p element
+         * See {@link plugin_combo_dokuwiki_test::test_p_tag()}
+         */
+        StringUtility::ltrim($text,"<p>");
+        StringUtility::rtrim($text,"</p>");
+
+        return HtmlUtility::normalize($text);
     }
 }

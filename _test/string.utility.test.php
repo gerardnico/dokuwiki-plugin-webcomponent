@@ -54,12 +54,21 @@ class plugin_combo_string_utility_test extends DokuWikiTest
 
     }
 
-    public function test_deleteFromEnd()
+    public function test_rtrim()
     {
 
         $doc = "Hallo";
-        StringUtility::deleteFromEnd($doc,"lo");
+        StringUtility::rtrim($doc,"lo");
         $this->assertEquals("Hal", $doc);
+
+    }
+
+    public function test_ltrim()
+    {
+
+        $doc = "Hallo";
+        StringUtility::ltrim($doc,"Ha");
+        $this->assertEquals("llo", $doc);
 
     }
 

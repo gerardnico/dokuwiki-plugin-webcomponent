@@ -10,6 +10,7 @@
 use ComboStrap\ArrayUtility;
 use ComboStrap\PluginUtility;
 use ComboStrap\StringUtility;
+use ComboStrap\TestUtility;
 
 require_once(__DIR__ . '/../class/StringUtility.php');
 require_once(__DIR__ . '/../class/PluginUtility.php');
@@ -33,7 +34,7 @@ class plugin_combo_navbar_test extends DokuWikiTest
         $content = "<navbar class=\"$extraClass\"></navbar>";
         $instructions = p_get_instructions($content);
         $xhtml = p_render('xhtml', $instructions, $info);
-        $this->assertEquals("<nav class=\"$extraClass navbar navbar-expand-lg navbar-light\" style=\"background-color:var(--light)\"><div class=\"container\"></div></nav>", StringUtility::normalized($xhtml));
+        $this->assertEquals(TestUtility::normalizeDokuWikiHtml("<nav class=\"$extraClass navbar navbar-expand-lg navbar-light\" style=\"background-color:var(--light)\"><div class=\"container\"></div></nav>"), TestUtility::normalizeDokuWikiHtml($xhtml));
 
     }
 

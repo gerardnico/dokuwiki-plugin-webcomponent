@@ -1,10 +1,13 @@
 <?php
 
+use ComboStrap\LinkUtility;
 use ComboStrap\PluginUtility;
 use ComboStrap\StringUtility;
+use ComboStrap\TestUtility;
 
 require_once(__DIR__ . '/../class/PluginUtility.php');
 require_once(__DIR__ . '/../class/StringUtility.php');
+require_once(__DIR__ . '/../class/LinkUtility.php');
 
 /**
  * Test the component plugin
@@ -37,10 +40,13 @@ class plugin_combo_cite_test extends DokuWikiTest
         $element = syntax_plugin_combo_cite::TAG;
         $id = 'namespace:page';
         $doku_text = '<' . $element . ' >[['.$id.'#section|bla]]</' . $element . '>';
-        $expected = '<cite><a href="/./doku.php?id='.$id.'#section" class="wikilink2" title="namespace:page" rel="nofollow" data-wiki-id="'.$id.'">bla</a></cite>';
+        $expected = '<cite><a href="/./doku.php?id='.$id.'#section" class="wikilink2" title="namespace:page" rel="nofollow" data-wiki-id="'.$id.'" style="'. LinkUtility::STYLE_VALUE.'">bla</a></cite>';
         $instructions = p_get_instructions($doku_text);
         $xhtml = p_render('xhtml', $instructions, $info);
-        $this->assertEquals($expected, StringUtility::normalized($xhtml));
+        $this->assertEquals(
+            TestUtility::normalizeDokuWikiHtml($expected),
+            TestUtility::normalizeDokuWikiHtml($xhtml)
+        );
 
     }
 
@@ -51,10 +57,13 @@ class plugin_combo_cite_test extends DokuWikiTest
         $id = 'namespace:page';
         $extraAttr = 'class="m-2"';
         $doku_text = '<' . $element . ' ' . $extraAttr . '>[[' .$id.'#section|bla]]</' . $element . '>';
-        $expected = '<cite ' . $extraAttr . '><a href="/./doku.php?id='.$id.'#section" class="wikilink2" title="namespace:page" rel="nofollow" data-wiki-id="'.$id.'">bla</a></cite>';
+        $expected = '<cite ' . $extraAttr . '><a href="/./doku.php?id='.$id.'#section" class="wikilink2" title="namespace:page" rel="nofollow" data-wiki-id="'.$id.'" style="'. LinkUtility::STYLE_VALUE.'">bla</a></cite>';
         $instructions = p_get_instructions($doku_text);
         $xhtml = p_render('xhtml', $instructions, $info);
-        $this->assertEquals($expected, StringUtility::normalized($xhtml));
+        $expectedNormalized = TestUtility::normalizeDokuWikiHtml($expected);
+        $this->assertEquals(
+            $expectedNormalized,
+            TestUtility::normalizeDokuWikiHtml($xhtml));
 
     }
 
