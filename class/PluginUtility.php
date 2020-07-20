@@ -182,19 +182,7 @@ class PluginUtility
         // Process the style attributes if any
         self::processStyle($attributes);
 
-        // The class shortcut
-        $align = "align";
-        if (array_key_exists($align, $attributes)) {
-            $alignValue = $attributes[$align];
-            unset($attributes[$align]);
-            if ($alignValue == "center") {
-                if (array_key_exists("class", $attributes)) {
-                    $attributes["class"] .= " mx-auto";
-                } else {
-                    $attributes["class"] = " mx-auto";
-                }
-            }
-        }
+        self::processClass($attributes);
 
         // Then transform
         $tagAttributeString = "";
@@ -751,6 +739,36 @@ class PluginUtility
         } else {
             $attributes["class"] = "{$classValue}";
         }
+    }
+
+    /**
+     * Process the attributes that have an impact on the class
+     * @param $attributes
+     */
+    private static function processClass(&$attributes)
+    {
+        // The class shortcut
+        $align = "align";
+        if (array_key_exists($align, $attributes)) {
+            $alignValue = $attributes[$align];
+            unset($attributes[$align]);
+            if ($alignValue == "center") {
+                if (array_key_exists("class", $attributes)) {
+                    $attributes["class"] .= " mx-auto";
+                } else {
+                    $attributes["class"] = " mx-auto";
+                }
+            }
+        }
+
+        // Spacing is just a class
+        $spacing = "spacing";
+        if (array_key_exists($spacing, $attributes)) {
+            $spacingValue = $attributes[$spacing];
+            unset($attributes[$spacing]);
+            self::addClass2Attributes($spacingValue,$attributes);
+        }
+
     }
 
 

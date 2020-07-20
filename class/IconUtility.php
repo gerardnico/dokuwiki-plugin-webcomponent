@@ -22,6 +22,7 @@ require_once(__DIR__ . '/../class/ConfUtility.php');
  * @see https://combostrap.com/icon
  *
  * TODO: Add Feather ? https://github.com/feathericons/feather/tree/master/icons
+ * TODO: Add Bootstrap ? https://icons.getbootstrap.com/
  *
  */
 class IconUtility
