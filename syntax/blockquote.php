@@ -42,10 +42,14 @@ class syntax_plugin_combo_blockquote extends DokuWiki_Syntax_Plugin
 
 
     /**
-     * Syntax Type.
+     * How Dokuwiki will add P element
      *
-     * Needs to return one of the mode types defined in $PARSER_MODES in parser.php
-     * @see https://www.dokuwiki.org/devel:syntax_plugins#syntax_types
+     *  * 'normal' - The plugin can be used inside paragraphs (inline)
+     *  * 'block'  - Open paragraphs need to be closed before plugin output - block should not be inside paragraphs
+     *  * 'stack'  - Special case. Plugin wraps other paragraphs. - Stacks can contain paragraphs
+     *
+     * @see DokuWiki_Syntax_Plugin::getPType()
+     * @see https://www.dokuwiki.org/devel:syntax_plugins#ptype
      */
     function getType()
     {
@@ -78,7 +82,7 @@ class syntax_plugin_combo_blockquote extends DokuWiki_Syntax_Plugin
      */
     function getPType()
     {
-        return 'block';
+        return 'stack';
     }
 
     /**

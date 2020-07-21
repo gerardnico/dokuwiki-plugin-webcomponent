@@ -14,6 +14,7 @@ namespace ComboStrap;
 
 
 use DOMDocument;
+use http\Exception\RuntimeException;
 use SimpleXMLElement;
 require_once(__DIR__ . '/../class/PluginUtility.php');
 require_once(__DIR__ . '/../class/XmlUtility.php');
@@ -84,10 +85,13 @@ class HtmlUtility
      * @param $text
      * @return mixed
      * DOMDocument supports formatted XML while SimpleXMLElement does not.
+     * @throws \Exception if empty
      */
     public static function format($text)
     {
-
+        if (empty($text)){
+            throw new \Exception("The text should not be empty");
+        }
         $doc = new DOMDocument();
         /**
          * The @ is to suppress the error because of HTML5 tag such as footer

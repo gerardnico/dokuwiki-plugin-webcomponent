@@ -16,10 +16,9 @@ namespace ComboStrap;
 class TableUtility
 {
 
-    static function render($renderer,$pos)
+    static function tableOpen($renderer, $pos)
     {
-        // initialize the row counter used for classes
-        $renderer->_counter['row_counter'] = 0;
+
         $class = 'table';
         if ($pos !== null) {
             $sectionEditStartData = ['target' => 'table'];

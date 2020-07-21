@@ -8,7 +8,6 @@ use ComboStrap\TestUtility;
 
 require_once(__DIR__ . '/../class/PluginUtility.php');
 require_once(__DIR__ . '/../class/TestUtility.php');
-require_once(__DIR__ . '/../class/LinkUtility.php');
 
 /**
  * Test the component plugin
@@ -16,7 +15,7 @@ require_once(__DIR__ . '/../class/LinkUtility.php');
  * @group plugin_combo
  * @group plugins
  */
-class plugin_combo_jumbotron_test extends DokuWikiTest
+class plugin_combo_hr_test extends DokuWikiTest
 {
 
     public function setUp()
@@ -26,11 +25,11 @@ class plugin_combo_jumbotron_test extends DokuWikiTest
     }
 
 
-    public function test_jumbotron_base()
+    public function test_hr_base()
     {
 
-        $text = "<jumbotron spacing=\"mt-3\">Hallo Jumbotron</jumbotron>";
-        $expected = '<div class="jumbotron mt-3">Hallo Jumbotron</div>';
+        $text = "<hr>";
+        $expected = $text;
         $xhtml = PluginUtility::render($text);
         $this->assertEquals(
             TestUtility::normalizeDokuWikiHtml($expected),
@@ -38,21 +37,18 @@ class plugin_combo_jumbotron_test extends DokuWikiTest
         );
     }
 
-    public function test_jumbotron_title()
+    public function test_hr_spacing()
     {
 
-        $text = "<jumbotron spacing=\"mt-3\">" . DOKU_LF
-            . "=== Title ===" . DOKU_LF
-            . "Hallo Jumbotron" . DOKU_LF
-            . "</jumbotron>";
-        $expected = TestUtility::normalizeDokuWikiHtml('<div class="jumbotron mt-3"><h4 '. HeadingUtility::COMPONENT_TITLE_STYLE. '>Title</h4>Hallo Jumbotron</div></div>');
+        $text = "<hr spacing=\"mt-3\">";
+        $expected = "<hr class=\"mt-3\">";
         $xhtml = PluginUtility::render($text);
-        $xhtml = TestUtility::normalizeDokuWikiHtml($xhtml);
         $this->assertEquals(
-            $expected,
-            $xhtml
+            TestUtility::normalizeDokuWikiHtml($expected),
+            TestUtility::normalizeDokuWikiHtml($xhtml)
         );
     }
+
 
 
 }

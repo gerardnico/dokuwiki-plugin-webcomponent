@@ -51,7 +51,7 @@ class syntax_plugin_combo_jumbotron extends DokuWiki_Syntax_Plugin
         /**
          * No base only otherwise the {@link syntax_plugin_combo_heading} title (heading) base will not be taken into account
          */
-        return array('container', 'formatting',  'substition', 'protected', 'disabled', 'paragraphs');
+        return array('container', 'formatting', 'substition', 'protected', 'disabled', 'paragraphs');
     }
 
     /**
@@ -169,8 +169,18 @@ class syntax_plugin_combo_jumbotron extends DokuWiki_Syntax_Plugin
 
         if ($format == 'xhtml') {
 
-            /** @var Doku_Renderer_xhtml $renderer */
-            $renderer->doc .= $data[PluginUtility::PAYLOAD];
+            $state = $data[PluginUtility::STATE];
+            switch ($state) {
+                case DOKU_LEXER_EXIT :
+                case DOKU_LEXER_ENTER:
+                    /** @var Doku_Renderer_xhtml $renderer */
+                    $renderer->doc .= $data[PluginUtility::PAYLOAD].DOKU_LF;
+                    break;
+
+                case DOKU_LEXER_UNMATCHED :
+                    $renderer->doc .= $data[PluginUtility::PAYLOAD];
+            }
+
             return true;
 
         }

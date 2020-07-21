@@ -16,39 +16,42 @@ require_once(__DIR__ . '/../class/TestUtility.php');
 
 
 
-class plugin_combo_renderer_test extends DokuWikiTest
+class plugin_combo_table_test extends DokuWikiTest
 {
 
     public function setUp()
     {
         $this->pluginsEnabled[] = PluginUtility::PLUGIN_BASE_NAME;
+        global $conf;
         parent::setUp();
         $conf['renderer_xhtml'] = 'combo_renderer';
+
     }
 
 
     /**
-     * Test a internal canonical rewrite redirect
+     * Test the {@link \ComboStrap\TableUtility::tableOpen()}
+     * function
      *
      */
-    public function test_no_toc()
+    public function test_table()
     {
 
-        $pageId = "renderer";
-
-
-        // Save a page
-        $text = '===== h1 ====='.DOKU_LF;
-        $text .= '==== h2 ===='.DOKU_LF;
+        // Save a page with a table
+        $text = '^ Header ^ Header ^' . DOKU_LF
+            . '| Value 1 | Value 2 |' . DOKU_LF;
+        $pageId ="table";
         TestUtility::addPage($pageId, $text, 'Page creation');
 
         // In a request
         $request = new TestRequest();
-        $request->get(array('id' => $pageId), '/doku.php');
+        $response =  $request->get(array('id' => $pageId), '/doku.php');
 
-
+        $count = $response->queryHTML(".table-responsive")->count();
+        $this->assertEquals(1,$count,"The table should be responsive");
 
     }
+
 
 
 

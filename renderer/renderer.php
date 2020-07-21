@@ -264,7 +264,9 @@ class  renderer_plugin_combo_renderer extends Doku_Renderer_xhtml
      */
     function table_open($maxcols = null, $numrows = null, $pos = null, $classes = NULL)
     {
-        TableUtility::render($this,$pos);
+        // initialize the row counter used for classes
+        $this->_counter['row_counter'] = 0;
+        TableUtility::tableOpen($this,$pos);
     }
 
 
