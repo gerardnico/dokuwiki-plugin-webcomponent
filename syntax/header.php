@@ -5,7 +5,7 @@
 
 // must be run within Dokuwiki
 use ComboStrap\HeaderUtility;
-use ComboStrap\HeadingUtility;
+use ComboStrap\TitleUtility;
 use ComboStrap\PluginUtility;
 use ComboStrap\StringUtility;
 use ComboStrap\Tag;

@@ -191,6 +191,15 @@ class Tag
     }
 
     /**
+     * Return all attributes
+     * @return string the attributes
+     */
+    public function getAttributes()
+    {
+        return $this->attributes;
+    }
+
+    /**
      * @return mixed - the name of the element (ie the opening tag)
      */
     public function getName()

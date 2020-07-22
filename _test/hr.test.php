@@ -1,6 +1,6 @@
 <?php
 
-use ComboStrap\HeadingUtility;
+use ComboStrap\TitleUtility;
 use ComboStrap\HtmlUtility;
 use ComboStrap\LinkUtility;
 use ComboStrap\PluginUtility;

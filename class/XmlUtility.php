@@ -84,6 +84,9 @@ class XmlUtility
     public static function asHtml(SimpleXMLElement $linkDom)
     {
         $domXml = dom_import_simplexml($linkDom);
+        /**
+         * ownerDocument returned the DOMElement
+         */
         return $domXml->ownerDocument->saveXML($domXml->ownerDocument->documentElement);
     }
 
@@ -102,6 +105,46 @@ class XmlUtility
             $valid = false;
         }
         return $valid;
+    }
+
+    /**
+     * Return a formatted HTML
+     * @param $text
+     * @return mixed
+     * DOMDocument supports formatted XML while SimpleXMLElement does not.
+     * @throws \Exception if empty
+     */
+    public static function format($text)
+    {
+        if (empty($text)){
+            throw new \Exception("The text should not be empty");
+        }
+        $doc = new DOMDocument();
+        $doc->loadXML($text);
+        $doc->normalize();
+        $doc->formatOutput = true;
+        // Type doc can also be reach with $domNode->ownerDocument
+        return $doc->saveXML();
+
+
+    }
+
+    /**
+     * @param $text
+     * @return mixed
+     * @throws \Exception
+     */
+    public static function normalize($text)
+    {
+        if (empty($text)){
+            throw new \Exception("The text should not be empty");
+        }
+        $doc = new DOMDocument();
+        $doc->loadXML($text);
+        $doc->normalize();
+        $doc->formatOutput = true;
+        // Type doc can also be reach with $domNode->ownerDocument
+        return $doc->saveXML($doc->documentElement);
     }
 
 

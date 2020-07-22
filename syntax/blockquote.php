@@ -7,7 +7,7 @@
 
 use ComboStrap\StringUtility;
 use ComboStrap\Tag;
-use ComboStrap\HeadingUtility;
+use ComboStrap\TitleUtility;
 use ComboStrap\PluginUtility;
 
 if (!defined('DOKU_INC')) {
@@ -15,7 +15,7 @@ if (!defined('DOKU_INC')) {
 }
 
 require_once(__DIR__ . '/../class/PluginUtility.php');
-require_once(__DIR__ . '/../class/HeadingUtility.php');
+require_once(__DIR__ . '/../class/TitleUtility.php');
 require_once(__DIR__ . '/../class/StringUtility.php');
 require_once(__DIR__ . '/../class/Tag.php');
 
@@ -82,7 +82,7 @@ class syntax_plugin_combo_blockquote extends DokuWiki_Syntax_Plugin
      */
     function getPType()
     {
-        return 'stack';
+        return 'normal';
     }
 
     /**

@@ -4,7 +4,7 @@ namespace ComboStrap;
 
 use dokuwiki\Extension\Plugin;
 
-require_once(__DIR__ . '/../class/HeadingUtility.php');
+require_once(__DIR__ . '/../class/TitleUtility.php');
 /**
  * Class MetadataUtility
  * @package ComboStrap
@@ -55,7 +55,7 @@ class MetadataUtility
         // Building the box
         $content = '<div id="' . self::META_MESSAGE_BOX_ID . '" class="alert alert-success " role="note">';
         if (array_key_exists(self::TITLE_ATTRIBUTE, $attributes)) {
-            $content .= '<h2 class="alert-heading" ' . HeadingUtility::COMPONENT_TITLE_STYLE . '">' . $attributes[self::TITLE_ATTRIBUTE] . '</h2>';
+            $content .= '<h2 class="alert-heading" ' . TitleUtility::COMPONENT_TITLE_STYLE . '">' . $attributes[self::TITLE_ATTRIBUTE] . '</h2>';
         }
         global $ID;
         $metadata = p_read_metadata($ID);

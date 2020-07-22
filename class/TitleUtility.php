@@ -13,7 +13,7 @@
 namespace ComboStrap;
 
 
-class HeadingUtility
+class TitleUtility
 {
 
     /**
@@ -29,7 +29,7 @@ class HeadingUtility
     const TITLE = 'title';
     const LEVEL = 'level';
 
-    public static function parse($match)
+    public static function parseHeading($match)
     {
         $title = trim($match);
         $level = 7 - strspn($title, '=');

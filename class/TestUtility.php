@@ -5,6 +5,7 @@ namespace ComboStrap;
 use TestRequest;
 
 require_once(__DIR__ . '/../class/HtmlUtility.php');
+require_once(__DIR__ . '/../class/XmlUtility.php');
 
 /**
  * Class TestUtility
@@ -108,6 +109,16 @@ class TestUtility
     {
         global $conf;
         $request->setServer('REMOTE_USER',$conf['superuser']);
+    }
+
+    /**
+     * @param $expected
+     * @return mixed
+     * @throws \Exception
+     */
+    public static function normalizeComboXml($expected)
+    {
+        return XmlUtility::normalize($expected);
     }
 
     /**

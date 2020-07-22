@@ -1,11 +1,11 @@
 <?php
 
-use ComboStrap\HeadingUtility;
+use ComboStrap\TitleUtility;
 use ComboStrap\HtmlUtility;
 use ComboStrap\PluginUtility;
 
 require_once(__DIR__ . '/../class/PluginUtility.php');
-require_once(__DIR__ . '/../class/HeadingUtility.php');
+require_once(__DIR__ . '/../class/TitleUtility.php');
 
 /**
  * Test the component plugin
@@ -43,7 +43,7 @@ class plugin_combo_teaser_test extends DokuWikiTest
         $xhtml = p_render('xhtml', $instructions, $info);
         $expected = '<div class="card">' . DOKU_LF
             . '<div class="card-body">' . DOKU_LF
-            . '<h4 class="card-title" '.HeadingUtility::COMPONENT_TITLE_STYLE.'>Teaser Title</h4>'.DOKU_LF
+            . '<h4 class="card-title" '.TitleUtility::COMPONENT_TITLE_STYLE.'>Teaser Title</h4>'.DOKU_LF
             . 'A example taken '.DOKU_LF
             . '</div>'.DOKU_LF
             . '</div>'.DOKU_LF;
@@ -92,7 +92,7 @@ class plugin_combo_teaser_test extends DokuWikiTest
         $expected = '<div style="width: 18rem" class="mb-3 card">' . DOKU_LF .
             '<img class="card-img-top" src="/./lib/exe/fetch.php?w=30&amp;tok=029902&amp;media=allowclipboardhelper.jpg" alt="" width="30">' . DOKU_LF .
             '<div class="card-body">' . DOKU_LF .
-            '<h4 class="card-title" ' . HeadingUtility::COMPONENT_TITLE_STYLE . '>Teaser Title</h4>' . DOKU_LF .
+            '<h4 class="card-title" ' . TitleUtility::COMPONENT_TITLE_STYLE . '>Teaser Title</h4>' . DOKU_LF .
             'A example taken from <a href="https://getbootstrap.com/docs/4.3/components/card/#example" class="urlextern" title="https://getbootstrap.com/docs/4.3/components/card/#example" rel="ugc nofollow">the bootstrap quick example</a> on how to build a card title in order to make up the bulk of the teaser content.' . DOKU_LF .
             '</div>' . DOKU_LF .
             '</div>' . DOKU_LF;
@@ -116,7 +116,7 @@ class plugin_combo_teaser_test extends DokuWikiTest
         $expected = '<div style="width: 18rem" class="card">' . DOKU_LF
             . '<img class="card-img-top" src="/./lib/exe/fetch.php?w=30&amp;tok=029902&amp;media=allowclipboardhelper.jpg" alt="" width="30">' . DOKU_LF
             . '<div class="card-body">' . DOKU_LF
-            . '<h4 class="card-title" ' . HeadingUtility::COMPONENT_TITLE_STYLE . '>Teaser Title</h4>' . DOKU_LF .
+            . '<h4 class="card-title" ' . TitleUtility::COMPONENT_TITLE_STYLE . '>Teaser Title</h4>' . DOKU_LF .
             'A example taken from <a href="https://getbootstrap.com/docs/4.3/components/card/#example" class="urlextern" title="https://getbootstrap.com/docs/4.3/components/card/#example" rel="ugc nofollow">the bootstrap quick example</a> on how to build a card title in order to make up the bulk of the teaser content.' . DOKU_LF .
             '</div>' . DOKU_LF .
             '</div>' . DOKU_LF;

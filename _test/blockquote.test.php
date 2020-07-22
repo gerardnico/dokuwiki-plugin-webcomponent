@@ -2,7 +2,8 @@
 
 require_once(__DIR__ . '/../class/PluginUtility.php');
 
-use ComboStrap\HeadingUtility;
+use ComboStrap\TestUtility;
+use ComboStrap\TitleUtility;
 use ComboStrap\HtmlUtility;
 use ComboStrap\PluginUtility;
 
@@ -43,10 +44,16 @@ class plugin_combo_blockquote_test extends DokuWikiTest
 
         $instructions = p_get_instructions($dokuContent);
         $xhtml = p_render('xhtml', $instructions, $info);
-        $this->assertEquals($expected, $xhtml);
+        $this->assertEquals(
+            TestUtility::normalizeDokuWikiHtml($expected),
+            TestUtility::normalizeDokuWikiHtml($xhtml)
+        );
 
     }
 
+    /**
+     * @throws Exception
+     */
     public function test_base_card()
     {
 
@@ -62,7 +69,10 @@ class plugin_combo_blockquote_test extends DokuWikiTest
 
         $instructions = p_get_instructions($dokuContent);
         $xhtml = p_render('xhtml', $instructions, $info);
-        $this->assertEquals($expected, $xhtml);
+        $this->assertEquals(
+            TestUtility::normalizeDokuWikiHtml($expected),
+            TestUtility::normalizeDokuWikiHtml($xhtml)
+        );
 
     }
 
@@ -88,7 +98,7 @@ class plugin_combo_blockquote_test extends DokuWikiTest
             . '</' . $element . '>';
         $expected = '<div class="card">' . DOKU_LF
             . '<div class="card-body">' . DOKU_LF
-            . "<h4 class=\"card-title\" " . HeadingUtility::COMPONENT_TITLE_STYLE . ">Header</h4>" . DOKU_LF
+            . "<h4 class=\"card-title\" " . TitleUtility::COMPONENT_TITLE_STYLE . ">Header</h4>" . DOKU_LF
             . '<blockquote class="blockquote mb-0">' . DOKU_LF
             . 'MyQuote' . DOKU_LF
             . '</blockquote>' . DOKU_LF
@@ -98,7 +108,10 @@ class plugin_combo_blockquote_test extends DokuWikiTest
 
         $instructions = p_get_instructions($dokuContent);
         $xhtml = p_render('xhtml', $instructions, $info);
-        $this->assertEquals(HtmlUtility::normalize($expected), HtmlUtility::normalize($xhtml));
+        $this->assertEquals(
+            TestUtility::normalizeDokuWikiHtml($expected),
+            TestUtility::normalizeDokuWikiHtml($xhtml)
+        );
 
     }
 
@@ -124,7 +137,10 @@ class plugin_combo_blockquote_test extends DokuWikiTest
 
         $instructions = p_get_instructions($dokuContent);
         $xhtml = p_render('xhtml', $instructions, $info);
-        $this->assertEquals(HtmlUtility::normalize($expected), HtmlUtility::normalize($xhtml));
+        $this->assertEquals(
+            TestUtility::normalizeDokuWikiHtml($expected),
+            TestUtility::normalizeDokuWikiHtml($xhtml)
+        );
 
     }
 
@@ -211,7 +227,7 @@ class plugin_combo_blockquote_test extends DokuWikiTest
             . '</' . $element . '>';
         $expected = '<div class="card">' . DOKU_LF
             . '<div class="card-body">' . DOKU_LF
-            . '<h4 class="card-title" ' . HeadingUtility::COMPONENT_TITLE_STYLE . '>Title</h4>' . DOKU_LF
+            . '<h4 class="card-title" ' . TitleUtility::COMPONENT_TITLE_STYLE . '>Title</h4>' . DOKU_LF
             . '<blockquote class="blockquote mb-0">' . DOKU_LF
             . 'MyQuote' . DOKU_LF
             . '</blockquote>' . DOKU_LF

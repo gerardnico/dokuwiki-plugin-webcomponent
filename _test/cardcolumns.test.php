@@ -1,6 +1,6 @@
 <?php
 
-use ComboStrap\HeadingUtility;
+use ComboStrap\TitleUtility;
 use ComboStrap\HtmlUtility;
 use ComboStrap\PluginUtility;
 
@@ -50,7 +50,7 @@ class plugin_combo_cardcolumns_test extends DokuWikiTest
         $expected = '<div class="card-columns">'.DOKU_LF
             .'<div style="width: 18rem" class="card">'.DOKU_LF
             .'<div class="card-body">'.DOKU_LF
-            .'<h2 class="card-title" '. HeadingUtility::COMPONENT_TITLE_STYLE .'>Title</h2>'.DOKU_LF
+            .'<h2 class="card-title" '. TitleUtility::COMPONENT_TITLE_STYLE .'>Title</h2>'.DOKU_LF
             .'Teaser Text'.DOKU_LF
             .'</div>'.DOKU_LF
             .'</div>'.DOKU_LF
