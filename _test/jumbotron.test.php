@@ -45,7 +45,7 @@ class plugin_combo_jumbotron_test extends DokuWikiTest
             . "=== Title ===" . DOKU_LF
             . "Hallo Jumbotron" . DOKU_LF
             . "</jumbotron>";
-        $expected = TestUtility::normalizeDokuWikiHtml('<div class="jumbotron mt-3"><h4 '. TitleUtility::COMPONENT_TITLE_STYLE. '>Title</h4>Hallo Jumbotron</div></div>');
+        $expected = TestUtility::normalizeDokuWikiHtml('<div class="jumbotron mt-3"><h4 >Title</h4>Hallo Jumbotron</div></div>');
         $xhtml = PluginUtility::render($text);
         $xhtml = TestUtility::normalizeDokuWikiHtml($xhtml);
         $this->assertEquals(

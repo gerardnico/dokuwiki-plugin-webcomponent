@@ -67,7 +67,7 @@ class syntax_plugin_combo_disqus extends DokuWiki_Syntax_Plugin
      */
     function connectTo($mode)
     {
-        $pattern = PluginUtility::getLeafTagPattern(self::TAG);
+        $pattern = PluginUtility::getEmptyTagPattern(self::TAG);
         $this->Lexer->addSpecialPattern($pattern, $mode, PluginUtility::getModeForComponent($this->getPluginComponent()));
     }
 

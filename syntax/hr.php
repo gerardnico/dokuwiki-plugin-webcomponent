@@ -52,8 +52,13 @@ class syntax_plugin_combo_hr extends DokuWiki_Syntax_Plugin
 
     function connectTo($mode)
     {
+        /**
+         * HR is a void element and support both syntax
+         * https://dev.w3.org/html5/html-author/#void-elements-0
+         */
+        $this->Lexer->addSpecialPattern(PluginUtility::getEmptyTagPattern(self::TAG), $mode, PluginUtility::getModeForComponent($this->getPluginComponent()));
+        $this->Lexer->addSpecialPattern(PluginUtility::getVoidElementTagPattern(self::TAG), $mode, PluginUtility::getModeForComponent($this->getPluginComponent()));
 
-        $this->Lexer->addSpecialPattern(PluginUtility::getLeafTagPattern(self::TAG), $mode, PluginUtility::getModeForComponent($this->getPluginComponent()));
     }
 
 

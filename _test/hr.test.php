@@ -25,11 +25,23 @@ class plugin_combo_hr_test extends DokuWikiTest
     }
 
 
-    public function test_hr_base()
+    public function test_hr_html_syntax()
     {
 
         $text = "<hr>";
-        $expected = $text;
+        $expected = "<hr/>";
+        $xhtml = PluginUtility::render($text);
+        $this->assertEquals(
+            TestUtility::normalizeDokuWikiHtml($expected),
+            TestUtility::normalizeDokuWikiHtml($xhtml)
+        );
+    }
+
+    public function test_hr_xhtml_syntax()
+    {
+
+        $text = "<hr/>";
+        $expected = "<hr/>";
         $xhtml = PluginUtility::render($text);
         $this->assertEquals(
             TestUtility::normalizeDokuWikiHtml($expected),

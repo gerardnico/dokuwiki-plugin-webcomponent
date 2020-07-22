@@ -169,6 +169,18 @@ class PluginUtility
     }
 
     /**
+     * @param $tag
+     * @return string
+     *
+     * Create a open tag pattern without lookahead.
+     * Used for https://dev.w3.org/html5/html-author/#void-elements-0
+     */
+    public static function getVoidElementTagPattern($tag)
+    {
+        return '<' . $tag . '.*?>';
+    }
+
+    /**
      * Take an array  where the key is the attribute name
      * and return a HTML tag string
      *
@@ -314,7 +326,7 @@ class PluginUtility
      * and a {@link Lexer::addSpecialPattern} state
      * where the tag is just replaced
      */
-    public static function getLeafTagPattern($tag)
+    public static function getEmptyTagPattern($tag)
     {
         return '<' . $tag . '.*?/>';
     }

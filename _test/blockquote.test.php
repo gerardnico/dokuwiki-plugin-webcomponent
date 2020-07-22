@@ -98,7 +98,7 @@ class plugin_combo_blockquote_test extends DokuWikiTest
             . '</' . $element . '>';
         $expected = '<div class="card">' . DOKU_LF
             . '<div class="card-body">' . DOKU_LF
-            . "<h4 class=\"card-title\" " . TitleUtility::COMPONENT_TITLE_STYLE . ">Header</h4>" . DOKU_LF
+            . "<h4 class=\"card-title\">Header</h4>" . DOKU_LF
             . '<blockquote class="blockquote mb-0">' . DOKU_LF
             . 'MyQuote' . DOKU_LF
             . '</blockquote>' . DOKU_LF
@@ -159,7 +159,10 @@ class plugin_combo_blockquote_test extends DokuWikiTest
 
         $instructions = p_get_instructions($dokuContent);
         $xhtml = p_render('xhtml', $instructions, $info);
-        $this->assertEquals($expected, $xhtml);
+        $this->assertEquals(
+            TestUtility::normalizeDokuWikiHtml($expected),
+            TestUtility::normalizeDokuWikiHtml($xhtml)
+        );
 
     }
 
@@ -178,7 +181,10 @@ class plugin_combo_blockquote_test extends DokuWikiTest
 
         $instructions = p_get_instructions($dokuContent);
         $xhtml = p_render('xhtml', $instructions, $info);
-        $this->assertEquals(HtmlUtility::normalize($expected), HtmlUtility::normalize($xhtml));
+        $this->assertEquals(
+            TestUtility::normalizeDokuWikiHtml($expected),
+            TestUtility::normalizeDokuWikiHtml($xhtml)
+        );
 
     }
 
@@ -194,7 +200,10 @@ class plugin_combo_blockquote_test extends DokuWikiTest
             . '</blockquote>' . DOKU_LF;
         $instructions = p_get_instructions($doku_text);
         $xhtml = p_render('xhtml', $instructions, $info);
-        $this->assertEquals($expected, $xhtml);
+        $this->assertEquals(
+            TestUtility::normalizeDokuWikiHtml($expected),
+            TestUtility::normalizeDokuWikiHtml($xhtml)
+        );
 
     }
 
@@ -213,7 +222,10 @@ class plugin_combo_blockquote_test extends DokuWikiTest
 
         $instructions = p_get_instructions($doku_text);
         $xhtml = p_render('xhtml', $instructions, $info);
-        $this->assertEquals($expected, $xhtml);
+        $this->assertEquals(
+            TestUtility::normalizeDokuWikiHtml($expected),
+            TestUtility::normalizeDokuWikiHtml($xhtml)
+        );
 
     }
 
@@ -227,7 +239,7 @@ class plugin_combo_blockquote_test extends DokuWikiTest
             . '</' . $element . '>';
         $expected = '<div class="card">' . DOKU_LF
             . '<div class="card-body">' . DOKU_LF
-            . '<h4 class="card-title" ' . TitleUtility::COMPONENT_TITLE_STYLE . '>Title</h4>' . DOKU_LF
+            . '<h4 class="card-title">Title</h4>' . DOKU_LF
             . '<blockquote class="blockquote mb-0">' . DOKU_LF
             . 'MyQuote' . DOKU_LF
             . '</blockquote>' . DOKU_LF
@@ -236,7 +248,10 @@ class plugin_combo_blockquote_test extends DokuWikiTest
 
         $instructions = p_get_instructions($doku_text);
         $xhtml = p_render('xhtml', $instructions, $info);
-        $this->assertEquals(HtmlUtility::normalize($expected), HtmlUtility::normalize($xhtml));
+        $this->assertEquals(
+            TestUtility::normalizeDokuWikiHtml($expected),
+            TestUtility::normalizeDokuWikiHtml($xhtml)
+        );
 
     }
 
@@ -263,9 +278,10 @@ class plugin_combo_blockquote_test extends DokuWikiTest
             . '</div>' . DOKU_LF;
 
         $xhtml = PluginUtility::render($doku_text);
-        $actual = HtmlUtility::normalize($xhtml);
-        $expected = HtmlUtility::normalize($expected);
-        $this->assertEquals($expected, $actual,"The html are the same");
+        $this->assertEquals(
+            TestUtility::normalizeDokuWikiHtml($expected),
+            TestUtility::normalizeDokuWikiHtml($xhtml)
+        );
 
     }
 
@@ -288,7 +304,10 @@ class plugin_combo_blockquote_test extends DokuWikiTest
             . '</div>' . DOKU_LF;
 
         $xhtml = PluginUtility::render($doku_text);
-        $this->assertEquals($expected, $xhtml);
+        $this->assertEquals(
+            TestUtility::normalizeDokuWikiHtml($expected),
+            TestUtility::normalizeDokuWikiHtml($xhtml)
+        );
 
     }
 
@@ -311,7 +330,10 @@ class plugin_combo_blockquote_test extends DokuWikiTest
             . '</div>' . DOKU_LF;
 
         $xhtml = PluginUtility::render($doku_text);
-        $this->assertEquals($expected, $xhtml);
+        $this->assertEquals(
+            TestUtility::normalizeDokuWikiHtml($expected),
+            TestUtility::normalizeDokuWikiHtml($xhtml)
+        );
 
     }
 

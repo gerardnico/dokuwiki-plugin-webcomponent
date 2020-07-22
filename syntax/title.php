@@ -221,13 +221,16 @@ class syntax_plugin_combo_title extends DokuWiki_Syntax_Plugin
         if ($type != 0){
             PluginUtility::addClass2Attributes("display-".$type,$attributes);
         }
+        if (isset($attributes[TitleUtility::TITLE])){
+            unset($attributes[TitleUtility::TITLE]);
+        }
         $level = $attributes[TitleUtility::LEVEL];
         unset($attributes[TitleUtility::LEVEL]);
         $html = '<h' . $level;
         if (sizeof($attributes)>0) {
             $html .= ' '.PluginUtility::array2HTMLAttributes($attributes);
         }
-        //$html .= ' ' . TitleUtility::COMPONENT_TITLE_STYLE . '>';
+        //$html .= ' >';
         return $html. '>';
     }
 

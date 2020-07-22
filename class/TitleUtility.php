@@ -22,10 +22,6 @@ class TitleUtility
      */
     const HEADING_PATTERN = '[ \t]*={2,}[^\n]+={2,}[ \t]*(?=\n)';
 
-    /**
-     * The fix top menu strike again
-     */
-    const COMPONENT_TITLE_STYLE = 'style="color: inherit!important;margin-top:unset!important;margin-left:unset!important;padding-top:unset!important"';
     const TITLE = 'title';
     const LEVEL = 'level';
 

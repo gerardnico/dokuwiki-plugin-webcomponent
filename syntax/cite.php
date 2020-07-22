@@ -24,6 +24,15 @@ class syntax_plugin_combo_cite extends DokuWiki_Syntax_Plugin
         return 'container';
     }
 
+    /**
+     * How Dokuwiki will add P element
+     *
+     * * 'normal' - The plugin can be used inside paragraphs
+     *  * 'block'  - Open paragraphs need to be closed before plugin output - block should not be inside paragraphs
+     *  * 'stack'  - Special case. Plugin wraps other paragraphs. - Stacks can contain paragraphs
+     *
+     * @see DokuWiki_Syntax_Plugin::getPType()
+     */
     function getPType()
     {
         return 'normal';

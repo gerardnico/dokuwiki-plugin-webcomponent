@@ -97,7 +97,7 @@ class HtmlUtility
          * The @ is to suppress the error because of HTML5 tag such as footer
          * https://stackoverflow.com/questions/6090667/php-domdocument-errors-warnings-on-html5-tags
          */
-        $doc->loadHTML($text);
+        @$doc->loadHTML($text);
         $doc->normalize();
         $doc->formatOutput = true;
         $domNode = $doc->getElementsByTagName("body")->item(0)->childNodes->item(0);

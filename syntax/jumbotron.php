@@ -65,7 +65,7 @@ class syntax_plugin_combo_jumbotron extends DokuWiki_Syntax_Plugin
      */
     function getPType()
     {
-        return 'normal';
+        return 'block';
     }
 
     /**

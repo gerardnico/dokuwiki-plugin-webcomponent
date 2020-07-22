@@ -82,7 +82,7 @@ class syntax_plugin_combo_blockquote extends DokuWiki_Syntax_Plugin
      */
     function getPType()
     {
-        return 'normal';
+        return 'block';
     }
 
     /**

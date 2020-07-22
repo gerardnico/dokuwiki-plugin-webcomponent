@@ -89,7 +89,7 @@ class syntax_plugin_combo_icon extends DokuWiki_Syntax_Plugin
     function connectTo($mode)
     {
 
-        $pattern = PluginUtility::getLeafTagPattern(self::getTag());
+        $pattern = PluginUtility::getEmptyTagPattern(self::getTag());
         $this->Lexer->addSpecialPattern($pattern, $mode, PluginUtility::getModeForComponent($this->getPluginComponent()));
 
     }

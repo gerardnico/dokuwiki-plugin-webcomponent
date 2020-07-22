@@ -63,7 +63,7 @@ class syntax_plugin_combo_metadata extends DokuWiki_Syntax_Plugin
     {
 
 
-        $pattern = PluginUtility::getLeafTagPattern(MetadataUtility::TAG);
+        $pattern = PluginUtility::getEmptyTagPattern(MetadataUtility::TAG);
         $this->Lexer->addSpecialPattern($pattern, $mode, PluginUtility::getModeForComponent($this->getPluginComponent()));
 
 
