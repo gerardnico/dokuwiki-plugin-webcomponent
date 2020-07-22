@@ -25,4 +25,6 @@ tail -f /var/log/php-fpm/www-error.log
 ```
   * Working ?
   * Release the date at DokuWiki
+    * https://www.dokuwiki.org/plugin:combo
+    * https://www.dokuwiki.org/template:strap
 

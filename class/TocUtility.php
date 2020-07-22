@@ -49,21 +49,21 @@ class TocUtility
     {
 
         global $ACT;
-        $showToc = null;
+
 
         /**
          * Search page, no toc
          */
         if ($ACT == 'search') {
 
-            $showToc = false;
+            return false;
 
         }
 
         /**
          * On the admin page
          */
-        if ($ACT == 'admin' and $showToc == null) {
+        if ($ACT == 'admin') {
 
             global $INPUT;
             $plugin = null;
@@ -82,9 +82,9 @@ class TocUtility
                     global $TOC;
                     if (!is_array($TOC)) $TOC = $plugin->getTOC(); //if TOC wasn't requested yet
                     if (!is_array($TOC)) {
-                        $showToc = false;
+                        return false;
                     } else {
-                        $showToc = true;
+                        return true;
                     }
 
                 }
@@ -93,15 +93,12 @@ class TocUtility
 
         }
 
-        /**
-         * Show Toc
-         */
-        if ($showToc == null) {
-            $showToc = $renderer->info['toc'];
+
+        if (isset($renderer->info['toc'])){
+            return $renderer->info['toc'];
+        } else {
+            return true;
         }
-
-
-        return $showToc;
 
     }
 }

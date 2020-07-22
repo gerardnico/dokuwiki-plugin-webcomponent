@@ -106,4 +106,13 @@ class HtmlUtility
 
 
     }
+
+    /**
+     * @param $text
+     * @return int the number of lines estimated
+     */
+    public static function countLines($text)
+    {
+        return count(preg_split("/<\/p>|<\/h[1-9]{1}>|<br|<\/tr>|<\/li>|<hr>|<\/pre>/",$text)) - 1;
+    }
 }

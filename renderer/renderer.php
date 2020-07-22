@@ -1,6 +1,8 @@
 <?php
 
+use ComboStrap\AdsUtility;
 use ComboStrap\BreadcrumbHierarchical;
+use ComboStrap\HtmlUtility;
 use ComboStrap\PageUtility;
 use ComboStrap\TableUtility;
 use ComboStrap\TocUtility;
@@ -9,6 +11,7 @@ use ComboStrap\TocUtility;
 require_once(__DIR__ . '/../class/PageUtility.php');
 require_once(__DIR__ . '/../class/TableUtility.php');
 require_once(__DIR__ . '/../class/TocUtility.php');
+require_once(__DIR__ . '/../class/AdsUtility.php');
 require_once(__DIR__ . '/../class/BreadcrumbHierarchical.php');
 
 /**
@@ -167,14 +170,13 @@ class  renderer_plugin_combo_renderer extends Doku_Renderer_xhtml
         $isSidebar = PageUtility::isSideBar();
 
 
-
         // Pump the last doc
         $this->sections[$this->sectionNumber] = array('level' => $this->previousNodeLevel, 'position' => $this->previousNodePosition, 'content' => $this->doc, 'text' => $this->previousSectionTextHeader);
 
         // Recreate the doc
         $this->doc = '';
         $rollingLineCount = 0;
-        $lineCounter = 0;
+        $currentLineCountSinceLastAd = 0;
         $adsCounter = 0;
         foreach ($this->sections as $sectionNumber => $section) {
 
@@ -191,58 +193,34 @@ class  renderer_plugin_combo_renderer extends Doku_Renderer_xhtml
 
             # Split by element line
             # element p, h, br, tr, li, pre (one line for pre)
-            $localCount = count(preg_split("/<\/p>|<\/h[1-9]{1}>|<br|<\/tr>|<\/li>|<\/pre>/", $sectionContent)) - 1;
-            $lineCounter += $localCount;
-            $rollingLineCount += $localCount;
+            $sectionLineCount = HtmlUtility::countLines($sectionContent);
+            $currentLineCountSinceLastAd += $sectionLineCount;
+            $rollingLineCount += $sectionLineCount;
 
             // The content
             if ($this->getConf('ShowCount') == 1 && $isSidebar == FALSE) {
-                $this->doc .= "<p>Section " . $sectionNumber . ": (" . $localCount . "|" . $lineCounter . "|" . $rollingLineCount . ")</p>";
+                $this->doc .= "<p>Section " . $sectionNumber . ": (" . $sectionLineCount . "|" . $currentLineCountSinceLastAd . "|" . $rollingLineCount . ")</p>";
             }
             $this->doc .= $sectionContent;
 
             // No ads on private page
 
 
-            global $ACT;
-
-            if (
-                $isSidebar == FALSE && // No display on the sidebar
-                $ACT != 'admin' && // Not in the admin page
-                isHiddenPage($id) == FALSE && // No ads on hidden pages
-                (
-                    (
-                        $localCount > $this->getConf('AdsMinLocalLine') && // Doesn't show any ad if the section does not contains this minimum number of line
-                        $lineCounter > $this->getConf('AdsLineBetween') && // Every N line,
-                        $sectionNumber > $this->getConf('AdsMinSectionNumber') // Doesn't show any ad before
-                    )
-                    or
-                    // Show always an ad after a number of section
-                    (
-                        $adsCounter == 0 && // Still not ads
-                        $sectionNumber > $this->getConf('AdsMinSectionNumber') && // Above the minimum number of section
-                        $localCount > $this->getConf('AdsMinLocalLine') // Minimum line in the current section (to avoid a pub below a header)
-                    )
-                    or
-                    // Sometimes the last section (reference) has not so much line and it avoids to show an ads at the end
-                    // even if the number of line (space) was enough
-                    (
-                        $sectionNumber == count($this->sections) - 1 && // The last section
-                        $lineCounter > $this->getConf('AdsLineBetween')  // Every N line,
-                    )
-                )
-            ) {
+            $isLastSection = $sectionNumber === count($this->sections) - 1;
+            if (AdsUtility::showAds($sectionLineCount, $currentLineCountSinceLastAd, $sectionNumber, $adsCounter, $isLastSection)) {
 
                 // Counter
                 $adsCounter += 1;
-                $lineCounter = 0;
+                $currentLineCountSinceLastAd = 0;
 
-                if ($this->getConf('ShowPlaceholder') == 1) {
-                    $this->doc .= '<div align="center" style="border:1px solid;padding:30px;height:90px">Placeholder' . $adsCounter . '</div>';
+                if (AdsUtility::showPlaceHolder()) {
+
+                    $this->doc .= '<div style="border:1px solid;height:90px;padding:30px; margin: 20px auto 30px;max-width:600px;text-align: center">Placeholder' . $adsCounter . '</div>';
+
                 } else {
-                    if ($adsCounter <= 6) {
-                        $this->doc .= $this->getConf('Ads' . $adsCounter);
-                    }
+
+                    $this->doc .= $this->getConf('AdsInContent' . $adsCounter);
+
                 }
 
             }
@@ -266,7 +244,7 @@ class  renderer_plugin_combo_renderer extends Doku_Renderer_xhtml
     {
         // initialize the row counter used for classes
         $this->_counter['row_counter'] = 0;
-        TableUtility::tableOpen($this,$pos);
+        TableUtility::tableOpen($this, $pos);
     }
 
     /**
