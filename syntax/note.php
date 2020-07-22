@@ -82,7 +82,9 @@ class syntax_plugin_combo_note extends DokuWiki_Syntax_Plugin
         switch ($state) {
 
             case DOKU_LEXER_ENTER :
-                $attributes = PluginUtility::getTagAttributes($match);
+                $defaultAttributes = array("type" => "info");
+                $inlineAttributes = PluginUtility::getTagAttributes($match);
+                $attributes = PluginUtility::mergeAttributes($inlineAttributes, $defaultAttributes);
                 return array($state, $attributes);
 
             case DOKU_LEXER_UNMATCHED :
@@ -119,19 +121,17 @@ class syntax_plugin_combo_note extends DokuWiki_Syntax_Plugin
                 case DOKU_LEXER_ENTER :
                     $attributes = $payload;
                     $classValue = "alert";
-                    $type = "info";
-                    if (array_key_exists("type", $attributes)) {
-                        $type = $attributes["type"];
-                        // Switch for the color
-                        switch ($type) {
-                            case "important":
-                                $type = "warning";
-                                break;
-                            case "warning":
-                                $type = "danger";
-                                break;
-                        }
+                    $type = $attributes["type"];
+                    // Switch for the color
+                    switch ($type) {
+                        case "important":
+                            $type = "warning";
+                            break;
+                        case "warning":
+                            $type = "danger";
+                            break;
                     }
+
                     if ($type != "tip") {
                         $classValue .= " alert-" . $type;
                     } else {

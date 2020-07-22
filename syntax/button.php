@@ -136,22 +136,50 @@ class syntax_plugin_combo_button extends DokuWiki_Syntax_Plugin
 
             case DOKU_LEXER_ENTER:
 
-                $attributes = PluginUtility::getTagAttributes($match);
+                $defaultAttributes = array("skin" => "filled", "type" => "primary");
+                $inLinesAttributes = PluginUtility::getTagAttributes($match);
+                $attributes = PluginUtility::mergeAttributes($inLinesAttributes, $defaultAttributes);
+
+                # A button
                 PluginUtility::addClass2Attributes("btn", $attributes);
 
-                if (array_key_exists("type", $attributes)) {
-                    $type = $attributes["type"];
-                    $attributes["class"] .= " btn-" . $type;
-                    unset($attributes["type"]);
-                } else {
-                    $attributes["class"] .= " btn-primary";
-                }
-                if (array_key_exists("align", $attributes)) {
-                    $align=$attributes["align"];
-                    if ($align=="center"){
-                        PluginUtility::addStyleProperty("display","block",$attributes);
+                $type = $attributes["type"];
+                $skin = $attributes["skin"];
+                $class = "btn";
+                switch ($skin) {
+                    case "contained":
+                    {
+                        $class .= "-" . $type;
+                        $attributes["elevation"]=true;
+                        break;
+                    }
+                    case "filled":
+                    {
+                        $class .= "-" . $type;
+                        break;
+                    }
+                    case "outline":
+                    {
+                        $class .= "-outline-" . $type;
+                        break;
+                    }
+                    case "text":
+                    {
+                        $class .= "-link";
+                        $attributes["color"]=$type;
+                        break;
                     }
                 }
+                unset($attributes["skin"]);
+                PluginUtility::addClass2Attributes($class, $attributes);
+
+                if (array_key_exists("align", $attributes)) {
+                    $align = $attributes["align"];
+                    if ($align == "center") {
+                        PluginUtility::addStyleProperty("display", "block", $attributes);
+                    }
+                }
+
                 $sizeAttribute = "size";
                 if (array_key_exists($sizeAttribute, $attributes)) {
                     $size = $attributes[$sizeAttribute];

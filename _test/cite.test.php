@@ -2,11 +2,9 @@
 
 use ComboStrap\LinkUtility;
 use ComboStrap\PluginUtility;
-use ComboStrap\StringUtility;
 use ComboStrap\TestUtility;
 
 require_once(__DIR__ . '/../class/PluginUtility.php');
-require_once(__DIR__ . '/../class/StringUtility.php');
 require_once(__DIR__ . '/../class/LinkUtility.php');
 
 /**

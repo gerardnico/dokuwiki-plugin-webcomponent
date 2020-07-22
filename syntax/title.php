@@ -136,7 +136,7 @@ class syntax_plugin_combo_title extends DokuWiki_Syntax_Plugin
                  * Title may lived outside a component
                  */
                 if ($parent!=null){
-                    $parentTagName = $parentTagName->getName();
+                    $parentTagName = $parent->getName();
                 }
                 $html = self::renderClosingTag($parentTagName,$tag->getOpeningTag()->getAttributes());
                 return array(

@@ -57,4 +57,11 @@ class ArrayUtility
             }
         }
     }
+
+    public static function addIfNotSet(array &$array, $key, $value)
+    {
+        if (!isset($array[$key])){
+            $array[$key] = $value;
+        }
+    }
 }

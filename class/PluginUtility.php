@@ -10,6 +10,7 @@ use TestRequest;
 require_once(__DIR__ . '/LogUtility.php');
 require_once(__DIR__ . '/IconUtility.php');
 require_once(__DIR__ . '/StringUtility.php');
+require_once(__DIR__ . '/ColorUtility.php');
 
 
 
@@ -194,6 +195,7 @@ class PluginUtility
         // Process the style attributes if any
         self::processStyle($attributes);
 
+        // Process the attributes that have an effect on the class
         self::processClass($attributes);
 
         // Then transform
@@ -446,7 +448,7 @@ class PluginUtility
      */
     public static function processStyle(&$attributes)
     {
-        // Style (color)
+        // Style
         $styleAttributeName = "style";
         $styleProperties = array();
         if (array_key_exists($styleAttributeName, $attributes)) {
@@ -457,6 +459,53 @@ class PluginUtility
                 }
             }
         }
+
+        // Skin
+        $skinAttributes = "skin";
+        if (array_key_exists($skinAttributes, $attributes)){
+            $skinValue = $attributes[$skinAttributes];
+            unset($attributes[$skinAttributes]);
+            if ( array_key_exists("type",$attributes)) {
+                $type = $attributes["type"];
+                if (isset(ColorUtility::$colors[$type])) {
+                    $color = ColorUtility::$colors[$type];
+                    switch ($skinValue) {
+                        case "contained":
+                            ArrayUtility::addIfNotSet($styleProperties, ColorUtility::COLOR, $color[ColorUtility::COLOR]);
+                            ArrayUtility::addIfNotSet($styleProperties, ColorUtility::BACKGROUND_COLOR, $color[ColorUtility::BACKGROUND_COLOR]);
+                            ArrayUtility::addIfNotSet($styleProperties, ColorUtility::BORDER_COLOR, $color[ColorUtility::BORDER_COLOR]);
+                            $attributes["elevation"] = true;
+                            break;
+                        case "filled":
+                        case "solid":
+                            ArrayUtility::addIfNotSet($styleProperties, ColorUtility::COLOR, $color[ColorUtility::COLOR]);
+                            ArrayUtility::addIfNotSet($styleProperties, ColorUtility::BACKGROUND_COLOR, $color[ColorUtility::BACKGROUND_COLOR]);
+                            ArrayUtility::addIfNotSet($styleProperties, ColorUtility::BORDER_COLOR, $color[ColorUtility::BORDER_COLOR]);
+                            break;
+                        case "outline":
+                            $primaryColor = $color[ColorUtility::COLOR];
+                            if ($primaryColor === "#fff"){
+                                $primaryColor = $color[ColorUtility::BACKGROUND_COLOR];
+                            }
+                            ArrayUtility::addIfNotSet($styleProperties, ColorUtility::COLOR, $primaryColor);
+                            ArrayUtility::addIfNotSet($styleProperties, ColorUtility::BACKGROUND_COLOR, "transparent");
+                            ArrayUtility::addIfNotSet($styleProperties, ColorUtility::BORDER_COLOR, $primaryColor);
+                            break;
+                        case "text":
+                            $primaryColor = $color[ColorUtility::COLOR];
+                            if ($primaryColor === "#fff"){
+                                $primaryColor = $color[ColorUtility::BACKGROUND_COLOR];
+                            }
+                            ArrayUtility::addIfNotSet($styleProperties, ColorUtility::COLOR, $primaryColor);
+                            ArrayUtility::addIfNotSet($styleProperties, ColorUtility::BACKGROUND_COLOR, "transparent");
+                            ArrayUtility::addIfNotSet($styleProperties, ColorUtility::BORDER_COLOR, "transparent");
+                            break;
+                    }
+                }
+            }
+        }
+
+        // Color
         $colorAttributes = ["color", "background-color", "border-color"];
         foreach ($colorAttributes as $colorAttribute) {
             if (array_key_exists($colorAttribute, $attributes)) {

@@ -14,7 +14,7 @@ require_once(__DIR__ . '/../class/StringUtility.php');
  * @group plugin_combo
  * @group plugins
  */
-class plugin_combo_note_test extends DokuWikiTest
+class plugin_combo_badge_test extends DokuWikiTest
 {
 
     public function setUp()
