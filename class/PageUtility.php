@@ -12,7 +12,11 @@
 
 namespace ComboStrap;
 
-
+/**
+ * Class PageUtility
+ * @package ComboStrap
+ * See also {@link pageutils.php}
+ */
 class PageUtility
 {
 
@@ -33,5 +37,47 @@ class PageUtility
             }
         }
         return $isSidebar;
+    }
+
+    /**
+     * @param $pageContent
+     * @return array
+     */
+    private static function getInstructions($pageContent)
+    {
+        $instructions = p_get_instructions($pageContent);
+        $lastPBlockPosition = sizeof($instructions) - 2;
+        if ($instructions[1][0] == 'p_open') {
+            unset($instructions[1]);
+        }
+        if ($instructions[$lastPBlockPosition][0] == 'p_close') {
+            unset($instructions[$lastPBlockPosition]);
+        }
+        return $instructions;
+    }
+
+    /**
+     * @param $content
+     * @return string|null
+     */
+    public static function renderText2Xhtml($content)
+    {
+        $instructions = self::getInstructions($content);
+        return p_render('xhtml', $instructions, $info);
+    }
+
+    /**
+     * @param $pageId
+     * @return string|null
+     */
+    public static function renderId2Xhtml($pageId)
+    {
+        $file = wikiFN($pageId);
+        if (file_exists($file)) {
+            $content = file_get_contents($file);
+            return self::renderText2Xhtml($content);
+        } else {
+            return false;
+        }
     }
 }

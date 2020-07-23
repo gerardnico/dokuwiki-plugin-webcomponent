@@ -13,7 +13,12 @@
 namespace ComboStrap;
 
 
-
+/**
+ * Class AdsUtility
+ * @package ComboStrap
+ *
+ * TODO: Injection: Words Between Ads (https://wpadvancedads.com/manual/minimum-amount-of-words-between-ads/)
+ */
 class AdsUtility
 {
 

@@ -4,6 +4,7 @@ use ComboStrap\AdsUtility;
 use ComboStrap\BreadcrumbHierarchical;
 use ComboStrap\HtmlUtility;
 use ComboStrap\PageUtility;
+use ComboStrap\PluginUtility;
 use ComboStrap\TableUtility;
 use ComboStrap\TocUtility;
 
@@ -209,21 +210,31 @@ class  renderer_plugin_combo_renderer extends Doku_Renderer_xhtml
             $isLastSection = $sectionNumber === count($this->sections) - 1;
             if (AdsUtility::showAds($sectionLineCount, $currentLineCountSinceLastAd, $sectionNumber, $adsCounter, $isLastSection)) {
 
+
                 // Counter
                 $adsCounter += 1;
                 $currentLineCountSinceLastAd = 0;
 
-                if (AdsUtility::showPlaceHolder()) {
-
-                    $this->doc .= '<div style="border:1px solid;height:90px;padding:30px; margin: 20px auto 30px;max-width:600px;text-align: center">Placeholder' . $adsCounter . '</div>';
+                $adsPageId = strtolower(':combostrap:ads:InContent' . $adsCounter);
+                $file = wikiFN($adsPageId);
+                if (file_exists($file)) {
+                    $content = file_get_contents($file);
+                    PageUtility::renderText2Xhtml($content);
 
                 } else {
+                    if (AdsUtility::showPlaceHolder()) {
 
-                    $this->doc .= $this->getConf('AdsInContent' . $adsCounter);
+                        $this->doc .= '<div style="border:1px solid;padding:30px; margin: 20px auto 30px;max-width:600px;text-align: center">' . DOKU_LF
+                            . 'Ads Page Id (' . $adsPageId . ') not found. <br>' . DOKU_LF
+                            . 'Showing the placeholder. <br>' . DOKU_LF
+                            . '</div>';
 
+                    }
                 }
 
+
             }
+
 
 
         }
@@ -250,12 +261,14 @@ class  renderer_plugin_combo_renderer extends Doku_Renderer_xhtml
     /**
      * https://getbootstrap.com/docs/4.4/content/typography/#inline-text-elements
      */
-    public function monospace_open()
+    public
+    function monospace_open()
     {
         $this->doc .= '<mark>';
     }
 
-    public function monospace_close()
+    public
+    function monospace_close()
     {
         $this->doc .= '</mark>';
     }

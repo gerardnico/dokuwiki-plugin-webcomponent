@@ -18,6 +18,7 @@ class action_plugin_combo_metadescription extends DokuWiki_Action_Plugin
 {
 
     const DESCRIPTION_META_KEY = 'description';
+    const DESCRIPTION_PROPERTY = 'og:description';
 
     public function register(Doku_Event_Handler $controller)
     {
@@ -70,6 +71,8 @@ class action_plugin_combo_metadescription extends DokuWiki_Action_Plugin
 
         // Add it to the meta
         $event->data['meta'][] = array("name" => self::DESCRIPTION_META_KEY, "content" => $description);
+        $event->data['meta'][] = array("property" => self::DESCRIPTION_PROPERTY, "content" => $description);
+
 
 
     }

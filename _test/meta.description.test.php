@@ -64,7 +64,9 @@ class plugin_combo_description_test extends DokuWikiTest
         $request = new TestRequest(); // initialize the request
         $response = $request->get(array('id' =>$pageId), '/doku.php');
         $metaDescription = $response->queryHTML('meta[name="description"]')->attr('content');
-        $this->assertEquals($description, $metaDescription,"The meta description was not be seen in the page");
+        $this->assertEquals($description, $metaDescription,"The meta name description was not be seen in the page");
+        $metaDescription = $response->queryHTML('meta[property="og:description"]')->attr('content');
+        $this->assertEquals($description, $metaDescription,"The meta property description was not be seen in the page");
 
     }
 

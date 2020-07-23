@@ -118,7 +118,11 @@ class syntax_plugin_combo_icon extends DokuWiki_Syntax_Plugin
 
                 // Get the parameters
                 $parameters = PluginUtility::getTagAttributes($match);
-                return array($state, $parameters);
+                $html = IconUtility::renderIconByAttributes($parameters);
+                return array(
+                    PluginUtility::STATE=> $state,
+                    PluginUtility::ATTRIBUTES => $parameters,
+                    PluginUtility::PAYLOAD => $html);
 
 
         }
@@ -144,17 +148,12 @@ class syntax_plugin_combo_icon extends DokuWiki_Syntax_Plugin
 
             case 'xhtml':
                 {
-
                     /** @var Doku_Renderer_xhtml $renderer */
-                    list($state, $attributes) = $data;
-                    if ($state != DOKU_LEXER_SPECIAL) {
-                        return false;
+                    $state = $data[PluginUtility::STATE];
+                    if ($state === DOKU_LEXER_SPECIAL) {
+                        $renderer->doc .= $data[PluginUtility::PAYLOAD];
                     }
 
-
-                    $renderer->doc .= IconUtility::renderIconByAttributes($attributes);
-
-                    return true;
                 }
                 break;
 

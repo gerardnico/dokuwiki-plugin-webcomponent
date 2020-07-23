@@ -389,32 +389,9 @@ class PluginUtility
      */
     public static function render($pageContent)
     {
-        $instructions = self::getInstructions($pageContent);
-        return p_render('xhtml', $instructions, $info);
+        return PageUtility::renderText2Xhtml($pageContent);
     }
 
-    /**
-     * Render a text inside a text in order to give context to the
-     * below component
-     * @param $tag
-     * @param $pageContent
-     * @return string|null
-     */
-    public static function renderInsideTag($tag, $pageContent)
-    {
-        // Add the tag
-        $text = "<$tag>$pageContent</$tag>";
-
-        // Retrieve the instructions
-        $instructions = self::getInstructions($text);
-
-        // Delete the tag instructions
-        unset($instructions[1]);
-        unset($instructions[sizeof($instructions) - 1]);
-
-        // Render
-        return p_render('xhtml', $instructions, $info);
-    }
 
     /**
      * Set the environment to be able to
@@ -771,22 +748,7 @@ class PluginUtility
         return hsc($payload);
     }
 
-    /**
-     * @param $pageContent
-     * @return array
-     */
-    private static function getInstructions($pageContent)
-    {
-        $instructions = p_get_instructions($pageContent);
-        $lastPBlockPosition = sizeof($instructions) - 2;
-        if ($instructions[1][0] == 'p_open') {
-            unset($instructions[1]);
-        }
-        if ($instructions[$lastPBlockPosition][0] == 'p_close') {
-            unset($instructions[$lastPBlockPosition]);
-        }
-        return $instructions;
-    }
+
 
     /**
      * Add a class
