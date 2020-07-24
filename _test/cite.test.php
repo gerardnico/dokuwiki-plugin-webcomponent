@@ -32,7 +32,22 @@ class plugin_combo_cite_test extends DokuWikiTest
 
     }
 
-    public function test_base()
+    public function test_cite_base()
+    {
+
+        $element = syntax_plugin_combo_cite::TAG;
+        $doku_text = '<' . $element . ' >Citation</' . $element . '>';
+        $expected = '<cite>Citation</cite>';
+
+        $xhtml = PluginUtility::render($doku_text);
+        $this->assertEquals(
+            TestUtility::normalizeDokuWikiHtml($expected),
+            TestUtility::normalizeDokuWikiHtml($xhtml)
+        );
+
+    }
+
+    public function test_cite_with_url()
     {
 
         $element = syntax_plugin_combo_cite::TAG;

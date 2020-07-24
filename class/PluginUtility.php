@@ -8,6 +8,7 @@ use RuntimeException;
 use TestRequest;
 
 require_once(__DIR__ . '/LogUtility.php');
+require_once(__DIR__ . '/PageUtility.php');
 require_once(__DIR__ . '/IconUtility.php');
 require_once(__DIR__ . '/StringUtility.php');
 require_once(__DIR__ . '/ColorUtility.php');

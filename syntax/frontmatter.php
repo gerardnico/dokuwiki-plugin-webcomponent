@@ -130,7 +130,7 @@ class syntax_plugin_combo_frontmatter extends DokuWiki_Syntax_Plugin
                 "creator",
                 "contributor"
             ];
-            foreach ($json as $key => $metaKey) {
+            foreach ($json as $key => $value) {
 
                 // Not modifiable metadata
                 if (in_array($key, $notModifiableMeta)) {
@@ -140,12 +140,17 @@ class syntax_plugin_combo_frontmatter extends DokuWiki_Syntax_Plugin
 
                 // Description is special
                 if ($key == "description") {
-                    p_set_metadata($ID, array("description" => array("abstract" => $metaKey)));
+                    p_set_metadata($ID, array("description" => array("abstract" => $value)));
                     continue;
                 }
 
+                // Canonical should be lowercase
+                if ($key == UrlCanonical::CANONICAL_PROPERTY) {
+                    $value = strtolower($value);
+                }
+
                 // Set the value persistently
-                p_set_metadata($ID, array($key => $metaKey));
+                p_set_metadata($ID, array($key => $value));
 
             }
 

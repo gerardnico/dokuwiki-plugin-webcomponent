@@ -49,7 +49,6 @@ class plugin_combo_canonical_test extends DokuWikiTest
             $urlCanonicalManager->deletePage($newPageId);
         }
 
-        /** @noinspection PhpUndefinedMethodInspection */
         $this->assertEquals(0, $urlCanonicalManager->pageExist($pageId), "The page was deleted");
 
         // Save a page
@@ -65,12 +64,10 @@ class plugin_combo_canonical_test extends DokuWikiTest
         $request = new TestRequest();
         $request->get(array('id' => $pageId), '/doku.php');
 
-        /** @noinspection PhpUndefinedMethodInspection */
         $this->assertEquals(1, $urlCanonicalManager->pageExist($pageId), "The page was added to the table");
 
         // Page move
         TestUtility::addPage($pageId, "", 'Page deletion');
-        /** @noinspection PhpUndefinedMethodInspection */
         $this->assertEquals(false, page_exists($pageId), "The old page does not exist on disk");
         TestUtility::addPage($newPageId, $text, 'Page creation');
 
@@ -78,12 +75,9 @@ class plugin_combo_canonical_test extends DokuWikiTest
         $request = new TestRequest();
         $request->get(array('id' => $newPageId), '/doku.php');
 
-        /** @noinspection PhpUndefinedMethodInspection */
         $this->assertEquals(0, $urlCanonicalManager->pageExist($pageId), "The old page does not exist in db");
-        /** @noinspection PhpUndefinedMethodInspection */
         $this->assertEquals(1, $urlCanonicalManager->pageExist($newPageId), "The new page exist");
         $pageRow = $urlCanonicalManager->getPage($newPageId);
-        /** @noinspection PhpUndefinedMethodInspection */
         $this->assertEquals($pageCanonical, $pageRow['CANONICAL'], "The canonical is the same");
 
 
@@ -123,7 +117,6 @@ class plugin_combo_canonical_test extends DokuWikiTest
             . 'Content';
         TestUtility::addPage($pageId, $text, 'Updated meta');
         $canonicalMeta = p_get_metadata($pageId, $metaKey, METADATA_RENDER_UNLIMITED);
-        /** @noinspection PhpUndefinedMethodInspection */
         $this->assertEquals($canonicalValue, $canonicalMeta);
 
         // Do we have the description in the meta
@@ -134,11 +127,9 @@ class plugin_combo_canonical_test extends DokuWikiTest
         // Query
         $canonicalHrefLink = $response->queryHTML('link[rel="' . $metaKey . '"]')->attr('href');
         $canonicalId = UrlCanonical::toDokuWikiId($canonicalHrefLink);
-        /** @noinspection PhpUndefinedMethodInspection */
         $this->assertEquals($canonicalValue, $canonicalId, "The link canonical meta should be good");
         // Facebook: https://developers.facebook.com/docs/sharing/webmasters/getting-started/versioned-link/
         $canonicalHrefMetaOg = $response->queryHTML('meta[property="og:url"]')->attr('content');
-        /** @noinspection PhpUndefinedMethodInspection */
         $this->assertEquals($canonicalHrefLink, $canonicalHrefMetaOg, "The meta canonical property should be good");
 
 
@@ -210,6 +201,32 @@ class plugin_combo_canonical_test extends DokuWikiTest
         $request->get(array('id' => $pageIdWithCanonical), '/doku.php');
         $canonicalMeta = p_get_metadata($pageIdWithCanonical, $canonicalKey, METADATA_RENDER_UNLIMITED);
         $this->assertEquals($canonical, $canonicalMeta,"A page with a canonical does not see its canonical change");
+
+    }
+
+    /**
+     * A canonical cannot be uppercase
+     *
+     */
+    public function test_canonical_case()
+    {
+
+        // Save a page
+        $pageCanonical = "Hallo";
+        $text = DOKU_LF . '---json' . DOKU_LF
+            . '{' . DOKU_LF
+            . '   "canonical":"' . $pageCanonical . '"' . DOKU_LF
+            . '}' . DOKU_LF
+            . '---' . DOKU_LF
+            . 'Content';
+        $pageId = "testcano";
+        TestUtility::addPage($pageId, $text);
+
+
+        $canonicalMeta = p_get_metadata($pageId, UrlCanonical::CANONICAL_PROPERTY, METADATA_RENDER_UNLIMITED);
+        $this->assertEquals(strtolower($pageCanonical), $canonicalMeta,"The canonical should be lowercase");
+
+
 
     }
 

@@ -159,7 +159,8 @@ class syntax_plugin_combo_cite extends DokuWiki_Syntax_Plugin
                     $renderer->doc .= '</cite>';
                     $node = new Tag(self::TAG,array(), $state, $data[PluginUtility::TREE]);
 
-                    if (in_array($node->getParent()->getName(), ["card","blockquote"])) {
+                    $tag = $node->getParent();
+                    if (!empty($tag) && in_array($tag->getName(), ["card","blockquote"])) {
                         $renderer->doc .= '</footer>'.DOKU_LF;
                     } else {
                         $renderer->doc .= DOKU_LF;
