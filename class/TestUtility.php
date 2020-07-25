@@ -121,6 +121,11 @@ class TestUtility
         return XmlUtility::normalize($expected);
     }
 
+    public static function renderText2Xhtml($text)
+    {
+        return PageUtility::renderText2Xhtml($text);
+    }
+
     /**
      * See {@link getMeta}
      *

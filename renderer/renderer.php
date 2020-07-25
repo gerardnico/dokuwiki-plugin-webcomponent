@@ -20,6 +20,7 @@ require_once(__DIR__ . '/../class/BreadcrumbHierarchical.php');
  */
 class  renderer_plugin_combo_renderer extends Doku_Renderer_xhtml
 {
+    const COMBO_RENDERER_NAME = 'combo_renderer';
 
     /**
      * @var array that hold the position of the parent
@@ -208,32 +209,24 @@ class  renderer_plugin_combo_renderer extends Doku_Renderer_xhtml
 
 
             $isLastSection = $sectionNumber === count($this->sections) - 1;
-            if (AdsUtility::showAds($sectionLineCount, $currentLineCountSinceLastAd, $sectionNumber, $adsCounter, $isLastSection)) {
+            if (AdsUtility::showAds(
+                $sectionLineCount,
+                $currentLineCountSinceLastAd,
+                $sectionNumber,
+                $adsCounter,
+                $isLastSection
+            )) {
 
 
                 // Counter
                 $adsCounter += 1;
                 $currentLineCountSinceLastAd = 0;
 
-                $adsPageId = AdsUtility::getAdPage('InContent' . $adsCounter);
-                $file = wikiFN($adsPageId);
-                if (file_exists($file)) {
-                    $content = file_get_contents($file);
-                    PageUtility::renderText2Xhtml($content);
-                } else {
-                    if (AdsUtility::showPlaceHolder()) {
-
-                        $this->doc .= '<div style="border:1px solid;padding:30px; margin: 20px auto 30px;max-width:600px;text-align: center">' . DOKU_LF
-                            . 'Ads Page Id (' . $adsPageId . ') not found. <br>' . DOKU_LF
-                            . 'Showing the placeholder. <br>' . DOKU_LF
-                            . '</div>';
-
-                    }
-                }
+                $attributes = array("name" => AdsUtility::PREFIX_IN_ARTICLE_ADS . $adsCounter);
+                $this->doc .= AdsUtility::render($attributes);
 
 
             }
-
 
 
         }

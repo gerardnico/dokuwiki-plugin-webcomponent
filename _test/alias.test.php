@@ -1,6 +1,5 @@
 <?php
 /**
- * Integration Tests for the handling of the canonical
  *
  * plugin_combo
  * @group plugins

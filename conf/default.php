@@ -21,7 +21,6 @@
 use ComboStrap\IconUtility;
 use ComboStrap\MetadataUtility;
 
-$conf['UnitShortCutKey'] = 'u';
 
 /**
  * Related UI components
@@ -94,3 +93,9 @@ $conf['metadataViewerDefaultAttributes']= 'title="Metadata" exclude="tableofcont
  * See {@link syntax_plugin_combo_badge::CONF_DEFAULT_ATTRIBUTES_KEY
  */
 $conf['defaultBadgeAttributes'] = 'type="info" rounded="true"';
+
+/**
+ * Ads
+ * See {@link \ComboStrap\AdsUtility::CONF_IN_ARTICLE_PLACEHOLDER
+ */
+$conf['AdsInArticleShowPlaceholder'] = 0;

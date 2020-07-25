@@ -1,12 +1,12 @@
 <?php
 
+use ComboStrap\AdsUtility;
 use ComboStrap\IconUtility;
 use ComboStrap\MetadataUtility;
 use ComboStrap\UrlManagerBestEndPage;
 
-include_once (__DIR__.'/../syntax/related.php');
+require_once (__DIR__.'/../syntax/related.php');
 
-$meta['UnitShortCutKey'] = array('string');
 
 // https://www.dokuwiki.org/devel:configuration
 $meta[syntax_plugin_combo_related::MAX_LINKS_CONF] = array('numeric');
@@ -15,18 +15,17 @@ $meta[syntax_plugin_combo_related::EXTRA_PATTERN_CONF] = array('string');
 /**
  * Disqus
  */
-include_once (__DIR__.'/../syntax/disqus.php');
+require_once (__DIR__.'/../syntax/disqus.php');
 $meta[syntax_plugin_combo_disqus::CONF_DEFAULT_ATTRIBUTES] = array('string');
 
 
 /**
  * Url Manager
  */
-$meta['GoToEditMode'] = array('onoff');
 $meta['ShowPageNameIsNotUnique'] = array('onoff');
 $meta['ShowMessageClassic'] = array('onoff');
 
-include_once (__DIR__.'/../action/urlmanager.php');
+require_once (__DIR__.'/../action/urlmanager.php');
 $actionChoices = array('multichoice', '_choices' => array(
     action_plugin_combo_urlmanager::NOTHING,
     action_plugin_combo_urlmanager::GO_TO_BEST_END_PAGE_NAME,
@@ -35,7 +34,7 @@ $actionChoices = array('multichoice', '_choices' => array(
     action_plugin_combo_urlmanager::GO_TO_BEST_NAMESPACE,
     action_plugin_combo_urlmanager::GO_TO_SEARCH_ENGINE
 ));
-
+$meta['GoToEditMode'] = array('onoff');
 $meta['ActionReaderFirst']  = $actionChoices;
 $meta['ActionReaderSecond'] = $actionChoices;
 $meta['ActionReaderThird']  = $actionChoices;
@@ -69,3 +68,9 @@ $meta[MetadataUtility::CONF_ENABLE_WHEN_EDITING]=array('onoff');
  * Badge
  */
 $meta[syntax_plugin_combo_badge::CONF_DEFAULT_ATTRIBUTES_KEY]=array('string');
+
+/**
+ * Ads
+ */
+require_once (__DIR__.'/../class/AdsUtility.php');
+$meta[AdsUtility::CONF_IN_ARTICLE_PLACEHOLDER]=array('onoff');

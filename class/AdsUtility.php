@@ -28,8 +28,21 @@ class AdsUtility
     const CONF_ADS_LINE_BETWEEN_KEY = 'AdsLineBetween';
     const CONF_ADS_MIN_SECTION_NUMBER_DEFAULT = 2;
     const CONF_ADS_MIN_SECTION_KEY = 'AdsMinSectionNumber';
-    const CONF_ADS_SHOW_PLACEHOLDER_DEFAULT = 1;
-    const CONF_ADS_SHOW_PLACEHOLDER_KEY = 'ShowPlaceholder';
+
+
+    const ADS_NAMESPACE = ':combostrap:ads:';
+
+    /**
+     * All in-article should start with this prefix
+     */
+    const PREFIX_IN_ARTICLE_ADS = "inarticle";
+
+    /**
+     * Do we show a placeholder when there is no ad page
+     * for a in-article
+     */
+    const CONF_IN_ARTICLE_PLACEHOLDER = 'AdsInArticleShowPlaceholder';
+    const CONF_IN_ARTICLE_PLACEHOLDER_DEFAULT = 0;
 
     public static function showAds($sectionLineCount, $currentLineCountSinceLastAd, $sectionNumber, $adsCounter, $isLastSection)
     {
@@ -48,7 +61,7 @@ class AdsUtility
                 or
                 // Show always an ad after a number of section
                 (
-                    $adsCounter == 0 && // Still not ads
+                    $adsCounter == 0 && // Still no ads
                     $sectionNumber > self::CONF_ADS_MIN_SECTION_NUMBER_DEFAULT && // Above the minimum number of section
                     $sectionLineCount > self::CONF_ADS_MIN_LOCAL_LINE_DEFAULT // Minimum line in the current section (to avoid a pub below a header)
                 )
@@ -68,7 +81,7 @@ class AdsUtility
 
     public static function showPlaceHolder()
     {
-        return self::CONF_ADS_SHOW_PLACEHOLDER_DEFAULT == 1;
+        return PluginUtility::getConfValue(self::CONF_IN_ARTICLE_PLACEHOLDER);
     }
 
     /**
@@ -78,6 +91,71 @@ class AdsUtility
      */
     public static function getAdPage($name)
     {
-        return strtolower(':combostrap:ads:'.$name);
+        return strtolower(self::ADS_NAMESPACE . $name);
+    }
+
+    /**
+     * Return the id of the div that wrap the ad
+     * @param $name - the name of the page ad
+     * @return string|string[]
+     */
+    public static function getTagId($name)
+    {
+        return str_replace(":","-",substr(self::getAdPage($name),1));
+    }
+
+    public static function render(array $attributes)
+    {
+        $htmlAttributes = array();
+        $html = "";
+        if (!isset($attributes["name"])) {
+
+            $name = "unknown";
+            $html = "The name attribute is mandatory to render an ad";
+            $htmlAttributes["color"] = "red";
+
+        } else {
+
+            $name = $attributes["name"];
+            $adsPageId = AdsUtility::getAdPage($name);
+            if (page_exists($adsPageId)) {
+                $html .= PageUtility::renderId2Xhtml($adsPageId);
+            } else {
+                if (!(strpos($name, self::PREFIX_IN_ARTICLE_ADS) === 0)) {
+                    $html .= "The ad page (" . $adsPageId . ") does not exist";
+                    $htmlAttributes["color"] = "red";
+                } else {
+                    if (AdsUtility::showPlaceHolder()) {
+
+                        $html .= 'Ads Page Id (' . $adsPageId . ') not found. <br>' . DOKU_LF
+                        . 'Showing the '.PluginUtility::getUrl("automatic/in-article/ad#AdsInArticleShowPlaceholder","In-article placeholder").'<br>' . DOKU_LF;
+
+                        $htmlAttributes["color"] = "dark";
+                        $htmlAttributes["spacing"] = "m-3 p-3";
+                        $htmlAttributes["text-align"] = "center";
+                        $htmlAttributes["align"] = "center";
+                        $htmlAttributes["width"] = "600px";
+                        $htmlAttributes["border-color"] = "dark";
+
+                    } else {
+
+                        // Show nothing
+                        return "";
+
+                    }
+                }
+            }
+
+        }
+
+        /**
+         * We wrap the ad with a div to locate it and id it
+         */
+        $divHtmlWrapper = "<div";
+        $htmlAttributes["id"] = AdsUtility::getTagId($name);
+        $htmlAttributes = PluginUtility::mergeAttributes($attributes, $htmlAttributes);
+        unset($htmlAttributes["name"]);
+        $divHtmlWrapper .= " " . PluginUtility::array2HTMLAttributes($htmlAttributes);
+        return $divHtmlWrapper . ">" . $html . '</div>';
     }
 }

@@ -72,7 +72,6 @@ class syntax_plugin_combo_ad extends DokuWiki_Syntax_Plugin
     }
 
 
-
     /**
      *
      * The handle function goal is to parse the matched syntax through the pattern function
@@ -93,44 +92,7 @@ class syntax_plugin_combo_ad extends DokuWiki_Syntax_Plugin
 
             case DOKU_LEXER_SPECIAL :
                 $attributes = PluginUtility::getTagAttributes($match);
-                $htmlAttributes = array();
-                $html = "";
-                $wrapWithDiv = false;
-                if (!isset($attributes["name"])){
-                    $html = "The name attribute is mandatory to render an ad";
-                    $wrapWithDiv = true;
-                    $htmlAttributes["color"]="red";
-                } else {
-                    $name = $attributes["name"];
-                    $adsPageId = AdsUtility::getAdPage($name);
-                    if (page_exists($adsPageId)) {
-                        $html .= PageUtility::renderId2Xhtml($adsPageId);
-                    } else {
-                        $html .= "The ad page (".$adsPageId.") does not exist";
-                        $wrapWithDiv = true;
-                        $htmlAttributes["color"]="red";
-                    }
-
-                    if (sizeof($attributes) > 1) {
-                        // if there is more than the name attributes, this is styling attributes, we
-                        // wrap then the ads with a div
-                        $wrapWithDiv = true;
-                    }
-
-                }
-
-                /**
-                 * When an error occurs or there is styling attributes,
-                 * we wrap the ad with a div
-                 */
-                if ($wrapWithDiv) {
-                    $divHtmlWrapper = "<div";
-                    $htmlAttributes = PluginUtility::mergeAttributes($attributes,$htmlAttributes);
-                    unset($htmlAttributes["name"]);
-                    $divHtmlWrapper .= " " . PluginUtility::array2HTMLAttributes($htmlAttributes);
-                    $html = $divHtmlWrapper .">". $html . '</div>';
-                }
-
+                $html = AdsUtility::render($attributes);
                 return array(
                     PluginUtility::STATE => $state,
                     PluginUtility::ATTRIBUTES => $attributes,

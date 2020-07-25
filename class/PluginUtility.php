@@ -620,11 +620,15 @@ class PluginUtility
             if ($conf['template'] === 'strap') {
                 $logo = tpl_incdir() . 'images/logo.svg';
                 if (file_exists($logo)) {
-                    $icon = IconUtility::renderFileIcon($logo);
+                    $icon = IconUtility::renderFileIcon($logo,array(
+                        "width"=>"16px",
+                        "height"=>"16px",
+                        "color"=>"#075EBB"
+                    ));
                 }
             }
         }
-        return $icon . '<a href="' . self::$URL_BASE . '/' . str_replace(":", "/", $canonical) . '" title="' . $text . '">' . $text . '</a>';
+        return $icon . ' <a href="' . self::$URL_BASE . '/' . str_replace(":", "/", $canonical) . '" title="' . $text . '">' . $text . '</a>';
     }
 
     /**
@@ -855,6 +859,12 @@ class PluginUtility
             $styleProperties["border-radius"] = ".25rem";
         }
 
+    }
+
+    public static function getConfValue($confName)
+    {
+        global $conf;
+        return $conf['plugin'][PluginUtility::PLUGIN_BASE_NAME][$confName];
     }
 
 

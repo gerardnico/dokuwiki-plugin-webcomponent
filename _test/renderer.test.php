@@ -23,7 +23,7 @@ class plugin_combo_renderer_test extends DokuWikiTest
     {
         $this->pluginsEnabled[] = PluginUtility::PLUGIN_BASE_NAME;
         parent::setUp();
-        $conf['renderer_xhtml'] = 'combo_renderer';
+        $conf['renderer_xhtml'] = renderer_plugin_combo_renderer::COMBO_RENDERER_NAME;
     }
 
 
