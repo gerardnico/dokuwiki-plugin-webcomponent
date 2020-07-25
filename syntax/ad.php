@@ -2,9 +2,9 @@
 
 
 use ComboStrap\AdsUtility;
-use ComboStrap\PageUtility;
 use ComboStrap\PluginUtility;
 
+require_once(__DIR__ . '/../class/AdsUtility.php');
 
 /**
  * Class syntax_plugin_combo_ad
