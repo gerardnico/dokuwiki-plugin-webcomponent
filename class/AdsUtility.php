@@ -70,4 +70,14 @@ class AdsUtility
     {
         return self::CONF_ADS_SHOW_PLACEHOLDER_DEFAULT == 1;
     }
+
+    /**
+     * Return the full page location
+     * @param $name
+     * @return string
+     */
+    public static function getAdPage($name)
+    {
+        return strtolower(':combostrap:ads:'.$name);
+    }
 }

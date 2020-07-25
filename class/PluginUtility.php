@@ -4,7 +4,6 @@
 namespace ComboStrap;
 
 
-use RuntimeException;
 use TestRequest;
 
 require_once(__DIR__ . '/LogUtility.php');
@@ -496,6 +495,12 @@ class PluginUtility
                 } else {
                     $styleProperties[$colorAttribute] = self::getColorValue($colorValue);
                 }
+
+                if ($colorAttribute == "border-color") {
+                    self::checkDefaultBorderColorAttributes($styleProperties);
+                }
+
+
                 unset($attributes[$colorAttribute]);
             }
         }
@@ -807,6 +812,47 @@ class PluginUtility
             $attributes["style"] .= ";$property:$value";
         } else {
             $attributes["style"] = "$property:$value";
+        }
+
+    }
+
+    /**
+     * Add default border attributes
+     * to see a border
+     * Doc
+     * https://combostrap.com/styling/color#border_color
+     * @param array $styleProperties
+     */
+    private static function checkDefaultBorderColorAttributes(array &$styleProperties)
+    {
+        /**
+         * border color was set without the width
+         * setting the width
+         */
+        if (!(
+                isset($styleProperties["border"])
+                ||
+                isset($styleProperties["border-width"])
+            )
+        ) {
+            $styleProperties["border-width"] = "1px";
+        }
+        /**
+         * border color was set without the style
+         * setting the style
+         */
+        if (!
+            (
+                isset($styleProperties["border"])
+                ||
+                isset($styleProperties["border-style"])
+            )
+        ) {
+            $styleProperties["border-style"] = "solid";
+
+        }
+        if (!isset($styleProperties["border-radius"])) {
+            $styleProperties["border-radius"] = ".25rem";
         }
 
     }

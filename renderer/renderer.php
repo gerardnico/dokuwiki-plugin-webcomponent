@@ -215,12 +215,11 @@ class  renderer_plugin_combo_renderer extends Doku_Renderer_xhtml
                 $adsCounter += 1;
                 $currentLineCountSinceLastAd = 0;
 
-                $adsPageId = strtolower(':combostrap:ads:InContent' . $adsCounter);
+                $adsPageId = AdsUtility::getAdPage('InContent' . $adsCounter);
                 $file = wikiFN($adsPageId);
                 if (file_exists($file)) {
                     $content = file_get_contents($file);
                     PageUtility::renderText2Xhtml($content);
-
                 } else {
                     if (AdsUtility::showPlaceHolder()) {
 
