@@ -1,25 +1,19 @@
 <?php
 
 
-// must be run within Dokuwiki
+use ComboStrap\AdsUtility;
 use ComboStrap\PluginUtility;
 
-if (!defined('DOKU_INC')) die();
 
 /**
- * Class syntax_plugin_combo_badge
- * Implementation of a badge
- * called an alert in <a href="https://getbootstrap.com/docs/4.0/components/badge/">bootstrap</a>
+ * Class syntax_plugin_combo_list
+ * Implementation of a list
  */
-class syntax_plugin_combo_badge extends DokuWiki_Syntax_Plugin
+class syntax_plugin_combo_list extends DokuWiki_Syntax_Plugin
 {
 
-    const TAG = "badge";
+    const TAG = "list";
 
-    const CONF_DEFAULT_ATTRIBUTES_KEY = 'defaultBadgeAttributes';
-
-    const ATTRIBUTE_TYPE = "type";
-    const ATTRIBUTE_ROUNDED = "rounded";
 
     /**
      * Syntax Type.
@@ -30,7 +24,7 @@ class syntax_plugin_combo_badge extends DokuWiki_Syntax_Plugin
      */
     function getType()
     {
-        return 'formatting';
+        return 'container';
     }
 
     /**
@@ -62,10 +56,6 @@ class syntax_plugin_combo_badge extends DokuWiki_Syntax_Plugin
         return array('container', 'formatting', 'substition', 'protected', 'disabled', 'paragraphs');
     }
 
-    /**
-     * @see Doku_Parser_Mode::getSort()
-     * the mode with the lowest sort number will win out
-     */
     function getSort()
     {
         return 201;
@@ -80,12 +70,12 @@ class syntax_plugin_combo_badge extends DokuWiki_Syntax_Plugin
 
     }
 
-    function postConnect()
+    public function postConnect()
     {
-
         $this->Lexer->addExitPattern('</' . self::TAG . '>', PluginUtility::getModeForComponent($this->getPluginComponent()));
 
     }
+
 
     /**
      *
@@ -107,15 +97,27 @@ class syntax_plugin_combo_badge extends DokuWiki_Syntax_Plugin
 
             case DOKU_LEXER_ENTER :
                 $attributes = PluginUtility::getTagAttributes($match);
-                return array($state, $attributes);
+                $html = '<ul';
+                if (sizeof($attributes)) {
+                    $html .= PluginUtility::array2HTMLAttributes($attributes);
+                }
+                $html .= '>';
+                return array(
+                    PluginUtility::STATE => $state,
+                    PluginUtility::ATTRIBUTES => $attributes,
+                    PluginUtility::PAYLOAD => $html);
 
             case DOKU_LEXER_UNMATCHED :
-                return array($state, $match);
+
+                return array(
+                    PluginUtility::STATE => $state,
+                    PluginUtility::PAYLOAD => PluginUtility::escape($match));
 
             case DOKU_LEXER_EXIT :
 
-                // Important otherwise we don't get an exit in the render
-                return array($state, '');
+                return array(
+                    PluginUtility::STATE => $state,
+                    PluginUtility::PAYLOAD => '</ul>');
 
 
         }
@@ -138,44 +140,14 @@ class syntax_plugin_combo_badge extends DokuWiki_Syntax_Plugin
         if ($format == 'xhtml') {
 
             /** @var Doku_Renderer_xhtml $renderer */
-            list($state, $payload) = $data;
+            $state = $data[PluginUtility::STATE];
             switch ($state) {
                 case DOKU_LEXER_ENTER :
-
-                    $defaultConfValue = $this->getConf(self::CONF_DEFAULT_ATTRIBUTES_KEY);
-                    $defaultAttributes = PluginUtility::parse2HTMLAttributes($defaultConfValue);
-                    $attributes = PluginUtility::mergeAttributes($payload,$defaultAttributes);
-
-                    $classValue = "badge";
-                    $type = $attributes[self::ATTRIBUTE_TYPE];
-                    if (empty($type)) {
-                        $type = "info";
-                    }
-                    if ($type != "tip") {
-                        $classValue .= " alert-" . $type;
-                    } else {
-                        if (!array_key_exists("background-color", $attributes)) {
-                            $attributes["background-color"] = "#fff79f"; // lum - 195
-                        }
-                    }
-
-                    PluginUtility::addClass2Attributes($classValue,$attributes);
-
-                    $rounded = $attributes[self::ATTRIBUTE_ROUNDED];
-                    if (!empty($rounded)){
-                        $attributes["class"] .= " badge-pill";
-                        unset($attributes[self::ATTRIBUTE_ROUNDED]);
-                    }
-
-                    $renderer->doc .= '<span ' . PluginUtility::array2HTMLAttributes($attributes) . '>';
-                    break;
-
-                case DOKU_LEXER_UNMATCHED :
-                    $renderer->doc .= $renderer->_xmlEntities($payload);
-                    break;
-
                 case DOKU_LEXER_EXIT :
-                    $renderer->doc .= '</span>';
+                    $renderer->doc .= $data[PluginUtility::PAYLOAD].DOKU_LF;
+                    break;
+                case DOKU_LEXER_UNMATCHED :
+                    $renderer->doc .= $data[PluginUtility::PAYLOAD];
                     break;
             }
             return true;

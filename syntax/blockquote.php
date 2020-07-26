@@ -87,8 +87,7 @@ class syntax_plugin_combo_blockquote extends DokuWiki_Syntax_Plugin
 
     /**
      * @see Doku_Parser_Mode::getSort()
-     * Higher number than the teaser-columns
-     * because the mode with the lowest sort number will win out
+     * the mode with the lowest sort number will win out
      */
     function getSort()
     {

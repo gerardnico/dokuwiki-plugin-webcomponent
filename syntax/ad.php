@@ -57,6 +57,10 @@ class syntax_plugin_combo_ad extends DokuWiki_Syntax_Plugin
         return array('container', 'formatting', 'substition', 'protected', 'disabled', 'paragraphs');
     }
 
+    /**
+     * @see Doku_Parser_Mode::getSort()
+     * the mode with the lowest sort number will win out
+     */
     function getSort()
     {
         return 201;
