@@ -97,9 +97,18 @@ class syntax_plugin_combo_list extends DokuWiki_Syntax_Plugin
 
             case DOKU_LEXER_ENTER :
                 $attributes = PluginUtility::getTagAttributes($match);
+
+                PluginUtility::addStyleProperty('list-style-type', 'none', $attributes);
+                PluginUtility::addStyleProperty('padding', '8px 0', $attributes); // Padding on list is 40px left default
+                PluginUtility::addStyleProperty('line-height', '1.75rem', $attributes);
+                PluginUtility::addStyleProperty('border', '1px solid #e5e5e5',$attributes);
+                PluginUtility::addStyleProperty('width', '100%',$attributes);
+                PluginUtility::addStyleProperty('display', 'block',$attributes);
+                PluginUtility::addStyleProperty('border-radius', '0.25rem',$attributes);
+
                 $html = '<ul';
                 if (sizeof($attributes)) {
-                    $html .= PluginUtility::array2HTMLAttributes($attributes);
+                    $html .= ' ' . PluginUtility::array2HTMLAttributes($attributes);
                 }
                 $html .= '>';
                 return array(
@@ -144,7 +153,7 @@ class syntax_plugin_combo_list extends DokuWiki_Syntax_Plugin
             switch ($state) {
                 case DOKU_LEXER_ENTER :
                 case DOKU_LEXER_EXIT :
-                    $renderer->doc .= $data[PluginUtility::PAYLOAD].DOKU_LF;
+                    $renderer->doc .= $data[PluginUtility::PAYLOAD] . DOKU_LF;
                     break;
                 case DOKU_LEXER_UNMATCHED :
                     $renderer->doc .= $data[PluginUtility::PAYLOAD];

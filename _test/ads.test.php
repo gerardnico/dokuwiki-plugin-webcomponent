@@ -73,6 +73,34 @@ class plugin_combo_ads_test extends DokuWikiTest
 
     }
 
+
+    public function test_ad_placeholder()
+    {
+
+        // Save a page
+        $articleContent = self::PAGE_WITH_ENOUGH_CONTENT_FOR_INARTICLE_AD;
+
+        $articleId = "inarticle-test-placeholder";
+        TestUtility::addPage($articleId, $articleContent);
+
+        // No ad page
+        global $conf;
+        $conf['plugin'][PluginUtility::PLUGIN_BASE_NAME][AdsUtility::CONF_IN_ARTICLE_PLACEHOLDER]=1;
+
+        $name = "inarticle1";
+        $adPage = AdsUtility::getAdPage($name);
+        $this->assertFalse(page_exists($adPage),"The page ad should not exist");
+
+        $testRequest = new TestRequest();
+        $testResponse = $testRequest->get(array("id" => $articleId));
+
+        $ad = $testResponse->queryHTML("#" . AdsUtility::getTagId($name));
+
+        $this->assertEquals(1, $ad->count(), "The ad page does not exist but a placeholder is shown");
+        $this->assertTrue(strpos($ad->text(),"placeholder")>0, "The ad page does not exist but a placeholder is shown");
+
+    }
+
     /**
      * Test a ad tag
      *
@@ -82,8 +110,6 @@ class plugin_combo_ads_test extends DokuWikiTest
 
 
         $adName = "inarticle1";
-        $adId = strtolower(AdsUtility::ADS_NAMESPACE . $adName);
-
 
         // Save a page
         $articleContent = self::PAGE_WITH_ENOUGH_CONTENT_FOR_INARTICLE_AD;
@@ -131,26 +157,7 @@ class plugin_combo_ads_test extends DokuWikiTest
 
     }
 
-    public function test_placeholder()
-    {
 
-        // Save a page
-        $articleContent = self::PAGE_WITH_ENOUGH_CONTENT_FOR_INARTICLE_AD;
-
-        $articleId = "inarticle-test-placeholder";
-        TestUtility::addPage($articleId, $articleContent);
-
-        // No ad page
-        global $conf;
-        $conf['plugin'][PluginUtility::PLUGIN_BASE_NAME][AdsUtility::CONF_IN_ARTICLE_PLACEHOLDER]=1;
-        $testRequest = new TestRequest();
-        $testResponse = $testRequest->get(array("id" => $articleId));
-        $ad = $testResponse->queryHTML("#" . AdsUtility::getTagId("inarticle1"));
-
-        $this->assertEquals(1, $ad->count(), "The ad page does not exist but a placeholder is shown");
-        $this->assertTrue(strpos($ad->text(),"placeholder")>0, "The ad page does not exist but a placeholder is shown");
-
-    }
 
 
     public function test_tag_id()

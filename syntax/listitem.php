@@ -113,9 +113,18 @@ class syntax_plugin_combo_listitem extends DokuWiki_Syntax_Plugin
 
             case DOKU_LEXER_ENTER :
                 $attributes = PluginUtility::getTagAttributes($match);
+
+                PluginUtility::addStyleProperty('position', 'relative',$attributes); // Why ?
+                //PluginUtility::addStyleProperty('height', '36px',$attributes); // Why ?
+                PluginUtility::addStyleProperty('display', 'flex',$attributes);
+                PluginUtility::addStyleProperty('align-items', 'center',$attributes);
+                PluginUtility::addStyleProperty('justify-content', 'flex-start',$attributes);
+                PluginUtility::addStyleProperty('padding', '8px 16px',$attributes); // Padding at the left and right
+                PluginUtility::addStyleProperty('overflow', 'hidden',$attributes);
+
                 $html = '<li';
                 if (sizeof($attributes)) {
-                    $html .= PluginUtility::array2HTMLAttributes($attributes);
+                    $html .= ' '.PluginUtility::array2HTMLAttributes($attributes);
                 }
                 $html .= '>';
                 return array(
@@ -125,9 +134,14 @@ class syntax_plugin_combo_listitem extends DokuWiki_Syntax_Plugin
 
             case DOKU_LEXER_UNMATCHED :
 
+                $attributes = array();
+                PluginUtility::addStyleProperty('letter-spacing','.009375em',$attributes);
+                PluginUtility::addStyleProperty('font-weight','400',$attributes);
+                PluginUtility::addStyleProperty('font-size','1rem',$attributes);
+                $inlineAttributes = PluginUtility::array2HTMLAttributes($attributes);
                 return array(
                     PluginUtility::STATE => $state,
-                    PluginUtility::PAYLOAD => PluginUtility::escape($match));
+                    PluginUtility::PAYLOAD => "<span $inlineAttributes>".PluginUtility::escape($match).'</span>');
 
             case DOKU_LEXER_EXIT :
 
