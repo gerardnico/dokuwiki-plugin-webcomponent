@@ -227,6 +227,21 @@ class plugin_combo_plugin_utility_test extends DokuWikiTest
 
     }
 
+    /**
+     * Test if an expression is a regular expression pattern
+     */
+    public function test_get_tag()
+    {
+
+        // A complicated expression
+        $match = "<file-item>Blabla</file-item>";
+        $this->assertEquals("file-item",PluginUtility::getTag($match));
+
+        $match = "<file-item boublou>Blabla</file-item>";
+        $this->assertEquals("file-item",PluginUtility::getTag($match));
+
+    }
+
 
 
 

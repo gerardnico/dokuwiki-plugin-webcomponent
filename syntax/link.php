@@ -75,7 +75,8 @@ class syntax_plugin_combo_link extends DokuWiki_Syntax_Plugin
             [
                 PluginUtility::getModeForComponent(syntax_plugin_combo_button::getTag()),
                 PluginUtility::getModeForComponent(syntax_plugin_combo_cite::TAG),
-                PluginUtility::getModeForComponent(syntax_plugin_combo_dropdown::TAG)
+                PluginUtility::getModeForComponent(syntax_plugin_combo_dropdown::TAG),
+                PluginUtility::getModeForComponent(syntax_plugin_combo_listitem::MODE_NAME)
                 ];
         if (in_array($mode,$authorizedMode)) {
             $this->Lexer->addSpecialPattern(LinkUtility::LINK_PATTERN, $mode, PluginUtility::getModeForComponent($this->getPluginComponent()));

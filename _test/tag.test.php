@@ -25,7 +25,14 @@ use ComboStrap\UrlCanonical;
 require_once(__DIR__ . '/../class/PluginUtility.php');
 require_once(__DIR__ . '/../class/TestUtility.php');
 
-
+/**
+ * Class plugin_combo_tag_test
+ * This is a test class based on the card and blockquote element
+ *
+ * Each function represents a lexer state, add the function that you want ot test
+ * in one of this function.
+ *
+ */
 class plugin_combo_tag_test extends DokuWikiTest
 {
 
@@ -155,6 +162,32 @@ class plugin_combo_tag_test extends DokuWikiTest
 
     }
 
+
+    /**
+     * Test the node function in an {@link DOKU_LEXER_EXIT} state
+     */
+    public function test_exit_tag()
+    {
+        $text = '<card>' . DOKU_LF
+            . '<blockquote warning>' . DOKU_LF
+            . '<header></header>' . DOKU_LF
+            . '<tag important>Unmatched</tag>' . DOKU_LF
+            . '</blockquote></card>';
+        $id = "idTestSibling";
+        TestUtility::addPage($id, $text);
+        $testRequest = new TestRequest();
+        $response = $testRequest->get(array("id" => $id));
+        $node = $response->queryHTML("tag-exit");
+        $this->assertEquals(syntax_plugin_combo_tag::TAG, $node->attr("name"), "exit name test");
+        $this->assertEquals("important", $node->attr("type"), "exit type");
+        $this->assertEquals("blockquote", $node->attr("parent"), "exit parent test");
+        $this->assertEquals("warning", $node->attr("parent-type"), "exit parent-type test");
+        $this->assertEquals("true", $node->attr("child-of-blockquote"), "exit child of test");
+        $this->assertEquals("true", $node->attr("descendant-of-card"), "exit descendant test");
+        $this->assertEquals("true", $node->attr("has-siblings"), "exit has siblings test");
+
+
+    }
 
 
 

@@ -15,12 +15,40 @@ namespace ComboStrap;
 
 use Doku_Handler;
 
+/**
+ * Class Tag
+ * @package ComboStrap
+ * This is class that have tree like function on tag level
+ * to match what's called a {@link Doku_Handler::$calls call}
+ */
 class Tag
 {
+    /**
+     * The {@link Doku_Handler::$calls}
+     * @var
+     */
     private $calls;
+
+    /**
+     * The parsed attributes for the tag
+     * @var
+     */
     private $attributes;
+    /**
+     * The name of the tag
+     * @var
+     */
     private $name;
+    /**
+     * The lexer state
+     * @var
+     */
     private $state;
+    /**
+     * The position is the call stack
+     * @var int
+     */
+    private $position;
 
 
     /**
@@ -38,12 +66,17 @@ class Tag
      * @param $state
      * @param $calls - The dokuwiki call stack - ie {@link Doku_Handler->calls} or a subset
      */
-    public function __construct($name, $attributes, $state, $calls)
+    public function __construct($name, $attributes, $state, $calls, $position=null)
     {
         $this->name = $name;
         $this->attributes = $attributes;
         $this->state = $state;
         $this->calls = $calls;
+        if($position==null){
+            $this->position = sizeof($this->calls)-1;
+        } else {
+            $this->position = $position;
+        }
     }
 
     /**
@@ -93,9 +126,8 @@ class Tag
             $attributes = PluginUtility::getTagAttributes($match);
         }
         $name = self::getTagName($call);
-        $calls = array_slice($this->calls, 0, $position); // reduce the call stack
         $state = self::getStateFromCall($call);
-        return new Tag($name, $attributes, $state, $calls);
+        return new Tag($name, $attributes, $state, $this->calls, $position);
     }
 
     /**

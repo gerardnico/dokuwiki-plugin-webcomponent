@@ -98,15 +98,15 @@ class syntax_plugin_combo_tag extends DokuWiki_Syntax_Plugin
 
             case DOKU_LEXER_ENTER :
                 $attributes = PluginUtility::getTagAttributes($match);
-                $node = new Tag(self::TAG, $attributes, $state, $handler->calls);
-                $attributes['name'] = $node->getName();
-                $attributes['type'] = $node->getType();
-                $attributes['parent'] = $node->getParent()->getName();;
-                $attributes['parent-type'] = $node->getParent()->getType();;
-                $attributes['child-of-blockquote'] = $node->isChildOf("blockquote");
-                $attributes['descendant-of-card'] = $node->isDescendantOf("card");
-                $attributes['has-siblings'] = $node->hasSiblings();
-                $attributes['first-sibling'] = $node->getSibling()!==false?$node->getSibling()->getName():false;
+                $tag = new Tag(self::TAG, $attributes, $state, $handler->calls);
+                $attributes['name'] = $tag->getName();
+                $attributes['type'] = $tag->getType();
+                $attributes['parent'] = $tag->getParent()->getName();;
+                $attributes['parent-type'] = $tag->getParent()->getType();;
+                $attributes['child-of-blockquote'] = $tag->isChildOf("blockquote");
+                $attributes['descendant-of-card'] = $tag->isDescendantOf("card");
+                $attributes['has-siblings'] = $tag->hasSiblings();
+                $attributes['first-sibling'] = $tag->getSibling()!==false?$tag->getSibling()->getName():false;
 
                 $payload = '<tag-enter type="'.$attributes['type'].'" ' . PluginUtility::array2HTMLAttributes($attributes) . '></tag-enter>';
 
@@ -120,15 +120,15 @@ class syntax_plugin_combo_tag extends DokuWiki_Syntax_Plugin
                 );
 
             case DOKU_LEXER_UNMATCHED :
-                $node = new Tag(self::TAG, array(), $state, $handler->calls);
-                $attributes['name'] = $node->getName();
-                $attributes['type'] = $node->getType();
-                $attributes['parent'] = $node->getParent()->getName();;
-                $attributes['parent-type'] = $node->getParent()->getType();;
-                $attributes['child-of-blockquote'] = $node->isChildOf("blockquote");
-                $attributes['descendant-of-card'] = $node->isDescendantOf("card");
-                $attributes['has-siblings'] = $node->hasSiblings();
-                $attributes['first-sibling'] = $node->getSibling()!==false?$node->getSibling():false;
+                $tag = new Tag(self::TAG, array(), $state, $handler->calls);
+                $attributes['name'] = $tag->getName();
+                $attributes['type'] = $tag->getType();
+                $attributes['parent'] = $tag->getParent()->getName();;
+                $attributes['parent-type'] = $tag->getParent()->getType();;
+                $attributes['child-of-blockquote'] = $tag->isChildOf("blockquote");
+                $attributes['descendant-of-card'] = $tag->isDescendantOf("card");
+                $attributes['has-siblings'] = $tag->hasSiblings();
+                $attributes['first-sibling'] = $tag->getSibling()!==false?$tag->getSibling():false;
                 $payload = '<tag-unmatched type="'.$attributes['type'].'" ' . PluginUtility::array2HTMLAttributes($attributes) . '></tag-unmatched>';
                 return array(
                     PluginUtility::STATE => $state,
@@ -137,15 +137,15 @@ class syntax_plugin_combo_tag extends DokuWiki_Syntax_Plugin
 
             case DOKU_LEXER_SPECIAL :
 
-                $node = new Tag(self::TAG, PluginUtility::getTagAttributes($match), $state, $handler->calls);
-                $attributes['name'] = $node->getName();
-                $attributes['type'] = $node->getType();
-                $attributes['parent'] = $node->getParent()->getName();;
-                $attributes['parent-type'] = $node->getParent()->getType();;
-                $attributes['child-of-blockquote'] = $node->isChildOf("blockquote");
-                $attributes['descendant-of-card'] = $node->isDescendantOf("card");
-                $attributes['has-siblings'] = $node->hasSiblings();
-                $attributes['first-sibling'] = $node->getSibling()->getName();
+                $tag = new Tag(self::TAG, PluginUtility::getTagAttributes($match), $state, $handler->calls);
+                $attributes['name'] = $tag->getName();
+                $attributes['type'] = $tag->getType();
+                $attributes['parent'] = $tag->getParent()->getName();;
+                $attributes['parent-type'] = $tag->getParent()->getType();;
+                $attributes['child-of-blockquote'] = $tag->isChildOf("blockquote");
+                $attributes['descendant-of-card'] = $tag->isDescendantOf("card");
+                $attributes['has-siblings'] = $tag->hasSiblings();
+                $attributes['first-sibling'] = $tag->getSibling()->getName();
                 $payload = '<tag-special type="'.$attributes['type'].'" ' . PluginUtility::array2HTMLAttributes($attributes) . '></tag-special>';
                 return array(
                     PluginUtility::STATE => $state,
@@ -154,8 +154,21 @@ class syntax_plugin_combo_tag extends DokuWiki_Syntax_Plugin
 
             case DOKU_LEXER_EXIT :
 
-                // Important otherwise we don't get an exit in the render
-                return array($state, '');
+                $tag = new Tag(self::TAG, array(), $state, $handler->calls);
+                $tag = $tag->getOpeningTag();
+                $attributes['name'] = $tag->getName();
+                $attributes['type'] = $tag->getType();
+                $attributes['parent'] = $tag->getParent()->getName();;
+                $attributes['parent-type'] = $tag->getParent()->getType();;
+                $attributes['child-of-blockquote'] = $tag->isChildOf("blockquote");
+                $attributes['descendant-of-card'] = $tag->isDescendantOf("card");
+                $attributes['has-siblings'] = $tag->hasSiblings();
+                $attributes['first-sibling'] = $tag->getSibling()!==false?$tag->getSibling()->getName():false;
+                $payload = '<tag-exit type="'.$attributes['type'].'" ' . PluginUtility::array2HTMLAttributes($attributes) . '></tag-exit>';
+                return array(
+                    PluginUtility::STATE => $state,
+                    PluginUtility::PAYLOAD => $payload
+                );
 
 
         }
@@ -183,12 +196,10 @@ class syntax_plugin_combo_tag extends DokuWiki_Syntax_Plugin
                 case DOKU_LEXER_UNMATCHED:
                 case DOKU_LEXER_ENTER :
                 case DOKU_LEXER_SPECIAL:
+                case DOKU_LEXER_EXIT :
                     $renderer->doc .= $data[PluginUtility::PAYLOAD];
                     break;
 
-                case DOKU_LEXER_EXIT :
-                    $renderer->doc = '';
-                    break;
             }
             return true;
         }

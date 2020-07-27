@@ -13,7 +13,6 @@ require_once(__DIR__ . '/StringUtility.php');
 require_once(__DIR__ . '/ColorUtility.php');
 
 
-
 /**
  * Class url static
  * List of static utilities
@@ -439,10 +438,10 @@ class PluginUtility
 
         // Skin
         $skinAttributes = "skin";
-        if (array_key_exists($skinAttributes, $attributes)){
+        if (array_key_exists($skinAttributes, $attributes)) {
             $skinValue = $attributes[$skinAttributes];
             unset($attributes[$skinAttributes]);
-            if ( array_key_exists("type",$attributes)) {
+            if (array_key_exists("type", $attributes)) {
                 $type = $attributes["type"];
                 if (isset(ColorUtility::$colors[$type])) {
                     $color = ColorUtility::$colors[$type];
@@ -461,7 +460,7 @@ class PluginUtility
                             break;
                         case "outline":
                             $primaryColor = $color[ColorUtility::COLOR];
-                            if ($primaryColor === "#fff"){
+                            if ($primaryColor === "#fff") {
                                 $primaryColor = $color[ColorUtility::BACKGROUND_COLOR];
                             }
                             ArrayUtility::addIfNotSet($styleProperties, ColorUtility::COLOR, $primaryColor);
@@ -470,7 +469,7 @@ class PluginUtility
                             break;
                         case "text":
                             $primaryColor = $color[ColorUtility::COLOR];
-                            if ($primaryColor === "#fff"){
+                            if ($primaryColor === "#fff") {
                                 $primaryColor = $color[ColorUtility::BACKGROUND_COLOR];
                             }
                             ArrayUtility::addIfNotSet($styleProperties, ColorUtility::COLOR, $primaryColor);
@@ -620,10 +619,10 @@ class PluginUtility
             if ($conf['template'] === 'strap') {
                 $logo = tpl_incdir() . 'images/logo.svg';
                 if (file_exists($logo)) {
-                    $icon = IconUtility::renderFileIcon($logo,array(
-                        "width"=>"16px",
-                        "height"=>"16px",
-                        "color"=>"#075EBB"
+                    $icon = IconUtility::renderFileIcon($logo, array(
+                        "width" => "16px",
+                        "height" => "16px",
+                        "color" => "#075EBB"
                     ));
                 }
             }
@@ -759,7 +758,6 @@ class PluginUtility
     }
 
 
-
     /**
      * Add a class
      * @param $classValue
@@ -799,7 +797,7 @@ class PluginUtility
         if (array_key_exists($spacing, $attributes)) {
             $spacingValue = $attributes[$spacing];
             unset($attributes[$spacing]);
-            self::addClass2Attributes($spacingValue,$attributes);
+            self::addClass2Attributes($spacingValue, $attributes);
         }
 
     }
@@ -812,7 +810,7 @@ class PluginUtility
      */
     public static function addStyleProperty($property, $value, array &$attributes)
     {
-        if (isset($attributes["style"])){
+        if (isset($attributes["style"])) {
             $attributes["style"] .= ";$property:$value";
         } else {
             $attributes["style"] = "$property:$value";
@@ -834,10 +832,10 @@ class PluginUtility
          * setting the width
          */
         if (!(
-                isset($styleProperties["border"])
-                ||
-                isset($styleProperties["border-width"])
-            )
+            isset($styleProperties["border"])
+            ||
+            isset($styleProperties["border-width"])
+        )
         ) {
             $styleProperties["border-width"] = "1px";
         }
@@ -846,11 +844,11 @@ class PluginUtility
          * setting the style
          */
         if (!
-            (
-                isset($styleProperties["border"])
-                ||
-                isset($styleProperties["border-style"])
-            )
+        (
+            isset($styleProperties["border"])
+            ||
+            isset($styleProperties["border-style"])
+        )
         ) {
             $styleProperties["border-style"] = "solid";
 
@@ -865,6 +863,38 @@ class PluginUtility
     {
         global $conf;
         return $conf['plugin'][PluginUtility::PLUGIN_BASE_NAME][$confName];
+    }
+
+    public static function getTag($match)
+    {
+
+        // Trim to start clean
+        $match = trim($match);
+
+        // Until the first >
+        $pos = strpos($match, ">");
+        if ($pos == false) {
+            LogUtility::msg("The match does not contain any tag. Match: {$match}", LogUtility::LVL_MSG_ERROR);
+            return array();
+        }
+        $match = substr($match, 0, $pos);
+
+        // Suppress the <
+        if ($match[0] == "<") {
+            $match = substr($match, 1);
+        } else {
+            LogUtility::msg("This is not a text tag because it does not start with the character `>`");
+        }
+
+        // Suppress the tag name (ie until the first blank)
+        $spacePosition = strpos($match, " ");
+        if (!$spacePosition) {
+            // No space, meaning this is only the tag name
+            return $match;
+        } else {
+            return substr($match, 0, $spacePosition);
+        }
+
     }
 
 

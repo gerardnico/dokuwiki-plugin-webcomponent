@@ -15,7 +15,7 @@ require_once(__DIR__ . '/../class/TestUtility.php');
  * @group plugin_combo
  * @group plugins
  */
-class plugin_combo_list_test extends DokuWikiTest
+class plugin_combo_list_ntoc extends DokuWikiTest
 {
 
     public function setUp()
@@ -29,23 +29,17 @@ class plugin_combo_list_test extends DokuWikiTest
      * Basic
      * @throws Exception
      */
-    public function test_list()
+    public function test_ntoc()
     {
 
-        $text = "<list>" . DOKU_LF
-            . "<li>" . DOKU_LF
-            . "Title" . DOKU_LF
-            . "</li>" . DOKU_LF
-            . "</list>";
-        $expected = "<ul style=\"list-style-type:none;padding:8px 0;line-height:1.75rem;border:1px solid #e5e5e5;width:100%;display:block;border-radius:0.25rem\">
-  <li style=\"position:relative;display:flex;align-items:center;justify-content:flex-start;padding:8px 16px;overflow:hidden\">
-    <span>Title</span>
-  </li>
-</ul>";
+        $text = "<ntoc>" . DOKU_LF
+            ."<file-item>Bla</file-item>"
+            . "</ntoc>";
+        $expected = "";
         $xhtmlLi = PluginUtility::render($text);
 
         $this->assertEquals(
-            TestUtility::normalizeComboXml($expected),
+            $expected,
             TestUtility::normalizeDokuWikiHtml($xhtmlLi)
         );
 

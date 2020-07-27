@@ -3,17 +3,19 @@
 
 use ComboStrap\AdsUtility;
 use ComboStrap\PluginUtility;
+use ComboStrap\Tag;
 
 
 /**
- * Class syntax_plugin_combo_list
- * Implementation of a list
+ * Class syntax_plugin_combo_ntoc
+ * Implementation of a namespace toc
  */
-class syntax_plugin_combo_listitem extends DokuWiki_Syntax_Plugin
+class syntax_plugin_combo_ntoc extends DokuWiki_Syntax_Plugin
 {
 
-    const MODE_NAME = "listitem";
-    const TAGS = array("list-item", "li");
+    const TAG = "ntoc";
+    const TAGS = [self::TAG,"minimap"];
+    const FILE_ITEM = "file-item";
 
 
     /**
@@ -25,7 +27,7 @@ class syntax_plugin_combo_listitem extends DokuWiki_Syntax_Plugin
      */
     function getType()
     {
-        return 'formatting';
+        return 'container';
     }
 
     /**
@@ -57,11 +59,6 @@ class syntax_plugin_combo_listitem extends DokuWiki_Syntax_Plugin
         return array('container', 'formatting', 'substition', 'protected', 'disabled', 'paragraphs');
     }
 
-    /**
-     * @see Doku_Parser_Mode::getSort()
-     * the mode with the lowest sort number will win out
-     * Higher than {@link syntax_plugin_combo_list}
-     */
     function getSort()
     {
         return 201;
@@ -71,25 +68,16 @@ class syntax_plugin_combo_listitem extends DokuWiki_Syntax_Plugin
     function connectTo($mode)
     {
 
-        /**
-         * This selection helps also because
-         * the pattern for the li tag could also catch a list tag
-         */
-        if ($mode == PluginUtility::getModeForComponent(syntax_plugin_combo_list::TAG)) {
-            foreach (self::TAGS as $tag) {
-                $pattern = PluginUtility::getContainerTagPattern($tag);
-                $this->Lexer->addEntryPattern($pattern, $mode, PluginUtility::getModeForComponent($this->getPluginComponent()));
-            }
-        }
+        $pattern = PluginUtility::getContainerTagPattern(self::TAG);
+        $this->Lexer->addEntryPattern($pattern, $mode, PluginUtility::getModeForComponent($this->getPluginComponent()));
 
+        $this->Lexer->addPattern(PluginUtility::getLeafContainerTagPattern(self::FILE_ITEM), PluginUtility::getModeForComponent($this->getPluginComponent()));
 
     }
 
     public function postConnect()
     {
-        foreach (self::TAGS as $tag) {
-            $this->Lexer->addExitPattern('</' . $tag . '>', PluginUtility::getModeForComponent($this->getPluginComponent()));
-        }
+        $this->Lexer->addExitPattern('</' . self::TAG . '>', PluginUtility::getModeForComponent($this->getPluginComponent()));
 
     }
 
@@ -114,35 +102,36 @@ class syntax_plugin_combo_listitem extends DokuWiki_Syntax_Plugin
 
             case DOKU_LEXER_ENTER :
                 $attributes = PluginUtility::getTagAttributes($match);
-
-                PluginUtility::addStyleProperty('position', 'relative',$attributes); // Why ?
-                PluginUtility::addStyleProperty('display', 'flex',$attributes);
-                PluginUtility::addStyleProperty('align-items', 'center',$attributes);
-                PluginUtility::addStyleProperty('justify-content', 'flex-start',$attributes);
-                PluginUtility::addStyleProperty('padding', '8px 16px',$attributes); // Padding at the left and right
-                PluginUtility::addStyleProperty('overflow', 'hidden',$attributes);
-
-                $html = '<li';
-                if (sizeof($attributes)) {
-                    $html .= ' '.PluginUtility::array2HTMLAttributes($attributes);
-                }
-                $html .= '>';
                 return array(
                     PluginUtility::STATE => $state,
-                    PluginUtility::ATTRIBUTES => $attributes,
-                    PluginUtility::PAYLOAD => $html);
+                    PluginUtility::ATTRIBUTES => $attributes);
 
             case DOKU_LEXER_UNMATCHED :
 
+                // We should not ever come here but a user does not not known that
                 return array(
                     PluginUtility::STATE => $state,
-                    PluginUtility::PAYLOAD => "<span>".PluginUtility::escape($match).'</span>');
+                    PluginUtility::PAYLOAD => PluginUtility::escape($match));
+
+            case DOKU_LEXER_MATCHED :
+
+                $attributes = PluginUtility::getTagAttributes($match);
+                $attributes['tag'] = PluginUtility::getTag($match);
+                $attributes['content'] = PluginUtility::getTagContent($match);
+                return array(
+                    PluginUtility::STATE => $state,
+                    PluginUtility::ATTRIBUTES =>$attributes
+                );
 
             case DOKU_LEXER_EXIT :
 
+                $tag = new Tag(self::TAG,array(),$state,$handler->calls);
+                $openingTag = $tag->getOpeningTag();
+                $fileItem = $openingTag->getChild(self::FILE_ITEM);
+
                 return array(
                     PluginUtility::STATE => $state,
-                    PluginUtility::PAYLOAD => '</li>');
+                    PluginUtility::PAYLOAD => '</ul>');
 
 
         }
