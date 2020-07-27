@@ -7,6 +7,7 @@
 use ComboStrap\IconUtility;
 use ComboStrap\LogUtility;
 use ComboStrap\PluginUtility;
+use ComboStrap\Tag;
 use ComboStrap\XmlUtility;
 
 
@@ -28,6 +29,7 @@ require_once(__DIR__ . '/../class/IconUtility.php');
  */
 class syntax_plugin_combo_icon extends DokuWiki_Syntax_Plugin
 {
+    const TAG = "icon";
 
 
     /**
@@ -89,7 +91,7 @@ class syntax_plugin_combo_icon extends DokuWiki_Syntax_Plugin
     function connectTo($mode)
     {
 
-        $pattern = PluginUtility::getEmptyTagPattern(self::getTag());
+        $pattern = PluginUtility::getEmptyTagPattern(self::TAG);
         $this->Lexer->addSpecialPattern($pattern, $mode, PluginUtility::getModeForComponent($this->getPluginComponent()));
 
     }
@@ -117,11 +119,16 @@ class syntax_plugin_combo_icon extends DokuWiki_Syntax_Plugin
             case DOKU_LEXER_SPECIAL:
 
                 // Get the parameters
-                $parameters = PluginUtility::getTagAttributes($match);
-                $html = IconUtility::renderIconByAttributes($parameters);
+                $originalAttributes = PluginUtility::getTagAttributes($match);
+                $attributesToRender = $originalAttributes;
+                $tag = new Tag(self::TAG,$originalAttributes,$state,$handler->calls);
+                if($tag->isDescendantOf(syntax_plugin_combo_list::TAG)){
+                    PluginUtility::addClass2Attributes("mr-2",$attributesToRender);
+                }
+                $html = IconUtility::renderIconByAttributes($attributesToRender);
                 return array(
                     PluginUtility::STATE=> $state,
-                    PluginUtility::ATTRIBUTES => $parameters,
+                    PluginUtility::ATTRIBUTES => $originalAttributes,
                     PluginUtility::PAYLOAD => $html);
 
 
@@ -162,11 +169,7 @@ class syntax_plugin_combo_icon extends DokuWiki_Syntax_Plugin
     }
 
 
-    public
-    static function getTag()
-    {
-        return PluginUtility::getTagName(get_called_class());
-    }
+
 
 
 }

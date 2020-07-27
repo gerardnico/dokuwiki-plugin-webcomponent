@@ -3,6 +3,7 @@
 
 // must be run within Dokuwiki
 use ComboStrap\PluginUtility;
+use ComboStrap\Tag;
 
 if (!defined('DOKU_INC')) die();
 
@@ -106,16 +107,65 @@ class syntax_plugin_combo_badge extends DokuWiki_Syntax_Plugin
         switch ($state) {
 
             case DOKU_LEXER_ENTER :
-                $attributes = PluginUtility::getTagAttributes($match);
-                return array($state, $attributes);
+                $defaultConfValue = PluginUtility::parse2HTMLAttributes($this->getConf(self::CONF_DEFAULT_ATTRIBUTES_KEY));
+                $originalAttributes = PluginUtility::getTagAttributes($match);
+                $originalAttributes = PluginUtility::mergeAttributes($originalAttributes,$defaultConfValue);
+
+                /**
+                 * Context Rendering attributes
+                 */
+                $attributesToRender = $originalAttributes;
+                $tag = new Tag(self::TAG,$originalAttributes,$state,$handler->calls);
+
+                if($tag->isDescendantOf(syntax_plugin_combo_list::TAG)){
+                    PluginUtility::addStyleProperty("margin-left","auto",$attributesToRender);
+                }
+
+
+                /**
+                 * Type attributes
+                 */
+                $classValue = "badge";
+                $type = $attributesToRender[self::ATTRIBUTE_TYPE];
+                if (empty($type)) {
+                    $type = "info";
+                }
+                if ($type != "tip") {
+                    $classValue .= " alert-" . $type;
+                } else {
+                    if (!array_key_exists("background-color", $attributesToRender)) {
+                        $attributesToRender["background-color"] = "#fff79f"; // lum - 195
+                    }
+                }
+
+                PluginUtility::addClass2Attributes($classValue,$attributesToRender);
+
+                $rounded = $attributesToRender[self::ATTRIBUTE_ROUNDED];
+                if (!empty($rounded)){
+                    $attributesToRender["class"] .= " badge-pill";
+                    unset($attributesToRender[self::ATTRIBUTE_ROUNDED]);
+                }
+
+                $html = '<span ' . PluginUtility::array2HTMLAttributes($attributesToRender) . '>';
+
+                return array(
+                    PluginUtility::STATE => $state,
+                    PluginUtility::ATTRIBUTES => $originalAttributes,
+                    PluginUtility::PAYLOAD => $html);
 
             case DOKU_LEXER_UNMATCHED :
-                return array($state, $match);
+                return array(
+                    PluginUtility::STATE=> $state,
+                    PluginUtility::PAYLOAD=> PluginUtility::escape($match)
+                );
 
             case DOKU_LEXER_EXIT :
 
                 // Important otherwise we don't get an exit in the render
-                return array($state, '');
+                return array(
+                    PluginUtility::STATE=> $state,
+                    PluginUtility::PAYLOAD=> '</span>'
+                );
 
 
         }
@@ -138,45 +188,18 @@ class syntax_plugin_combo_badge extends DokuWiki_Syntax_Plugin
         if ($format == 'xhtml') {
 
             /** @var Doku_Renderer_xhtml $renderer */
-            list($state, $payload) = $data;
+            $state = $data[PluginUtility::STATE];
             switch ($state) {
+                case DOKU_LEXER_EXIT :
                 case DOKU_LEXER_ENTER :
 
-                    $defaultConfValue = $this->getConf(self::CONF_DEFAULT_ATTRIBUTES_KEY);
-                    $defaultAttributes = PluginUtility::parse2HTMLAttributes($defaultConfValue);
-                    $attributes = PluginUtility::mergeAttributes($payload,$defaultAttributes);
-
-                    $classValue = "badge";
-                    $type = $attributes[self::ATTRIBUTE_TYPE];
-                    if (empty($type)) {
-                        $type = "info";
-                    }
-                    if ($type != "tip") {
-                        $classValue .= " alert-" . $type;
-                    } else {
-                        if (!array_key_exists("background-color", $attributes)) {
-                            $attributes["background-color"] = "#fff79f"; // lum - 195
-                        }
-                    }
-
-                    PluginUtility::addClass2Attributes($classValue,$attributes);
-
-                    $rounded = $attributes[self::ATTRIBUTE_ROUNDED];
-                    if (!empty($rounded)){
-                        $attributes["class"] .= " badge-pill";
-                        unset($attributes[self::ATTRIBUTE_ROUNDED]);
-                    }
-
-                    $renderer->doc .= '<span ' . PluginUtility::array2HTMLAttributes($attributes) . '>';
+                    $renderer->doc .= $data[PluginUtility::PAYLOAD].DOKU_LF;
                     break;
 
                 case DOKU_LEXER_UNMATCHED :
-                    $renderer->doc .= $renderer->_xmlEntities($payload);
+                    $renderer->doc .= $data[PluginUtility::PAYLOAD];
                     break;
 
-                case DOKU_LEXER_EXIT :
-                    $renderer->doc .= '</span>';
-                    break;
             }
             return true;
         }
