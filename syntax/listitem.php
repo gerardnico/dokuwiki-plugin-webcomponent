@@ -1,8 +1,9 @@
 <?php
 
 
-use ComboStrap\AdsUtility;
+use ComboStrap\FsWikiUtility;
 use ComboStrap\PluginUtility;
+use ComboStrap\StyleUtility;
 
 
 /**
@@ -14,6 +15,9 @@ class syntax_plugin_combo_listitem extends DokuWiki_Syntax_Plugin
 
     const MODE_NAME = "listitem";
     const TAGS = array("list-item", "li");
+    const COMBO_LIST_ITEM_CLASS = "combo-list-item";
+
+    private $indicator = array();
 
 
     /**
@@ -113,18 +117,29 @@ class syntax_plugin_combo_listitem extends DokuWiki_Syntax_Plugin
         switch ($state) {
 
             case DOKU_LEXER_ENTER :
+
+
+                $html = "";
+                if (!PluginUtility::htmlSnippetAlreadyAdded($this->indicator)) {
+                    if (FsWikiUtility::getMainPageId() != null) {
+
+                        $styles = array();
+                        $styles['position'] = 'relative'; // Why ?
+                        $styles['display'] = 'flex';
+                        $styles['align-items'] = 'center';
+                        $styles['justify-content'] = 'flex-start';
+                        $styles['padding'] = '8px 16px'; // Padding at the left and right
+                        $styles['overflow'] = 'hidden';
+
+                        $html = '<style>' . StyleUtility::getRule($styles, "." . self::COMBO_LIST_ITEM_CLASS) . '</style>';
+                    }
+                }
+
                 $attributes = PluginUtility::getTagAttributes($match);
-
-                PluginUtility::addStyleProperty('position', 'relative',$attributes); // Why ?
-                PluginUtility::addStyleProperty('display', 'flex',$attributes);
-                PluginUtility::addStyleProperty('align-items', 'center',$attributes);
-                PluginUtility::addStyleProperty('justify-content', 'flex-start',$attributes);
-                PluginUtility::addStyleProperty('padding', '8px 16px',$attributes); // Padding at the left and right
-                PluginUtility::addStyleProperty('overflow', 'hidden',$attributes);
-
-                $html = '<li';
+                PluginUtility::addClass2Attributes(self::COMBO_LIST_ITEM_CLASS,$attributes);
+                $html .= '<li';
                 if (sizeof($attributes)) {
-                    $html .= ' '.PluginUtility::array2HTMLAttributes($attributes);
+                    $html .= ' ' . PluginUtility::array2HTMLAttributes($attributes);
                 }
                 $html .= '>';
                 return array(
@@ -136,7 +151,7 @@ class syntax_plugin_combo_listitem extends DokuWiki_Syntax_Plugin
 
                 return array(
                     PluginUtility::STATE => $state,
-                    PluginUtility::PAYLOAD => "<span>".PluginUtility::escape($match).'</span>');
+                    PluginUtility::PAYLOAD => "<span>" . PluginUtility::escape($match) . '</span>');
 
             case DOKU_LEXER_EXIT :
 

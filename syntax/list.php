@@ -1,8 +1,11 @@
 <?php
 
 
-use ComboStrap\AdsUtility;
+use ComboStrap\FsWikiUtility;
 use ComboStrap\PluginUtility;
+use ComboStrap\StyleUtility;
+
+require_once(__DIR__ . '/../class/StyleUtility.php');
 
 
 /**
@@ -13,6 +16,12 @@ class syntax_plugin_combo_list extends DokuWiki_Syntax_Plugin
 {
 
     const TAG = "list";
+    const COMBO_LIST_CLASS = "combo-list";
+
+    /**
+     * @var array The html indicators
+     */
+    private $indicator = array();
 
 
     /**
@@ -96,21 +105,32 @@ class syntax_plugin_combo_list extends DokuWiki_Syntax_Plugin
         switch ($state) {
 
             case DOKU_LEXER_ENTER :
+
+                $html = "";
+                if (!PluginUtility::htmlSnippetAlreadyAdded($this->indicator)) {
+                    if (FsWikiUtility::getMainPageId()!=null) {
+                        $styles = array();
+                        $styles['list-style-type'] = 'none';
+                        $styles['padding'] = '8px 0'; // Padding on list is 40px left default
+                        $styles['line-height'] = '1.75rem';
+                        $styles['border'] = '1px solid #e5e5e5';
+                        $styles['width'] = '100%';
+                        $styles['display'] = 'block';
+                        $styles['border-radius'] = '0.25rem';
+                        $html = '<style>' . StyleUtility::getRule($styles, "." . self::COMBO_LIST_CLASS) . '</style>';
+                    }
+                }
+
                 $attributes = PluginUtility::getTagAttributes($match);
+                PluginUtility::addClass2Attributes(self::COMBO_LIST_CLASS,$attributes);
 
-                PluginUtility::addStyleProperty('list-style-type', 'none', $attributes);
-                PluginUtility::addStyleProperty('padding', '8px 0', $attributes); // Padding on list is 40px left default
-                PluginUtility::addStyleProperty('line-height', '1.75rem', $attributes);
-                PluginUtility::addStyleProperty('border', '1px solid #e5e5e5',$attributes);
-                PluginUtility::addStyleProperty('width', '100%',$attributes);
-                PluginUtility::addStyleProperty('display', 'block',$attributes);
-                PluginUtility::addStyleProperty('border-radius', '0.25rem',$attributes);
-
-                $html = '<ul';
+                $html .= '<ul';
                 if (sizeof($attributes)) {
                     $html .= ' ' . PluginUtility::array2HTMLAttributes($attributes);
                 }
                 $html .= '>';
+
+
                 return array(
                     PluginUtility::STATE => $state,
                     PluginUtility::ATTRIBUTES => $attributes,
