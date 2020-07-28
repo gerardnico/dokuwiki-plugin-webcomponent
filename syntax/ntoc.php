@@ -92,6 +92,7 @@ class syntax_plugin_combo_ntoc extends DokuWiki_Syntax_Plugin
      * @param int $pos - byte position in the original source file
      * @param Doku_Handler $handler
      * @return array|bool
+     * @throws Exception
      * @see DokuWiki_Syntax_Plugin::handle()
      *
      */
@@ -126,8 +127,9 @@ class syntax_plugin_combo_ntoc extends DokuWiki_Syntax_Plugin
             case DOKU_LEXER_EXIT :
 
                 $tag = new Tag(self::TAG,array(),$state,$handler->calls);
-                $openingTag = $tag->getOpeningTag();
-                $fileItem = $openingTag->getChild(self::FILE_ITEM);
+
+                $fileItem = $tag->getDescendant(self::FILE_ITEM);
+                $fileItemContent = $fileItem->getMatchedContent();
 
                 return array(
                     PluginUtility::STATE => $state,

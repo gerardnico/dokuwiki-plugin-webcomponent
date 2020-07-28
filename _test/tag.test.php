@@ -172,7 +172,7 @@ class plugin_combo_tag_test extends DokuWikiTest
             . '<blockquote warning>' . DOKU_LF
             . '<header></header>' . DOKU_LF
             . '<tag important>Unmatched [[url|url]]' . DOKU_LF
-            . '<badge>Hallo</badge>'
+            . '<badge>Hallo [[url|url]]</badge>'
             . '</tag>' . DOKU_LF
             . '</blockquote></card>';
         $id = "idTestSibling";
@@ -188,8 +188,9 @@ class plugin_combo_tag_test extends DokuWikiTest
         $this->assertEquals("true", $node->attr("descendant-of-card"), "exit descendant test");
         $this->assertEquals("true", $node->attr("has-siblings"), "exit has siblings test");
         $this->assertEquals("true", $node->attr("has-descendants"), "exit has descendant test");
-        $this->assertEquals("5", $node->attr("descendants-count"), "exit descendant count test");
+        $this->assertEquals("6", $node->attr("descendants-count"), "exit descendant count test");
         $this->assertEquals("true", $node->attr("has-badge-descendant"), "exit badge descendant test");
+        $this->assertEquals("Hallo [[url|url]]", $node->attr("badge-content"), "exit badge content test");
 
 
     }

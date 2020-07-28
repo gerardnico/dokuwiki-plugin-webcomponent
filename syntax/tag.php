@@ -166,7 +166,9 @@ class syntax_plugin_combo_tag extends DokuWiki_Syntax_Plugin
                 $attributes['first-sibling'] = $tag->getSibling()!==false?$tag->getSibling()->getName():false;
                 $attributes['has-descendants'] = $tag->hasDescendants();
                 $attributes['descendants-count'] = sizeof($tag->getDescendants());
-                $attributes['has-badge-descendant'] = $tag->getDescendant("badge")!== null;
+                $badgeTag = $tag->getDescendant("badge");
+                $attributes['has-badge-descendant'] = $badgeTag !== null;
+                $attributes['badge-content'] = $badgeTag !== null ? $badgeTag->getContent(): "";
                 $payload = '<tag-exit type="'.$attributes['type'].'" ' . PluginUtility::array2HTMLAttributes($attributes) . '></tag-exit>';
                 return array(
                     PluginUtility::STATE => $state,

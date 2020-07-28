@@ -76,20 +76,35 @@ class Tag
         $this->attributes = $attributes;
         $this->state = $state;
         $this->calls = &$calls;
-        if ($position == null) {
-            $this->position = sizeof($this->calls) - 1;
-        } else {
-            $this->position = $position;
-        }
+        $this->position = $position;
+
     }
+
 
     /**
      * @param $call
-     * @return mixed the data returned from the {@link DokuWiki_Syntax_Plugin::handle}
+     * @return mixed the data returned from the {@link DokuWiki_Syntax_Plugin::handle} (ie attributes, payload, ...)
      */
     private static function getDataFromCall($call)
     {
         return $call[1][1];
+    }
+
+    /**
+     * @param $call
+     * @return mixed the matched content from the {@link DokuWiki_Syntax_Plugin::handle}
+     */
+    private static function getContentFromCall($call)
+    {
+        $caller = $call[0];
+        switch ($caller) {
+            case "plugin":
+                return self::getMatchFromCall($call);
+            case "internallink":
+                return '[[' . $call[1][0] . '|' . $call[1][1] . ']]';
+            default:
+                return "Unknown tag content for caller ($caller)";
+        }
     }
 
     private static function getMatchFromCall($call)
@@ -129,7 +144,7 @@ class Tag
             $match = self::getMatchFromCall($call);
             $attributes = PluginUtility::getTagAttributes($match);
         }
-        $name = self::getTagName($call);
+        $name = self::getTagNameFromCall($call);
         $state = self::getStateFromCall($call);
         return new Tag($name, $attributes, $state, $this->calls, $position);
     }
@@ -258,14 +273,25 @@ class Tag
 
     /**
      * Return the tag name from a call array
+     * (much more what's called the component name)
      * @param $call
      * @return mixed|string
      */
-    static function getTagName($call)
+    static function getTagNameFromCall($call)
     {
-        $component = $call[1][0];
-        $componentNames = explode("_", $component);
-        return $componentNames[sizeof($componentNames) - 1];
+        $state = self::getStateFromCall($call);
+        $tagName = null;
+        switch ($state) {
+            case DOKU_LEXER_MATCHED:
+                $tagName = PluginUtility::getTag(self::getContentFromCall($call));
+                break;
+            default:
+                $component = $call[1][0];
+                $componentNames = explode("_", $component);
+                $tagName = $componentNames[sizeof($componentNames) - 1];
+        }
+        return $tagName;
+
     }
 
 
@@ -289,7 +315,7 @@ class Tag
     {
 
         for ($i = sizeof($this->calls) - 1; $i >= 0; $i--) {
-            if (self::getTagName($this->calls[$i]) == "$tag") {
+            if (self::getTagNameFromCall($this->calls[$i]) == "$tag") {
                 return true;
             }
 
@@ -340,7 +366,7 @@ class Tag
         while ($descendantCounter > 0) {
 
             $parentCall = $this->calls[$descendantCounter];
-            $parentTagName = self::getTagName($parentCall);
+            $parentTagName = self::getTagNameFromCall($parentCall);
             $state = self::getStateFromCall($parentCall);
             if ($state === DOKU_LEXER_ENTER && $parentTagName === $this->getName()) {
                 break;
@@ -387,7 +413,7 @@ class Tag
         while ($descendantPosition > 0) {
 
             $parentCall = $this->calls[$descendantPosition];
-            $parentTagName = self::getTagName($parentCall);
+            $parentTagName = self::getTagNameFromCall($parentCall);
             $state = self::getStateFromCall($parentCall);
             if ($state === DOKU_LEXER_ENTER && $parentTagName === $this->getName()) {
                 break;
@@ -395,8 +421,8 @@ class Tag
                 /**
                  * We don't take the end of line
                  */
-                if ($parentCall[0]!="eol") {
-                    $descendants[] = self::call2Tag($parentCall,$descendantPosition);
+                if ($parentCall[0] != "eol") {
+                    $descendants[] = self::call2Tag($parentCall, $descendantPosition);
                 }
                 /**
                  * Close
@@ -417,12 +443,59 @@ class Tag
     public function getDescendant($tagName)
     {
         $tags = $this->getDescendants();
-        foreach ($tags as $tag){
-            if ($tag->getName()===$tagName){
+        foreach ($tags as $tag) {
+            if ($tag->getName() === $tagName &&
+                (
+                    $tag->getState() === DOKU_LEXER_ENTER
+                    || $tag->getState() === DOKU_LEXER_MATCHED
+                )
+            ) {
                 return $tag;
             }
         }
         return null;
     }
 
+    /**
+     * Returned the matched content for this tag
+     */
+    public function getMatchedContent()
+    {
+        if($this->position!=null){
+            return self::getMatchFromCall($this->calls[$this->position]);
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Return the content of a tag (the string between this tag)
+     * This function is generally called after a function that goes up on the stack
+     * such as {@link getDescendant}
+     * @return string
+     */
+    public function getContent()
+    {
+        $content = "";
+        $index = $this->position + 1;
+        while ($index <= sizeof($this->calls) - 1) {
+
+
+            $currentCall = $this->calls[$index];
+            if (
+                self::getTagNameFromCall($currentCall) == $this->getName()
+                &&
+                self::getStateFromCall($currentCall) == DOKU_LEXER_EXIT
+            ) {
+                break;
+            } else {
+                $content .= self::getContentFromCall($currentCall);
+                $index++;
+            }
+        }
+
+
+        return $content;
+
+    }
 }
