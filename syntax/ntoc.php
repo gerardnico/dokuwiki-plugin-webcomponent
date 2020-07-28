@@ -24,6 +24,7 @@ class syntax_plugin_combo_ntoc extends DokuWiki_Syntax_Plugin
      * Ntoc attribute
      */
     const ATTR_NAMESPACE = "ns";
+    const NAMESPACE_ITEM = "ns-item";
 
 
     /**
@@ -139,13 +140,22 @@ class syntax_plugin_combo_ntoc extends DokuWiki_Syntax_Plugin
                  * Get the file item pattern
                  */
                 $fileItem = $tag->getDescendant(self::FILE_ITEM);
-                $fileItemContent = $fileItem->getData()[PluginUtility::CONTENT];
+                $fileItemContent = null;
+                if ($fileItem!=null){
+                    $fileItemContent = $fileItem->getData()[PluginUtility::CONTENT];
+                }
+
+                $directoryItem = $tag->getDescendant(self::NAMESPACE_ITEM);
+                $dirItemContent = null;
+                if ($dirItemContent!=null) {
+                    $dirItemContent = $directoryItem->getData()[PluginUtility::CONTENT];
+                }
+
 
                 /**
                  * Get the attributes
                  */
-                $openingTag = $tag->getOpeningTag();
-                $openingTagAttributes = $openingTag->getAttributes();
+                $openingTagAttributes = $tag->getOpeningTag()->getAttributes();
 
                 /**
                  * Get the data
@@ -155,6 +165,7 @@ class syntax_plugin_combo_ntoc extends DokuWiki_Syntax_Plugin
 
                 if (array_key_exists(self::ATTR_NAMESPACE, $openingTagAttributes)) {
                     $nameSpacePath = $openingTagAttributes[self::ATTR_NAMESPACE];
+                    unset($openingTagAttributes[self::ATTR_NAMESPACE]);
                 }
 
                 if ($nameSpacePath===false){
@@ -165,22 +176,32 @@ class syntax_plugin_combo_ntoc extends DokuWiki_Syntax_Plugin
                 /**
                  * Create the list
                  */
-                $list = "<list>";
+                $list = "<list";
+                if (sizeof($openingTagAttributes)>0){
+                    $list .= ' '.PluginUtility::array2HTMLAttributes($openingTagAttributes);
+                }
+                $list .= ">";
                 $pageNum=0;
                 foreach ($pages as $page){
+
                     // If it's a directory
-                    if ($page['type'] == "d") {
+                    if ($page['type'] == "d" && !empty($dirItemContent)) {
 
                         $pageId = FsWikiUtility::getIndex($page['id']);
+                        $pageName = FsWikiUtility::getName($pageId);
+                        $list .= '<li>'.str_replace("\$name",$pageName, $dirItemContent).'</li>';
 
                     } else {
 
-                        $pageNum++;
-                        $pageId = $page['id'];
-
+                        if (!empty($fileItemContent)) {
+                            $pageNum++;
+                            $pageId = $page['id'];
+                            $pageName = FsWikiUtility::getName($pageId);
+                            $list .= '<li>' . str_replace("\$name", $pageName, $fileItemContent) . '</li>';
+                        }
                     }
-                    $pageName = FsWikiUtility::getName($pageId);
-                    $list .= '<li>'.str_replace("\$name",$pageName, $fileItemContent).'</li>';
+
+
                 }
                 $list .= "</list>";
                 $html = RenderUtility::renderText2Xhtml($list);
