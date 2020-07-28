@@ -125,9 +125,9 @@ class plugin_combo_tag_test extends DokuWikiTest
         $node = $response->queryHTML("tag-unmatched");
         $this->assertEquals(syntax_plugin_combo_tag::TAG, $node->attr("name"), "unmatched name test");
         $this->assertEquals("important", $node->attr("type"), "unmatched type");
-        $this->assertEquals("blockquote", $node->attr("parent"), "unmatched parent test");
-        $this->assertEquals("warning", $node->attr("parent-type"), "unmatched parent-type test");
-        $this->assertEquals("true", $node->attr("child-of-blockquote"), "unmatched child of test");
+        $this->assertEquals("tag", $node->attr("parent"), "unmatched parent test");
+        $this->assertEquals("important", $node->attr("parent-type"), "unmatched parent-type test");
+        $this->assertEquals("false", $node->attr("child-of-blockquote"), "unmatched child of test");
         $this->assertEquals("true", $node->attr("descendant-of-card"), "unmatched descendant test");
         $this->assertEquals("false", $node->attr("has-siblings"), "unmatched has siblings test");
         $this->assertEquals("false", $node->attr("first-sibling"), "unmatched first siblings test");
@@ -171,7 +171,9 @@ class plugin_combo_tag_test extends DokuWikiTest
         $text = '<card>' . DOKU_LF
             . '<blockquote warning>' . DOKU_LF
             . '<header></header>' . DOKU_LF
-            . '<tag important>Unmatched</tag>' . DOKU_LF
+            . '<tag important>Unmatched [[url|url]]' . DOKU_LF
+            . '<badge>Hallo</badge>'
+            . '</tag>' . DOKU_LF
             . '</blockquote></card>';
         $id = "idTestSibling";
         TestUtility::addPage($id, $text);
@@ -179,16 +181,18 @@ class plugin_combo_tag_test extends DokuWikiTest
         $response = $testRequest->get(array("id" => $id));
         $node = $response->queryHTML("tag-exit");
         $this->assertEquals(syntax_plugin_combo_tag::TAG, $node->attr("name"), "exit name test");
-        $this->assertEquals("important", $node->attr("type"), "exit type");
+        $this->assertEquals("", $node->attr("type"), "exit type");
         $this->assertEquals("blockquote", $node->attr("parent"), "exit parent test");
         $this->assertEquals("warning", $node->attr("parent-type"), "exit parent-type test");
         $this->assertEquals("true", $node->attr("child-of-blockquote"), "exit child of test");
         $this->assertEquals("true", $node->attr("descendant-of-card"), "exit descendant test");
         $this->assertEquals("true", $node->attr("has-siblings"), "exit has siblings test");
+        $this->assertEquals("true", $node->attr("has-descendants"), "exit has descendant test");
+        $this->assertEquals("5", $node->attr("descendants-count"), "exit descendant count test");
+        $this->assertEquals("true", $node->attr("has-badge-descendant"), "exit badge descendant test");
 
 
     }
-
 
 
 }

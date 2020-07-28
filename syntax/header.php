@@ -87,13 +87,16 @@ class syntax_plugin_combo_header extends DokuWiki_Syntax_Plugin
             case DOKU_LEXER_EXIT :
                 $html = "</div>";
                 $tag = new Tag(HeaderUtility::HEADER, array(), $state, $handler->calls);
-                switch ($tag->getParent()->getName()) {
-                    case syntax_plugin_combo_blockquote::TAG:
-                        $html .= syntax_plugin_combo_blockquote::CARD_BODY_BLOCKQUOTE_OPEN_TAG;
-                        break;
-                    case syntax_plugin_combo_card::TAG:
-                        $html .= syntax_plugin_combo_card::CARD_BODY;
-                        break;
+                $parent = $tag->getParent();
+                if ($parent !=null) {
+                    switch ($parent->getName()) {
+                        case syntax_plugin_combo_blockquote::TAG:
+                            $html .= syntax_plugin_combo_blockquote::CARD_BODY_BLOCKQUOTE_OPEN_TAG;
+                            break;
+                        case syntax_plugin_combo_card::TAG:
+                            $html .= syntax_plugin_combo_card::CARD_BODY;
+                            break;
+                    }
                 }
                 return array(
                     PluginUtility::STATE => $state,

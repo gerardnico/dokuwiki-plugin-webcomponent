@@ -88,6 +88,7 @@ class syntax_plugin_combo_tag extends DokuWiki_Syntax_Plugin
      * @param int $pos - byte position in the original source file
      * @param Doku_Handler $handler
      * @return array|bool
+     * @throws Exception
      * @see DokuWiki_Syntax_Plugin::handle()
      *
      */
@@ -155,7 +156,6 @@ class syntax_plugin_combo_tag extends DokuWiki_Syntax_Plugin
             case DOKU_LEXER_EXIT :
 
                 $tag = new Tag(self::TAG, array(), $state, $handler->calls);
-                $tag = $tag->getOpeningTag();
                 $attributes['name'] = $tag->getName();
                 $attributes['type'] = $tag->getType();
                 $attributes['parent'] = $tag->getParent()->getName();;
@@ -164,6 +164,9 @@ class syntax_plugin_combo_tag extends DokuWiki_Syntax_Plugin
                 $attributes['descendant-of-card'] = $tag->isDescendantOf("card");
                 $attributes['has-siblings'] = $tag->hasSiblings();
                 $attributes['first-sibling'] = $tag->getSibling()!==false?$tag->getSibling()->getName():false;
+                $attributes['has-descendants'] = $tag->hasDescendants();
+                $attributes['descendants-count'] = sizeof($tag->getDescendants());
+                $attributes['has-badge-descendant'] = $tag->getDescendant("badge")!== null;
                 $payload = '<tag-exit type="'.$attributes['type'].'" ' . PluginUtility::array2HTMLAttributes($attributes) . '></tag-exit>';
                 return array(
                     PluginUtility::STATE => $state,
