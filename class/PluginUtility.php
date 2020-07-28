@@ -7,10 +7,11 @@ namespace ComboStrap;
 use TestRequest;
 
 require_once(__DIR__ . '/LogUtility.php');
-require_once(__DIR__ . '/PageUtility.php');
+require_once(__DIR__ . '/FsWikiUtility.php');
 require_once(__DIR__ . '/IconUtility.php');
 require_once(__DIR__ . '/StringUtility.php');
 require_once(__DIR__ . '/ColorUtility.php');
+require_once(__DIR__ . '/RenderUtility.php');
 
 
 /**
@@ -31,6 +32,8 @@ class PluginUtility
     const ATTRIBUTES = "attributes";
     const TREE = "tree";
     const PARENT_TAG = 'parent';
+    const CONTENT = 'content';
+    const TAG = "tag";
 
 
     /**
@@ -388,7 +391,7 @@ class PluginUtility
      */
     public static function render($pageContent)
     {
-        return PageUtility::renderText2Xhtml($pageContent);
+        return RenderUtility::renderText2Xhtml($pageContent);
     }
 
 

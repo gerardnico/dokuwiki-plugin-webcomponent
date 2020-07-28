@@ -12,38 +12,25 @@
 
 namespace ComboStrap;
 
-/**
- * Class PageUtility
- * @package ComboStrap
- * See also {@link pageutils.php}
- */
-class PageUtility
+
+class RenderUtility
 {
 
-
     /**
-     * Determine if the page is a sidebar (a bar)
-     * @return bool
+     * @param $content
+     * @return string|null
      */
-    public static function isSideBar()
+    public static function renderText2Xhtml($content)
     {
-        global $INFO;
-        global $ID;
-        $isSidebar = false;
-        if ($INFO != null) {
-            $id = $INFO['id'];
-            if ($ID != $id){
-                $isSidebar = TRUE;
-            }
-        }
-        return $isSidebar;
+        $instructions = self::getInstructions($content);
+        return p_render('xhtml', $instructions, $info);
     }
 
     /**
      * @param $pageContent
      * @return array
      */
-    private static function getInstructions($pageContent)
+    public static function getInstructions($pageContent)
     {
         $instructions = p_get_instructions($pageContent);
         $lastPBlockPosition = sizeof($instructions) - 2;
@@ -54,16 +41,6 @@ class PageUtility
             unset($instructions[$lastPBlockPosition]);
         }
         return $instructions;
-    }
-
-    /**
-     * @param $content
-     * @return string|null
-     */
-    public static function renderText2Xhtml($content)
-    {
-        $instructions = self::getInstructions($content);
-        return p_render('xhtml', $instructions, $info);
     }
 
     /**

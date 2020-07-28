@@ -256,7 +256,7 @@ class Tag
 
     /**
      * Return all attributes
-     * @return string the attributes
+     * @return string[] the attributes
      */
     public function getAttributes()
     {
@@ -467,6 +467,19 @@ class Tag
             return null;
         }
     }
+
+    /**
+     *
+     * @return array|mixed - the data
+     */
+    public function getData(){
+        if($this->position!=null){
+            return self::getDataFromCall($this->calls[$this->position]);
+        } else {
+            return array();
+        }
+    }
+
 
     /**
      * Return the content of a tag (the string between this tag)

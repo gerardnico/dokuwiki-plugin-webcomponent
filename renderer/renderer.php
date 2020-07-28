@@ -3,13 +3,13 @@
 use ComboStrap\AdsUtility;
 use ComboStrap\BreadcrumbHierarchical;
 use ComboStrap\HtmlUtility;
-use ComboStrap\PageUtility;
+use ComboStrap\FsWikiUtility;
 use ComboStrap\PluginUtility;
 use ComboStrap\TableUtility;
 use ComboStrap\TocUtility;
 
 
-require_once(__DIR__ . '/../class/PageUtility.php');
+require_once(__DIR__ . '/../class/FsWikiUtility.php');
 require_once(__DIR__ . '/../class/TableUtility.php');
 require_once(__DIR__ . '/../class/TocUtility.php');
 require_once(__DIR__ . '/../class/AdsUtility.php');
@@ -169,7 +169,7 @@ class  renderer_plugin_combo_renderer extends Doku_Renderer_xhtml
         global $ID;
         // The id of the page (not of the sidebar)
         $id = $ID;
-        $isSidebar = PageUtility::isSideBar();
+        $isSidebar = FsWikiUtility::isSideBar();
 
 
         // Pump the last doc

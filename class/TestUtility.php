@@ -123,7 +123,7 @@ class TestUtility
 
     public static function renderText2Xhtml($text)
     {
-        return PageUtility::renderText2Xhtml($text);
+        return RenderUtility::renderText2Xhtml($text);
     }
 
     /**

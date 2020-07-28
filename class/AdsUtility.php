@@ -49,7 +49,7 @@ class AdsUtility
         global $ACT;
         global $ID;
         if (
-            PageUtility::isSideBar() == FALSE && // No display on the sidebar
+            FsWikiUtility::isSideBar() == FALSE && // No display on the sidebar
             $ACT != 'admin' && // Not in the admin page
             isHiddenPage($ID) == FALSE && // No ads on hidden pages
             (
@@ -119,7 +119,7 @@ class AdsUtility
             $name = $attributes["name"];
             $adsPageId = AdsUtility::getAdPage($name);
             if (page_exists($adsPageId)) {
-                $html .= PageUtility::renderId2Xhtml($adsPageId);
+                $html .= RenderUtility::renderId2Xhtml($adsPageId);
             } else {
                 if (!(strpos($name, self::PREFIX_IN_ARTICLE_ADS) === 0)) {
                     $html .= "The ad page (" . $adsPageId . ") does not exist";

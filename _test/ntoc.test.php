@@ -32,11 +32,13 @@ class plugin_combo_list_ntoc extends DokuWikiTest
     public function test_ntoc()
     {
 
-        $text = "<ntoc>" . DOKU_LF
-            ."<file-item>Bla</file-item>"
+        $text = "<ntoc ns=':'>" . DOKU_LF
+            . "<file-item>\$name</file-item>"
             . "</ntoc>";
         $expected = "";
-        $xhtmlLi = PluginUtility::render($text);
+        TestUtility::addPage("ntoc",$text);
+
+        $xhtmlLi = TestUtility::renderText2Xhtml($text);
 
         $this->assertEquals(
             $expected,
