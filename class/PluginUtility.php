@@ -680,7 +680,7 @@ class PluginUtility
             return "";
         }
 
-        $end = strpos($match, "</");
+        $end = strrpos($match, "</");
         if ($end == false) {
             LogUtility::msg("The match does not contain any closing tag. Match: {$match}", LogUtility::LVL_MSG_ERROR);
             return "";

@@ -141,13 +141,13 @@ class syntax_plugin_combo_ntoc extends DokuWiki_Syntax_Plugin
                  */
                 $fileItem = $tag->getDescendant(self::FILE_ITEM);
                 $fileItemContent = null;
-                if ($fileItem!=null){
+                if ($fileItem != null) {
                     $fileItemContent = $fileItem->getData()[PluginUtility::CONTENT];
                 }
 
                 $directoryItem = $tag->getDescendant(self::NAMESPACE_ITEM);
                 $dirItemContent = null;
-                if ($dirItemContent!=null) {
+                if ($dirItemContent != null) {
                     $dirItemContent = $directoryItem->getData()[PluginUtility::CONTENT];
                 }
 
@@ -168,7 +168,7 @@ class syntax_plugin_combo_ntoc extends DokuWiki_Syntax_Plugin
                     unset($openingTagAttributes[self::ATTR_NAMESPACE]);
                 }
 
-                if ($nameSpacePath===false){
+                if ($nameSpacePath === false) {
                     LogUtility::msg("A namespace could not be found");
                 }
                 $pages = FsWikiUtility::getChildren($nameSpacePath);
@@ -177,27 +177,29 @@ class syntax_plugin_combo_ntoc extends DokuWiki_Syntax_Plugin
                  * Create the list
                  */
                 $list = "<list";
-                if (sizeof($openingTagAttributes)>0){
-                    $list .= ' '.PluginUtility::array2HTMLAttributes($openingTagAttributes);
+                if (sizeof($openingTagAttributes) > 0) {
+                    $list .= ' ' . PluginUtility::array2HTMLAttributes($openingTagAttributes);
                 }
                 $list .= ">";
-                $pageNum=0;
-                foreach ($pages as $page){
+                $pageNum = 0;
+                foreach ($pages as $page) {
 
                     // If it's a directory
                     if ($page['type'] == "d" && !empty($dirItemContent)) {
 
                         $pageId = FsWikiUtility::getIndex($page['id']);
-                        $pageName = FsWikiUtility::getName($pageId);
-                        $list .= '<li>'.str_replace("\$name",$pageName, $dirItemContent).'</li>';
+                        $pageTitle = FsWikiUtility::getTitle($pageId);
+                        $list .= '<li>' . str_replace("\$title", $pageTitle, $dirItemContent) . '</li>';
 
                     } else {
 
                         if (!empty($fileItemContent)) {
                             $pageNum++;
                             $pageId = $page['id'];
-                            $pageName = FsWikiUtility::getName($pageId);
-                            $list .= '<li>' . str_replace("\$name", $pageName, $fileItemContent) . '</li>';
+                            $pageTitle = FsWikiUtility::getTitle($pageId);
+                            $tpl = str_replace("\$title", $pageTitle, $fileItemContent);
+                            $tpl = str_replace("\$id", $pageId, $tpl);
+                            $list .= '<li>' . $tpl . '</li>';
                         }
                     }
 

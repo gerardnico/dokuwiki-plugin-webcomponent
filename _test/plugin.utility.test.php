@@ -173,11 +173,22 @@ class plugin_combo_plugin_utility_test extends DokuWikiTest
     public function test_get_content()
     {
 
+        /**
+         * Working test
+         */
         $expectedContent = "x^2";
         $match = '<math whatever="yolo">'.$expectedContent.'</math>';
         $content = PluginUtility::getTagContent($match);
         $this->assertEquals($expectedContent, $content);
 
+        $expectedContent = "<yolo>x^2</yolo>";
+        $match = '<math whatever="yolo">'.$expectedContent.'</math>';
+        $content = PluginUtility::getTagContent($match);
+        $this->assertEquals($expectedContent, $content,"An internal element is captured");
+
+        /**
+         * Exception
+         */
         // A substituion leaf tag has no content
         $error = null;
         try {
@@ -197,6 +208,8 @@ class plugin_combo_plugin_utility_test extends DokuWikiTest
             $error = $e;
         }
         $this->assertNotNull($error);
+
+
 
 
     }

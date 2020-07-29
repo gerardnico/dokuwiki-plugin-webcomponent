@@ -31,7 +31,6 @@ class plugin_combo_pipeline_test extends DokuWikiTest
 {
 
 
-
     public function setUp()
     {
 
@@ -42,7 +41,6 @@ class plugin_combo_pipeline_test extends DokuWikiTest
 
 
     /**
-     * Test a ad tag
      *
      */
     public function test_pipeline_replace()
@@ -51,6 +49,58 @@ class plugin_combo_pipeline_test extends DokuWikiTest
         $input = '"Hallo World" | replace("World","You") ';
         $output = PipelineUtility::execute($input);
         $this->assertEquals("Hallo You", $output);
+
+
+    }
+
+    /**
+     *
+     */
+    public function test_pipeline_head()
+    {
+
+        $input = '"Hallo World" | head(5) ';
+        $output = PipelineUtility::execute($input);
+        $this->assertEquals("Hallo", $output);
+
+
+    }
+
+    public function test_pipeline_tail()
+    {
+
+        $input = '"Hallo World" | tail(5) ';
+        $output = PipelineUtility::execute($input);
+        $this->assertEquals("World", $output);
+
+
+    }
+
+    /**
+     *
+     */
+    public function test_pipeline_concat()
+    {
+
+        $input = '"Hallo World" | rconcat(" ...") ';
+        $output = PipelineUtility::execute($input);
+        $this->assertEquals("Hallo World ...", $output);
+
+        $input = '"Hallo World" | lconcat(" ...") ';
+        $output = PipelineUtility::execute($input);
+        $this->assertEquals(" ...Hallo World", $output);
+
+    }
+
+    /**
+     * Test pipeline in a page
+     */
+    public function test_pipeline_page()
+    {
+
+        $input = '<' . syntax_plugin_combo_pipeline::TAG . '>"Hallo World" | rconcat(" ...") </' . syntax_plugin_combo_pipeline::TAG . '>';
+        $output = PluginUtility::render($input);
+        $this->assertEquals("Hallo World ...", $output);
 
 
     }

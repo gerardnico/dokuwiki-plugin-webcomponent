@@ -5,7 +5,7 @@ use ComboStrap\PipelineUtility;
 use ComboStrap\PluginUtility;
 
 require_once(__DIR__ . '/../class/PluginUtility.php');
-
+require_once(__DIR__ . '/../class/PipelineUtility.php');
 
 /**
  *
@@ -106,12 +106,11 @@ class syntax_plugin_combo_pipeline extends DokuWiki_Syntax_Plugin
     function render($format, Doku_Renderer $renderer, $data)
     {
 
-        $commands = $data[PluginUtility::PAYLOAD];
         switch ($format) {
             case 'xhtml':
 
             default:
-                $renderer->doc .= $renderer->$data;
+                $renderer->doc .= $data[PluginUtility::PAYLOAD];
                 break;
 
         }

@@ -117,7 +117,7 @@ class FsWikiUtility
         return $homePageId;
     }
 
-    public static function getName($pageId)
+    public static function getTitle($pageId)
     {
         $name = $pageId;
         // The title of the page

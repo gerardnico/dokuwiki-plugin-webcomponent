@@ -57,7 +57,7 @@ class LinkUtility
      * @param $match
      * @return string[] - an array with the attributes constant `ATTRIBUTE_xxxx` as key
      *
-     * Code adapted from  {@link Doku_Handler}->internallink($match,$state,$pos)}
+     * Code adapted from  {@link Doku_Handler::internallink()}
      */
     public static function getAttributes($match)
     {
@@ -99,6 +99,15 @@ class LinkUtility
     {
         $id = $attributes[self::ATTRIBUTE_ID];
         $title = $attributes[self::ATTRIBUTE_TITLE];
+
+        /**
+         * To allow {@link \syntax_plugin_combo_pipeline}
+         */
+        if (strpos($title,"<pipeline>")!==false) {
+            $title=str_replace("<pipeline>","",$title);
+            $title=str_replace("</pipeline>","",$title);
+            $title = PipelineUtility::execute($title);
+        }
 
         // Always return the string
         $returnOnly = true;
