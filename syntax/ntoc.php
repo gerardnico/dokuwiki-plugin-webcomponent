@@ -17,8 +17,7 @@ class syntax_plugin_combo_ntoc extends DokuWiki_Syntax_Plugin
 {
 
     const TAG = "ntoc";
-    const TAGS = [self::TAG, "minimap"];
-    const FILE_ITEM = "file-item";
+    const PAGE_ITEM = "page-item";
 
     /**
      * Ntoc attribute
@@ -80,7 +79,7 @@ class syntax_plugin_combo_ntoc extends DokuWiki_Syntax_Plugin
         $pattern = PluginUtility::getContainerTagPattern(self::TAG);
         $this->Lexer->addEntryPattern($pattern, $mode, PluginUtility::getModeForComponent($this->getPluginComponent()));
 
-        $this->Lexer->addPattern(PluginUtility::getLeafContainerTagPattern(self::FILE_ITEM), PluginUtility::getModeForComponent($this->getPluginComponent()));
+        $this->Lexer->addPattern(PluginUtility::getLeafContainerTagPattern(self::PAGE_ITEM), PluginUtility::getModeForComponent($this->getPluginComponent()));
 
     }
 
@@ -139,16 +138,21 @@ class syntax_plugin_combo_ntoc extends DokuWiki_Syntax_Plugin
                 /**
                  * Get the file item pattern
                  */
-                $fileItem = $tag->getDescendant(self::FILE_ITEM);
-                $fileItemContent = null;
+                $fileItem = $tag->getDescendant(self::PAGE_ITEM);
+                $pageItemContent = null;
                 if ($fileItem != null) {
-                    $fileItemContent = $fileItem->getData()[PluginUtility::CONTENT];
+                    $pageItemContent = $fileItem->getData()[PluginUtility::CONTENT];
                 }
 
                 $directoryItem = $tag->getDescendant(self::NAMESPACE_ITEM);
                 $dirItemContent = null;
                 if ($dirItemContent != null) {
                     $dirItemContent = $directoryItem->getData()[PluginUtility::CONTENT];
+                }
+
+                if ($pageItemContent == null && $dirItemContent==null){
+                    LogUtility::msg("There should be at minimum a `page-item` or `ns-item` defined",LogUtility::LVL_MSG_ERROR,"ntoc");
+                    return false;
                 }
 
 
@@ -174,6 +178,11 @@ class syntax_plugin_combo_ntoc extends DokuWiki_Syntax_Plugin
                 $pages = FsWikiUtility::getChildren($nameSpacePath);
 
                 /**
+                 * Get the index page name
+                 */
+                $pageIndex = FsWikiUtility::getIndex($nameSpacePath);
+
+                /**
                  * Create the list
                  */
                 $list = "<list";
@@ -182,6 +191,7 @@ class syntax_plugin_combo_ntoc extends DokuWiki_Syntax_Plugin
                 }
                 $list .= ">";
                 $pageNum = 0;
+
                 foreach ($pages as $page) {
 
                     // If it's a directory
@@ -193,13 +203,15 @@ class syntax_plugin_combo_ntoc extends DokuWiki_Syntax_Plugin
 
                     } else {
 
-                        if (!empty($fileItemContent)) {
+                        if (!empty($pageItemContent)) {
                             $pageNum++;
                             $pageId = $page['id'];
-                            $pageTitle = FsWikiUtility::getTitle($pageId);
-                            $tpl = str_replace("\$title", $pageTitle, $fileItemContent);
-                            $tpl = str_replace("\$id", $pageId, $tpl);
-                            $list .= '<li>' . $tpl . '</li>';
+                            if ($pageId!=$pageIndex) {
+                                $pageTitle = FsWikiUtility::getTitle($pageId);
+                                $tpl = str_replace("\$title", $pageTitle, $pageItemContent);
+                                $tpl = str_replace("\$id", $pageId, $tpl);
+                                $list .= '<li>' . $tpl . '</li>';
+                            }
                         }
                     }
 

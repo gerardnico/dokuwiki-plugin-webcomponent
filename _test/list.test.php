@@ -37,11 +37,12 @@ class plugin_combo_list_test extends DokuWikiTest
             . "Title" . DOKU_LF
             . "</li>" . DOKU_LF
             . "</list>";
-        $expected = "<ul style=\"list-style-type:none;padding:8px 0;line-height:1.75rem;border:1px solid #e5e5e5;width:100%;display:block;border-radius:0.25rem\">
-  <li style=\"position:relative;display:flex;align-items:center;justify-content:flex-start;padding:8px 16px;overflow:hidden\">
+        $expected = "<ul class=\"combo-list\">
+  <li class=\"combo-list-item\">
     <span>Title</span>
   </li>
-</ul>";
+</ul>
+";
         $xhtmlLi = PluginUtility::render($text);
 
         $this->assertEquals(
@@ -61,8 +62,9 @@ class plugin_combo_list_test extends DokuWikiTest
         $input = '<list><li>[[hallo|<' . syntax_plugin_combo_pipeline::TAG . '>"Hallo World" | rconcat(" ...") </' . syntax_plugin_combo_pipeline::TAG . '>]]</li></list>';
         $output = PluginUtility::render($input);
         $this->assertEquals('<ul class="combo-list">
-<li class="combo-list-item">
-<a href="/./doku.php?id=hallo" class="wikilink2" title="hallo" rel="nofollow" data-wiki-id="hallo" style=";background-color:inherit;border-color:inherit;color:inherit;background-image:unset;padding:unset">Hallo World ...</a></li>
+  <li class="combo-list-item">
+    <span>Title</span>
+  </li>
 </ul>
 ', $output);
 

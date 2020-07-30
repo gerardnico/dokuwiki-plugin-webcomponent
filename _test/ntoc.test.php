@@ -33,9 +33,22 @@ class plugin_combo_list_ntoc extends DokuWikiTest
     {
 
         $text = "<ntoc ns=':'>" . DOKU_LF
-            . "<file-item>\$name</file-item>"
+            . "<page-item>name</page-item>"
             . "</ntoc>";
-        $expected = "";
+        $expected = "<ul class=\"combo-list\">
+  <li class=\"combo-list-item\">
+    <span>name</span>
+  </li>
+  <li class=\"combo-list-item\">
+    <span>name</span>
+  </li>
+  <li class=\"combo-list-item\">
+    <span>name</span>
+  </li>
+  <li class=\"combo-list-item\">
+    <span>name</span>
+  </li>
+</ul>";
         TestUtility::addPage("ntoc",$text);
 
         $xhtmlLi = TestUtility::renderText2Xhtml($text);
