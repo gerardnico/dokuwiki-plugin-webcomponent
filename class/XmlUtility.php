@@ -144,7 +144,7 @@ class XmlUtility
         $doc->normalize();
         $doc->formatOutput = true;
         // Type doc can also be reach with $domNode->ownerDocument
-        return $doc->saveXML($doc->documentElement);
+        return $doc->saveXML($doc->documentElement).DOKU_LF;
     }
 
 

@@ -73,6 +73,7 @@ class HtmlUtility
      * Return a formatted HTML that does take into account the {@link DOKU_LF}
      * @param $text
      * @return mixed
+     * @throws \Exception
      */
     public static function normalize($text)
     {
@@ -100,9 +101,13 @@ class HtmlUtility
         @$doc->loadHTML($text);
         $doc->normalize();
         $doc->formatOutput = true;
-        $domNode = $doc->getElementsByTagName("body")->item(0)->childNodes->item(0);
+        $DOMNodeList = $doc->getElementsByTagName("body")->item(0)->childNodes;
+        $output = "";
+        foreach ($DOMNodeList as $value){
+            $output .= $doc->saveXML($value).DOKU_LF;
+        }
         // Type doc can also be reach with $domNode->ownerDocument
-        return $doc->saveXML($domNode);
+        return $output;
 
 
     }

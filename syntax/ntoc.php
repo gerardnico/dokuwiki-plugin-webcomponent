@@ -138,13 +138,14 @@ class syntax_plugin_combo_ntoc extends DokuWiki_Syntax_Plugin
                 /**
                  * Get the file item pattern
                  */
-                $fileItem = $tag->getDescendant(self::PAGE_ITEM);
+                $openingTag = $tag->getOpeningTag();
+                $fileItem = $openingTag->getDescendant(self::PAGE_ITEM);
                 $pageItemContent = null;
                 if ($fileItem != null) {
                     $pageItemContent = $fileItem->getData()[PluginUtility::CONTENT];
                 }
 
-                $directoryItem = $tag->getDescendant(self::NAMESPACE_ITEM);
+                $directoryItem = $openingTag->getDescendant(self::NAMESPACE_ITEM);
                 $dirItemContent = null;
                 if ($dirItemContent != null) {
                     $dirItemContent = $directoryItem->getData()[PluginUtility::CONTENT];
@@ -159,7 +160,7 @@ class syntax_plugin_combo_ntoc extends DokuWiki_Syntax_Plugin
                 /**
                  * Get the attributes
                  */
-                $openingTagAttributes = $tag->getOpeningTag()->getAttributes();
+                $openingTagAttributes = $openingTag->getAttributes();
 
                 /**
                  * Get the data

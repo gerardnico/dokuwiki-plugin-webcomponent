@@ -69,7 +69,7 @@ class plugin_combo_html_test extends DokuWikiTest
 
         $text = "<div><span></span></div>";
         $text = HtmlUtility::format($text);
-        $expected = "<div>".DOKU_LF."  <span/>".DOKU_LF."</div>";
+        $expected = "<div>".DOKU_LF."  <span/>".DOKU_LF."</div>".DOKU_LF;
         $this->assertEquals($expected,$text, "The HTML is formatted");
 
 

@@ -62,9 +62,8 @@ class plugin_combo_list_test extends DokuWikiTest
         $input = '<list><li>[[hallo|<' . syntax_plugin_combo_pipeline::TAG . '>"Hallo World" | rconcat(" ...") </' . syntax_plugin_combo_pipeline::TAG . '>]]</li></list>';
         $output = PluginUtility::render($input);
         $this->assertEquals('<ul class="combo-list">
-  <li class="combo-list-item">
-    <span>Title</span>
-  </li>
+<li class="combo-list-item">
+<a href="/./doku.php?id=hallo" class="wikilink2" title="hallo" rel="nofollow" data-wiki-id="hallo" style=";background-color:inherit;border-color:inherit;color:inherit;background-image:unset;padding:unset">Hallo World ...</a></li>
 </ul>
 ', $output);
 

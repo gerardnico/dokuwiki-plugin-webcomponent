@@ -113,7 +113,16 @@ class syntax_plugin_combo_tabs extends DokuWiki_Syntax_Plugin
 
                 $tagAttributes = PluginUtility::getTagAttributes($match);
                 $htmlAttributes = $tagAttributes;
-                PluginUtility::addClass2Attributes("nav nav-tabs",$htmlAttributes);
+                PluginUtility::addClass2Attributes("nav",$htmlAttributes);
+                $skinClass = "nav-tabs";
+                if (isset($htmlAttributes["skin"])){
+                    $skin = $htmlAttributes["skin"];
+                    if ($skin=="pills"){
+                        $skinClass = "nav-pills";
+                    }
+                    unset($htmlAttributes["skin"]);
+                }
+                PluginUtility::addClass2Attributes($skinClass,$htmlAttributes);
                 $htmlAttributes['role']='tablist';
                 $html = "<ul ".PluginUtility::array2HTMLAttributes($htmlAttributes).">";
                 return array(
