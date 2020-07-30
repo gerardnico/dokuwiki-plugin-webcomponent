@@ -32,14 +32,35 @@ class plugin_combo_tabs_test extends DokuWikiTest
     public function test_base()
     {
 
-        $text = "<tabpanels>" . DOKU_LF
-            . "<tabpanel id=\"home\">" . DOKU_LF
-            . "First" . DOKU_LF
-            . "</tabpanel>" . DOKU_LF
-            . "<tabpanel id=\"profile\">" . DOKU_LF
-            . "Second" . DOKU_LF
-            . "</tabpanel>" . DOKU_LF
+        $text = "<tabs>" . DOKU_LF
+            . "<tab panel=\"home\" selected=\"true\">Home</tab>" . DOKU_LF
+            . "<tab panel=\"profile\">Profile</tab>" . DOKU_LF
+            . "</tabs>" . DOKU_LF
+            . "<tabpanels>" . DOKU_LF
+            . "<tabpanel id=\"home\">First</tabpanel>" . DOKU_LF
+            . "<tabpanel id=\"profile\">Second</tabpanel>" . DOKU_LF
             . "</tabpanels>";
+        $expected = "";
+        $xhtmlLi = PluginUtility::render($text);
+
+        $this->assertEquals(
+            $expected,
+            $xhtmlLi
+        );
+
+    }
+
+    public function test_tabs_alone()
+    {
+
+        $text = "<tabs>" . DOKU_LF
+            . "<tab panel=\"home\">" . DOKU_LF
+            . "Home" . DOKU_LF
+            . "</tab>" . DOKU_LF
+            . "<tab panel=\"profile\">" . DOKU_LF
+            . "Profile" . DOKU_LF
+            . "</tab>" . DOKU_LF
+            . "</tabs>";
         $expected = "";
         $xhtmlLi = PluginUtility::render($text);
 
@@ -50,6 +71,29 @@ class plugin_combo_tabs_test extends DokuWikiTest
 
     }
 
+    /**
+     * Panel is a mandatory attribute
+     */
+    public function test_tabs_panel_mandatory()
+    {
+
+        $text = "<tabs>" . DOKU_LF
+            . "<tab>Home</tab>" . DOKU_LF
+            . "<tab>Profile</tab>" . DOKU_LF
+            . "</tabs>" . DOKU_LF;
+        $error = false;
+        try {
+            PluginUtility::render($text);
+        } catch (Exception $e) {
+            $error = true;
+        }
+
+        $this->assertEquals(
+            true,
+            $error
+        );
+
+    }
 
 
 }

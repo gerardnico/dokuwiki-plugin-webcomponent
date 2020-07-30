@@ -4,9 +4,7 @@
  *
  */
 
-use ComboStrap\LogUtility;
 use ComboStrap\PluginUtility;
-use ComboStrap\Tag;
 
 if (!defined('DOKU_INC')) {
     die();
@@ -20,11 +18,10 @@ require_once(__DIR__ . '/../class/PluginUtility.php');
  * ie:
  *    syntax_plugin_PluginName_ComponentName
  */
-class syntax_plugin_combo_tabpanel extends DokuWiki_Syntax_Plugin
+class syntax_plugin_combo_tabs extends DokuWiki_Syntax_Plugin
 {
 
-    const TAG = 'tabpanel';
-    const STATE = 'state';
+    const TAG = 'tabs';
 
 
     /**
@@ -82,11 +79,8 @@ class syntax_plugin_combo_tabpanel extends DokuWiki_Syntax_Plugin
     function connectTo($mode)
     {
 
-        // Only inside tabs
-        if ($mode == PluginUtility::getModeForComponent(syntax_plugin_combo_tabpanels::TAG)) {
-            $pattern = PluginUtility::getContainerTagPattern(self::TAG);
-            $this->Lexer->addEntryPattern($pattern, $mode, PluginUtility::getModeForComponent($this->getPluginComponent()));
-        }
+        $pattern = PluginUtility::getContainerTagPattern(self::TAG);
+        $this->Lexer->addEntryPattern($pattern, $mode, PluginUtility::getModeForComponent($this->getPluginComponent()));
 
     }
 
@@ -107,7 +101,6 @@ class syntax_plugin_combo_tabpanel extends DokuWiki_Syntax_Plugin
      * @param int $pos
      * @param Doku_Handler $handler
      * @return array|bool
-     * @throws Exception
      * @see DokuWiki_Syntax_Plugin::handle()
      *
      */
@@ -118,69 +111,32 @@ class syntax_plugin_combo_tabpanel extends DokuWiki_Syntax_Plugin
 
             case DOKU_LEXER_ENTER:
 
-
                 $tagAttributes = PluginUtility::getTagAttributes($match);
                 $htmlAttributes = $tagAttributes;
-                $id = "";
-                if (!isset($htmlAttributes["id"])) {
-                    LogUtility::msg("The id attribute is mandatory for a " . self::TAG . "");
-                } else {
-                    $id = $htmlAttributes["id"];
-                }
-
-                PluginUtility::addClass2Attributes("tab-pane fade", $htmlAttributes);
-                $htmlAttributes["role"] = "tabpanel";
-                $htmlAttributes["aria-labelledby"] = $id . "-tab";
-
-                /**
-                 * Selected ?
-                 */
-                $tag = new Tag(self::TAG, $tagAttributes, $state, $handler->calls);
-                $parent = $tag->getParent();
-                if ($parent !== null) {
-                    $siblingTag = $parent->getSibling();
-                    if ($siblingTag != null) {
-                        if ($siblingTag->getName() === syntax_plugin_combo_tabs::TAG) {
-                            $descendants = $siblingTag->getDescendants();
-                            foreach ($descendants as $descendant) {
-                                $descendantName = $descendant->getName();
-                                $descendantPanel = $descendant->getAttribute(syntax_plugin_combo_tab::PANEL);
-                                $descendantSelected = $descendant->getAttribute(syntax_plugin_combo_tab::SELECTED);
-                                if (
-                                    $descendantName == syntax_plugin_combo_tab::TAG
-                                    && $descendantPanel === $id
-                                    && $descendantSelected === "true") {
-                                    PluginUtility::addClass2Attributes("show active", $htmlAttributes);
-                                    break;
-                                }
-                            }
-                        } else {
-                            LogUtility::msg("The direct element above a tabpanels should be a tabs", LogUtility::LVL_MSG_ERROR, "tabs");
-                        }
-                    }
-                }
-                $html = '<div ' . PluginUtility::array2HTMLAttributes($htmlAttributes) . '>';
+                PluginUtility::addClass2Attributes("nav nav-tabs",$htmlAttributes);
+                $htmlAttributes['role']='tablist';
+                $html = "<ul ".PluginUtility::array2HTMLAttributes($htmlAttributes).">";
                 return array(
                     PluginUtility::STATE => $state,
                     PluginUtility::ATTRIBUTES => $tagAttributes,
-                    PluginUtility::PAYLOAD => $html
-                );
+                    PluginUtility::PAYLOAD => $html);
 
             case DOKU_LEXER_UNMATCHED:
 
-                return array(
-                    PluginUtility::STATE => $state,
-                    PluginUtility::PAYLOAD => PluginUtility::escape($match)
-                );
+                // We should never get there but yeah ...
+                return
+                    array(
+                        PluginUtility::STATE => $state,
+                        PluginUtility::PAYLOAD => PluginUtility::escape($match)
+                    );
 
 
             case DOKU_LEXER_EXIT :
 
-                return
-                    array(
-                        PluginUtility::STATE => $state,
-                        PluginUtility::PAYLOAD => "</div>"
-                    );
+                return array(
+                    PluginUtility::STATE => $state,
+                    PluginUtility::PAYLOAD => "</ul>"
+                );
 
 
         }

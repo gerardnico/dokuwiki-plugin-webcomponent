@@ -173,7 +173,7 @@ class Tag
      */
     public function hasSiblings()
     {
-        if ($this->getSibling() === false) {
+        if ($this->getSibling() === null) {
             return false;
         } else {
             return true;
@@ -187,7 +187,11 @@ class Tag
      */
     public function getParent()
     {
-        $descendantCounter = sizeof($this->calls) - 1;
+        if (isset($this->position)) {
+            $descendantCounter = $this->position;
+        } else {
+            $descendantCounter = sizeof($this->calls) - 1;
+        }
         $treeLevel = 0;
 
         /**
@@ -245,13 +249,18 @@ class Tag
     }
 
     /**
-     * Return an attribute of the node
+     * Return an attribute of the node or null if it does not exist
      * @param string $name
      * @return string the attribute value
      */
     public function getAttribute($name)
     {
-        return $this->attributes[$name];
+        if (isset($this->attributes)) {
+            return $this->attributes[$name];
+        } else {
+            return null;
+        }
+
     }
 
     /**
@@ -326,31 +335,56 @@ class Tag
 
     /**
      *
-     * @return bool|Tag - the sibling tag (in ascendant order) or false
+     * @return null|Tag - the sibling tag (in ascendant order) or null
      */
     public function getSibling()
     {
-        $counter = sizeof($this->calls);
+        if (isset($this->position)) {
+            $counter = $this->position - 1;
+        } else {
+            $counter = sizeof($this->calls) - 1;
+        }
+        $treeLevel = 0;
         while ($counter > 0) {
 
-            $call = $this->calls[$counter - 1];
-            if ($call[0] == "eol") {
+            $call = $this->calls[$counter];
+            $state = self::getStateFromCall($call);
+
+            /**
+             * Before the breaking condition
+             * to take the case when the first call is an exit
+             */
+            switch ($state) {
+                case DOKU_LEXER_ENTER:
+                    $treeLevel = $treeLevel - 1;
+                    break;
+                case DOKU_LEXER_EXIT:
+                    /**
+                     * When the tag has a sibling with an exit tag
+                     */
+                    $treeLevel = $treeLevel + 1;
+                    break;
+            }
+
+            /*
+             * Breaking conditions
+             * If we get above or on the same level
+             */
+            if ($treeLevel <= 0
+                && $state != null // eol state
+            ) {
+                break;
+            } else {
                 $counter = $counter - 1;
                 unset($call);
                 continue;
-            } else {
-                break;
             }
 
         }
-        if (isset($call)) {
-            if (self::getStateFromCall($call) == DOKU_LEXER_ENTER) {
-                return false;
-            } else {
-                return self::call2Tag($call, $counter);
-            }
+        if ($treeLevel == 0) {
+            return self::call2Tag($call, $counter);
         }
-        return false;
+        return null;
 
 
     }
@@ -390,7 +424,7 @@ class Tag
     public function hasDescendants()
     {
 
-        if (sizeof(self::getDescendants()) > 0) {
+        if (sizeof($this->getDescendants()) > 0) {
             return true;
         } else {
             return false;
@@ -398,37 +432,45 @@ class Tag
     }
 
     /**
-     * Descendant can only be tested on exit tag
+     * Descendant can only be run on enter tag
      * @return Tag[]
      * @throws Exception
      */
     public function getDescendants()
     {
 
-        if ($this->state != DOKU_LEXER_EXIT) {
-            throw new Exception("Because this is a rolling stack, the descendants can only be checked on exit tag. This is not an exit tag.");
+        if ($this->state != DOKU_LEXER_ENTER) {
+            throw new Exception("Descendant should be called on enter tag. Get the opening tag first if you are in a exit tag");
         }
-        $descendantPosition = sizeof($this->calls) - 1;
+        if (isset($this->position)) {
+            $index = $this->position + 1;
+        } else {
+            throw new Exception("It seems that we are at the end of the stack because the position is not set");
+        }
         $descendants = array();
-        while ($descendantPosition > 0) {
+        while ($index <= sizeof($this->calls) - 1) {
 
-            $parentCall = $this->calls[$descendantPosition];
-            $parentTagName = self::getTagNameFromCall($parentCall);
-            $state = self::getStateFromCall($parentCall);
-            if ($state === DOKU_LEXER_ENTER && $parentTagName === $this->getName()) {
+            $childCall = $this->calls[$index];
+            $childTagName = self::getTagNameFromCall($childCall);
+            $state = self::getStateFromCall($childCall);
+
+            /**
+             * We break when got to the exit tag
+             */
+            if ($state === DOKU_LEXER_EXIT && $childTagName === $this->getName()) {
                 break;
             } else {
                 /**
                  * We don't take the end of line
                  */
-                if ($parentCall[0] != "eol") {
-                    $descendants[] = self::call2Tag($parentCall, $descendantPosition);
+                if ($childCall[0] != "eol") {
+                    $descendants[] = self::call2Tag($childCall, $index);
                 }
                 /**
                  * Close
                  */
-                $descendantPosition = $descendantPosition - 1;
-                unset($parentCall);
+                $index = $index + 1;
+                unset($childCall);
             }
 
         }
@@ -461,7 +503,7 @@ class Tag
      */
     public function getMatchedContent()
     {
-        if($this->position!=null){
+        if ($this->position != null) {
             return self::getMatchFromCall($this->calls[$this->position]);
         } else {
             return null;
@@ -472,8 +514,9 @@ class Tag
      *
      * @return array|mixed - the data
      */
-    public function getData(){
-        if($this->position!=null){
+    public function getData()
+    {
+        if ($this->position != null) {
             return self::getDataFromCall($this->calls[$this->position]);
         } else {
             return array();

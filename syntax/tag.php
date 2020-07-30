@@ -107,7 +107,7 @@ class syntax_plugin_combo_tag extends DokuWiki_Syntax_Plugin
                 $attributes['child-of-blockquote'] = $tag->isChildOf("blockquote");
                 $attributes['descendant-of-card'] = $tag->isDescendantOf("card");
                 $attributes['has-siblings'] = $tag->hasSiblings();
-                $attributes['first-sibling'] = $tag->getSibling()!==false?$tag->getSibling()->getName():false;
+                $attributes['first-sibling'] = $tag->getSibling()!==null?$tag->getSibling()->getName():false;
 
                 $payload = '<tag-enter type="'.$attributes['type'].'" ' . PluginUtility::array2HTMLAttributes($attributes) . '></tag-enter>';
 
@@ -129,7 +129,7 @@ class syntax_plugin_combo_tag extends DokuWiki_Syntax_Plugin
                 $attributes['child-of-blockquote'] = $tag->isChildOf("blockquote");
                 $attributes['descendant-of-card'] = $tag->isDescendantOf("card");
                 $attributes['has-siblings'] = $tag->hasSiblings();
-                $attributes['first-sibling'] = $tag->getSibling()!==false?$tag->getSibling():false;
+                $attributes['first-sibling'] = $tag->getSibling()!==null?$tag->getSibling():false;
                 $payload = '<tag-unmatched type="'.$attributes['type'].'" ' . PluginUtility::array2HTMLAttributes($attributes) . '></tag-unmatched>';
                 return array(
                     PluginUtility::STATE => $state,
@@ -163,10 +163,11 @@ class syntax_plugin_combo_tag extends DokuWiki_Syntax_Plugin
                 $attributes['child-of-blockquote'] = $tag->isChildOf("blockquote");
                 $attributes['descendant-of-card'] = $tag->isDescendantOf("card");
                 $attributes['has-siblings'] = $tag->hasSiblings();
-                $attributes['first-sibling'] = $tag->getSibling()!==false?$tag->getSibling()->getName():false;
-                $attributes['has-descendants'] = $tag->hasDescendants();
-                $attributes['descendants-count'] = sizeof($tag->getDescendants());
-                $badgeTag = $tag->getDescendant("badge");
+                $attributes['first-sibling'] = $tag->getSibling()!==null?$tag->getSibling()->getName():false;
+                $openingTag = $tag->getOpeningTag();
+                $attributes['has-descendants'] = $openingTag->hasDescendants();
+                $attributes['descendants-count'] = sizeof($openingTag->getDescendants());
+                $badgeTag = $openingTag->getDescendant("badge");
                 $attributes['has-badge-descendant'] = $badgeTag !== null;
                 $attributes['badge-content'] = $badgeTag !== null ? $badgeTag->getContent(): "";
                 $payload = '<tag-exit type="'.$attributes['type'].'" ' . PluginUtility::array2HTMLAttributes($attributes) . '></tag-exit>';
