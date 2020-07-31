@@ -83,11 +83,15 @@ class IconUtility
         }
         XmlUtility::setAttribute($heightName, $heightValue, $mediaSvgXml);
 
+
         // Add fill="currentColor"
         $pathXml = $mediaSvgXml->{'path'};
         XmlUtility::setAttribute("fill", "currentColor", $pathXml);
         // for line item such as feather (https://github.com/feathericons/feather#2-use)
         // fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+
+        // For whatever reason if you add a border the line icon are neater
+        PluginUtility::addStyleProperty("border","1px solid transparent",$attributes);
 
         // Process the style
         PluginUtility::processStyle($attributes);

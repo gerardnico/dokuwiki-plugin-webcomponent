@@ -535,6 +535,7 @@ class PluginUtility
         }
 
 
+
         if (sizeof($styleProperties) != 0) {
             $attributes[$styleAttributeName] = PluginUtility::array2InlineStyle($styleProperties);
         }

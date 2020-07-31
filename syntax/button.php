@@ -37,6 +37,8 @@ class syntax_plugin_combo_button extends DokuWiki_Syntax_Plugin
 
     const INTERNAL_LINK_PATTERN = "\[\[.*?\]\](?!\])";
 
+    const TAG = "button";
+
 
     /**
      * Syntax Type.
@@ -262,33 +264,14 @@ class syntax_plugin_combo_button extends DokuWiki_Syntax_Plugin
     }
 
 
-    public static function getTag()
-    {
-        return PluginUtility::getTagName(get_called_class());
-    }
 
     public static function getTags()
     {
-        $elements[] = self::getTag();
+        $elements[] = self::TAG;
         $elements[] = 'btn';
         return $elements;
     }
 
-    /**
-     * @param $string
-     * @return mixed
-     * @throws Exception
-     */
-    public static function getTagInString($string)
-    {
-        foreach (self::getTags() as $tag) {
-            if (strpos($string, $tag) !== false) {
-                return $tag;
-            }
-        }
-        throw new Exception('No tag was found in the string (' . $string . ')');
-
-    }
 
 
 }

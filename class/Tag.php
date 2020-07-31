@@ -73,7 +73,11 @@ class Tag
     public function __construct($name, $attributes, $state, &$calls, $position = null)
     {
         $this->name = $name;
-        $this->attributes = $attributes;
+        if ($attributes == null) {
+            $this->attributes = array();
+        } else {
+            $this->attributes = $attributes;
+        }
         $this->state = $state;
         $this->calls = &$calls;
         $this->position = $position;

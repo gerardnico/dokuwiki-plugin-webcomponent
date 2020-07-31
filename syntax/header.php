@@ -67,16 +67,27 @@ class syntax_plugin_combo_header extends DokuWiki_Syntax_Plugin
 
             case DOKU_LEXER_ENTER:
                 $tagAttributes = PluginUtility::getTagAttributes($match);
+                $htmlAttributes = $tagAttributes;
                 $tag = new Tag(HeaderUtility::HEADER, $tagAttributes, $state, $handler->calls);
-                PluginUtility::addClass2Attributes("card-header", $tagAttributes);
-                $inlineAttributes = PluginUtility::array2HTMLAttributes($tagAttributes);
-                $html = "<div {$inlineAttributes}>" . DOKU_LF;
-                $parent = $tag->getParent()->getName();
+                $parent = $tag->getParent();
+                $parentName = "";
+                $html = "";
+                if ($parent != null) {
+                    $parentName = $parent->getName();
+                    switch ($parentName) {
+                        case syntax_plugin_combo_blockquote::TAG:
+                        case syntax_plugin_combo_card::TAG:
+                            PluginUtility::addClass2Attributes("card-header", $htmlAttributes);
+                            $inlineAttributes = PluginUtility::array2HTMLAttributes($htmlAttributes);
+                            $html = "<div {$inlineAttributes}>" . DOKU_LF;
+                            break;
+                    }
+                }
                 return array(
                     PluginUtility::STATE => $state,
                     PluginUtility::ATTRIBUTES => $tagAttributes,
                     PluginUtility::PAYLOAD => $html,
-                    PluginUtility::PARENT_TAG => $parent
+                    PluginUtility::PARENT_TAG => $parentName
                 );
 
             case DOKU_LEXER_UNMATCHED :
@@ -88,7 +99,7 @@ class syntax_plugin_combo_header extends DokuWiki_Syntax_Plugin
                 $html = "</div>";
                 $tag = new Tag(HeaderUtility::HEADER, array(), $state, $handler->calls);
                 $parent = $tag->getParent();
-                if ($parent !=null) {
+                if ($parent != null) {
                     switch ($parent->getName()) {
                         case syntax_plugin_combo_blockquote::TAG:
                             $html .= syntax_plugin_combo_blockquote::CARD_BODY_BLOCKQUOTE_OPEN_TAG;

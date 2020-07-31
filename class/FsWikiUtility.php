@@ -94,6 +94,12 @@ class FsWikiUtility
         return $data;
     }
 
+    /**
+     * Return the page index of a namespace of null if it does not exist
+     * ie the index.html
+     * @param $id
+     * @return string|null
+     */
     public static function getIndex($id)
     {
         global $conf;
@@ -103,18 +109,16 @@ class FsWikiUtility
         $startPageName = $conf['start'];
         if (page_exists($id . $startPageName)) {
             // start page inside namespace
-            $homePageId = $id . $startPageName;
+            return $id . $startPageName;
         } elseif (page_exists($id . noNS(cleanID($id)))) {
             // page named like the NS inside the NS
-            $homePageId = $id . noNS(cleanID($id));
+            return $id . noNS(cleanID($id));
         } elseif (page_exists($id)) {
             // page like namespace exists
-            $homePageId = substr($id, 0, -1);
+            return substr($id, 0, -1);
         } else {
-            // fall back to default
-            $homePageId = $id . $startPageName;
+            return null;
         }
-        return $homePageId;
     }
 
     public static function getTitle($pageId)

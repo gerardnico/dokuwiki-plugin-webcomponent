@@ -8,6 +8,7 @@ require_once(__DIR__ . "/../class/HtmlUtility.php");
 use ComboStrap\HtmlUtility;
 use ComboStrap\LinkUtility;
 use ComboStrap\PluginUtility;
+use ComboStrap\Tag;
 
 if (!defined('DOKU_INC')) die();
 
@@ -18,7 +19,7 @@ if (!defined('DOKU_INC')) die();
  */
 class syntax_plugin_combo_link extends DokuWiki_Syntax_Plugin
 {
-
+    const TAG = 'link';
 
 
     /**
@@ -73,7 +74,7 @@ class syntax_plugin_combo_link extends DokuWiki_Syntax_Plugin
         // Only inside the following component
         $authorizedMode =
             [
-                PluginUtility::getModeForComponent(syntax_plugin_combo_button::getTag()),
+                PluginUtility::getModeForComponent(syntax_plugin_combo_button::TAG),
                 PluginUtility::getModeForComponent(syntax_plugin_combo_cite::TAG),
                 PluginUtility::getModeForComponent(syntax_plugin_combo_dropdown::TAG),
                 PluginUtility::getModeForComponent(syntax_plugin_combo_listitem::MODE_NAME)
@@ -101,7 +102,17 @@ class syntax_plugin_combo_link extends DokuWiki_Syntax_Plugin
         /**
          * Because we use the specialPattern, there is only one state ie DOKU_LEXER_SPECIAL
          */
-        return LinkUtility::getAttributes($match);
+        $attributes = LinkUtility::getAttributes($match);
+        $tag = new Tag(self::TAG,$attributes,$state,$handler->calls);
+        $parent = $tag->getParent();
+        $parentName = "";
+        if ($parent !=null){
+            $parentName = $parent->getName();
+        }
+        return array (
+                PluginUtility::ATTRIBUTES=> $attributes,
+                PluginUtility::PARENT_TAG=>$parentName
+            );
 
 
     }
@@ -124,8 +135,21 @@ class syntax_plugin_combo_link extends DokuWiki_Syntax_Plugin
 
                 /** @var Doku_Renderer_xhtml $renderer */
 
-                $htmlLink = LinkUtility::renderHTML($renderer, $data);
-                $htmlLink = LinkUtility::inheritColorFromParent($htmlLink);
+                /**
+                 * Cache problem
+                 */
+                if (isset($data[PluginUtility::ATTRIBUTES])){
+                    $attributes = $data[PluginUtility::ATTRIBUTES];
+                } else {
+                    $attributes = $data;
+                }
+
+                $htmlLink = LinkUtility::renderHTML($renderer, $attributes);
+                $htmlLink = LinkUtility::deleteDokuWikiClass($htmlLink);
+                if ($data[PluginUtility::PARENT_TAG]==syntax_plugin_combo_button::TAG){
+                    // We could also apply the class ie btn-secondary ...
+                    $htmlLink = LinkUtility::inheritColorFromParent($htmlLink);
+                }
                 $renderer->doc .= $htmlLink;
 
                 return true;

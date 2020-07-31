@@ -7,6 +7,9 @@ use ComboStrap\LogUtility;
 use ComboStrap\PluginUtility;
 use ComboStrap\RenderUtility;
 use ComboStrap\Tag;
+use ComboStrap\TemplateUtility;
+
+require_once(__DIR__ . '/../class/TemplateUtility.php');
 
 
 /**
@@ -17,13 +20,15 @@ class syntax_plugin_combo_ntoc extends DokuWiki_Syntax_Plugin
 {
 
     const TAG = "ntoc";
-    const PAGE_ITEM = "page-item";
+
 
     /**
      * Ntoc attribute
      */
     const ATTR_NAMESPACE = "ns";
     const NAMESPACE_ITEM = "ns-item";
+    const PAGE_ITEM = "page-item";
+    const INDEX_ITEM = "index";
 
 
     /**
@@ -80,8 +85,11 @@ class syntax_plugin_combo_ntoc extends DokuWiki_Syntax_Plugin
         $this->Lexer->addEntryPattern($pattern, $mode, PluginUtility::getModeForComponent($this->getPluginComponent()));
 
         $this->Lexer->addPattern(PluginUtility::getLeafContainerTagPattern(self::PAGE_ITEM), PluginUtility::getModeForComponent($this->getPluginComponent()));
+        $this->Lexer->addPattern(PluginUtility::getLeafContainerTagPattern(self::INDEX_ITEM), PluginUtility::getModeForComponent($this->getPluginComponent()));
+        $this->Lexer->addPattern(PluginUtility::getLeafContainerTagPattern(self::NAMESPACE_ITEM), PluginUtility::getModeForComponent($this->getPluginComponent()));
 
     }
+
 
     public function postConnect()
     {
@@ -139,21 +147,36 @@ class syntax_plugin_combo_ntoc extends DokuWiki_Syntax_Plugin
                  * Get the file item pattern
                  */
                 $openingTag = $tag->getOpeningTag();
-                $fileItem = $openingTag->getDescendant(self::PAGE_ITEM);
-                $pageItemContent = null;
-                if ($fileItem != null) {
-                    $pageItemContent = $fileItem->getData()[PluginUtility::CONTENT];
+
+                /**
+                 * Pattern for a page
+                 */
+                $pageTag = $openingTag->getDescendant(self::PAGE_ITEM);
+                $pageTemplate = null;
+                if ($pageTag != null) {
+                    $pageTemplate = $pageTag->getData()[PluginUtility::CONTENT];
                 }
 
-                $directoryItem = $openingTag->getDescendant(self::NAMESPACE_ITEM);
-                $dirItemContent = null;
-                if ($dirItemContent != null) {
-                    $dirItemContent = $directoryItem->getData()[PluginUtility::CONTENT];
+                /**
+                 * Pattern for a ns
+                 */
+                $nsTag = $openingTag->getDescendant(self::NAMESPACE_ITEM);
+                $nsTemplate = null;
+                if ($nsTemplate != null) {
+                    $nsTemplate = $nsTag->getData()[PluginUtility::CONTENT];
                 }
 
-                if ($pageItemContent == null && $dirItemContent==null){
-                    LogUtility::msg("There should be at minimum a `page-item` or `ns-item` defined",LogUtility::LVL_MSG_ERROR,"ntoc");
-                    return false;
+                /**
+                 * Pattern for a header
+                 */
+                $headerTag = $openingTag->getDescendant(self::INDEX_ITEM);
+                $headerTemplate = null;
+                if ($headerTag != null) {
+                    $headerTemplate = $headerTag->getData()[PluginUtility::CONTENT];
+                }
+
+                if ($pageTemplate == null && $nsTemplate==null && $headerTemplate==null){
+                    LogUtility::msg("There should be at minimum a `".self::INDEX_ITEM."`, `".self::NAMESPACE_ITEM."` or a `".self::INDEX_ITEM."` defined",LogUtility::LVL_MSG_ERROR,"ntoc");
                 }
 
 
@@ -181,7 +204,7 @@ class syntax_plugin_combo_ntoc extends DokuWiki_Syntax_Plugin
                 /**
                  * Get the index page name
                  */
-                $pageIndex = FsWikiUtility::getIndex($nameSpacePath);
+
 
                 /**
                  * Create the list
@@ -191,26 +214,43 @@ class syntax_plugin_combo_ntoc extends DokuWiki_Syntax_Plugin
                     $list .= ' ' . PluginUtility::array2HTMLAttributes($openingTagAttributes);
                 }
                 $list .= ">";
+
+                /**
+                 * Header
+                 */
+                $pageIndex = FsWikiUtility::getIndex($nameSpacePath);
+                if ($pageIndex!=null && $headerTemplate!=null){
+                    $pageTitle = FsWikiUtility::getTitle($pageIndex);
+                    $tpl = TemplateUtility::render($headerTemplate,$pageIndex, $pageTitle);
+                    $headerAttributes = $headerTag->getAttributes();
+                    if (sizeof($headerAttributes)==0){
+                        $headerAttributes["background-color"]="light";
+                        PluginUtility::addStyleProperty("border-bottom","1px solid #e5e5e5",$headerAttributes);
+                    }
+                    $list .= '<li '.PluginUtility::array2HTMLAttributes($headerAttributes).'>' . $tpl . '</li>';
+                }
                 $pageNum = 0;
 
                 foreach ($pages as $page) {
 
                     // If it's a directory
-                    if ($page['type'] == "d" && !empty($dirItemContent)) {
+                    if ($page['type'] == "d" && !empty($nsTemplate)) {
 
                         $pageId = FsWikiUtility::getIndex($page['id']);
-                        $pageTitle = FsWikiUtility::getTitle($pageId);
-                        $list .= '<li>' . str_replace("\$title", $pageTitle, $dirItemContent) . '</li>';
+                        if ($pageId!=null) {
+                            $pageTitle = FsWikiUtility::getTitle($pageId);
+                            $tpl = TemplateUtility::render($nsTemplate, $pageId, $pageTitle);
+                            $list .= '<li>' . $tpl . '</li>';
+                        }
 
                     } else {
 
-                        if (!empty($pageItemContent)) {
+                        if (!empty($pageTemplate)) {
                             $pageNum++;
                             $pageId = $page['id'];
                             if ($pageId!=$pageIndex) {
                                 $pageTitle = FsWikiUtility::getTitle($pageId);
-                                $tpl = str_replace("\$title", $pageTitle, $pageItemContent);
-                                $tpl = str_replace("\$id", $pageId, $tpl);
+                                $tpl = TemplateUtility::render($pageTemplate,$pageId, $pageTitle);
                                 $list .= '<li>' . $tpl . '</li>';
                             }
                         }

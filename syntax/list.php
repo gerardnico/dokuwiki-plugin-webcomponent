@@ -111,7 +111,7 @@ class syntax_plugin_combo_list extends DokuWiki_Syntax_Plugin
                     if (FsWikiUtility::getMainPageId()!=null) {
                         $styles = array();
                         $styles['list-style-type'] = 'none';
-                        $styles['padding'] = '8px 0'; // Padding on list is 40px left default
+                        $styles['padding'] = '0 0'; // Padding on list is 40px left default
                         $styles['line-height'] = '1.75rem';
                         $styles['border'] = '1px solid #e5e5e5';
                         $styles['width'] = '100%';
