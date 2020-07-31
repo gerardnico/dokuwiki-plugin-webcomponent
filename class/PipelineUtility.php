@@ -21,14 +21,26 @@ class PipelineUtility
      * @return string
      */
     static public function execute($input){
-        $commands = preg_split("/\|/",$input);
 
         /**
          * Get the value
          */
-        $value = trim($commands[0]," \"");
-        unset($commands[0]);
+        $firstQuoteChar = strpos($input,'"');
+        $input = substr($input,$firstQuoteChar+1);
+        $secondQuoteChar = strpos($input,'"');
+        $value = substr($input,0,$secondQuoteChar);
+        $input = substr($input,$secondQuoteChar+1);
 
+        /**
+         * Go to the first | and delete it from the input
+         */
+        $pipeChar = strpos($input,'|');
+        $input = substr($input,$pipeChar+1);
+
+        /**
+         * Get the command and applies them
+         */
+        $commands = preg_split("/\|/",$input);
         foreach ($commands as $command){
             $command = trim($command, " )");
             $leftParenthesis = strpos($command, "(");

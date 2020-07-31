@@ -21,10 +21,12 @@
 use ComboStrap\AdsUtility;
 use ComboStrap\PipelineUtility;
 use ComboStrap\PluginUtility;
+use ComboStrap\TemplateUtility;
 use ComboStrap\TestUtility;
 
 require_once(__DIR__ . '/../class/PipelineUtility.php');
 require_once(__DIR__ . '/../class/PluginUtility.php');
+require_once(__DIR__ . '/../class/TemplateUtility.php');
 
 
 class plugin_combo_pipeline_test extends DokuWikiTest
@@ -39,6 +41,33 @@ class plugin_combo_pipeline_test extends DokuWikiTest
 
     }
 
+
+    /**
+     * pipe in title
+     */
+    public function test_pipeline_pipe_in_title()
+    {
+
+        $input = '"Hallo | World" | replace("World","You") ';
+        $output = PipelineUtility::execute($input);
+        $this->assertEquals("Hallo | You", $output);
+
+
+    }
+
+    /**
+     * pipe in title
+     */
+    public function test_pipeline_with_template()
+    {
+        $title = '"World"';
+        $template = '"$title" | replace("World","You") ';
+        $tplOutput =  TemplateUtility::render($template,"",$title);
+        $output = PipelineUtility::execute($tplOutput);
+        $this->assertEquals("'You'", $output);
+
+
+    }
 
     /**
      *
