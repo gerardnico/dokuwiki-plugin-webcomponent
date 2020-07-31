@@ -11,7 +11,10 @@
 cd combo
 upssh
 ```
-  * Check that [Travis](https://travis-ci.org/github/gerardnico/dokuwiki-plugin-webcomponent/branches) is green
+  * Rebuild the [index](https://combostrap.com/ui/tabs?do=admin&page=searchindex)
+  * Check Travis:
+    * [Combo](https://travis-ci.org/github/gerardnico/dokuwiki-plugin-webcomponent/branches)
+    * [Strap](https://travis-ci.org/github/ComboStrap/dokuwiki-template-strap)
   * Create the Zip
 ```bash
 cd /opt/www/bytle/farmer.bytle.net/lib/plugins
