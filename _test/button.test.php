@@ -25,14 +25,6 @@ class plugin_combo_button_test extends DokuWikiTest
     }
 
 
-    public function test_component_name()
-    {
-
-        $componentName = syntax_plugin_combo_button::getTag();
-
-        $this->assertEquals('button', $componentName);
-
-    }
 
     public function test_internal_base()
     {
@@ -100,30 +92,6 @@ class plugin_combo_button_test extends DokuWikiTest
 
     }
 
-    /**
-     * A link with a button should be in the index
-     */
-    public function test_indexer()
-    {
-
-        // The home page
-        $pageIdReferent = PluginUtility::getNameSpace() .'referrer';
-        TestUtility::addPage($pageIdReferent, 'Not null', 'test_indexer test base');
-
-        // The backlinks page
-        $pageWithBacklinks =  PluginUtility::getNameSpace() . 'test_indexer';
-        $element = syntax_plugin_combo_button::getTags()[0];
-        $textWithBackLinks = '<' . $element . '>' . '[['.$pageIdReferent.']]' . '</' . $element . '>';
-        TestUtility::addPage($pageWithBacklinks, $textWithBackLinks, 'test_indexer test base');
-
-
-        // The test
-        $backLinks = ft_backlinks($pageIdReferent);
-        $expected = 1;
-        $this->assertEquals($expected, sizeof($backLinks),"There should be 2 link in the backlinks");
-
-
-    }
 
     public function test_size()
     {

@@ -63,7 +63,7 @@ class plugin_combo_list_test extends DokuWikiTest
         $output = PluginUtility::render($input);
         $this->assertEquals('<ul class="combo-list">
 <li class="combo-list-item">
-<a href="/./doku.php?id=hallo" class="wikilink2" title="hallo" rel="nofollow" data-wiki-id="hallo" style=";background-color:inherit;border-color:inherit;color:inherit;background-image:unset;padding:unset">Hallo World ...</a></li>
+<a href="/./doku.php?id=hallo" class="wikilink2" title="hallo" rel="nofollow" data-wiki-id="hallo">Hallo World ...</a></li>
 </ul>
 ', $output);
 

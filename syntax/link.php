@@ -162,7 +162,12 @@ class syntax_plugin_combo_link extends DokuWiki_Syntax_Plugin
                  * Keep track of the backlinks ie meta['relation']['references']
                  * @var Doku_Renderer_metadata $renderer
                  */
-                LinkUtility::handleMetadata($renderer, $data);
+                if (isset($data[PluginUtility::ATTRIBUTES])){
+                    $attributes = $data[PluginUtility::ATTRIBUTES];
+                } else {
+                    $attributes = $data;
+                }
+                LinkUtility::handleMetadata($renderer, $attributes);
 
                 return true;
                 break;

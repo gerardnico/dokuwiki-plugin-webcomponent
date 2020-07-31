@@ -143,8 +143,9 @@ class syntax_plugin_combo_ntoc extends DokuWiki_Syntax_Plugin
 
                 $tag = new Tag(self::TAG, array(), $state, $handler->calls);
 
+
                 /**
-                 * Get the file item pattern
+                 * Get the opening tag
                  */
                 $openingTag = $tag->getOpeningTag();
 
@@ -179,7 +180,6 @@ class syntax_plugin_combo_ntoc extends DokuWiki_Syntax_Plugin
                     LogUtility::msg("There should be at minimum a `".self::INDEX_ITEM."`, `".self::NAMESPACE_ITEM."` or a `".self::INDEX_ITEM."` defined",LogUtility::LVL_MSG_ERROR,"ntoc");
                 }
 
-
                 /**
                  * Get the attributes
                  */
@@ -199,12 +199,6 @@ class syntax_plugin_combo_ntoc extends DokuWiki_Syntax_Plugin
                 if ($nameSpacePath === false) {
                     LogUtility::msg("A namespace could not be found");
                 }
-                $pages = FsWikiUtility::getChildren($nameSpacePath);
-
-                /**
-                 * Get the index page name
-                 */
-
 
                 /**
                  * Create the list
@@ -214,6 +208,13 @@ class syntax_plugin_combo_ntoc extends DokuWiki_Syntax_Plugin
                     $list .= ' ' . PluginUtility::array2HTMLAttributes($openingTagAttributes);
                 }
                 $list .= ">";
+
+                /**
+                 * Get the index page name
+                 */
+                $pages = FsWikiUtility::getChildren($nameSpacePath);
+
+
 
                 /**
                  * Header

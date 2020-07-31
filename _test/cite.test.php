@@ -53,7 +53,7 @@ class plugin_combo_cite_test extends DokuWikiTest
         $element = syntax_plugin_combo_cite::TAG;
         $id = 'namespace:page';
         $doku_text = '<' . $element . ' >[['.$id.'#section|bla]]</' . $element . '>';
-        $expected = '<cite><a href="/./doku.php?id='.$id.'#section" class="wikilink2" title="namespace:page" rel="nofollow" data-wiki-id="'.$id.'" style="'. LinkUtility::STYLE_VALUE.'">bla</a></cite>';
+        $expected = '<cite><a href="/./doku.php?id='.$id.'#section" class="wikilink2" title="namespace:page" rel="nofollow" data-wiki-id="'.$id.'">bla</a></cite>';
         $instructions = p_get_instructions($doku_text);
         $xhtml = p_render('xhtml', $instructions, $info);
         $this->assertEquals(
@@ -70,7 +70,7 @@ class plugin_combo_cite_test extends DokuWikiTest
         $id = 'namespace:page';
         $extraAttr = 'class="m-2"';
         $doku_text = '<' . $element . ' ' . $extraAttr . '>[[' .$id.'#section|bla]]</' . $element . '>';
-        $expected = '<cite ' . $extraAttr . '><a href="/./doku.php?id='.$id.'#section" class="wikilink2" title="namespace:page" rel="nofollow" data-wiki-id="'.$id.'" style="'. LinkUtility::STYLE_VALUE.'">bla</a></cite>';
+        $expected = '<cite ' . $extraAttr . '><a href="/./doku.php?id='.$id.'#section" class="wikilink2" title="namespace:page" rel="nofollow" data-wiki-id="'.$id.'">bla</a></cite>';
         $instructions = p_get_instructions($doku_text);
         $xhtml = p_render('xhtml', $instructions, $info);
         $expectedNormalized = TestUtility::normalizeDokuWikiHtml($expected);

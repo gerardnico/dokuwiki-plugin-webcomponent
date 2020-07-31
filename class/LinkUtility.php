@@ -221,6 +221,7 @@ class LinkUtility
      * @return bool|false|string
      */
     public static function deleteDokuWikiClass($htmlLink){
+        // only wikilink1 (wikilink2 shows a red link if the page does not exist)
         return HtmlUtility::deleteClassValue($htmlLink,"wikilink1");
     }
 
