@@ -19,7 +19,7 @@ upssh
 ```bash
 cd /opt/www/bytle/farmer.bytle.net/lib/plugins
 mv /opt/www/bytle/farmer.bytle.net/combo.zip /opt/www/bytle/farmer.bytle.net/combo-date.zip
-zip /opt/www/bytle/farmer.bytle.net/combo.zip -r ./combo
+    zip /opt/www/bytle/farmer.bytle.net/combo.zip -r ./combo
 ```
   * Reinstall at DataCadamia via the Plugin Manager
   * Check the error log
