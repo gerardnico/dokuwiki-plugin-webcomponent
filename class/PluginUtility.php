@@ -91,7 +91,14 @@ class PluginUtility
             msg($sqliteMandatoryMessage, LogUtility::LVL_MSG_ERROR);
             return null;
         }
-        $sqlite->getAdapter()->setUseNativeAlter(true);
+        $adapter = $sqlite->getAdapter();
+        if ($adapter == null){
+            $sqliteMandatoryMessage = "The Sqlite Php Extension is mandatory. It seems that it's not available on this installation.";
+            msg($sqliteMandatoryMessage, LogUtility::LVL_MSG_ERROR);
+            return null;
+        }
+
+        $adapter->setUseNativeAlter(true);
 
         // The name of the database (on windows, it should be
         $dbname = strtolower(self::PLUGIN_BASE_NAME);
