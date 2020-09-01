@@ -163,7 +163,7 @@ class syntax_plugin_combo_ntoc extends DokuWiki_Syntax_Plugin
                  */
                 $nsTag = $openingTag->getDescendant(self::NAMESPACE_ITEM);
                 $nsTemplate = null;
-                if ($nsTemplate != null) {
+                if ($nsTag != null) {
                     $nsTemplate = $nsTag->getData()[PluginUtility::CONTENT];
                 }
 
@@ -196,9 +196,6 @@ class syntax_plugin_combo_ntoc extends DokuWiki_Syntax_Plugin
                     unset($openingTagAttributes[self::ATTR_NAMESPACE]);
                 }
 
-                if ($nameSpacePath === false) {
-                    LogUtility::msg("A namespace could not be found");
-                }
 
                 /**
                  * Create the list

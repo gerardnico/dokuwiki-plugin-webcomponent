@@ -33,6 +33,12 @@ class plugin_combo_list_ntoc extends DokuWikiTest
     {
 
         /**
+         * https://www.dokuwiki.org/config:useheading
+         */
+        global $conf;
+        $conf['useheading']=1;
+
+        /**
          * We add a page to test if the page
          * does not get a backlink from the ntoc
          */
@@ -40,9 +46,17 @@ class plugin_combo_list_ntoc extends DokuWikiTest
         TestUtility::addPage($page,"Text");
 
         /**
+         * Create a sub page
+         */
+        $nspage = "ns:start";
+        $title = "Title";
+        TestUtility::addPage($nspage, "====== {$title} ======" .DOKU_LF);
+
+        /**
          * The ntoc
          */
         $text = "<ntoc ns=':'>" . DOKU_LF
+            . "<ns-item>[[\$id|\$title]]</ns-item>"
             . "<page-item>[[\$id|\$title]]</page-item>"
             . "</ntoc>";
 
@@ -51,13 +65,10 @@ class plugin_combo_list_ntoc extends DokuWikiTest
          */
         $expected = "<ul class=\"combo-list\">
   <li class=\"combo-list-item\">
-    <a href=\"/./doku.php?id=int\" class=\"wikilink2\" title=\"int\" rel=\"nofollow\" data-wiki-id=\"int\">int</a>
+    <a href=\"/./doku.php?id=$nspage\" class=\"\" title=\"ns:start\" data-wiki-id=\"$nspage\">$title</a>
   </li>
   <li class=\"combo-list-item\">
-    <a href=\"/./doku.php?id=wiki\" class=\"wikilink2\" title=\"wiki\" rel=\"nofollow\" data-wiki-id=\"wiki\">wiki</a>
-  </li>
-  <li class=\"combo-list-item\">
-    <a href=\"/./doku.php?id=mailinglist\" class=\"\" title=\"mailinglist\" data-wiki-id=\"mailinglist\">mailinglist</a>
+    <a href=\"/./doku.php?id=mailinglist\" class=\"\" title=\"mailinglist\" data-wiki-id=\"mailinglist\">Mailing Lists</a>
   </li>
   <li class=\"combo-list-item\">
     <a href=\"/./doku.php?id=page\" class=\"\" title=\"page\" data-wiki-id=\"page\">page</a>
