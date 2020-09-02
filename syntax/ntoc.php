@@ -324,7 +324,7 @@ class syntax_plugin_combo_ntoc extends DokuWiki_Syntax_Plugin
                             if (!empty($pageTemplate)) {
                                 $pageNum++;
                                 $pageId = $page['id'];
-                                if (":" . $pageId != $pageIndex) {
+                                if (":" . $pageId != $pageIndex && $pageId != $pageIndex ) {
                                     $pageTitle = FsWikiUtility::getTitle($pageId);
                                     $tpl = TemplateUtility::render($pageTemplate, $pageId, $pageTitle);
                                     $list .= '<li>' . $tpl . '</li>';
