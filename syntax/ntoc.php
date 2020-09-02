@@ -244,7 +244,7 @@ class syntax_plugin_combo_ntoc extends DokuWiki_Syntax_Plugin
                     $attributes = $data[PluginUtility::ATTRIBUTES];
 
                     if ($attributes == null) {
-                        LogUtility::msg("Ntoc attributes are null. You may need to purge the cache. To do that, you can modify slightly your page", LogUtility::LVL_MSG_ERROR, "ntoc");
+                        LogUtility::msg("Ntoc attributes are null. You may need to purge the cache. To do that, you can modify slightly your page or a configuration", LogUtility::LVL_MSG_ERROR, "ntoc");
                         return false;
                     }
 
