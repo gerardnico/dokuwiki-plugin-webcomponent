@@ -19,7 +19,7 @@ require_once(__DIR__ . '/../class/TemplateUtility.php');
 class syntax_plugin_combo_ntoc extends DokuWiki_Syntax_Plugin
 {
 
-    const TAG = "ntoc";
+    const TAG = self::CANONICAL_NTOC;
 
 
     /**
@@ -29,6 +29,15 @@ class syntax_plugin_combo_ntoc extends DokuWiki_Syntax_Plugin
     const NAMESPACE_ITEM = "ns-item";
     const PAGE_ITEM = "page-item";
     const INDEX_ITEM = "index";
+
+    /**
+     * Keys of the array passed between {@link handle} and {@link render}
+     */
+    const PAGE_TEMPLATE_KEY = 'pageTemplate';
+    const NS_TEMPLATE_KEY = 'nsTemplate';
+    const INDEX_TEMPLATE_KEY = 'indexTemplate';
+    const INDEX_ATTRIBUTES_KEY = 'indexAttributes';
+    const CANONICAL_NTOC = "ntoc";
 
 
     /**
@@ -143,6 +152,10 @@ class syntax_plugin_combo_ntoc extends DokuWiki_Syntax_Plugin
 
                 $tag = new Tag(self::TAG, array(), $state, $handler->calls);
 
+                /**
+                 * The attributes to send to the render
+                 */
+                $attributes = array();
 
                 /**
                  * Get the opening tag
@@ -157,6 +170,7 @@ class syntax_plugin_combo_ntoc extends DokuWiki_Syntax_Plugin
                 if ($pageTag != null) {
                     $pageTemplate = $pageTag->getData()[PluginUtility::CONTENT];
                 }
+                $attributes[self::PAGE_TEMPLATE_KEY] = $pageTemplate;
 
                 /**
                  * Pattern for a ns
@@ -166,102 +180,35 @@ class syntax_plugin_combo_ntoc extends DokuWiki_Syntax_Plugin
                 if ($nsTag != null) {
                     $nsTemplate = $nsTag->getData()[PluginUtility::CONTENT];
                 }
+                $attributes[self::NS_TEMPLATE_KEY] = $nsTemplate;
 
                 /**
                  * Pattern for a header
                  */
                 $headerTag = $openingTag->getDescendant(self::INDEX_ITEM);
                 $headerTemplate = null;
+                $headerAttributes = array();
                 if ($headerTag != null) {
                     $headerTemplate = $headerTag->getData()[PluginUtility::CONTENT];
+                    $headerAttributes = $headerTag->getAttributes();
                 }
+                $attributes[self::INDEX_TEMPLATE_KEY] = $headerTemplate;
+                $attributes[self::INDEX_ATTRIBUTES_KEY] = $headerAttributes;
 
-                if ($pageTemplate == null && $nsTemplate==null && $headerTemplate==null){
-                    LogUtility::msg("There should be at minimum a `".self::INDEX_ITEM."`, `".self::NAMESPACE_ITEM."` or a `".self::INDEX_ITEM."` defined",LogUtility::LVL_MSG_ERROR,"ntoc");
+                if ($pageTemplate == null && $nsTemplate == null && $headerTemplate == null) {
+                    LogUtility::msg("There should be at minimum a `" . self::INDEX_ITEM . "`, `" . self::NAMESPACE_ITEM . "` or a `" . self::INDEX_ITEM . "` defined", LogUtility::LVL_MSG_ERROR, self::CANONICAL_NTOC);
                 }
 
                 /**
                  * Get the attributes
                  */
                 $openingTagAttributes = $openingTag->getAttributes();
+                $attributes = PluginUtility::mergeAttributes($openingTagAttributes, $attributes);
 
-                /**
-                 * Get the data
-                 */
-                $id = FsWikiUtility::getMainPageId();
-                $nameSpacePath = getNS($id);
-
-                if (array_key_exists(self::ATTR_NAMESPACE, $openingTagAttributes)) {
-                    $nameSpacePath = $openingTagAttributes[self::ATTR_NAMESPACE];
-                    unset($openingTagAttributes[self::ATTR_NAMESPACE]);
-                }
-
-
-                /**
-                 * Create the list
-                 */
-                $list = "<list";
-                if (sizeof($openingTagAttributes) > 0) {
-                    $list .= ' ' . PluginUtility::array2HTMLAttributes($openingTagAttributes);
-                }
-                $list .= ">";
-
-                /**
-                 * Get the index page name
-                 */
-                $pages = FsWikiUtility::getChildren($nameSpacePath);
-
-
-
-                /**
-                 * Header
-                 */
-                $pageIndex = FsWikiUtility::getIndex($nameSpacePath);
-                if ($pageIndex!=null && $headerTemplate!=null){
-                    $pageTitle = FsWikiUtility::getTitle($pageIndex);
-                    $tpl = TemplateUtility::render($headerTemplate,$pageIndex, $pageTitle);
-                    $headerAttributes = $headerTag->getAttributes();
-                    if (sizeof($headerAttributes)==0){
-                        $headerAttributes["background-color"]="light";
-                        PluginUtility::addStyleProperty("border-bottom","1px solid #e5e5e5",$headerAttributes);
-                    }
-                    $list .= '<li '.PluginUtility::array2HTMLAttributes($headerAttributes).'>' . $tpl . '</li>';
-                }
-                $pageNum = 0;
-
-                foreach ($pages as $page) {
-
-                    // If it's a directory
-                    if ($page['type'] == "d" && !empty($nsTemplate)) {
-
-                        $pageId = FsWikiUtility::getIndex($page['id']);
-                        if ($pageId!=null) {
-                            $pageTitle = FsWikiUtility::getTitle($pageId);
-                            $tpl = TemplateUtility::render($nsTemplate, $pageId, $pageTitle);
-                            $list .= '<li>' . $tpl . '</li>';
-                        }
-
-                    } else {
-
-                        if (!empty($pageTemplate)) {
-                            $pageNum++;
-                            $pageId = $page['id'];
-                            if ($pageId!=$pageIndex) {
-                                $pageTitle = FsWikiUtility::getTitle($pageId);
-                                $tpl = TemplateUtility::render($pageTemplate,$pageId, $pageTitle);
-                                $list .= '<li>' . $tpl . '</li>';
-                            }
-                        }
-                    }
-
-
-                }
-                $list .= "</list>";
-                $html = RenderUtility::renderText2Xhtml($list);
 
                 return array(
                     PluginUtility::STATE => $state,
-                    PluginUtility::PAYLOAD => $html
+                    PluginUtility::ATTRIBUTES => $attributes
                 );
 
 
@@ -288,11 +235,107 @@ class syntax_plugin_combo_ntoc extends DokuWiki_Syntax_Plugin
             $state = $data[PluginUtility::STATE];
             switch ($state) {
                 case DOKU_LEXER_ENTER :
-                case DOKU_LEXER_EXIT :
-                    $renderer->doc .= $data[PluginUtility::PAYLOAD] . DOKU_LF;
-                    break;
                 case DOKU_LEXER_UNMATCHED :
                     $renderer->doc .= $data[PluginUtility::PAYLOAD];
+                    break;
+
+                case DOKU_LEXER_EXIT :
+
+                    $attributes = $data[PluginUtility::ATTRIBUTES];
+
+                    if ($attributes == null) {
+                        LogUtility::msg("Ntoc attributes are null. You may need to purge the cache. To do that, you can modify slightly your page", LogUtility::LVL_MSG_ERROR, "ntoc");
+                        return false;
+                    }
+
+                    /**
+                     * Get the data
+                     */
+                    $id = FsWikiUtility::getMainPageId();
+
+                    // Namespace
+                    $nameSpacePath = getNS($id);
+                    if (array_key_exists(self::ATTR_NAMESPACE, $attributes)) {
+                        $nameSpacePath = $attributes[self::ATTR_NAMESPACE];
+                        unset($attributes[self::ATTR_NAMESPACE]);
+                    }
+
+                    // Ns template
+                    $nsTemplate = $attributes[self::NS_TEMPLATE_KEY];
+                    unset($attributes[self::NS_TEMPLATE_KEY]);
+
+                    // Header template
+                    $headerTemplate = $attributes[self::INDEX_TEMPLATE_KEY];
+                    unset($attributes[self::INDEX_TEMPLATE_KEY]);
+                    $headerAttributes = $attributes[self::INDEX_ATTRIBUTES_KEY];
+                    unset($attributes[self::INDEX_ATTRIBUTES_KEY]);
+
+                    // Page template
+                    $pageTemplate = $attributes[self::PAGE_TEMPLATE_KEY];
+                    unset($attributes[self::PAGE_TEMPLATE_KEY]);
+
+
+                    /**
+                     * Create the list
+                     */
+                    $list = "<list";
+                    if (sizeof($attributes) > 0) {
+                        $list .= ' ' . PluginUtility::array2HTMLAttributes($attributes);
+                    }
+                    $list .= ">";
+
+                    /**
+                     * Get the index page name
+                     */
+                    $pages = FsWikiUtility::getChildren($nameSpacePath);
+
+
+                    /**
+                     * Header
+                     */
+                    $pageIndex = FsWikiUtility::getIndex($nameSpacePath);
+                    if ($pageIndex != null && $headerTemplate != null) {
+                        $pageTitle = FsWikiUtility::getTitle($pageIndex);
+                        $tpl = TemplateUtility::render($headerTemplate, $pageIndex, $pageTitle);
+                        if (sizeof($headerAttributes) == 0) {
+                            $headerAttributes["background-color"] = "light";
+                            PluginUtility::addStyleProperty("border-bottom", "1px solid #e5e5e5", $headerAttributes);
+                        }
+                        $list .= '<li ' . PluginUtility::array2HTMLAttributes($headerAttributes) . '>' . $tpl . '</li>';
+                    }
+                    $pageNum = 0;
+
+                    foreach ($pages as $page) {
+
+                        // If it's a directory
+                        if ($page['type'] == "d" ) {
+
+                            if (!empty($nsTemplate)) {
+                                $pageId = FsWikiUtility::getIndex($page['id']);
+                                if ($pageId != null) {
+                                    $pageTitle = FsWikiUtility::getTitle($pageId);
+                                    $tpl = TemplateUtility::render($nsTemplate, $pageId, $pageTitle);
+                                    $list .= '<li>' . $tpl . '</li>';
+                                }
+                            }
+
+                        } else {
+
+                            if (!empty($pageTemplate)) {
+                                $pageNum++;
+                                $pageId = $page['id'];
+                                if (":" . $pageId != $pageIndex) {
+                                    $pageTitle = FsWikiUtility::getTitle($pageId);
+                                    $tpl = TemplateUtility::render($pageTemplate, $pageId, $pageTitle);
+                                    $list .= '<li>' . $tpl . '</li>';
+                                }
+                            }
+                        }
+
+
+                    }
+                    $list .= "</list>";
+                    $renderer->doc .= RenderUtility::renderText2Xhtml($list) . DOKU_LF;
                     break;
             }
             return true;
