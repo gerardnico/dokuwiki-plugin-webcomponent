@@ -51,6 +51,8 @@ class syntax_plugin_combo_ad extends DokuWiki_Syntax_Plugin
      * because we manage self the content and we call self the parser
      *
      * Return an array of one or more of the mode types {@link $PARSER_MODES} in Parser.php
+     *
+     * @see https://www.dokuwiki.org/devel:syntax_plugins#syntax_types
      */
     function getAllowedTypes()
     {

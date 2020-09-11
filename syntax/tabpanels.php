@@ -56,7 +56,7 @@ class syntax_plugin_combo_tabpanels extends DokuWiki_Syntax_Plugin
      */
     function getPType()
     {
-        return 'block';
+        return 'stack';
     }
 
     /**

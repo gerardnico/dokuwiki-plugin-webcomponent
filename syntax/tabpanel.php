@@ -82,7 +82,9 @@ class syntax_plugin_combo_tabpanel extends DokuWiki_Syntax_Plugin
     function connectTo($mode)
     {
 
-        // Only inside tabs
+        /**
+         * Only inside {@link syntax_plugin_combo_tabpanels}
+         */
         if ($mode == PluginUtility::getModeForComponent(syntax_plugin_combo_tabpanels::TAG)) {
             $pattern = PluginUtility::getContainerTagPattern(self::TAG);
             $this->Lexer->addEntryPattern($pattern, $mode, PluginUtility::getModeForComponent($this->getPluginComponent()));

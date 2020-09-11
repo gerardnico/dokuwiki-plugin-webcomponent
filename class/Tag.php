@@ -146,7 +146,12 @@ class Tag
          */
         if ($attributes == null && self::getStateFromCall($call) == DOKU_LEXER_ENTER) {
             $match = self::getMatchFromCall($call);
-            $attributes = PluginUtility::getTagAttributes($match);
+            /**
+             * If this is not a combo element, we got no match
+             */
+            if ($match != null) {
+                $attributes = PluginUtility::getTagAttributes($match);
+            }
         }
         $name = self::getTagNameFromCall($call);
         $state = self::getStateFromCall($call);
