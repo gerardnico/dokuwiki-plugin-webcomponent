@@ -3,6 +3,7 @@
 
 
 ## Steps
+
 Steps to be taken to do a release (functional or snapshot)
 
   * Check a [detail page](http://localhost:81/_detail/strap/strap_heightfixedtopnavbar.png)
@@ -13,7 +14,7 @@ Steps to be taken to do a release (functional or snapshot)
     * Functional Release: Change the snapshot value to the date in the [changes page](http://localhost:81/changes)
     * Snapshot Release: Do nothing
   * Commit and push
-  * Upload to ComboStrap.com
+  * Upload to ComboStrap.com the website and combo
 ```bash
 cd combo
 upssh
