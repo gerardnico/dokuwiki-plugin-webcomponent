@@ -61,6 +61,42 @@ final class plugin_combo_icon_test extends DokuWikiTest
 
     }
 
+    /**
+     *
+     * A illustrator icon given by a user that was
+     * creating problem
+     */
+    public function test_iconIllustratorLibrary()
+    {
+
+        $iconPage = "icon:test-bad";
+
+        $name = 'icon-illustrator.svg';
+
+        $expectedClassValue = "btn-dark";
+        $expectedStyleValue = "color:red";
+        $widthValue = '96px';
+        $heightValue = '64px';
+        $mediaDir = dirname(DOKU_CONF) . '/data/media';
+        TestUtils::rcopy($mediaDir, PluginUtility::$DIR_RESOURCES . '/'.$name);
+
+
+        TestUtility::addPage($iconPage, '<icon name="' . $name . '" width="' . $widthValue . '" height="' . $heightValue . '" class="' .$expectedClassValue.'" style="'.$expectedStyleValue.'"/>', '');
+
+
+
+
+        $request = new TestRequest();
+        $response = $request->get(array('id' => $iconPage), '/doku.php');
+        $svgElements = $response->queryHTML("svg[data-name='$name']");
+        $this->assertEquals(1,$svgElements->count(),"The icon is present");
+        $classValue = $svgElements->attr("class");
+        $this->assertEquals($expectedClassValue ,$classValue,"The class is present");
+        $styleValue = $svgElements->attr("style");
+        $this->assertEquals($expectedStyleValue ,$styleValue,"The style is present");
+
+    }
+
     public function test_iconFromMaterialDesign()
     {
 

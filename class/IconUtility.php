@@ -30,7 +30,10 @@ class IconUtility
 {
     const CONF_ICONS_MEDIA_NAMESPACE = "icons_namespace";
     const CONF_ICONS_MEDIA_NAMESPACE_DEFAULT = ":combostrap:icons";
+    // Canonical name
     const NAME = "icon";
+    // Arbitrary default namespace to be able to query with xpath
+    const SVG_NAMESPACE = "svg";
 
     /**
      * A short cut function used also to retrieve an icon internally (ie to style our own message)
@@ -60,8 +63,28 @@ class IconUtility
             }
         }
 
+        // A namespace must be registered to be able to query it with xpath
+        $docNamespaces = $mediaSvgXml->getDocNamespaces();
+        $namespace = "";
+        foreach($docNamespaces as $nsKey => $nsValue) {
+            if(strlen($nsKey)==0) {
+                if (strpos($nsValue, "svg") ) {
+                    $nsKey = self::SVG_NAMESPACE;
+                    $namespace = self::SVG_NAMESPACE;
+                }
+            }
+            if(strlen($nsKey)!=0) {
+                $mediaSvgXml->registerXPathNamespace($nsKey, $nsValue);
+            }
+        }
+        if ($namespace==""){
+            $msg = "The svg namespace was not found (http://www.w3.org/2000/svg). This can lead to problem with the setting of attributes such as the color due to bad xpath selection.";
+            LogUtility::log2FrontEnd($msg,LogUtility::LVL_MSG_WARNING,self::NAME);
+            LogUtility::log2file($msg);
+        }
+
         // Set the name attribute for test selection
-        $mediaSvgXml->addAttribute('data-name', $attributes["name"]);
+        XmlUtility::setAttribute('data-name', $attributes["name"], $mediaSvgXml);
         unset($attributes["name"]);
 
 
@@ -84,9 +107,14 @@ class IconUtility
         XmlUtility::setAttribute($heightName, $heightValue, $mediaSvgXml);
 
 
-        // Add fill="currentColor"
-        $pathXml = $mediaSvgXml->{'path'};
-        XmlUtility::setAttribute("fill", "currentColor", $pathXml);
+        // Add fill="currentColor" to all path descendant element
+        if ($namespace!="") {
+            $pathsXml = $mediaSvgXml->xpath("//$namespace:path");
+            foreach ($pathsXml as $pathXml):
+                XmlUtility::setAttribute("fill", "currentColor", $pathXml);
+            endforeach;
+        }
+
         // for line item such as feather (https://github.com/feathericons/feather#2-use)
         // fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
 

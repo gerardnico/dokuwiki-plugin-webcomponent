@@ -100,7 +100,6 @@ class LogUtility
     public static function log2FrontEnd($message, $level, $canonical, $withIconURL = true)
     {
 
-
         $prefix = PluginUtility::getUrl("", PluginUtility::$PLUGIN_NAME, $withIconURL);
         if ($canonical != null) {
             $prefix = PluginUtility::getUrl($canonical, ucfirst(str_replace(":", " ", $canonical)));
