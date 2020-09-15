@@ -18,6 +18,8 @@ Steps to be taken to do a release (functional or snapshot)
 ```bash
 cd combo
 upssh
+cd dataweb
+upssh
 ```
   * Rebuild the [index](https://combostrap.com/ui/tabs?do=admin&page=searchindex)
   * Check Travis:
@@ -29,7 +31,7 @@ upssh
 
 ```bash
 cd /opt/www/bytle/farmer.bytle.net/lib/plugins
-rm /opt/www/bytle/farmer.bytle.net/combo-snaphost.zip
+rm /opt/www/bytle/farmer.bytle.net/combo-snapshot.zip
 zip /opt/www/bytle/farmer.bytle.net/combo-snapshot.zip -r ./combo
 ```
 
