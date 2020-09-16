@@ -20,6 +20,8 @@ cd combo
 upssh
 cd dataweb
 upssh
+cd strap
+upssh
 ```
   * Rebuild the [index](https://combostrap.com/ui/tabs?do=admin&page=searchindex)
   * Check Travis:
