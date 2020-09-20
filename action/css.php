@@ -144,7 +144,7 @@ class action_plugin_combo_css extends DokuWiki_Action_Plugin
     }
 
     /**
-     * Finally, handle the JS script list. The script would be fit to do even more stuff / types
+     * Finally, handle the CSS script list. The script would be fit to do even more stuff / types
      * but handles only admin and default currently.
      *
      * @param Doku_Event $event event object by reference
