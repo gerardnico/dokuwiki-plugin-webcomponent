@@ -12,7 +12,14 @@
 
 namespace ComboStrap;
 
-
+/**
+ *
+ * Class TableUtility
+ * @package ComboStrap
+ *
+ * @see <a href="https://datatables.net/examples/styling/bootstrap4">DataTables (May be)</a>
+ * 
+ */
 class TableUtility
 {
 

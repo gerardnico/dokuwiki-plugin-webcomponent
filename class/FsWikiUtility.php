@@ -131,7 +131,13 @@ class FsWikiUtility
             // for instance if <math></math> is used, the output must have &lgt ...
             // otherwise browser may add quote and the math plugin will not work
             // May be a solution was just to encode the output
-            $name = tpl_pagetitle($pageId, true);
+
+            // Don't use the below procedure, it will return
+            // PHP Fatal error:  Allowed memory size of 134217728 bytes exhausted (tried to allocate 98570240 bytes) in /inc/Cache/CacheInstructions.php on line 44
+            //$name = tpl_pagetitle($pageId, true);
+
+            $name = p_get_first_heading($pageId);
+
         }
         return $name;
     }
