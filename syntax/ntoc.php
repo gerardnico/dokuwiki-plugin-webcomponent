@@ -8,6 +8,7 @@ use ComboStrap\PluginUtility;
 use ComboStrap\RenderUtility;
 use ComboStrap\Tag;
 use ComboStrap\TemplateUtility;
+use ComboStrap\TitleUtility;
 
 require_once(__DIR__ . '/../class/TemplateUtility.php');
 
@@ -295,7 +296,7 @@ class syntax_plugin_combo_ntoc extends DokuWiki_Syntax_Plugin
                      */
                     $pageIndex = FsWikiUtility::getIndex($nameSpacePath);
                     if ($pageIndex != null && $headerTemplate != null) {
-                        $pageTitle = FsWikiUtility::getTitle($pageIndex);
+                        $pageTitle = TitleUtility::getPageTitle($pageIndex);
                         $tpl = TemplateUtility::render($headerTemplate, $pageIndex, $pageTitle);
                         if (sizeof($headerAttributes) == 0) {
                             $headerAttributes["background-color"] = "light";
@@ -313,7 +314,7 @@ class syntax_plugin_combo_ntoc extends DokuWiki_Syntax_Plugin
                             if (!empty($nsTemplate)) {
                                 $pageId = FsWikiUtility::getIndex($page['id']);
                                 if ($pageId != null) {
-                                    $pageTitle = FsWikiUtility::getTitle($pageId);
+                                    $pageTitle = TitleUtility::getPageTitle($pageId);
                                     $tpl = TemplateUtility::render($nsTemplate, $pageId, $pageTitle);
                                     $list .= '<li>' . $tpl . '</li>';
                                 }
@@ -325,7 +326,7 @@ class syntax_plugin_combo_ntoc extends DokuWiki_Syntax_Plugin
                                 $pageNum++;
                                 $pageId = $page['id'];
                                 if (":" . $pageId != $pageIndex && $pageId != $pageIndex ) {
-                                    $pageTitle = FsWikiUtility::getTitle($pageId);
+                                    $pageTitle = TitleUtility::getPageTitle($pageId);
                                     $tpl = TemplateUtility::render($pageTemplate, $pageId, $pageTitle);
                                     $list .= '<li>' . $tpl . '</li>';
                                 }
