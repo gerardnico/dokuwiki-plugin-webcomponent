@@ -67,6 +67,15 @@ class TitleUtility
              * Don't use the below procedures, they all call the same function and render the meta
              *   * $name = tpl_pagetitle($pageId, true);
              *   * $title = p_get_first_heading($page['id']);
+             *
+             * In the <a href="https://www.dokuwiki.org/devel:metadata">documentation</a>,
+             * the rendering mode that they advertised for the title is `METADATA_RENDER_SIMPLE_CACHE`
+             *
+             * We have chosen METADATA_DONT_RENDER (0)
+             * because when we asks for the title of the directory,
+             * it will render the whole tree (the directory of the directory)
+             *
+             *
              */
             $name = p_get_metadata(cleanID($pageId), 'title', METADATA_DONT_RENDER);
 

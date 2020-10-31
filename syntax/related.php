@@ -189,7 +189,6 @@ class syntax_plugin_combo_related extends DokuWiki_Syntax_Plugin
 
                 foreach ($relatedPages as $backlink) {
                     $backlinkId = $backlink[self::RELATED_PAGE_ID_PROP];
-                    // $name = p_get_metadata($backlinkId, 'title');
                     $name = TitleUtility::getPageTitle($backlinkId);
                     if (empty($name)) {
                         $name = $backlinkId;
