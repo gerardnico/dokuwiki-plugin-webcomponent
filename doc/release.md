@@ -15,13 +15,17 @@ Steps to be taken to do a release (functional or snapshot)
     * Snapshot Release: Do nothing
   * Commit and push
   * Upload to ComboStrap.com the website and combo
+```dos
+cd /D D:\dokuwiki\lib\plugins\combo
+upssh
+cd /D D:\dokuwiki\dataweb>
+upssh
+cd /D d:\dokuwiki\lib\tpl\strap
+upssh
+```
+  * Restart to clear the cache
 ```bash
-cd combo
-upssh
-cd dataweb
-upssh
-cd strap
-upssh
+systemctl restart php-fpm
 ```
   * Rebuild the [index](https://combostrap.com/ui/tabs?do=admin&page=searchindex)
   * Check Travis:
@@ -48,12 +52,13 @@ zip /opt/www/bytle/farmer.bytle.net/combo.zip -r ./combo
   * Function Release:
     * Reinstall at DataCadamia via the Plugin Manager
     * Check the error log
+
 ```bash
 tail -f /var/log/php-fpm/www-error.log
 ```
-    * Working ?
-    * Release the date at DokuWiki
-      * [Combo](https://www.dokuwiki.org/plugin:combo)
-    * [Strap](https://www.dokuwiki.org/template:strap)
-    * Tweet about it
+   * Working ?
+   * Release the date at DokuWiki
+     * [Combo](https://www.dokuwiki.org/plugin:combo)
+     * [Strap](https://www.dokuwiki.org/template:strap)
+   * Tweet about it
 

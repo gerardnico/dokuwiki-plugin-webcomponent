@@ -25,12 +25,11 @@ class PluginUtility
     const DOKU_CACHE_DIR = '/dokudata/cache';
 
     /**
-     * Key in the data array between handle and render function
+     * Key in the data array between the handle and render function
      */
     const STATE = "state";
     const PAYLOAD = "payload"; // The html or text
     const ATTRIBUTES = "attributes";
-    const TREE = "tree";
     const PARENT_TAG = 'parent';
     const CONTENT = 'content';
     const TAG = "tag";

@@ -18,7 +18,6 @@ class syntax_plugin_combo_cite extends DokuWiki_Syntax_Plugin
     const TAG = "cite";
 
 
-
     function getType()
     {
         return 'container';
@@ -77,6 +76,19 @@ class syntax_plugin_combo_cite extends DokuWiki_Syntax_Plugin
 
     }
 
+    /**
+     *
+     * The handle function goal is to parse the matched syntax through the pattern function
+     * and to return the result for use in the renderer
+     * This result is always cached until the page is modified.
+     * @param string $match
+     * @param int $state
+     * @param int $pos - byte position in the original source file
+     * @param Doku_Handler $handler
+     * @return array|bool
+     * @see DokuWiki_Syntax_Plugin::handle()
+     *
+     */
     function handle($match, $state, $pos, Doku_Handler $handler)
     {
 
@@ -84,10 +96,15 @@ class syntax_plugin_combo_cite extends DokuWiki_Syntax_Plugin
 
             case DOKU_LEXER_ENTER :
                 $tagAttributes = PluginUtility::getTagAttributes($match);
+                $node = new Tag(self::TAG, $tagAttributes, $state, $handler->calls);
+                $parent = "";
+                if ($node->hasParent()) {
+                    $parent = $node->getParent()->getName();
+                }
                 return array(
                     PluginUtility::STATE => $state,
                     PluginUtility::ATTRIBUTES => $tagAttributes,
-                    PluginUtility::TREE => $handler->calls);
+                    PluginUtility::PARENT_TAG => $parent);
 
             case DOKU_LEXER_UNMATCHED :
                 return array(
@@ -96,11 +113,15 @@ class syntax_plugin_combo_cite extends DokuWiki_Syntax_Plugin
                 );
 
             case DOKU_LEXER_EXIT :
-
                 // Important otherwise we don't get an exit in the render
+                $node = new Tag(self::TAG, array(), $state, $handler->calls);
+                $parentName = "";
+                if ($node->hasParent()) {
+                    $parentName = $node->getParent()->getName();
+                }
                 return array(
                     PluginUtility::STATE => $state,
-                    PluginUtility::TREE => $handler->calls);
+                    PluginUtility::PARENT_TAG => $parentName);
 
 
         }
@@ -129,8 +150,8 @@ class syntax_plugin_combo_cite extends DokuWiki_Syntax_Plugin
                 case DOKU_LEXER_ENTER :
 
                     $attributes = $data[PluginUtility::ATTRIBUTES];
-                    $node = new Tag(self::TAG, $attributes, $state, $data[PluginUtility::TREE]);
-                    if ($node->isChildOf(syntax_plugin_combo_blockquote::TAG)) {
+                    $parent = $data[PluginUtility::PARENT_TAG];
+                    if (!empty($parent) && $parent == syntax_plugin_combo_blockquote::TAG) {
                         StringUtility::addEolIfNotPresent($renderer->doc);
                         $renderer->doc .= "<footer class=\"blockquote-footer\"><cite";
                         if (sizeof($attributes) > 0) {
@@ -157,11 +178,9 @@ class syntax_plugin_combo_cite extends DokuWiki_Syntax_Plugin
                 case DOKU_LEXER_EXIT :
 
                     $renderer->doc .= '</cite>';
-                    $node = new Tag(self::TAG,array(), $state, $data[PluginUtility::TREE]);
-
-                    $tag = $node->getParent();
-                    if (!empty($tag) && in_array($tag->getName(), ["card","blockquote"])) {
-                        $renderer->doc .= '</footer>'.DOKU_LF;
+                    $parent = $data [PluginUtility::PARENT_TAG];
+                    if (!empty($parent) && in_array($parent, ["card", "blockquote"])) {
+                        $renderer->doc .= '</footer>' . DOKU_LF;
                     } else {
                         $renderer->doc .= DOKU_LF;
                     }

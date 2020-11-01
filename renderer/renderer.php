@@ -13,6 +13,7 @@ require_once(__DIR__ . '/../class/FsWikiUtility.php');
 require_once(__DIR__ . '/../class/TableUtility.php');
 require_once(__DIR__ . '/../class/TocUtility.php');
 require_once(__DIR__ . '/../class/AdsUtility.php');
+require_once(__DIR__ . '/../class/HtmlUtility.php');
 require_once(__DIR__ . '/../class/BreadcrumbHierarchical.php');
 
 /**

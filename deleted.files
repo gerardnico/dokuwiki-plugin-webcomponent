@@ -10,3 +10,4 @@ syntax/blockquoteheader.php
 syntax/blockquotecite.php
 syntax/noteheader.php
 syntax/buttonlink.php
+action/math.php
