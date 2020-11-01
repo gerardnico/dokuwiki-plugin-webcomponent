@@ -119,7 +119,11 @@ class syntax_plugin_combo_frontmatter extends DokuWiki_Syntax_Plugin
 
             // Trim it
             $jsonKey = array_map('trim', array_keys($json));
+            // We will get a php warning here because the values may be an array
+            // and trim accept only string
+            $oldLevel = error_reporting(E_ERROR );
             $jsonValues = array_map('trim', $json);
+            error_reporting($oldLevel);
             $json = array_combine($jsonKey, $jsonValues);
 
 

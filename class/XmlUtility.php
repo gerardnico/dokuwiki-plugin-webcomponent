@@ -98,12 +98,22 @@ class XmlUtility
     public static function isXml($text)
     {
         $valid = true;
+
+        /**
+         * Temporary No error reporting
+         * We see warning in the log
+         */
+        $oldLevel = error_reporting(E_ERROR );
         try {
             /** @noinspection PhpComposerExtensionStubsInspection */
             new SimpleXMLElement($text);
         } catch (\Exception $e) {
             $valid = false;
         }
+        /**
+         * Error reporting back
+         */
+        error_reporting($oldLevel);
         return $valid;
     }
 
