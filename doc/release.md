@@ -60,5 +60,5 @@ tail -f /var/log/php-fpm/www-error.log
    * Release the date at DokuWiki
      * [Combo](https://www.dokuwiki.org/plugin:combo)
      * [Strap](https://www.dokuwiki.org/template:strap)
-   * Tweet about it
+   * [Tweet about it](https://twitter.com)
 
