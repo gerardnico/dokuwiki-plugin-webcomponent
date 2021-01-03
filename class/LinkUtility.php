@@ -48,8 +48,9 @@ class LinkUtility
     /**
      * Style to cancel the dokuwiki styling
      * Is a constant to be able to use it in the test
+     * background is transparent, otherwise, you may see a rectangle with a link in button
      */
-    const STYLE_VALUE = ";background-color:inherit;border-color:inherit;color:inherit;background-image:unset;padding:unset";
+    const STYLE_VALUE = ";background-color:transparent;border-color:inherit;color:inherit;background-image:unset;padding:unset";
 
 
     /**
