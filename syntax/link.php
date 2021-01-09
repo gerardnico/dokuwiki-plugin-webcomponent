@@ -16,6 +16,10 @@ if (!defined('DOKU_INC')) die();
  *
  * A link pattern to take over the link of Dokuwiki
  * and transform it as a bootstrap link
+ *
+ * The handle of the move of link is to be found in the
+ * admin action {@link action_plugin_combo_linkmove}
+ *
  */
 class syntax_plugin_combo_link extends DokuWiki_Syntax_Plugin
 {
