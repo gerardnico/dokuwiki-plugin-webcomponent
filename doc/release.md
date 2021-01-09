@@ -18,7 +18,7 @@ Steps to be taken to do a release (functional or snapshot)
 ```dos
 cd /D D:\dokuwiki\lib\plugins\combo
 upssh
-cd /D D:\dokuwiki\dataweb>
+cd /D D:\dokuwiki\dataweb
 upssh
 cd /D d:\dokuwiki\lib\tpl\strap
 upssh
