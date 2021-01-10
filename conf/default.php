@@ -99,3 +99,9 @@ $conf['defaultBadgeAttributes'] = 'type="info" rounded="true"';
  * See {@link \ComboStrap\AdsUtility::CONF_IN_ARTICLE_PLACEHOLDER
  */
 $conf['AdsInArticleShowPlaceholder'] = 0;
+
+/**
+ * Code
+ * See {@link syntax_plugin_combo_code::CONF_CODE_ENABLE}
+ */
+$conf['codeEnable'] = 1;

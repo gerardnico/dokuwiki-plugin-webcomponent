@@ -66,6 +66,9 @@ $lang[syntax_plugin_combo_badge::CONF_DEFAULT_ATTRIBUTES_KEY] =  PluginUtility::
  */
 $lang[AdsUtility::CONF_IN_ARTICLE_PLACEHOLDER] =  PluginUtility::getUrl("automatic:in-article:ad","Automatic In-article Ad").' - Show a placeholder if the in-article ad page was not found';
 
-
+/**
+ * Code enabled
+ */
+$lang[syntax_plugin_combo_code::CONF_CODE_ENABLE] =  PluginUtility::getUrl("code","Code Component").' - Enable or disable the code component';
 
 ?>

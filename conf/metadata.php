@@ -74,3 +74,8 @@ $meta[syntax_plugin_combo_badge::CONF_DEFAULT_ATTRIBUTES_KEY]=array('string');
  */
 require_once (__DIR__.'/../class/AdsUtility.php');
 $meta[AdsUtility::CONF_IN_ARTICLE_PLACEHOLDER]=array('onoff');
+
+/**
+ * Code enabled ?
+ */
+$meta[syntax_plugin_combo_code::CONF_CODE_ENABLE]=array('onoff');

@@ -6,7 +6,7 @@ use ComboStrap\UrlUtility;
 
 require_once(__DIR__ . '/../class/PluginUtility.php');
 require_once(__DIR__ . '/../class/UrlUtility.php');
-
+require_once(__DIR__ . '/../class/TestUtility.php');
 
 
 /**

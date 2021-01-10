@@ -44,6 +44,7 @@ zip /opt/www/bytle/farmer.bytle.net/combo-snapshot.zip -r ./combo
   * Functional Release: Create the Zip
 
 ```bash
+rm /opt/www/bytle/farmer.bytle.net/combo-snapshot.zip
 cd /opt/www/bytle/farmer.bytle.net/lib/plugins
 mv /opt/www/bytle/farmer.bytle.net/combo.zip /opt/www/bytle/farmer.bytle.net/combo-date-release-before.zip
 zip /opt/www/bytle/farmer.bytle.net/combo.zip -r ./combo
