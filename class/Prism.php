@@ -219,11 +219,17 @@ EOD;
             unset($attributes["line-numbers"]);
             PluginUtility::addClass2Attributes('line-numbers', $attributes);
         }
+
         /**
          * Pre element
          */
         $preAttributes = [];
         PluginUtility::addClass2Attributes($addedClass, $preAttributes);
+        if (array_key_exists("prompt", $attributes)) {
+            PluginUtility::addClass2Attributes("command-line",$preAttributes);
+            $preAttributes["data-prompt"]=$attributes["prompt"];
+            unset($attributes["prompt"]);
+        }
         $htmlCode = '<pre ' . PluginUtility::array2HTMLAttributes($preAttributes) . '>' . DOKU_LF;
 
         /**

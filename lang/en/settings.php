@@ -70,8 +70,8 @@ $lang[AdsUtility::CONF_IN_ARTICLE_PLACEHOLDER] =  PluginUtility::getUrl("automat
 /**
  * Code enabled
  */
+$lang[Prism::CONF_PRISM_THEME] =  PluginUtility::getUrl("prism","Prism Component").' - The prism theme used for syntax highlighting in the code/file/console component';
 $lang[syntax_plugin_combo_code::CONF_CODE_ENABLE] =  PluginUtility::getUrl("code","Code Component").' - Enable or disable the code component';
-$lang[Prism::CONF_PRISM_THEME] =  PluginUtility::getUrl("code","Code Component").' - The theme used for syntax highlighting';
-$lang[syntax_plugin_combo_code::CONF_CODE_ENABLE] =  PluginUtility::getUrl("file","File Component").' - Enable or disable the file component';
+$lang[syntax_plugin_combo_file::CONF_FILE_ENABLE] =  PluginUtility::getUrl("file","File Component").' - Enable or disable the file component';
 
 ?>

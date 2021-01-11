@@ -47,10 +47,10 @@ class dokuwiki_plugin_combo_code_test extends DokuWikiTest
         $this->assertEquals(1, $scriptIdCount, "The number of script  should be one");
 
         $preElement = $testResponse->queryHTML("pre");
-        $this->assertEquals(1, $preElement->count(), "One pre element");
+        $this->assertEquals(2, $preElement->count(), "One pre element");
 
         $codeElement = $testResponse->queryHTML("code");
-        $this->assertEquals(1, $codeElement->count(), "One code element");
+        $this->assertEquals(2, $codeElement->count(), "One code element");
         $this->assertEquals(true, $codeElement->hasClass("language-html"), "One code element");
 
 
@@ -62,7 +62,24 @@ class dokuwiki_plugin_combo_code_test extends DokuWikiTest
         $text = '<code html line-numbers="true"><file></file></code>';
         $text .= $extra;
         $expected = Prism::getSnippet(Prism::PRISM_THEME_DEFAULT);
-        $expected .= '<pre><code class="language-html line-numbers">&lt;file&gt;&lt;/file&gt;</code></pre>';
+        $expected .= '<pre class="combo_code"><code class="language-html line-numbers combo_code">&lt;file&gt;&lt;/file&gt;</code></pre>';
+        $expected .= '<p>'.$extra.'</p>';
+
+        $xhtml = PluginUtility::render($text);
+        $this->assertEquals(
+            TestUtility::normalizeDokuWikiHtml($expected),
+            TestUtility::normalizeDokuWikiHtml($xhtml)
+        );
+
+    }
+
+    public function testPromptCodeOutput()
+    {
+        $extra = 'After';
+        $text = '<code bash prompt="#">ls -a</code>';
+        $text .= $extra;
+        $expected = Prism::getSnippet(Prism::PRISM_THEME_DEFAULT);
+        $expected .= '<pre class="combo_code command-line" data-prompt="#"><code class="language-bash combo_code">ls -a</code></pre>';
         $expected .= '<p>'.$extra.'</p>';
 
         $xhtml = PluginUtility::render($text);

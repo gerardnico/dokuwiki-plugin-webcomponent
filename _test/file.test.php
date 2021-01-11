@@ -17,6 +17,10 @@ use ComboStrap\TestUtility;
 require_once(__DIR__ . '/../class/PluginUtility.php');
 require_once(__DIR__ . '/../class/Prism.php');
 
+/**
+ * Class dokuwiki_plugin_combo_file_test
+ * For the prism syntax test, see {@link dokuwiki_plugin_combo_code_test}
+ */
 class dokuwiki_plugin_combo_file_test extends DokuWikiTest
 {
 
@@ -36,7 +40,7 @@ class dokuwiki_plugin_combo_file_test extends DokuWikiTest
         $text .= '<file html><code html></code></file>';
         $text .= $extra;
         $expected = Prism::getSnippet(Prism::PRISM_THEME_DEFAULT);
-        $htmlProduced = '<pre><code class="language-html">&lt;code html&gt;&lt;/code&gt;</code></pre>';
+        $htmlProduced = '<pre class="combo_file"><code class="language-html combo_file">&lt;code html&gt;&lt;/code&gt;</code></pre>';
         $expected .= $htmlProduced;
         $expected .= $htmlProduced;
         $expected .= '<p>'.$extra.'</p>';
