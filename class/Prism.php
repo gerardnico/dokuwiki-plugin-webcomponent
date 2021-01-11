@@ -254,9 +254,11 @@ EOD;
         } else {
             switch ($language) {
                 case "bash":
+                    PluginUtility::addClass2Attributes("command-line",$preAttributes);
                     $preAttributes["data-prompt"]=$plugin->getConf(self::CONF_BASH_PROMPT);
                     break;
                 case "batch":
+                    PluginUtility::addClass2Attributes("command-line",$preAttributes);
                     $powerShell = trim($plugin->getConf(self::CONF_BATCH_PROMPT));
                     if (!empty($powerShell)){
                         if (!strpos($powerShell, -1)==">"){
@@ -266,6 +268,7 @@ EOD;
                     $preAttributes["data-prompt"]=$powerShell;
                     break;
                 case "powershell":
+                    PluginUtility::addClass2Attributes("command-line",$preAttributes);
                     $powerShell = trim($plugin->getConf(self::CONF_POWERSHELL_PROMPT));
                     if (!empty($powerShell)){
                         if (!strpos($powerShell, -1)==">"){

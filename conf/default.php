@@ -110,5 +110,5 @@ $conf['codeEnable'] = 1;
 $conf['fileEnable'] = 1;
 $conf['prismTheme'] = "tomorrow";
 $conf['bashPrompt'] = "#";
-$conf['batchPrompt'] = "C:\\";
-$conf['powershellPrompt'] = "PS C:\\";
+$conf['batchPrompt'] = 'C:\\';
+$conf['powershellPrompt'] = 'PS C:\\';
