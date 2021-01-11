@@ -219,6 +219,10 @@ class PluginUtility
     }
 
     /**
+     *
+     * Example:
+     *   line-numbers="value"
+     *   line-numbers='value'
      * @param $string
      * @return array
      *

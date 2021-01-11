@@ -59,10 +59,10 @@ class dokuwiki_plugin_combo_code_test extends DokuWikiTest
     public function testCodeOutput()
     {
         $extra = 'After';
-        $text = '<code html><file></file></code>';
+        $text = '<code html line-numbers="true"><file></file></code>';
         $text .= $extra;
-        $expected = '<div class="'. Prism::SCRIPT_CLASS .'">'.syntax_plugin_combo_code::SCRIPT_CONTENT.'</div>';
-        $expected .= '<pre class="plain"><code class="language-html">&lt;file&gt;&lt;/file&gt;</code></pre>';
+        $expected = Prism::getSnippet(Prism::PRISM_THEME_DEFAULT);
+        $expected .= '<pre><code class="language-html line-numbers">&lt;file&gt;&lt;/file&gt;</code></pre>';
         $expected .= '<p>'.$extra.'</p>';
 
         $xhtml = PluginUtility::render($text);

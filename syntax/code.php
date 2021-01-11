@@ -153,6 +153,7 @@ class syntax_plugin_combo_code extends DokuWiki_Syntax_Plugin
     function render($format, Doku_Renderer $renderer, $data)
     {
 
+
         if ($format == 'xhtml') {
 
             /** @var Doku_Renderer_xhtml $renderer */
@@ -160,31 +161,9 @@ class syntax_plugin_combo_code extends DokuWiki_Syntax_Plugin
             switch ($state) {
                 case DOKU_LEXER_ENTER :
 
-                    /**
-                     * Add prism
-                     */
-                    if (!PluginUtility::htmlSnippetAlreadyAdded($renderer->info, Prism::SNIPPET_NAME)) {
-                        $renderer->doc .= Prism::getSnippet($this->getConf(Prism::CONF_PRISM_THEME));
-                    }
-
-                    /**
-                     * Add HTML
-                     */
                     $attributes = $data[PluginUtility::ATTRIBUTES];
-                    $language = $attributes["type"];
-                    if ($language == "dw") {
-                        $language = "html";
-                    }
-                    StringUtility::addEolIfNotPresent($renderer->doc);
-                    PluginUtility::addClass2Attributes('language-' . $language, $attributes);
-                    if ($attributes["line-numbers"]) {
-                        PluginUtility::addClass2Attributes('line-numbers', $attributes);
-                    }
-                    $htmlCode = '<pre>' . DOKU_LF;
-                    $htmlCode .= '<code ';
-                    $inlineAttributes = PluginUtility::array2HTMLAttributes($attributes);
-                    $htmlCode .= $inlineAttributes . ' >' . DOKU_LF;
-                    $renderer->doc .= $htmlCode;
+                    $theme = $this->getConf(Prism::CONF_PRISM_THEME);
+                    Prism::htmlEnter($renderer,$attributes,$theme,self::CODE_TAG);
                     break;
 
                 case DOKU_LEXER_UNMATCHED :
@@ -192,7 +171,7 @@ class syntax_plugin_combo_code extends DokuWiki_Syntax_Plugin
                     break;
 
                 case DOKU_LEXER_EXIT :
-                    $renderer->doc .= '</code>' . DOKU_LF . '</pre>' . DOKU_LF;
+                    Prism::htmlExit($renderer);
                     break;
 
             }
@@ -201,6 +180,7 @@ class syntax_plugin_combo_code extends DokuWiki_Syntax_Plugin
 
         // unsupported $mode
         return false;
+
     }
 
 

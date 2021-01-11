@@ -3,6 +3,8 @@
 namespace ComboStrap;
 
 
+use Doku_Renderer_xhtml;
+
 class Prism
 {
 
@@ -65,6 +67,8 @@ class Prism
 <script defer="true" src="$BASE_PRISM_CDN/plugins/command-line/prism-command-line.min.js"></script>
 <!--https://prismjs.com/plugins/line-numbers/-->
 <script defer="true" src="$BASE_PRISM_CDN/plugins/line-numbers/prism-line-numbers.min.js"></script>
+<!--https://prismjs.com/plugins/autolinker/-->
+<script defer="true" src="$BASE_PRISM_CDN/plugins/autolinker/prism-autolinker.min.js" integrity="sha512-/uypNVmpEQdCQLYz3mq7J2HPBpHkkg23FV4i7/WSUyEuTJrWJ2uZ3gXx1IBPUyB3qbIAY+AODbanXLkIar0NBQ==" crossorigin="anonymous"></script>
 <script defer="true" type="application/javascript">
 document.addEventListener('DOMContentLoaded', (event) => {
 
@@ -185,4 +189,57 @@ EOD;
             . '</div>' . DOKU_LF;
 
     }
+
+    /**
+     * Add the first block of prism
+     * @param \Doku_Renderer_xhtml $renderer
+     * @param $attributes
+     * @param $theme
+     * @param $addedClass - this class is added to the added node
+     */
+    public static function htmlEnter(\Doku_Renderer_xhtml $renderer, $attributes, $theme, $addedClass)
+    {
+        /**
+         * Add prism
+         */
+        if (!PluginUtility::htmlSnippetAlreadyAdded($renderer->info, Prism::SNIPPET_NAME)) {
+            $renderer->doc .= Prism::getSnippet($theme);
+        }
+
+        /**
+         * Add HTML
+         */
+        $language = $attributes["type"];
+        if ($language == "dw") {
+            $language = "html";
+        }
+        StringUtility::addEolIfNotPresent($renderer->doc);
+        PluginUtility::addClass2Attributes('language-' . $language, $attributes);
+        if (array_key_exists("line-numbers", $attributes)) {
+            unset($attributes["line-numbers"]);
+            PluginUtility::addClass2Attributes('line-numbers', $attributes);
+        }
+        /**
+         * Pre element
+         */
+        $preAttributes = [];
+        PluginUtility::addClass2Attributes($addedClass, $preAttributes);
+        $htmlCode = '<pre ' . PluginUtility::array2HTMLAttributes($preAttributes) . '>' . DOKU_LF;
+
+        /**
+         * Code element
+         */
+        $htmlCode .= '<code ';
+        PluginUtility::addClass2Attributes($addedClass, $attributes);
+        $htmlCode .= PluginUtility::array2HTMLAttributes($attributes) . ' >' . DOKU_LF;
+        $renderer->doc .= $htmlCode;
+
+    }
+
+    public static function htmlExit(\Doku_Renderer_xhtml $renderer)
+    {
+        $renderer->doc .= '</code>' . DOKU_LF . '</pre>' . DOKU_LF;
+    }
+
+
 }
