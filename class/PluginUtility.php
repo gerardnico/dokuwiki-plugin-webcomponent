@@ -91,7 +91,7 @@ class PluginUtility
             return null;
         }
         $adapter = $sqlite->getAdapter();
-        if ($adapter == null){
+        if ($adapter == null) {
             $sqliteMandatoryMessage = "The Sqlite Php Extension is mandatory. It seems that it's not available on this installation.";
             msg($sqliteMandatoryMessage, LogUtility::LVL_MSG_ERROR);
             return null;
@@ -541,7 +541,6 @@ class PluginUtility
         }
 
 
-
         if (sizeof($styleProperties) != 0) {
             $attributes[$styleAttributeName] = PluginUtility::array2InlineStyle($styleProperties);
         }
@@ -701,12 +700,12 @@ class PluginUtility
      * Check if a HTML tag was already added for a request
      * The request id is just the timestamp
      * An indicator array should be provided
-     * @param $indicators
+     * @param $info - the render info
+     * @param $snippetName - the name of the snippet (or $this->getPluginComponent())
      * @return bool
      */
-    public static function htmlSnippetAlreadyAdded(&$indicators)
+    public static function htmlSnippetAlreadyAdded(&$info, $snippetName)
     {
-        global $ID;
         if (isset($_SERVER['REQUEST_TIME_FLOAT'])) {
             // since php 5.4
             $requestTime = $_SERVER['REQUEST_TIME_FLOAT'];
@@ -714,11 +713,17 @@ class PluginUtility
             // DokuWiki test framework use this
             $requestTime = $_SERVER['REQUEST_TIME'];
         }
-        $uniqueId = hash('crc32b', $_SERVER['REMOTE_ADDR'] . $_SERVER['REMOTE_PORT'] . $requestTime . $ID);
-        if (array_key_exists($uniqueId, $indicators)) {
+        $keyPrefix = 'combo_';
+        if (!empty($snippetName)) {
+            $uniqueId = $keyPrefix . $snippetName;
+        } else {
+            global $ID;
+            $uniqueId = $keyPrefix . hash('crc32b', $_SERVER['REMOTE_ADDR'] . $_SERVER['REMOTE_PORT'] . $requestTime . $ID);
+        }
+        if (array_key_exists($uniqueId, $info)) {
             return true;
         } else {
-            $indicators[$uniqueId] = $requestTime;
+            $info[$uniqueId] = $requestTime;
             return false;
         }
     }

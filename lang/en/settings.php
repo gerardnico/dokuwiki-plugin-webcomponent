@@ -4,6 +4,7 @@ use ComboStrap\AdsUtility;
 use ComboStrap\IconUtility;
 use ComboStrap\MetadataUtility;
 use ComboStrap\PluginUtility;
+use ComboStrap\Prism;
 use ComboStrap\UrlManagerBestEndPage;
 
 require_once(__DIR__ . '/../../class/PluginUtility.php');
@@ -70,6 +71,7 @@ $lang[AdsUtility::CONF_IN_ARTICLE_PLACEHOLDER] =  PluginUtility::getUrl("automat
  * Code enabled
  */
 $lang[syntax_plugin_combo_code::CONF_CODE_ENABLE] =  PluginUtility::getUrl("code","Code Component").' - Enable or disable the code component';
-$lang[syntax_plugin_combo_code::CONF_CODE_THEME] =  PluginUtility::getUrl("code","Code Component").' - The theme used for syntax highlighting';
+$lang[Prism::CONF_PRISM_THEME] =  PluginUtility::getUrl("code","Code Component").' - The theme used for syntax highlighting';
+$lang[syntax_plugin_combo_code::CONF_CODE_ENABLE] =  PluginUtility::getUrl("file","File Component").' - Enable or disable the file component';
 
 ?>

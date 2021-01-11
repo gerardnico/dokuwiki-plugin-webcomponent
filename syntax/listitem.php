@@ -17,7 +17,6 @@ class syntax_plugin_combo_listitem extends DokuWiki_Syntax_Plugin
     const TAGS = array("list-item", "li");
     const COMBO_LIST_ITEM_CLASS = "combo-list-item";
 
-    private $indicator = array();
 
 
     /**
@@ -118,26 +117,9 @@ class syntax_plugin_combo_listitem extends DokuWiki_Syntax_Plugin
 
             case DOKU_LEXER_ENTER :
 
-
-                $html = "";
-                if (!PluginUtility::htmlSnippetAlreadyAdded($this->indicator)) {
-                    if (FsWikiUtility::getMainPageId() != null) {
-
-                        $styles = array();
-                        $styles['position'] = 'relative'; // Why ?
-                        $styles['display'] = 'flex';
-                        $styles['align-items'] = 'center';
-                        $styles['justify-content'] = 'flex-start';
-                        $styles['padding'] = '8px 16px'; // Padding at the left and right
-                        $styles['overflow'] = 'hidden';
-
-                        $html = '<style>' . StyleUtility::getRule($styles, "." . self::COMBO_LIST_ITEM_CLASS) . '</style>';
-                    }
-                }
-
                 $attributes = PluginUtility::getTagAttributes($match);
                 PluginUtility::addClass2Attributes(self::COMBO_LIST_ITEM_CLASS,$attributes);
-                $html .= '<li';
+                $html = '<li';
                 if (sizeof($attributes)) {
                     $html .= ' ' . PluginUtility::array2HTMLAttributes($attributes);
                 }
@@ -183,6 +165,20 @@ class syntax_plugin_combo_listitem extends DokuWiki_Syntax_Plugin
             $state = $data[PluginUtility::STATE];
             switch ($state) {
                 case DOKU_LEXER_ENTER :
+                    if (!PluginUtility::htmlSnippetAlreadyAdded($renderer->info,self::MODE_NAME)) {
+                        if (FsWikiUtility::getMainPageId() != null) {
+                            $styles = array();
+                            $styles['position'] = 'relative'; // Why ?
+                            $styles['display'] = 'flex';
+                            $styles['align-items'] = 'center';
+                            $styles['justify-content'] = 'flex-start';
+                            $styles['padding'] = '8px 16px'; // Padding at the left and right
+                            $styles['overflow'] = 'hidden';
+                            $renderer->doc .= '<style>' . StyleUtility::getRule($styles, "." . self::COMBO_LIST_ITEM_CLASS) . '</style>';
+                        }
+                    }
+                    $renderer->doc .= $data[PluginUtility::PAYLOAD] . DOKU_LF;
+                    break;
                 case DOKU_LEXER_EXIT :
                     $renderer->doc .= $data[PluginUtility::PAYLOAD] . DOKU_LF;
                     break;

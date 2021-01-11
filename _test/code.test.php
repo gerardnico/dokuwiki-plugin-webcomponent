@@ -11,9 +11,11 @@
  */
 
 use ComboStrap\PluginUtility;
+use ComboStrap\Prism;
 use ComboStrap\TestUtility;
 
 require_once(__DIR__ . '/../class/PluginUtility.php');
+require_once(__DIR__ . '/../class/Prism.php');
 
 class dokuwiki_plugin_combo_code_test extends DokuWikiTest
 {
@@ -24,18 +26,23 @@ class dokuwiki_plugin_combo_code_test extends DokuWikiTest
         parent::setUp();
     }
 
-    public function testRequest()
+    public function testCodeRequest()
     {
 
         $pageId = "code";
-        $text = '<code html><code></code></code>';
+        $codeSnippet = '<code html><code></code></code>';
+        /**
+         * We add it two times to verify that the script is added only once
+         */
+        $text = $codeSnippet;
+        $text .= $codeSnippet;
 
         TestUtility::addPage($pageId, $text);
 
         // In a request
         $request = new TestRequest();
         $testResponse = $request->get(array('id' => $pageId), '/doku.php');
-        $div = $testResponse->queryHTML("." . syntax_plugin_combo_code::SCRIPT_CLASS);
+        $div = $testResponse->queryHTML("." . Prism::SCRIPT_CLASS);
         $scriptIdCount = $div->count();
         $this->assertEquals(1, $scriptIdCount, "The number of script  should be one");
 
@@ -49,12 +56,12 @@ class dokuwiki_plugin_combo_code_test extends DokuWikiTest
 
     }
 
-    public function testCompo()
+    public function testCodeOutput()
     {
         $extra = 'After';
         $text = '<code html><file></file></code>';
         $text .= $extra;
-        $expected = '<div class="'.syntax_plugin_combo_code::SCRIPT_CLASS.'">'.syntax_plugin_combo_code::SCRIPT_CONTENT.'</div>';
+        $expected = '<div class="'. Prism::SCRIPT_CLASS .'">'.syntax_plugin_combo_code::SCRIPT_CONTENT.'</div>';
         $expected .= '<pre class="plain"><code class="language-html">&lt;file&gt;&lt;/file&gt;</code></pre>';
         $expected .= '<p>'.$extra.'</p>';
 
@@ -65,6 +72,8 @@ class dokuwiki_plugin_combo_code_test extends DokuWikiTest
         );
 
     }
+
+
 
 
 }

@@ -3,6 +3,7 @@
 use ComboStrap\AdsUtility;
 use ComboStrap\IconUtility;
 use ComboStrap\MetadataUtility;
+use ComboStrap\Prism;
 use ComboStrap\UrlManagerBestEndPage;
 
 require_once(__DIR__ . '/../syntax/related.php');
@@ -76,7 +77,8 @@ require_once(__DIR__ . '/../class/AdsUtility.php');
 $meta[AdsUtility::CONF_IN_ARTICLE_PLACEHOLDER] = array('onoff');
 
 /**
- * Code enabled ?
+ * Code / File / Console
  */
 $meta[syntax_plugin_combo_code::CONF_CODE_ENABLE] = array('onoff');
-$meta[syntax_plugin_combo_code::CONF_CODE_THEME] = array('multichoice', '_choices' => array_keys(syntax_plugin_combo_code::THEMES_INTEGRITY));
+$meta[Prism::CONF_PRISM_THEME] = array('multichoice', '_choices' => array_keys(Prism::THEMES_INTEGRITY));
+$meta[syntax_plugin_combo_code::CONF_FILE_ENABLE] = array('onoff');

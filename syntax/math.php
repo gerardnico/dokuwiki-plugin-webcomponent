@@ -32,7 +32,6 @@ class syntax_plugin_combo_math extends DokuWiki_Syntax_Plugin
 </script>
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js" async></script>
 EOD;
-    private $indicators = array();
 
     /**
      * syntax_plugin_combo_math constructor.
@@ -107,16 +106,15 @@ EOD;
         }
 
 
-
     }
 
 
     /**
      *
-     * @param   string $match The text matched by the patterns
-     * @param   int $state The lexer state for the match
-     * @param   int $pos The character position of the matched text
-     * @param   Doku_Handler $handler The Doku_Handler object
+     * @param string $match The text matched by the patterns
+     * @param int $state The lexer state for the match
+     * @param int $pos The character position of the matched text
+     * @param Doku_Handler $handler The Doku_Handler object
      * @return  array Return an array with all data you want to use in render
      */
     public function handle($match, $state, $pos, Doku_Handler $handler)
@@ -138,14 +136,14 @@ EOD;
     function render($format, Doku_Renderer $renderer, $data)
     {
 
-        list($content)=$data;
+        list($content) = $data;
         switch ($format) {
             case 'xhtml':
             case 'odt':
                 /** @var Doku_Renderer_xhtml $renderer */
-                $renderer->doc .= $renderer->_xmlEntities($content).DOKU_LF;
-                if (!PluginUtility::htmlSnippetAlreadyAdded($this->indicators)){
-                    $renderer->doc .= '<div id="'. self::MATH_JAX_DIV_ID .'">'.DOKU_LF;
+                $renderer->doc .= $renderer->_xmlEntities($content) . DOKU_LF;
+                if (!PluginUtility::htmlSnippetAlreadyAdded($renderer->info, $this->getPluginComponent())) {
+                    $renderer->doc .= '<div id="' . self::MATH_JAX_DIV_ID . '">' . DOKU_LF;
                     $renderer->doc .= self::HTML_SCRIPT_MATHJAX;
                     $renderer->doc .= '</div>';
                 }

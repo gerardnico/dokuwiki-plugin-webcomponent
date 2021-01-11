@@ -18,10 +18,6 @@ class syntax_plugin_combo_tooltip extends DokuWiki_Syntax_Plugin
     const POSITION_ATTRIBUTE = "position";
     const SCRIPT_ID = "combo_tooltip";
 
-    /**
-     * @var array An indicator array to know if the javascript was already added
-     */
-    private $indicator = array();
 
 
     /**
@@ -170,7 +166,7 @@ class syntax_plugin_combo_tooltip extends DokuWiki_Syntax_Plugin
 
                 case DOKU_LEXER_EXIT:
                     $html = $data[PluginUtility::PAYLOAD];
-                    if (!empty($html) && !PluginUtility::htmlSnippetAlreadyAdded($this->indicator)) {
+                    if (!empty($html) && !PluginUtility::htmlSnippetAlreadyAdded($renderer->info,$this->getPluginComponent())) {
                         $html .= "<script id=\"".self::SCRIPT_ID."\">" . DOKU_LF
                             . "window.addEventListener('load', function () { jQuery('[data-toggle=\"tooltip\"]').tooltip() })" . DOKU_LF
                             . "</script>".DOKU_LF;
