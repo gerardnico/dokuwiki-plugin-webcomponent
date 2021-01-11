@@ -158,8 +158,7 @@ class syntax_plugin_combo_code extends DokuWiki_Syntax_Plugin
                 case DOKU_LEXER_ENTER :
 
                     $attributes = $data[PluginUtility::ATTRIBUTES];
-                    $theme = $this->getConf(Prism::CONF_PRISM_THEME);
-                    Prism::htmlEnter($renderer,$attributes,$theme,"combo_".self::CODE_TAG);
+                    Prism::htmlEnter($renderer,$attributes,$this);
                     break;
 
                 case DOKU_LEXER_UNMATCHED :

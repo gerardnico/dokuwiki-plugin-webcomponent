@@ -96,7 +96,7 @@ class dokuwiki_plugin_combo_code_test extends DokuWikiTest
         $text = '<code bash foo.sh>ls -a</code>';
         $text .= $extra;
         $expected = Prism::getSnippet(Prism::PRISM_THEME_DEFAULT);
-        $expected .= '<pre class="combo_code" data-download-link="true" data-src="foo.sh" data-download-link-label="Download foo.sh"><code class="language-bash combo_code">ls -a</code></pre>';
+        $expected .= '<pre class="combo_code" data-prompt="#" data-download-link="true" data-src="foo.sh" data-download-link-label="Download foo.sh"><code class="language-bash combo_code">ls -a</code></pre>';
         $expected .= '<p>'.$extra.'</p>';
 
         $xhtml = PluginUtility::render($text);

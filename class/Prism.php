@@ -14,6 +14,23 @@ class Prism
      */
     const SCRIPT_CLASS = 'combo_prism';
     const BASE_PRISM_CDN = "https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/";
+    /**
+     * The default prompt for bash
+     */
+    const CONF_BASH_PROMPT = "bashPrompt";
+    /**
+     * The default prompt for batch (dos)
+     */
+    const CONF_BATCH_PROMPT = "batchPrompt";
+    /**
+     * The default prompt for powershell
+     */
+    const CONF_POWERSHELL_PROMPT = "powershellPrompt";
+
+    /**
+     * The default name of prism
+     * It does not follow the naming of the theming
+     */
     const PRISM_THEME = "prism";
 
     /**
@@ -46,6 +63,7 @@ class Prism
     const CONF_PRISM_THEME = "prismTheme";
     const PRISM_THEME_DEFAULT = "tomorrow";
     const FILE_PATH_KEY = "file-path";
+
 
     public static function getSnippet($theme)
     {
@@ -195,11 +213,12 @@ EOD;
      * Add the first block of prism
      * @param \Doku_Renderer_xhtml $renderer
      * @param $attributes
-     * @param $theme
-     * @param $addedClass - this class is added to the added node
+     * @param \DokuWiki_Syntax_Plugin $plugin
      */
-    public static function htmlEnter(\Doku_Renderer_xhtml $renderer, $attributes, $theme, $addedClass)
+    public static function htmlEnter(\Doku_Renderer_xhtml $renderer, $attributes, \DokuWiki_Syntax_Plugin $plugin)
     {
+
+        $theme = $plugin->getConf(Prism::CONF_PRISM_THEME);
         /**
          * Add prism
          */
@@ -210,7 +229,7 @@ EOD;
         /**
          * Add HTML
          */
-        $language = $attributes["type"];
+        $language = strtolower($attributes["type"]);
         if ($language == "dw") {
             $language = "html";
         }
@@ -225,12 +244,37 @@ EOD;
          * Pre element
          */
         $preAttributes = [];
+        $addedClass = 'combo_' . $plugin->getPluginComponent();
         PluginUtility::addClass2Attributes($addedClass, $preAttributes);
         // Command line
         if (array_key_exists("prompt", $attributes)) {
             PluginUtility::addClass2Attributes("command-line",$preAttributes);
             $preAttributes["data-prompt"]=$attributes["prompt"];
             unset($attributes["prompt"]);
+        } else {
+            switch ($language) {
+                case "bash":
+                    $preAttributes["data-prompt"]=$plugin->getConf(self::CONF_BASH_PROMPT);
+                    break;
+                case "batch":
+                    $powerShell = trim($plugin->getConf(self::CONF_BATCH_PROMPT));
+                    if (!empty($powerShell)){
+                        if (!strpos($powerShell, -1)==">"){
+                            $powerShell .= ">";
+                        }
+                    }
+                    $preAttributes["data-prompt"]=$powerShell;
+                    break;
+                case "powershell":
+                    $powerShell = trim($plugin->getConf(self::CONF_POWERSHELL_PROMPT));
+                    if (!empty($powerShell)){
+                        if (!strpos($powerShell, -1)==">"){
+                            $powerShell .= ">";
+                        }
+                    }
+                    $preAttributes["data-prompt"]=$powerShell;
+                    break;
+            }
         }
         // Download
         $preAttributes['data-download-link']=true;

@@ -156,13 +156,9 @@ class syntax_plugin_combo_file extends DokuWiki_Syntax_Plugin
             switch ($state) {
                 case DOKU_LEXER_ENTER :
 
-                    /**
-                     * The added class to the output
-                     */
-                    $class = 'combo_' . self::FILE_TAG;
+
                     $attributes = $data[PluginUtility::ATTRIBUTES];
-                    $theme = $this->getConf(Prism::CONF_PRISM_THEME);
-                    Prism::htmlEnter($renderer, $attributes, $theme, $class);
+                    Prism::htmlEnter($renderer, $attributes, $this);
                     break;
 
                 case DOKU_LEXER_UNMATCHED :
