@@ -35,7 +35,7 @@ class dokuwiki_plugin_combo_code_test extends DokuWikiTest
         // In a request
         $request = new TestRequest();
         $testResponse = $request->get(array('id' => $pageId), '/doku.php');
-        $div = $testResponse->queryHTML("#" . syntax_plugin_combo_code::SCRIPT_ID);
+        $div = $testResponse->queryHTML("." . syntax_plugin_combo_code::SCRIPT_CLASS);
         $scriptIdCount = $div->count();
         $this->assertEquals(1, $scriptIdCount, "The number of script  should be one");
 
@@ -54,7 +54,7 @@ class dokuwiki_plugin_combo_code_test extends DokuWikiTest
         $extra = 'After';
         $text = '<code html><file></file></code>';
         $text .= $extra;
-        $expected = '<div id="'.syntax_plugin_combo_code::SCRIPT_ID.'">'.syntax_plugin_combo_code::SCRIPT_CONTENT.'</div>';
+        $expected = '<div class="'.syntax_plugin_combo_code::SCRIPT_CLASS.'">'.syntax_plugin_combo_code::SCRIPT_CONTENT.'</div>';
         $expected .= '<pre class="plain"><code class="language-html">&lt;file&gt;&lt;/file&gt;</code></pre>';
         $expected .= '<p>'.$extra.'</p>';
 

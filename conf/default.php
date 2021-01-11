@@ -103,5 +103,7 @@ $conf['AdsInArticleShowPlaceholder'] = 0;
 /**
  * Code
  * See {@link syntax_plugin_combo_code::CONF_CODE_ENABLE}
+ * {@link syntax_plugin_combo_code::CONF_CODE_THEME}
  */
 $conf['codeEnable'] = 1;
+$conf['codeTheme'] = "tomorrow";

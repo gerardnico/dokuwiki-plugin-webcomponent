@@ -70,5 +70,6 @@ $lang[AdsUtility::CONF_IN_ARTICLE_PLACEHOLDER] =  PluginUtility::getUrl("automat
  * Code enabled
  */
 $lang[syntax_plugin_combo_code::CONF_CODE_ENABLE] =  PluginUtility::getUrl("code","Code Component").' - Enable or disable the code component';
+$lang[syntax_plugin_combo_code::CONF_CODE_THEME] =  PluginUtility::getUrl("code","Code Component").' - The theme used for syntax highlighting';
 
 ?>
