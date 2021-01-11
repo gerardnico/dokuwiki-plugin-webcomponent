@@ -1,109 +1,130 @@
 <?php
-/**
- * Plugin Webcode: Show webcode (Css, HTML) in a iframe
- *
- * @license    GPL 2 (http://www.gnu.org/licenses/gpl.html)
- * @author     Nicolas GERARD
- */
+
+// implementation of
+// https://developer.mozilla.org/en-US/docs/Web/HTML/Element/code
 
 // must be run within Dokuwiki
+use ComboStrap\Prism;
+use ComboStrap\StringUtility;
 use ComboStrap\PluginUtility;
 
-if (!defined('DOKU_INC')) die();
-require_once(__DIR__ . '/../class/PluginUtility.php');
+require_once(__DIR__ . '/../class/StringUtility.php');
+require_once(__DIR__ . '/../class/Prism.php');
 
-/**
- * All DokuWiki plugins to extend the parser/rendering mechanism
- * need to inherit from this class
- *
- * Format
- *
- * syntax_plugin_PluginName_PluginComponent
- */
+if (!defined('DOKU_INC')) die();
+
+
 class syntax_plugin_combo_console extends DokuWiki_Syntax_Plugin
 {
 
 
-    /*
-     * What is the type of this plugin ?
-     * This a plugin categorization
-     * This is only important for other plugin
-     * See @getAllowedTypes
+    /**
+     * The tag of the ui component
      */
-    public function getType()
-    {
-        return 'formatting';
-    }
+    const CONSOLE_TAG = "console";
 
 
-    // Sort order in which the plugin are applied
-    public function getSort()
+    function getType()
     {
-        return 168;
+        /**
+         * You can't write in a code block
+         */
+        return 'protected';
     }
 
     /**
+     * How DokuWiki will add P element
      *
+     *  * 'normal' - The plugin can be used inside paragraphs
+     *  * 'block'  - Open paragraphs need to be closed before plugin output - block should not be inside paragraphs
+     *  * 'stack'  - Special case. Plugin wraps other paragraphs. - Stacks can contain paragraphs
+     *
+     * @see DokuWiki_Syntax_Plugin::getPType()
+     */
+    function getPType()
+    {
+        return 'block';
+    }
+
+    /**
      * @return array
-     * The plugin type that are allowed inside
-     * this node (ie nested)
-     * Otherwise the node that are in the matched content are not processed
-     */
-    function getAllowedTypes() {
-        return array();
-
-    }
-
-    /**
-     * Handle the node
-     * @return string
-     * See
-     * https://www.dokuwiki.org/devel:syntax_plugins#ptype
-     */
-    function getPType(){ return 'block';}
-
-    // This where the addEntryPattern must bed defined
-    public function connectTo($mode)
-    {
-        // This define the DOKU_LEXER_ENTER state
-        $pattern = PluginUtility::getContainerTagPattern(self::getElementName());
-        $this->Lexer->addEntryPattern($pattern, $mode, 'plugin_' . PluginUtility::PLUGIN_BASE_NAME . '_' . $this->getPluginComponent());
-
-    }
-
-    public function postConnect()
-    {
-        // We define the DOKU_LEXER_EXIT state
-        $this->Lexer->addExitPattern('</' . self::getElementName() . '>', 'plugin_' . PluginUtility::PLUGIN_BASE_NAME . '_' . $this->getPluginComponent());
-    }
-
-
-    /**
-     * Handle the match
-     * You get the match for each pattern in the $match variable
-     * $state says if it's an entry, exit or match pattern
+     * Allow which kind of plugin inside
      *
-     * This is an instruction block and is cached apart from the rendering output
-     * There is two caches levels
-     * This cache may be suppressed with the url parameters ?purge=true
+     * No one of array('baseonly','container', 'formatting', 'substition', 'protected', 'disabled', 'paragraphs')
+     * because we manage self the content and we call self the parser
+     *
+     * Return an array of one or more of the mode types {@link $PARSER_MODES} in Parser.php
      */
-    public function handle($match, $state, $pos, Doku_Handler $handler)
+    function getAllowedTypes()
     {
+        return array();
+    }
+
+    function getSort()
+    {
+        /**
+         * Should be less than the code syntax plugin
+         * which is 200
+         **/
+        return 199;
+    }
+
+
+    function connectTo($mode)
+    {
+
+
+        $pattern = PluginUtility::getContainerTagPattern(self::CONSOLE_TAG);
+        $this->Lexer->addEntryPattern($pattern, $mode, PluginUtility::getModeForComponent($this->getPluginComponent()));
+
+
+    }
+
+
+    function postConnect()
+    {
+
+        $this->Lexer->addExitPattern('</' . self::CONSOLE_TAG . '>', PluginUtility::getModeForComponent($this->getPluginComponent()));
+
+    }
+
+    /**
+     *
+     * The handle function goal is to parse the matched syntax through the pattern function
+     * and to return the result for use in the renderer
+     * This result is always cached until the page is modified.
+     * @param string $match
+     * @param int $state
+     * @param int $pos - byte position in the original source file
+     * @param Doku_Handler $handler
+     * @return array|bool
+     * @see DokuWiki_Syntax_Plugin::handle()
+     *
+     */
+    function handle($match, $state, $pos, Doku_Handler $handler)
+    {
+
         switch ($state) {
 
             case DOKU_LEXER_ENTER :
+                $tagAttributes = PluginUtility::getQualifiedTagAttributes($match,true, Prism::FILE_PATH_KEY);
+                return array(
+                    PluginUtility::STATE => $state,
+                    PluginUtility::ATTRIBUTES => $tagAttributes
+                );
 
-                break;
+            case DOKU_LEXER_UNMATCHED :
+                return array(
+                    PluginUtility::STATE => $state,
+                    PluginUtility::PAYLOAD => $match
+                );
 
-            case DOKU_LEXER_UNMATCHED:
-                return array($state,$match);
-                break;
+            case DOKU_LEXER_EXIT :
+                return array(PluginUtility::STATE => $state);
 
-            case DOKU_LEXER_EXIT:
-
-                break;
 
         }
+        return array();
 
     }
 
@@ -119,35 +140,37 @@ class syntax_plugin_combo_console extends DokuWiki_Syntax_Plugin
      */
     function render($format, Doku_Renderer $renderer, $data)
     {
-        // The $data variable comes from the handle() function
-        //
-        // $mode = 'xhtml' means that we output html
-        // There is other mode such as metadata, odt
+
+
         if ($format == 'xhtml') {
 
-            $state = $data[0];
-            // No Unmatched because it's handled in the handle function
+            /** @var Doku_Renderer_xhtml $renderer */
+            $state = $data [PluginUtility::STATE];
             switch ($state) {
+                case DOKU_LEXER_ENTER :
 
-                case DOKU_LEXER_UNMATCHED:
-                    $text=$data[1];
-                    /**
-                     * @var Doku_Renderer_xhtml
-                     * See code in Doku_Renderer_xhtml
-                     * with lang, filename, highlight,... parameters
-                     */
-                    $renderer->code($text);
+                    $attributes = $data[PluginUtility::ATTRIBUTES];
+                    $theme = $this->getConf(Prism::CONF_PRISM_THEME);
+                    Prism::htmlEnter($renderer, $attributes, $theme, "combo_" . self::CONSOLE_TAG);
+                    break;
+
+                case DOKU_LEXER_UNMATCHED :
+                    $renderer->doc .= PluginUtility::escape($data[PluginUtility::PAYLOAD]) . DOKU_LF;
+                    break;
+
+                case DOKU_LEXER_EXIT :
+                    Prism::htmlExit($renderer);
                     break;
 
             }
             return true;
         }
+
+        // unsupported $mode
         return false;
+
     }
 
-    public static function getElementName()
-    {
-        return PluginUtility::getTagName(get_called_class());
-    }
 
 }
+

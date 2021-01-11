@@ -81,4 +81,4 @@ $meta[AdsUtility::CONF_IN_ARTICLE_PLACEHOLDER] = array('onoff');
  */
 $meta[syntax_plugin_combo_code::CONF_CODE_ENABLE] = array('onoff');
 $meta[Prism::CONF_PRISM_THEME] = array('multichoice', '_choices' => array_keys(Prism::THEMES_INTEGRITY));
-$meta[syntax_plugin_combo_code::CONF_FILE_ENABLE] = array('onoff');
+$meta[syntax_plugin_combo_file::CONF_FILE_ENABLE] = array('onoff');

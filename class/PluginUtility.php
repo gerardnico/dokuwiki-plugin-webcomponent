@@ -245,14 +245,20 @@ class PluginUtility
 
     }
 
+    public static function getTagAttributes($match){
+        return self::getQualifiedTagAttributes($match,false, "");
+    }
+
     /**
      * Return the attribute of a tag
      * Because they are users input, they are all escaped
      * @param $match
-     * @param $defaultType
+     * @param $hasThirdValue - if true, the third parameter is treated as value, not a property and returned in the `third` key
+     * use for the code/file/console where the accept a name as third value
+     * @param $keyThirdArgument - if a third argument is found, return it with this key
      * @return array
      */
-    public static function getTagAttributes($match)
+    public static function getQualifiedTagAttributes($match, $hasThirdValue, $keyThirdArgument)
     {
 
         // Until the first >
@@ -292,14 +298,31 @@ class PluginUtility
         $attributes = array();
         $spacePosition = strpos($match, " ");
         if ($spacePosition) {
-            $firstArgument = substr($match, 0, $spacePosition);
+            $nextArgument = substr($match, 0, $spacePosition);
         } else {
-            $firstArgument = $match;
+            $nextArgument = $match;
         }
-        if (!strpos($firstArgument, "=")) {
-            $attributes["type"] = $firstArgument;
+        if (!strpos($nextArgument, "=")) {
+            $attributes["type"] = $nextArgument;
             // Suppress the type
-            $match = substr($match, strlen($firstArgument));
+            $match = substr($match, strlen($nextArgument));
+            $match = trim($match);
+
+            // Do we have a value as first argument ?
+            if (!empty($hasThirdValue)) {
+                $spacePosition = strpos($match, " ");
+                if ($spacePosition) {
+                    $nextArgument = substr($match, 0, $spacePosition);
+                } else {
+                    $nextArgument = $match;
+                }
+                if (!strpos($nextArgument, "=") && !empty($nextArgument)) {
+                    $attributes[$keyThirdArgument] = $nextArgument;
+                    // Suppress the third argument
+                    $match = substr($match, strlen($nextArgument));
+                    $match = trim($match);
+                }
+            }
         }
 
         // Parse the remaining attributes

@@ -21,16 +21,12 @@ class syntax_plugin_combo_code extends DokuWiki_Syntax_Plugin
      * Enable or disable the code component
      */
     const CONF_CODE_ENABLE = 'codeEnable';
-    /**
-     * Enable or disable the file component
-     */
-    const CONF_FILE_ENABLE = 'fileEnable';
+
 
     /**
      * The tag of the ui component
      */
     const CODE_TAG = "code";
-
 
 
     function getType()
@@ -119,7 +115,7 @@ class syntax_plugin_combo_code extends DokuWiki_Syntax_Plugin
         switch ($state) {
 
             case DOKU_LEXER_ENTER :
-                $tagAttributes = PluginUtility::getTagAttributes($match);
+                $tagAttributes = PluginUtility::getQualifiedTagAttributes($match,true, Prism::FILE_PATH_KEY);
                 return array(
                     PluginUtility::STATE => $state,
                     PluginUtility::ATTRIBUTES => $tagAttributes

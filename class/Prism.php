@@ -45,6 +45,7 @@ class Prism
      */
     const CONF_PRISM_THEME = "prismTheme";
     const PRISM_THEME_DEFAULT = "tomorrow";
+    const FILE_PATH_KEY = "file-path";
 
     public static function getSnippet($theme)
     {
@@ -67,8 +68,8 @@ class Prism
 <script defer="true" src="$BASE_PRISM_CDN/plugins/command-line/prism-command-line.min.js"></script>
 <!--https://prismjs.com/plugins/line-numbers/-->
 <script defer="true" src="$BASE_PRISM_CDN/plugins/line-numbers/prism-line-numbers.min.js"></script>
-<!--https://prismjs.com/plugins/autolinker/-->
-<script defer="true" src="$BASE_PRISM_CDN/plugins/autolinker/prism-autolinker.min.js" integrity="sha512-/uypNVmpEQdCQLYz3mq7J2HPBpHkkg23FV4i7/WSUyEuTJrWJ2uZ3gXx1IBPUyB3qbIAY+AODbanXLkIar0NBQ==" crossorigin="anonymous"></script>
+<!--https://prismjs.com/plugins/download-button/-->
+<script defer="true" src="$BASE_PRISM_CDN/plugins/download-button/prism-download-button.min.js" integrity="sha512-rGJwSZEEYPBQjqYxrdg6Ug/6i763XQogKx+N/GF1rCGvfmhIlIUFxCjc4FmEdCu5dvovqxHsoe3IPMKP+KlgNQ==" crossorigin="anonymous"></script>
 <script defer="true" type="application/javascript">
 document.addEventListener('DOMContentLoaded', (event) => {
 
@@ -225,10 +226,20 @@ EOD;
          */
         $preAttributes = [];
         PluginUtility::addClass2Attributes($addedClass, $preAttributes);
+        // Command line
         if (array_key_exists("prompt", $attributes)) {
             PluginUtility::addClass2Attributes("command-line",$preAttributes);
             $preAttributes["data-prompt"]=$attributes["prompt"];
             unset($attributes["prompt"]);
+        }
+        // Download
+        $preAttributes['data-download-link']=true;
+        if (array_key_exists(self::FILE_PATH_KEY,$attributes)){
+            $preAttributes['data-src']=$attributes[self::FILE_PATH_KEY];
+            unset($attributes[self::FILE_PATH_KEY]);
+            $preAttributes['data-download-link-label']="Download ".$preAttributes['data-src'];
+        } else {
+            $preAttributes['data-src']="file.".$language;
         }
         $htmlCode = '<pre ' . PluginUtility::array2HTMLAttributes($preAttributes) . '>' . DOKU_LF;
 
@@ -246,6 +257,8 @@ EOD;
     {
         $renderer->doc .= '</code>' . DOKU_LF . '</pre>' . DOKU_LF;
     }
+
+
 
 
 }

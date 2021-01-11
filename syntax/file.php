@@ -114,7 +114,7 @@ class syntax_plugin_combo_file extends DokuWiki_Syntax_Plugin
         switch ($state) {
 
             case DOKU_LEXER_ENTER :
-                $tagAttributes = PluginUtility::getTagAttributes($match);
+                $tagAttributes = PluginUtility::getQualifiedTagAttributes($match,true, Prism::FILE_PATH_KEY);
                 return array(
                     PluginUtility::STATE => $state,
                     PluginUtility::ATTRIBUTES => $tagAttributes
@@ -160,23 +160,6 @@ class syntax_plugin_combo_file extends DokuWiki_Syntax_Plugin
                      * The added class to the output
                      */
                     $class = 'combo_' . self::FILE_TAG;
-
-                    /**
-                     * Styling extra for file
-                     * Disable for now
-                     */
-                    if (false && !PluginUtility::htmlSnippetAlreadyAdded($renderer->info, self::FILE_TAG)) {
-                        $renderer->doc .= <<<EOF
-<style>
-code[class*=$class]{
-   color: #333;
-}
-pre[class*=$class]{
-   background-color: #e9ecef;
-}
-</style>
-EOF;
-                    }
                     $attributes = $data[PluginUtility::ATTRIBUTES];
                     $theme = $this->getConf(Prism::CONF_PRISM_THEME);
                     Prism::htmlEnter($renderer, $attributes, $theme, $class);

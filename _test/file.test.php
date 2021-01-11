@@ -40,7 +40,7 @@ class dokuwiki_plugin_combo_file_test extends DokuWikiTest
         $text .= '<file html><code html></code></file>';
         $text .= $extra;
         $expected = Prism::getSnippet(Prism::PRISM_THEME_DEFAULT);
-        $htmlProduced = '<pre class="combo_file"><code class="language-html combo_file">&lt;code html&gt;&lt;/code&gt;</code></pre>';
+        $htmlProduced = '<pre class="combo_file" data-download-link="true" data-src="file.html"><code class="language-html combo_file">&lt;code html&gt;&lt;/code&gt;</code></pre>';
         $expected .= $htmlProduced;
         $expected .= $htmlProduced;
         $expected .= '<p>'.$extra.'</p>';

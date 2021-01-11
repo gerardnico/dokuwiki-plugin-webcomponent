@@ -62,7 +62,7 @@ class dokuwiki_plugin_combo_code_test extends DokuWikiTest
         $text = '<code html line-numbers="true"><file></file></code>';
         $text .= $extra;
         $expected = Prism::getSnippet(Prism::PRISM_THEME_DEFAULT);
-        $expected .= '<pre class="combo_code"><code class="language-html line-numbers combo_code">&lt;file&gt;&lt;/file&gt;</code></pre>';
+        $expected .= '<pre class="combo_code" data-download-link="true" data-src="file.html"><code class="language-html line-numbers combo_code">&lt;file&gt;&lt;/file&gt;</code></pre>';
         $expected .= '<p>'.$extra.'</p>';
 
         $xhtml = PluginUtility::render($text);
@@ -79,7 +79,24 @@ class dokuwiki_plugin_combo_code_test extends DokuWikiTest
         $text = '<code bash prompt="#">ls -a</code>';
         $text .= $extra;
         $expected = Prism::getSnippet(Prism::PRISM_THEME_DEFAULT);
-        $expected .= '<pre class="combo_code command-line" data-prompt="#"><code class="language-bash combo_code">ls -a</code></pre>';
+        $expected .= '<pre class="combo_code command-line" data-prompt="#" data-download-link="true" data-src="file.bash"><code class="language-bash combo_code">ls -a</code></pre>';
+        $expected .= '<p>'.$extra.'</p>';
+
+        $xhtml = PluginUtility::render($text);
+        $this->assertEquals(
+            TestUtility::normalizeDokuWikiHtml($expected),
+            TestUtility::normalizeDokuWikiHtml($xhtml)
+        );
+
+    }
+
+    public function testFilePathCodeOutput()
+    {
+        $extra = 'After';
+        $text = '<code bash foo.sh>ls -a</code>';
+        $text .= $extra;
+        $expected = Prism::getSnippet(Prism::PRISM_THEME_DEFAULT);
+        $expected .= '<pre class="combo_code" data-download-link="true" data-src="foo.sh" data-download-link-label="Download foo.sh"><code class="language-bash combo_code">ls -a</code></pre>';
         $expected .= '<p>'.$extra.'</p>';
 
         $xhtml = PluginUtility::render($text);
