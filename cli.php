@@ -23,7 +23,7 @@ use splitbrain\phpcli\Options;
  *
  * ```
  * docker exec -ti $(CONTAINER) /bin/bash
- * ./bin/plugin.php combo -v
+ * ./bin/plugin.php combo -o pages.csv
  * ```
  * or via the IDE
  *
@@ -37,6 +37,7 @@ class cli_plugin_combo extends DokuWiki_CLI_Plugin
 
     /**
      * register options and arguments
+     * @param Options $options
      */
     protected function setup(Options $options)
     {
@@ -68,15 +69,17 @@ class cli_plugin_combo extends DokuWiki_CLI_Plugin
 
         $fileHandle = @fopen($output, 'w');
         if (!$fileHandle) $this->fatal("Failed to open $output");
-        $this->process($namespaces, 0, $fileHandle);
+        $this->process($namespaces, $fileHandle);
         fclose($fileHandle);
+
     }
 
     /**
      * @param $namespaces
+     * @param $fileHandle
      * @param int $depth recursion depth. 0 for unlimited
      */
-    private function process($namespaces, $depth = 0, $fileHandle)
+    private function process($namespaces, $fileHandle, $depth = 0)
     {
         global $conf;
 
@@ -137,12 +140,13 @@ class cli_plugin_combo extends DokuWiki_CLI_Plugin
         $qc = plugin_load('helper', 'qc');
 
         $header = array(
-            'id' ,
+            'id',
             'backlinks',
             'broken_links',
             'changes',
             'chars',
             'external_links',
+            'external_medias',
             'formatted',
             'h1',
             'h2',
@@ -150,11 +154,13 @@ class cli_plugin_combo extends DokuWiki_CLI_Plugin
             'h4',
             'h5',
             'internal_links',
+            'internal_medias',
             'words',
             'score'
         );
         fwrite($fileHandle, implode(",", $header) . PHP_EOL);
         foreach ($pages as $id => $page) {
+            $meta = p_get_metadata($id);
             $backlinks = sizeof(ft_backlinks($id, true));
             $qcData = $qc->getQCData($id);
             $data = array(
@@ -164,6 +170,7 @@ class cli_plugin_combo extends DokuWiki_CLI_Plugin
                 'changes' => $qcData['changes'],
                 'chars' => $qcData['chars'],
                 'external_links' => $qcData['external_links'],
+                'external_medias' => $qcData['external_medias'],
                 'formatted' => $qcData['formatted'],
                 'h1' => $qcData['header_count'][1],
                 'h2' => $qcData['header_count'][2],
@@ -171,6 +178,7 @@ class cli_plugin_combo extends DokuWiki_CLI_Plugin
                 'h4' => $qcData['header_count'][4],
                 'h5' => $qcData['header_count'][5],
                 'internal_links' => $qcData['internal_links'],
+                'internal_medias' => $qcData['internal_medias'],
                 'words' => $qcData['words'],
                 'score' => $qcData['score']
             );
