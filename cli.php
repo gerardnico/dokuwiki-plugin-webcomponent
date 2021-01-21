@@ -14,6 +14,11 @@ if (!defined('DOKU_INC')) die();
 use splitbrain\phpcli\Options;
 
 /**
+ * The memory of the server 128 is not enough
+ */
+ini_set('memory_limit', '256M');
+
+/**
  * Class cli_plugin_combo
  *
  * This is a cli:
@@ -88,9 +93,8 @@ class cli_plugin_combo extends DokuWiki_CLI_Plugin
         $pages = array();
         foreach ($namespaces as $ns) {
 
-            $qcData = array();
             search(
-                $qcData,
+                $pages,
                 $conf['datadir'],
                 'search_universal',
                 array(
@@ -99,15 +103,15 @@ class cli_plugin_combo extends DokuWiki_CLI_Plugin
                     'listdirs' => false,
                     'pagesonly' => true,
                     'skipacl' => true,
-                    'firsthead' => true,
-                    'meta' => true,
+                    'firsthead' => false,
+                    'meta' => false,
                 ),
                 str_replace(':', '/', $ns)
             );
 
             // add the ns start page
             if ($ns && page_exists($ns)) {
-                $qcData[] = array(
+                $pages[] = array(
                     'id' => $ns,
                     'ns' => getNS($ns),
                     'title' => p_get_first_heading($ns, false),
@@ -120,20 +124,6 @@ class cli_plugin_combo extends DokuWiki_CLI_Plugin
                 );
             }
 
-            // go through all those pages
-            while ($item = array_shift($qcData)) {
-                $time = (int)p_get_metadata($item['id'], 'date created', false);
-                if (!$time) $time = $item['mtime'];
-
-                $pages[$item['id']] = array(
-                    'title' => $item['title'],
-                    'ns' => $item['ns'],
-                    'size' => $item['size'],
-                    'time' => $time,
-                    'links' => array(),
-                    'media' => array()
-                );
-            }
         }
 
         /** @var helper_plugin_qc $qc */
@@ -159,11 +149,13 @@ class cli_plugin_combo extends DokuWiki_CLI_Plugin
             'score'
         );
         fwrite($fileHandle, implode(",", $header) . PHP_EOL);
-        foreach ($pages as $id => $page) {
-            $meta = p_get_metadata($id);
+        while ($page = array_shift($pages)) {
+            $id=$page['id'];
+            echo 'Processing the page '.$id . "\n";
+            // $meta = p_get_metadata($id);
             $backlinks = sizeof(ft_backlinks($id, true));
             $qcData = $qc->getQCData($id);
-            $data = array(
+            $row = array(
                 'id' => $id,
                 'backlinks' => $backlinks,
                 'broken_links' => $qcData['broken_links'],
@@ -182,7 +174,7 @@ class cli_plugin_combo extends DokuWiki_CLI_Plugin
                 'words' => $qcData['words'],
                 'score' => $qcData['score']
             );
-            fwrite($fileHandle, implode(",", $data) . PHP_EOL);
+            fwrite($fileHandle, implode(",", $row) . PHP_EOL);
         }
 
     }
