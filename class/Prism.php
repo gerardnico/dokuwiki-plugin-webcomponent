@@ -65,6 +65,13 @@ class Prism
     const FILE_PATH_KEY = "file-path";
 
 
+    /**
+     *
+     * @param $theme
+     * @return string
+     *
+     * Ter info: The theme of the default wiki is in the print.css file (search for code blocks)
+     */
     public static function getSnippet($theme)
     {
         $BASE_PRISM_CDN = self::BASE_PRISM_CDN;

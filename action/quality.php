@@ -6,6 +6,14 @@ use ComboStrap\TplConstant;
 
 /**
  * Class action_plugin_combo_quality
+ *
+ *
+ * https://www.dokuwiki.org/plugin:qc
+ * https://www.dokuwiki.org/plugin:readability
+ *
+ * Quality Guideline SEO
+ * https://developers.google.com/search/docs/advanced/guidelines/auto-gen-content
+ * https://support.google.com/webmasters/answer/9044175#thin-content
  */
 class action_plugin_combo_quality extends DokuWiki_Action_Plugin
 {
@@ -26,6 +34,10 @@ class action_plugin_combo_quality extends DokuWiki_Action_Plugin
          * https://www.dokuwiki.org/devel:event:search_query_fullpage
          */
         $controller->register_hook('SEARCH_QUERY_FULLPAGE', 'AFTER', $this, 'handleSearchFullPage', array());
+        /**
+         * https://www.dokuwiki.org/devel:event:feed_data_process
+         */
+        $controller->register_hook('FEED_DATA_PROCESS', 'AFTER', $this, 'handleRssFeed', array());
     }
 
     function handleAclCheck(&$event, $param)
@@ -81,6 +93,21 @@ class action_plugin_combo_quality extends DokuWiki_Action_Plugin
      * The search page do a search on page name
      */
     function handleSearchFullPage(&$event, $param)
+    {
+
+        $this->excludeLowQualityPageFromSearch($event);
+    }
+
+    /**
+     *
+     * @param $event
+     * @param $param
+     * The Rss
+     * https://www.dokuwiki.org/syndication
+     * Example
+     * https://example.com/feed.php?type=rss2&num=5
+     */
+    function handleRssFeed(&$event, $param)
     {
 
         $this->excludeLowQualityPageFromSearch($event);

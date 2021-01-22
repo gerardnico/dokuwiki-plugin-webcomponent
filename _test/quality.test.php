@@ -117,6 +117,32 @@ class plugin_combo_quality_test extends DokuWikiTest
         $ft_backlinks = ft_backlinks($highPage);
         $this->assertEquals(array(), $ft_backlinks);
 
+        /**
+         * Rss / Log
+         *
+         * The feed {@link rssRecentChanges()}
+         * http://localhost:81/feed.php?type=rss2&num=5
+         * use the {@link getRecents()}
+         *
+         * We cannot test {@link rssRecentChanges()}
+         * because we cannot mock a RSS request
+         * Therefore we test the log function
+         * {@link getRecents()}
+         */
+        $opt = array();
+        $opt['items'] = 5;
+        $opt['namespace'] = '';
+        $flags = 0;
+        // This function is used in the RSS
+        $recents = getRecents(0, $opt['items'], $opt['namespace'], $flags);
+        // extract the pages
+        $recentPages = array();
+        while($result = array_shift($recents)) {
+            $recentPages[$result['id']]=1;
+        }
+        $this->assertTrue(sizeof($recentPages)>=1);
+        $this->assertArrayHasKey($highPage, $recentPages);
+        $this->assertArrayNotHasKey($lowPage, $recentPages);
     }
 
 
