@@ -38,7 +38,7 @@ class PluginUtility
      * The name of the hidden/private namespace
      * where the icon and other artifactory are stored
      */
-    const HIDDEN_NAMESPACE_NAME = "combostrap";
+    const COMBOSTRAP_NAMESPACE_NAME = "combostrap";
 
 
     /**

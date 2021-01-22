@@ -29,14 +29,24 @@ class plugin_combo_hiddenpage_test extends DokuWikiTest
 
     function testHiddenBar(){
 
-        require_once(__DIR__ . '/../../../tpl/strap/class/TplConstant.php');
-        $footerbar = tpl_getConf(TplConstant::CONF_FOOTER);
-        $this->assertTrue(isHiddenPage($footerbar));
+        $constantFile = __DIR__ . '/../../../tpl/strap/class/TplConstant.php';
+        if (file_exists($constantFile)) {
+            /** @noinspection PhpIncludeInspection */
+            require_once($constantFile);
+        }
+        $footerBar = tpl_getConf(TplConstant::CONF_FOOTER);
+        $this->assertTrue(isHiddenPage($footerBar));
 
-        $headerbar = tpl_getConf(TplConstant::CONF_HEADER);
-        $this->assertTrue(isHiddenPage($footerbar));
+        $headerBar = tpl_getConf(TplConstant::CONF_HEADER);
+        $this->assertTrue(isHiddenPage($headerBar));
+
+        $sidekick = tpl_getConf(TplConstant::CONF_SIDEKICK);
+        $this->assertTrue(isHiddenPage($sidekick));
+
+        $this->assertTrue(isHiddenPage(PluginUtility::COMBOSTRAP_NAMESPACE_NAME));
 
         $this->assertFalse(isHiddenPage("whatever"));
     }
+
 
 }

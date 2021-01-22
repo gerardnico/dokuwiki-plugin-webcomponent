@@ -27,7 +27,7 @@ class action_plugin_combo_hiddenpage extends DokuWiki_Action_Plugin
         /**
          * Caching the strap bars and private namespace
          */
-        $pattern = "(" . $conf['sidebar'] . "|" . PluginUtility::HIDDEN_NAMESPACE_NAME;
+        $pattern = "(" . $conf['sidebar'] . "|" . PluginUtility::COMBOSTRAP_NAMESPACE_NAME;
         if ($conf['template'] == PluginUtility::TEMPLATE_STRAP_NAME) {
             $constantFile = __DIR__ . '/../../../tpl/strap/class/TplConstant.php';
             if (file_exists($constantFile)) {

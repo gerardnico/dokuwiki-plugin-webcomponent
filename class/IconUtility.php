@@ -29,7 +29,7 @@ require_once(__DIR__ . '/../class/ConfUtility.php');
 class IconUtility
 {
     const CONF_ICONS_MEDIA_NAMESPACE = "icons_namespace";
-    const CONF_ICONS_MEDIA_NAMESPACE_DEFAULT = ":".PluginUtility::HIDDEN_NAMESPACE_NAME.":icons";
+    const CONF_ICONS_MEDIA_NAMESPACE_DEFAULT = ":".PluginUtility::COMBOSTRAP_NAMESPACE_NAME.":icons";
     // Canonical name
     const NAME = "icon";
     // Arbitrary default namespace to be able to query with xpath
