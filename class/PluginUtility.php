@@ -34,6 +34,12 @@ class PluginUtility
     const CONTENT = 'content';
     const TAG = "tag";
 
+    /**
+     * The name of the hidden/private namespace
+     * where the icon and other artifactory are stored
+     */
+    const HIDDEN_NAMESPACE_NAME = "combostrap";
+
 
     /**
      * The URL base of the documentation
@@ -48,6 +54,11 @@ class PluginUtility
      * such as verification of a path
      */
     const PLUGIN_BASE_NAME = "combo";
+
+    /**
+     * The name of the template plugin
+     */
+    const TEMPLATE_STRAP_NAME = "strap";
 
     /**
      * @var array
