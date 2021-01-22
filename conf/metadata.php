@@ -91,3 +91,8 @@ $meta[syntax_plugin_combo_file::CONF_FILE_ENABLE] = array('onoff');
  * Quality (SEO)
  */
 $meta[SeoUtility::CONF_PRIVATE_LOW_QUALITY_PAGE_ENABLED] = array('onoff');
+
+/**
+ * Preformatted mode enable
+ */
+$meta[syntax_plugin_combo_preformatted::CONF_PREFORMATTED_ENABLE] = array('onoff');

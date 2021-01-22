@@ -240,6 +240,13 @@ EOD;
         if ($language == "dw") {
             $language = "html";
         }
+        /**
+         * Language name mapping between the dokuwiki default
+         * and prism
+         */
+        if ($language == "rsplus"){
+            $language = "r";
+        }
         StringUtility::addEolIfNotPresent($renderer->doc);
         PluginUtility::addClass2Attributes('language-' . $language, $attributes);
         if (array_key_exists("line-numbers", $attributes)) {

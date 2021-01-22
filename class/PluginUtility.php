@@ -217,6 +217,7 @@ class PluginUtility
         // Process the attributes that have an effect on the class
         self::processClass($attributes);
 
+        self::processCollapse($attributes);
         // Then transform
         $tagAttributeString = "";
         foreach ($attributes as $name => $value) {
@@ -948,6 +949,23 @@ class PluginUtility
             return substr($match, 0, $spacePosition);
         }
 
+    }
+
+    /**
+     * The collapse attribute are the same
+     * for all component except a link
+     * @param $attributes
+     */
+    private static function processCollapse(&$attributes)
+    {
+
+        $collapse = "collapse";
+        if (array_key_exists($collapse, $attributes)) {
+            $targetId = $attributes[$collapse];
+            unset($attributes[$collapse]);
+            $attributes['data-toggle']="collapse";
+            $attributes['data-target']=$targetId;
+        }
     }
 
 

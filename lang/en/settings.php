@@ -83,4 +83,8 @@ $lang[syntax_plugin_combo_file::CONF_FILE_ENABLE] = PluginUtility::getUrl("file"
  */
 $lang[SeoUtility::CONF_PRIVATE_LOW_QUALITY_PAGE_ENABLED] = PluginUtility::getUrl("seo", "Seo Component") . ' - If enabled, low quality page will be made private and not available to search engine';
 
+/**
+ * Preformatted mode
+ */
+$lang[syntax_plugin_combo_preformatted::CONF_PREFORMATTED_ENABLE] = PluginUtility::getUrl("preformatted", "Preformatted Component") . ' - If checked, the default preformatted mode of dokuwiki is disabled';
 ?>

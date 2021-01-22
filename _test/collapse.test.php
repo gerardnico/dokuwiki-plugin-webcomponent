@@ -23,7 +23,7 @@ class plugin_combo_collapse_test extends DokuWikiTest
         parent::setUp();
     }
 
-    public function test_collapse()
+    public function test_collapse_navbar()
     {
 
         $content = "<navbar><collapse></collapse></navbar>";
@@ -36,7 +36,7 @@ class plugin_combo_collapse_test extends DokuWikiTest
 
     }
 
-    public function test_collapse_link()
+    public function test_collapse_navbar_link()
     {
 
         $content = "<navbar><collapse>[[a:link]]</collapse></navbar>";
@@ -46,6 +46,19 @@ class plugin_combo_collapse_test extends DokuWikiTest
         $this->assertEquals(
             TestUtility::normalizeDokuWikiHtml($expected),
             TestUtility::normalizeDokuWikiHtml($xhtml)
+        );
+
+    }
+
+    public function test_collapse_attribute()
+    {
+
+        $content = "<button collapse=\"#collapseExample\">Button with data-target</button>";
+        $result = TestUtility::renderText2Xhtml($content);
+        $expected = '<button type="button" class="btn btn-primary" data-toggle="collapse" data-target="#collapseExample">Button with data-target</button>';
+        $this->assertEquals(
+            TestUtility::normalizeDokuWikiHtml($expected),
+            TestUtility::normalizeDokuWikiHtml($result)
         );
 
     }

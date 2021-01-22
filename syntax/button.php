@@ -197,6 +197,8 @@ class syntax_plugin_combo_button extends DokuWiki_Syntax_Plugin
                             break;
                     }
                 }
+
+
                 $inlineAttributes = PluginUtility::array2HTMLAttributes($attributes);
                 $html = '<button type="button" ' . $inlineAttributes . '>';
                 return array(

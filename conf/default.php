@@ -118,3 +118,9 @@ $conf['powershellPrompt'] = 'PS C:\\';
  * See {@link \ComboStrap\SeoUtility::CONF_PRIVATE_LOW_QUALITY_PAGE_ENABLED}
  */
 $conf['privateLowQualityPageEnabled'] = 0;
+
+/**
+ * Preformatted mode disable
+ * See {@link syntax_plugin_combo_preformatted::CONF_PREFORMATTED_ENABLE}
+ */
+$conf['preformattedEnable'] = 0;
