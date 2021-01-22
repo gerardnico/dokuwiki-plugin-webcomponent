@@ -188,7 +188,7 @@ class syntax_plugin_combo_dropdown extends DokuWiki_Syntax_Plugin
 
                 case DOKU_LEXER_MATCHED:
 
-                    $html = LinkUtility::renderHTML($renderer, $payload);
+                    $html = LinkUtility::renderAsAnchorElement($renderer, $payload);
                     $html = HtmlUtility::addAttributeValue($html, "class", "dropdown-item");
                     $html = LinkUtility::deleteDokuWikiClass($html);
                     $renderer->doc .= $html;

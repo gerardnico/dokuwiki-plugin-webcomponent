@@ -55,7 +55,7 @@ class plugin_combo_link_test extends DokuWikiTest
         $this->assertEquals($title,$attributes[LinkUtility::ATTRIBUTE_TITLE],"It should be the good title");
 
         $render = new Doku_Renderer_xhtml();
-        $html = LinkUtility::renderHTML($render,$attributes);
+        $html = LinkUtility::renderAsAnchorElement($render,$attributes);
         $expectedHtml = '<a href="/./doku.php?id='.$qualifiedId.'" class="wikilink2" title="'.$id.'" rel="nofollow" data-wiki-id="'.$id.'">'.$title.'</a>';
         $this->assertEquals($expectedHtml,$html,"The html should be the good one");
     }
@@ -72,7 +72,7 @@ class plugin_combo_link_test extends DokuWikiTest
         $this->assertEquals($title,$attributes[LinkUtility::ATTRIBUTE_TITLE],"It should be the good title");
 
         $render = new Doku_Renderer_xhtml();
-        $html = LinkUtility::renderHTML($render,$attributes);
+        $html = LinkUtility::renderAsAnchorElement($render,$attributes);
         $this->assertEquals("<span>$title</span>",$html,"The html should be the good one");
 
     }

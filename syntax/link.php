@@ -8,6 +8,7 @@ require_once(__DIR__ . "/../class/HtmlUtility.php");
 use ComboStrap\HtmlUtility;
 use ComboStrap\LinkUtility;
 use ComboStrap\PluginUtility;
+use ComboStrap\SeoUtility;
 use ComboStrap\Tag;
 
 if (!defined('DOKU_INC')) die();
@@ -75,15 +76,23 @@ class syntax_plugin_combo_link extends DokuWiki_Syntax_Plugin
 
     function connectTo($mode)
     {
-        // Only inside the following component
-        $authorizedMode =
-            [
-                PluginUtility::getModeForComponent(syntax_plugin_combo_button::TAG),
-                PluginUtility::getModeForComponent(syntax_plugin_combo_cite::TAG),
-                PluginUtility::getModeForComponent(syntax_plugin_combo_dropdown::TAG),
-                PluginUtility::getModeForComponent(syntax_plugin_combo_listitem::MODE_NAME)
+        /**
+         * Without the low quality page module enabled
+         * we take over only on a subset of component
+         */
+        if (!$this->getConf(SeoUtility::CONF_PRIVATE_LOW_QUALITY_PAGE_ENABLED)) {
+            // Only inside the following component
+            $authorizedMode =
+                [
+                    PluginUtility::getModeForComponent(syntax_plugin_combo_button::TAG),
+                    PluginUtility::getModeForComponent(syntax_plugin_combo_cite::TAG),
+                    PluginUtility::getModeForComponent(syntax_plugin_combo_dropdown::TAG),
+                    PluginUtility::getModeForComponent(syntax_plugin_combo_listitem::MODE_NAME)
                 ];
-        if (in_array($mode,$authorizedMode)) {
+            if (in_array($mode, $authorizedMode)) {
+                $this->Lexer->addSpecialPattern(LinkUtility::LINK_PATTERN, $mode, PluginUtility::getModeForComponent($this->getPluginComponent()));
+            }
+        } else {
             $this->Lexer->addSpecialPattern(LinkUtility::LINK_PATTERN, $mode, PluginUtility::getModeForComponent($this->getPluginComponent()));
         }
     }
@@ -107,16 +116,16 @@ class syntax_plugin_combo_link extends DokuWiki_Syntax_Plugin
          * Because we use the specialPattern, there is only one state ie DOKU_LEXER_SPECIAL
          */
         $attributes = LinkUtility::getAttributes($match);
-        $tag = new Tag(self::TAG,$attributes,$state,$handler->calls);
+        $tag = new Tag(self::TAG, $attributes, $state, $handler->calls);
         $parent = $tag->getParent();
         $parentName = "";
-        if ($parent !=null){
+        if ($parent != null) {
             $parentName = $parent->getName();
         }
-        return array (
-                PluginUtility::ATTRIBUTES=> $attributes,
-                PluginUtility::PARENT_TAG=>$parentName
-            );
+        return array(
+            PluginUtility::ATTRIBUTES => $attributes,
+            PluginUtility::PARENT_TAG => $parentName
+        );
 
 
     }
@@ -142,17 +151,27 @@ class syntax_plugin_combo_link extends DokuWiki_Syntax_Plugin
                 /**
                  * Cache problem
                  */
-                if (isset($data[PluginUtility::ATTRIBUTES])){
+                if (isset($data[PluginUtility::ATTRIBUTES])) {
                     $attributes = $data[PluginUtility::ATTRIBUTES];
                 } else {
                     $attributes = $data;
                 }
 
-                $htmlLink = LinkUtility::renderHTML($renderer, $attributes);
-                $htmlLink = LinkUtility::deleteDokuWikiClass($htmlLink);
-                if ($data[PluginUtility::PARENT_TAG]==syntax_plugin_combo_button::TAG){
-                    // We could also apply the class ie btn-secondary ...
-                    $htmlLink = LinkUtility::inheritColorFromParent($htmlLink);
+                $type = $attributes[LinkUtility::ATTRIBUTE_TYPE];
+                $id = $attributes[LinkUtility::ATTRIBUTE_ID];
+                if (
+                    $type == "internal"
+                    && $this->getConf(SeoUtility::CONF_PRIVATE_LOW_QUALITY_PAGE_ENABLED)
+                    && SeoUtility::isPageToExclude($id)
+                ) {
+                    $htmlLink = LinkUtility::renderAsSpanElement($attributes);
+                } else {
+                    $htmlLink = LinkUtility::renderAsAnchorElement($renderer, $attributes);
+                    $htmlLink = LinkUtility::deleteDokuWikiClass($htmlLink);
+                    if ($data[PluginUtility::PARENT_TAG] == syntax_plugin_combo_button::TAG) {
+                        // We could also apply the class ie btn-secondary ...
+                        $htmlLink = LinkUtility::inheritColorFromParent($htmlLink);
+                    }
                 }
                 $renderer->doc .= $htmlLink;
 
@@ -166,7 +185,7 @@ class syntax_plugin_combo_link extends DokuWiki_Syntax_Plugin
                  * Keep track of the backlinks ie meta['relation']['references']
                  * @var Doku_Renderer_metadata $renderer
                  */
-                if (isset($data[PluginUtility::ATTRIBUTES])){
+                if (isset($data[PluginUtility::ATTRIBUTES])) {
                     $attributes = $data[PluginUtility::ATTRIBUTES];
                 } else {
                     $attributes = $data;

@@ -4,6 +4,7 @@ use ComboStrap\AdsUtility;
 use ComboStrap\IconUtility;
 use ComboStrap\MetadataUtility;
 use ComboStrap\Prism;
+use ComboStrap\SeoUtility;
 use ComboStrap\UrlManagerBestEndPage;
 
 require_once(__DIR__ . '/../syntax/related.php');
@@ -85,3 +86,8 @@ $meta[Prism::CONF_BASH_PROMPT] = array('string');
 $meta[Prism::CONF_BATCH_PROMPT] = array('string');
 $meta[Prism::CONF_POWERSHELL_PROMPT] = array('string');
 $meta[syntax_plugin_combo_file::CONF_FILE_ENABLE] = array('onoff');
+
+/**
+ * Quality (SEO)
+ */
+$meta[SeoUtility::CONF_PRIVATE_LOW_QUALITY_PAGE_ENABLED] = array('onoff');

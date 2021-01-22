@@ -5,6 +5,7 @@ use ComboStrap\IconUtility;
 use ComboStrap\MetadataUtility;
 use ComboStrap\PluginUtility;
 use ComboStrap\Prism;
+use ComboStrap\SeoUtility;
 use ComboStrap\UrlManagerBestEndPage;
 
 require_once(__DIR__ . '/../../class/PluginUtility.php');
@@ -77,5 +78,9 @@ $lang[Prism::CONF_POWERSHELL_PROMPT] = PluginUtility::getUrl("prism", "Prism Com
 $lang[syntax_plugin_combo_code::CONF_CODE_ENABLE] = PluginUtility::getUrl("code", "Code Component") . ' - Enable or disable the code component';
 $lang[syntax_plugin_combo_file::CONF_FILE_ENABLE] = PluginUtility::getUrl("file", "File Component") . ' - Enable or disable the file component';
 
+/**
+ * Seo
+ */
+$lang[SeoUtility::CONF_PRIVATE_LOW_QUALITY_PAGE_ENABLED] = PluginUtility::getUrl("seo", "Seo Component") . ' - If enabled, low quality page will be made private and not available to search engine';
 
 ?>

@@ -96,7 +96,7 @@ class LinkUtility
      * @param array $attributes
      * @return mixed
      */
-    public static function renderHTML($renderer, array $attributes)
+    public static function renderAsAnchorElement($renderer, array $attributes)
     {
         $id = $attributes[self::ATTRIBUTE_ID];
         $title = $attributes[self::ATTRIBUTE_TITLE];
@@ -224,6 +224,24 @@ class LinkUtility
     public static function deleteDokuWikiClass($htmlLink){
         // only wikilink1 (wikilink2 shows a red link if the page does not exist)
         return HtmlUtility::deleteClassValue($htmlLink,"wikilink1");
+    }
+
+    /**
+     * Render a link as a span element
+     * This is used when a public page links to a low quality page
+     * to render a span element
+     * The span element is then modified as link by javascript if the user is not anonymous
+     * @param array $attributes
+     * @return string
+     */
+    public static function renderAsSpanElement(array $attributes)
+    {
+        $id = $attributes[self::ATTRIBUTE_ID];
+        $title = $attributes[self::ATTRIBUTE_TITLE];
+        if (empty($title)){
+            $title = $id;
+        }
+        return "<span data-wiki-id=\"{$id}\">{$title}</span>";
     }
 
 }

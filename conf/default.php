@@ -112,3 +112,9 @@ $conf['prismTheme'] = "tomorrow";
 $conf['bashPrompt'] = "#";
 $conf['batchPrompt'] = 'C:\\';
 $conf['powershellPrompt'] = 'PS C:\\';
+
+/**
+ * SEO module
+ * See {@link \ComboStrap\SeoUtility::CONF_PRIVATE_LOW_QUALITY_PAGE_ENABLED}
+ */
+$conf['privateLowQualityPageEnabled'] = 0;

@@ -73,9 +73,6 @@ class plugin_combo_list_ntoc extends DokuWikiTest
   <li class=\"combo-list-item\">
     <a href=\"/./doku.php?id=page\" class=\"\" title=\"page\" data-wiki-id=\"page\">page</a>
   </li>
-  <li class=\"combo-list-item\">
-    <a href=\"/./doku.php?id=sidebar\" class=\"\" title=\"sidebar\" data-wiki-id=\"sidebar\">sidebar</a>
-  </li>
 </ul>
 ";
         /**

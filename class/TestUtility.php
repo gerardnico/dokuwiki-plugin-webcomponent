@@ -114,7 +114,6 @@ class TestUtility
     /**
      * @param $expected
      * @return mixed
-     * @throws \Exception
      */
     public static function normalizeComboXml($expected)
     {
