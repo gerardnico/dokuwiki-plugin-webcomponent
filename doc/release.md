@@ -7,6 +7,10 @@
 Steps to be taken to do a release (functional or snapshot)
 
   * Check a [detail page](http://localhost:81/_detail/strap/strap_heightfixedtopnavbar.png)
+  * Run the combo cli to rewrite the link not yet rewritten
+```
+/bin/plugin.php combo
+```
   * Release Type:
     * Functional Release: Change the date in the [info plugin file](../plugin.info.txt) and [info template file](../../../tpl/strap/template.info.txt)
     * Snapshot Release: Do nothing
