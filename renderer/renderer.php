@@ -4,7 +4,6 @@ use ComboStrap\AdsUtility;
 use ComboStrap\BreadcrumbHierarchical;
 use ComboStrap\HtmlUtility;
 use ComboStrap\FsWikiUtility;
-use ComboStrap\PluginUtility;
 use ComboStrap\TableUtility;
 use ComboStrap\TocUtility;
 
@@ -18,6 +17,8 @@ require_once(__DIR__ . '/../class/BreadcrumbHierarchical.php');
 
 /**
  * Class renderer_plugin_combo_renderer
+ * The last two parts ie `combo_renderer` is the id for dokuwiki
+ * The last part should also be equal to the name
  */
 class  renderer_plugin_combo_renderer extends Doku_Renderer_xhtml
 {
