@@ -29,6 +29,10 @@ class renderer_plugin_combo_stats extends Doku_Renderer
     const TOP_SCORE = 10;
     const RULE_TITLE = "title_present";
     const RULE_HEADERS_STRUCTURE = "headers_structure";
+    const BACKLINKS = "backlinks";
+    const FIXME = 'fixme';
+    const WORDS = 'words';
+    const RULE_WORDS_MINIMAL = 'words_min';
     /**
      * We store all our data in an array
      */
@@ -52,7 +56,7 @@ class renderer_plugin_combo_stats extends Doku_Renderer
         'external_medias' => 0,
         self::INTERNAL_LINK_DISTANCE => array(),
         'chars' => 0,
-        'words' => 0,
+        self::WORDS => 0,
 
     );
 
@@ -94,7 +98,7 @@ class renderer_plugin_combo_stats extends Doku_Renderer
         // work on raw text
         $text = rawWiki($ID);
         $this->stats['chars'] = strlen($text);
-        $this->stats['words'] = count(array_filter(preg_split('/[^\w\-_]/u', $text)));
+        $this->stats[self::WORDS] = count(array_filter(preg_split('/[^\w\-_]/u', $text)));
     }
 
 
@@ -105,16 +109,22 @@ class renderer_plugin_combo_stats extends Doku_Renderer
     {
         global $ID;
 
-        // The exported object
+        /**
+         * The exported object
+         */
         $statExport = $this->stats;
+
+        /**
+         * Internal link distance summary calculation
+         */
         $linkLengths = $statExport[self::INTERNAL_LINK_DISTANCE];
         unset($statExport[self::INTERNAL_LINK_DISTANCE]);
-        $count = count($linkLengths);
+        $countBacklinks = count($linkLengths);
         $statExport[self::INTERNAL_LINK_DISTANCE]['avg'] = null;
         $statExport[self::INTERNAL_LINK_DISTANCE]['max'] = null;
         $statExport[self::INTERNAL_LINK_DISTANCE]['min'] = null;
-        if ($count > 0) {
-            $statExport[self::INTERNAL_LINK_DISTANCE]['avg'] = array_sum($linkLengths) / $count;
+        if ($countBacklinks > 0) {
+            $statExport[self::INTERNAL_LINK_DISTANCE]['avg'] = array_sum($linkLengths) / $countBacklinks;
             $statExport[self::INTERNAL_LINK_DISTANCE]['max'] = max($linkLengths);
             $statExport[self::INTERNAL_LINK_DISTANCE]['min'] = min($linkLengths);
         }
@@ -128,7 +138,9 @@ class renderer_plugin_combo_stats extends Doku_Renderer
         $ruleResults = array();
         $ruleResults[self::RULE_BACKLINKS_MIN][self::DESCRIPTION] = "A page should have at minimum one backlink";
         $errorPoint = 0;
-        if (!count(ft_backlinks($ID))) {
+        $countBacklinks = count(ft_backlinks($ID));
+        $statExport[self::BACKLINKS] = $countBacklinks;
+        if ($countBacklinks == 0) {
             $errorPoint += 2;
             $ruleResults[self::RULE_BACKLINKS_MIN][self::RESULT] = self::FAILED;
         } else {
@@ -140,8 +152,10 @@ class renderer_plugin_combo_stats extends Doku_Renderer
          * No fixme
          */
         $ruleResults[self::RULE_FIXME][self::DESCRIPTION] = "A page should have no fixme";
-        if ($this->stats['fixme'] != 0) {
-            $errorPoint += $this->stats['fixme'];
+        $fixmeCount = $this->stats[self::FIXME];
+        $statExport[self::FIXME] = $fixmeCount == null ? 0 : $fixmeCount;
+        if ($fixmeCount != 0) {
+            $errorPoint += $fixmeCount;
             $ruleResults[self::RULE_FIXME][self::RESULT] = self::FAILED;
         } else {
             $ruleResults[self::RULE_FIXME][self::RESULT] = self::PASSED;
@@ -173,37 +187,21 @@ class renderer_plugin_combo_stats extends Doku_Renderer
                 $ruleResults[self::RULE_HEADERS_STRUCTURE][self::RESULT][self::DESCRIPTION][] = "The " . $i . " header (h" . $currentHeaderLevel . ") has a level bigger than its precedent (" . $previousHeaderLevel . ")";
             }
         }
-        if ($treeError>0) {
+        if ($treeError > 0) {
             $ruleResults[self::RULE_HEADERS_STRUCTURE][self::RESULT] = self::FAILED;
         } else {
             $ruleResults[self::RULE_HEADERS_STRUCTURE][self::RESULT] = self::PASSED;
         }
 
-        // 1/2 points for deeply nested quotations
-        if ($this->stats['quote_nest'] > 2) {
-            $ruleResults['deepquote'] += $this->stats['quote_nest'] / 2;
-        }
-
-        // FIXME points for many quotes?
-
-        // 1/2 points for too many hr
-        if ($this->stats['hr'] > 2) {
-            $ruleResults['manyhr'] = ($this->stats['hr'] - 2) / 2;
-        }
-
-        // 1 point for too many line breaks
-        if ($this->stats['linebreak'] > 2) {
-            $ruleResults['manybr'] = $this->stats['linebreak'] - 2;
-        }
-
-        // 1 point for single author only
-        if (!$this->getConf('single_author_only') && count($this->stats['authors']) == 1) {
-            $ruleResults['singleauthor'] = 1;
-        }
-
-        // 1 point for too small document
-        if ($this->stats['chars'] < 150) {
-            $ruleResults['toosmall'] = 1;
+        /**
+         * Small document
+         */
+        $minimalWordCount = 150;
+        $ruleResults[self::RULE_WORDS_MINIMAL][self::DESCRIPTION] = "A page should have at minimal " . $minimalWordCount . " words.";
+        if ($this->stats[self::WORDS] < $minimalWordCount) {
+            $ruleResults[self::RULE_WORDS_MINIMAL][self::RESULT] = self::FAILED;
+        } else {
+            $ruleResults[self::RULE_WORDS_MINIMAL][self::RESULT] = self::PASSED;
         }
 
         // 1 point for too large document
@@ -247,11 +245,36 @@ class renderer_plugin_combo_stats extends Doku_Renderer
             $ruleResults['manyformat'] = 2;
         }
 
-//        if ($len > 500) $statExport[self::QUALITY][self::ERROR]['plaintext']++;
-//        if ($len > 500) $statExport[self::QUALITY][self::ERROR]['plaintext']++;
-//
-//        // 1 point for formattings longer than 500 chars
-//        $statExport[self::QUALITY][self::ERROR]['multiformat']
+        /**
+         * Rules comes from the qc plugin
+         * They stay for doc
+         */
+        // 1/2 points for deeply nested quotations
+        if ($this->stats['quote_nest'] > 2) {
+            $ruleResults['deepquote'] += $this->stats['quote_nest'] / 2;
+        }
+
+        // 1/2 points for too many hr
+        if ($this->stats['hr'] > 2) {
+            $ruleResults['manyhr'] = ($this->stats['hr'] - 2) / 2;
+        }
+
+        // 1 point for too many line breaks
+        if ($this->stats['linebreak'] > 2) {
+            $ruleResults['manybr'] = $this->stats['linebreak'] - 2;
+        }
+
+        // 1 point for single author only
+        if (!$this->getConf('single_author_only') && count($this->stats['authors']) == 1) {
+            $ruleResults['singleauthor'] = 1;
+        }
+
+        // Too much cdata (plaintext), see cdata
+        // if ($len > 500) $statExport[self::QUALITY][self::ERROR]['plaintext']++;
+        // if ($len > 500) $statExport[self::QUALITY][self::ERROR]['plaintext']++;
+        //
+        // // 1 point for formattings longer than 500 chars
+        // $statExport[self::QUALITY][self::ERROR]['multiformat']
 
         /**
          * Quality Score
@@ -292,12 +315,10 @@ class renderer_plugin_combo_stats extends Doku_Renderer
     }
 
     /**
-     * the type of renderer
-     * The plugin can add data to this renderer
      */
     public function getFormat()
     {
-        return 'stats';
+        return 'json';
     }
 
     public function internallink($id, $name = null, $search = null, $returnonly = false, $linktype = 'content')
@@ -341,7 +362,7 @@ class renderer_plugin_combo_stats extends Doku_Renderer
 
     public function smiley($smiley)
     {
-        if ($smiley == 'FIXME') $this->stats['fixme']++;
+        if ($smiley == 'FIXME') $this->stats[self::FIXME]++;
     }
 
     public function linebreak()
