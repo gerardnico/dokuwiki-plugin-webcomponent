@@ -28,14 +28,22 @@ class renderer_plugin_combo_statsTest extends DokuWikiTest
 
     public function testLowLevel()
     {
-        // Save a page
+        // Save a test page
         $pageId = "stats";
         TestUtility::addPage($pageId, "bla", 'Page creation');
 
-        $request = new TestRequest();
-        $result = $request->get(array('id' => $pageId,"do"=>"export_combo_stats"), '/doku.php');
-        $json = json_decode($result->getContent());
+        /**
+         * The p_render function was stolen from the {@link p_cached_output} function
+         * used the in the switch of the {@link \dokuwiki\Action\Export::preProcess()} function
+         */
+        $file = wikiFN($pageId, 0);
+        $renderer = "combo_stats";
+        global $ID;
+        $ID=$pageId;
+        $result = p_render($renderer, p_cached_instructions($file,false,$pageId), $info);
+        $json = json_decode($result);
         $this->assertEquals($pageId, $json->id);
         $this->assertEquals("low", $json->quality->level);
+
     }
 }
