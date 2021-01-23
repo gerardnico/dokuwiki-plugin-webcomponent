@@ -26,17 +26,16 @@ class renderer_plugin_combo_statsTest extends DokuWikiTest
         parent::setUp();
     }
 
-    public function testRender()
+    public function testLowLevel()
     {
         // Save a page
         $pageId = "stats";
-        $text = '===== h1 ====='.DOKU_LF;
-        $text .= '==== h2 ===='.DOKU_LF;
-        TestUtility::addPage($pageId, $text, 'Page creation');
+        TestUtility::addPage($pageId, "bla", 'Page creation');
 
         $request = new TestRequest();
         $result = $request->get(array('id' => $pageId,"do"=>"export_combo_stats"), '/doku.php');
         $json = json_decode($result->getContent());
         $this->assertEquals($pageId, $json->id);
+        $this->assertEquals("low", $json->quality->level);
     }
 }
