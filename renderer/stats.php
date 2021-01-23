@@ -10,8 +10,11 @@ use dokuwiki\ChangeLog\PageChangeLog;
  */
 class renderer_plugin_combo_stats extends Doku_Renderer
 {
+    /**
+     * Constant in Key or value
+     */
     const HEADER_POSITION = 'header_id';
-    const HEADER_COUNT = 'headers';
+    const HEADERS = 'headers';
     const INTERNAL_LINK_DISTANCE = 'internal_links_distance';
     const DATE_CREATED = 'date_created';
     const DATE_MODIFIED = 'date_modified';
@@ -21,24 +24,43 @@ class renderer_plugin_combo_stats extends Doku_Renderer
     const RESULT = "result";
     const SCORE = "score";
     const DESCRIPTION = "description";
-
-    const RULE_BACKLINKS_MIN = 'backlinks_min';
     const PASSED = "Passed";
     const FAILED = "Failed";
     const RULE_FIXME = "fixme_min";
-    const TOP_SCORE = 10;
     const RULE_TITLE = "title_present";
-    const RULE_HEADERS_STRUCTURE = "headers_structure";
     const BACKLINKS = "backlinks";
     const FIXME = 'fixme';
     const WORDS = 'words';
+    /**
+     * Rules key
+     */
     const RULE_WORDS_MINIMAL = 'words_min';
+    const RULE_HEADERS_STRUCTURE = "headers_structure";
+    const RULE_BACKLINKS_MIN = 'backlinks_min';
+    const RULE_WORDS_MAXIMAL = "words_max";
+    const RULE_AVERAGE_WORDS_BY_SECTION_MIN = 'words_by_section_avg_min';
+    const RULE_AVERAGE_WORDS_BY_SECTION_MAX = 'words_by_section_avg_max';
+
+    /**
+     * Score factors
+     * They are used to calculate the score
+     */
+    const CONF_QUALITY_SCORE_BACKLINK_FACTOR = 'qualityScoreBacklinksFactor';
+    const CONF_QUALITY_SCORE_TITLE_PRESENT = 'qualityScoreTitlePresent';
+    const CONF_QUALITY_SCORE_GOOD_HEADER_STRUCTURE = 'qualityScoreGoodOutline';
+    const CONF_QUALITY_SCORE_GOOD_CONTENT = 'qualityScoreGoodContentLength';
+    const CONF_QUALITY_SCORE_NO_FIXME = 'qualityScoreNoFixMe';
+    const CONF_QUALITY_SCORE_GOOD_WORD_SECTION_RATIO = 'qualityScoreGoodWordSectionRatio';
+
+
+
+
     /**
      * We store all our data in an array
      */
     public $stats = array(
 
-        self::HEADER_COUNT => array(),
+        self::HEADERS => array(),
         self::HEADER_POSITION => array(),
         'linebreak' => 0,
         'quote_nest' => 0,
@@ -132,18 +154,22 @@ class renderer_plugin_combo_stats extends Doku_Renderer
         /**
          * Quality Report / Rules
          */
-        /**
-         * backlinks are an
-         */
+        // The array that hold the results of the quality rules
         $ruleResults = array();
+        // The array that hold the quality score details
+        $qualityScores = array();
+
+
+        /**
+         * Backlinks rule
+         */
         $ruleResults[self::RULE_BACKLINKS_MIN][self::DESCRIPTION] = "A page should have at minimum one backlink";
-        $errorPoint = 0;
         $countBacklinks = count(ft_backlinks($ID));
         $statExport[self::BACKLINKS] = $countBacklinks;
         if ($countBacklinks == 0) {
-            $errorPoint += 2;
             $ruleResults[self::RULE_BACKLINKS_MIN][self::RESULT] = self::FAILED;
         } else {
+            $qualityScores[self::BACKLINKS] = $countBacklinks * $this->getConf(self::CONF_QUALITY_SCORE_BACKLINK_FACTOR, 1);
             $ruleResults[self::RULE_BACKLINKS_MIN][self::RESULT] = self::PASSED;
         }
 
@@ -155,10 +181,10 @@ class renderer_plugin_combo_stats extends Doku_Renderer
         $fixmeCount = $this->stats[self::FIXME];
         $statExport[self::FIXME] = $fixmeCount == null ? 0 : $fixmeCount;
         if ($fixmeCount != 0) {
-            $errorPoint += $fixmeCount;
             $ruleResults[self::RULE_FIXME][self::RESULT] = self::FAILED;
         } else {
             $ruleResults[self::RULE_FIXME][self::RESULT] = self::PASSED;
+            $qualityScores['no' . self::FIXME] = $this->getConf(self::CONF_QUALITY_SCORE_NO_FIXME, 1);;
         }
 
         /**
@@ -166,16 +192,16 @@ class renderer_plugin_combo_stats extends Doku_Renderer
          */
         $ruleResults[self::RULE_TITLE][self::DESCRIPTION] = "A title should be present";
         if (empty($this->stats[self::TITLE])) {
-            $errorPoint += 5;
             $ruleResults[self::RULE_TITLE][self::RESULT] = self::FAILED;
         } else {
+            $qualityScores[self::TITLE.'Present'] = $this->getConf(self::CONF_QUALITY_SCORE_TITLE_PRESENT, 10);;
             $ruleResults[self::RULE_TITLE][self::RESULT] = self::PASSED;
         }
 
         /**
-         * header structure
+         * Outline / Header structure
          */
-        $ruleResults[self::RULE_HEADERS_STRUCTURE][self::DESCRIPTION] = "The headers should have a tree structure";
+        $ruleResults[self::RULE_HEADERS_STRUCTURE][self::DESCRIPTION] = "The headers should have a tree structure (outline, toc)";
         $cnt = count($this->stats[self::HEADER_POSITION]);
         unset($statExport[self::HEADER_POSITION]);
         $treeError = 0;
@@ -190,44 +216,68 @@ class renderer_plugin_combo_stats extends Doku_Renderer
         if ($treeError > 0) {
             $ruleResults[self::RULE_HEADERS_STRUCTURE][self::RESULT] = self::FAILED;
         } else {
+            $qualityScores['goodOutline'] = $this->getConf(self::CONF_QUALITY_SCORE_GOOD_HEADER_STRUCTURE, 10);
             $ruleResults[self::RULE_HEADERS_STRUCTURE][self::RESULT] = self::PASSED;
         }
 
         /**
-         * Small document
+         * Document length
          */
         $minimalWordCount = 150;
         $ruleResults[self::RULE_WORDS_MINIMAL][self::DESCRIPTION] = "A page should have at minimal " . $minimalWordCount . " words.";
+        $maximalWordCount = 2000;
+        $ruleResults[self::RULE_WORDS_MAXIMAL][self::DESCRIPTION] = "A page should have at maximal " . $maximalWordCount . " words.";
+
         if ($this->stats[self::WORDS] < $minimalWordCount) {
             $ruleResults[self::RULE_WORDS_MINIMAL][self::RESULT] = self::FAILED;
         } else {
             $ruleResults[self::RULE_WORDS_MINIMAL][self::RESULT] = self::PASSED;
+            if ($this->stats[self::WORDS] > $maximalWordCount) {
+                $ruleResults[self::RULE_WORDS_MAXIMAL][self::RESULT] = self::FAILED;
+            } else {
+                $ruleResults[self::RULE_WORDS_MAXIMAL][self::RESULT] = self::PASSED;
+                $qualityScores['goodContentLength'] = $this->getConf(self::CONF_QUALITY_SCORE_GOOD_CONTENT, 10);
+            }
         }
 
-        // 1 point for too large document
-        if ($this->stats['chars'] > 100000) {
-            $ruleResults['toolarge'] = 1;
-        }
 
-        // header to text ratio
-        $hc = $this->stats[self::HEADER_COUNT][1] +
-            $this->stats[self::HEADER_COUNT][2] +
-            $this->stats[self::HEADER_COUNT][3] +
-            $this->stats[self::HEADER_COUNT][4] +
-            $this->stats[self::HEADER_COUNT][5];
-        $hc--; //we expect at least 1
-        if ($hc > 0) {
-            $hr = $this->stats['chars'] / $hc;
+        /**
+         * Average Number of words by header section to text ratio
+         */
 
-            // 1 point for too many headers
-            if ($hr < 200) {
-                $ruleResults['manyheaders'] = 1;
+        $headerCount = array_sum($this->stats[self::HEADERS]);
+        $headerCount--; //we expect at least 1
+        if ($headerCount > 0) {
+
+            $avgWordsCountBySection = $this->stats['words'] / $headerCount;
+            $statExport['word_section_count']['avg'] = $avgWordsCountBySection;
+
+            /**
+             * Min words by header section
+             */
+            $wordsByHeaderMin = 20;
+            $ruleResults[self::RULE_AVERAGE_WORDS_BY_SECTION_MIN][self::DESCRIPTION] = "A page should have at minimal a average of {$wordsByHeaderMin} words by section.";
+
+            /**
+             * Max words by header section
+             */
+            $wordsByHeaderMax = 300;
+            $ruleResults[self::RULE_AVERAGE_WORDS_BY_SECTION_MAX][self::DESCRIPTION] = "A page should have at maximal a average of {$wordsByHeaderMax} words by section.";
+
+            if ($avgWordsCountBySection < $wordsByHeaderMin) {
+                $ruleResults[self::RULE_AVERAGE_WORDS_BY_SECTION_MIN][self::RESULT] = self::FAILED;
+            } else {
+                $ruleResults[self::RULE_AVERAGE_WORDS_BY_SECTION_MIN][self::RESULT] = self::PASSED;
+                if ($avgWordsCountBySection > $wordsByHeaderMax) {
+                    $ruleResults[self::RULE_AVERAGE_WORDS_BY_SECTION_MAX][self::RESULT] = self::FAILED;
+                } else {
+                    // Good Ratio
+                    $qualityScores['goodWordAvgBySection'] = $this->getConf(self::CONF_QUALITY_SCORE_GOOD_WORD_SECTION_RATIO, 10);
+                    $ruleResults[self::RULE_AVERAGE_WORDS_BY_SECTION_MAX][self::RESULT] = self::PASSED;
+                }
             }
 
-            // 1 point for too few headers
-            if ($hr > 2000) {
-                $ruleResults['fewheaders'] = 1;
-            }
+
         }
 
         // 1 point when no link at all
@@ -280,23 +330,19 @@ class renderer_plugin_combo_stats extends Doku_Renderer
          * Quality Score
          */
         $quality = array();
-        $qualityScore = self::TOP_SCORE - $errorPoint;
-        if ($qualityScore < 0) {
-            $qualityScore = 0;
-        }
-        $quality[self::SCORE] = $qualityScore;
-        if ($qualityScore != self::TOP_SCORE) {
-            $error = 0;
-            foreach ($ruleResults as $ruleResult) {
-                if ($ruleResult == self::FAILED) {
-                    $error++;
-                }
+        $error = 0;
+        foreach ($ruleResults as $ruleResult) {
+            if ($ruleResult == self::FAILED) {
+                $error++;
             }
+        }
+        if ($error > 0) {
             $quality[self::RESULT] = $error . " quality rules errors";
         } else {
             $quality[self::RESULT] = "All quality rules passed";
         }
         $quality["rules"] = $ruleResults;
+        $quality["scores"] = $qualityScores;
 
         global $ID;
         $statExport["id"] = $ID;
@@ -355,7 +401,7 @@ class renderer_plugin_combo_stats extends Doku_Renderer
 
     public function header($text, $level, $pos)
     {
-        $this->stats[self::HEADER_COUNT]['h' . $level]++;
+        $this->stats[self::HEADERS]['h' . $level]++;
         $this->headerId++;
         $this->stats[self::HEADER_POSITION][$this->headerId] = 'h' . $level;
     }
