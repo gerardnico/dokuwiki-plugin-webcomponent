@@ -2,6 +2,7 @@
 
 
 use dokuwiki\ChangeLog\PageChangeLog;
+
 /**
  * A stats Renderer
  * You can export the data with
@@ -10,15 +11,24 @@ use dokuwiki\ChangeLog\PageChangeLog;
 class renderer_plugin_combo_stats extends Doku_Renderer
 {
     const HEADER_POSITION = 'header_id';
-    const HEADER_COUNT = 'header_count';
-    const LINK_LENGTHS = 'link_lengths';
+    const HEADER_COUNT = 'headers';
+    const INTERNAL_LINK_DISTANCE = 'internal_links_distance';
     const DATE_CREATED = 'date_created';
     const DATE_MODIFIED = 'date_modified';
-    const REPORT = 'report';
     const TITLE = 'title';
     const QUALITY = 'quality';
     const PLAINTEXT = 'formatted';
     const RESULT = "result";
+    const SCORE = "score";
+    const DESCRIPTION = "description";
+
+    const RULE_BACKLINKS_MIN = 'backlinks_min';
+    const PASSED = "Passed";
+    const FAILED = "Failed";
+    const RULE_FIXME = "fixme_min";
+    const TOP_SCORE = 10;
+    const RULE_TITLE = "title_present";
+    const RULE_HEADERS_STRUCTURE = "headers_structure";
     /**
      * We store all our data in an array
      */
@@ -40,7 +50,7 @@ class renderer_plugin_combo_stats extends Doku_Renderer
         'broken_links' => 0,
         'external_links' => 0,
         'external_medias' => 0,
-        self::LINK_LENGTHS => array(),
+        self::INTERNAL_LINK_DISTANCE => array(),
         'chars' => 0,
         'words' => 0,
 
@@ -63,8 +73,8 @@ class renderer_plugin_combo_stats extends Doku_Renderer
         $meta = p_get_metadata($ID);
 
         // get some dates from meta data
-        $this->stats[self::DATE_CREATED] = date('Y-m-d h:i:s',$meta['date']['created']);
-        $this->stats[self::DATE_MODIFIED] = date('Y-m-d h:i:s',$meta['date']['modified']);
+        $this->stats[self::DATE_CREATED] = date('Y-m-d h:i:s', $meta['date']['created']);
+        $this->stats[self::DATE_MODIFIED] = date('Y-m-d h:i:s', $meta['date']['modified']);
         $this->stats[self::TITLE] = $meta['title'];
 
         // get author info
@@ -97,75 +107,108 @@ class renderer_plugin_combo_stats extends Doku_Renderer
 
         // The exported object
         $statExport = $this->stats;
-        $linkLengths = $statExport[self::LINK_LENGTHS];
-        unset($statExport[self::LINK_LENGTHS]);
-        $statExport['link_distance']['avg'] = array_sum($linkLengths) / count($linkLengths);
-        $statExport['link_distance']['max'] = max($linkLengths);
-        $statExport['link_distance']['min'] = min($linkLengths);
+        $linkLengths = $statExport[self::INTERNAL_LINK_DISTANCE];
+        unset($statExport[self::INTERNAL_LINK_DISTANCE]);
+        $count = count($linkLengths);
+        $statExport[self::INTERNAL_LINK_DISTANCE]['avg'] = null;
+        $statExport[self::INTERNAL_LINK_DISTANCE]['max'] = null;
+        $statExport[self::INTERNAL_LINK_DISTANCE]['min'] = null;
+        if ($count > 0) {
+            $statExport[self::INTERNAL_LINK_DISTANCE]['avg'] = array_sum($linkLengths) / $count;
+            $statExport[self::INTERNAL_LINK_DISTANCE]['max'] = max($linkLengths);
+            $statExport[self::INTERNAL_LINK_DISTANCE]['min'] = min($linkLengths);
+        }
 
         /**
-         * Quality Report
+         * Quality Report / Rules
          */
-        // 2 points for missing backlinks
-        $errors = array();
+        /**
+         * backlinks are an
+         */
+        $ruleResults = array();
+        $ruleResults[self::RULE_BACKLINKS_MIN][self::DESCRIPTION] = "A page should have at minimum one backlink";
+        $errorPoint = 0;
         if (!count(ft_backlinks($ID))) {
-            $errors['nobacklink'] += 2;
+            $errorPoint += 2;
+            $ruleResults[self::RULE_BACKLINKS_MIN][self::RESULT] = self::FAILED;
+        } else {
+            $ruleResults[self::RULE_BACKLINKS_MIN][self::RESULT] = self::PASSED;
         }
 
-        // 1 point for each FIXME
-        if ($this->stats['fixme']!=0) {
-            $errors['fixme'] += $this->stats['fixme'];
+
+        /**
+         * No fixme
+         */
+        $ruleResults[self::RULE_FIXME][self::DESCRIPTION] = "A page should have no fixme";
+        if ($this->stats['fixme'] != 0) {
+            $errorPoint += $this->stats['fixme'];
+            $ruleResults[self::RULE_FIXME][self::RESULT] = self::FAILED;
+        } else {
+            $ruleResults[self::RULE_FIXME][self::RESULT] = self::PASSED;
         }
 
-        // 5 points for missing H1 / normally title
-        if ($this->stats[self::HEADER_COUNT]['h1'] == 0) {
-            $errors['noh1'] += 5;
-        }
-        // 1 point for each H1 too much
-        if ($this->stats[self::HEADER_COUNT][1] > 1) {
-            $errors['manyh1'] += $this->stats['header'][1];
+        /**
+         * No title
+         */
+        $ruleResults[self::RULE_TITLE][self::DESCRIPTION] = "A title should be present";
+        if (empty($this->stats[self::TITLE])) {
+            $errorPoint += 5;
+            $ruleResults[self::RULE_TITLE][self::RESULT] = self::FAILED;
+        } else {
+            $ruleResults[self::RULE_TITLE][self::RESULT] = self::PASSED;
         }
 
-        // 1 point for each incorrectly nested headline
+        /**
+         * header structure
+         */
+        $ruleResults[self::RULE_HEADERS_STRUCTURE][self::DESCRIPTION] = "The headers should have a tree structure";
         $cnt = count($this->stats[self::HEADER_POSITION]);
+        unset($statExport[self::HEADER_POSITION]);
+        $treeError = 0;
         for ($i = 1; $i < $cnt; $i++) {
-            $currentHeader = $this->stats['header_struct'][$i];
-            $previousHeader = $this->stats['header_struct'][$i - 1];
-            if ($currentHeader - $previousHeader > 1) {
-                $errors['headernest'] += 1;
+            $currentHeaderLevel = $this->stats['header_struct'][$i];
+            $previousHeaderLevel = $this->stats['header_struct'][$i - 1];
+            if ($currentHeaderLevel - $previousHeaderLevel > 1) {
+                $treeError += 1;
+                $ruleResults[self::RULE_HEADERS_STRUCTURE][self::RESULT][self::DESCRIPTION][] = "The " . $i . " header (h" . $currentHeaderLevel . ") has a level bigger than its precedent (" . $previousHeaderLevel . ")";
             }
+        }
+        if ($treeError>0) {
+            $ruleResults[self::RULE_HEADERS_STRUCTURE][self::RESULT] = self::FAILED;
+        } else {
+            $ruleResults[self::RULE_HEADERS_STRUCTURE][self::RESULT] = self::PASSED;
         }
 
         // 1/2 points for deeply nested quotations
         if ($this->stats['quote_nest'] > 2) {
-            $errors['deepquote'] += $this->stats['quote_nest'] / 2;
+            $ruleResults['deepquote'] += $this->stats['quote_nest'] / 2;
         }
 
         // FIXME points for many quotes?
 
         // 1/2 points for too many hr
         if ($this->stats['hr'] > 2) {
-            $errors['manyhr'] = ($this->stats['hr'] - 2) / 2;
+            $ruleResults['manyhr'] = ($this->stats['hr'] - 2) / 2;
         }
 
         // 1 point for too many line breaks
         if ($this->stats['linebreak'] > 2) {
-            $errors['manybr'] = $this->stats['linebreak'] - 2;
+            $ruleResults['manybr'] = $this->stats['linebreak'] - 2;
         }
 
         // 1 point for single author only
         if (!$this->getConf('single_author_only') && count($this->stats['authors']) == 1) {
-            $errors['singleauthor'] = 1;
+            $ruleResults['singleauthor'] = 1;
         }
 
         // 1 point for too small document
         if ($this->stats['chars'] < 150) {
-            $errors['toosmall'] = 1;
+            $ruleResults['toosmall'] = 1;
         }
 
         // 1 point for too large document
         if ($this->stats['chars'] > 100000) {
-            $errors['toolarge'] = 1;
+            $ruleResults['toolarge'] = 1;
         }
 
         // header to text ratio
@@ -180,50 +223,68 @@ class renderer_plugin_combo_stats extends Doku_Renderer
 
             // 1 point for too many headers
             if ($hr < 200) {
-                $errors['manyheaders'] = 1;
+                $ruleResults['manyheaders'] = 1;
             }
 
             // 1 point for too few headers
             if ($hr > 2000) {
-                $errors['fewheaders'] = 1;
+                $ruleResults['fewheaders'] = 1;
             }
         }
 
         // 1 point when no link at all
         if (!$this->stats['internal_links']) {
-            $errors['nolink'] = 1;
+            $ruleResults['nolink'] = 1;
         }
 
         // 0.5 for broken links when too many
         if ($this->stats['broken_links'] > 2) {
-            $errors['brokenlink'] = $this->stats['broken_links'] * 0.5;
+            $ruleResults['brokenlink'] = $this->stats['broken_links'] * 0.5;
         }
 
         // 2 points for lot's of formatting
         if ($this->stats[self::PLAINTEXT] && $this->stats['chars'] / $this->stats[self::PLAINTEXT] < 3) {
-            $errors['manyformat'] = 2;
+            $ruleResults['manyformat'] = 2;
         }
+
+//        if ($len > 500) $statExport[self::QUALITY][self::ERROR]['plaintext']++;
+//        if ($len > 500) $statExport[self::QUALITY][self::ERROR]['plaintext']++;
+//
+//        // 1 point for formattings longer than 500 chars
+//        $statExport[self::QUALITY][self::ERROR]['multiformat']
 
         /**
          * Quality Score
          */
-        $score = 10;
-        if (sizeof($errors)>0) {
-            foreach ($errors as $err => $val) {
-                $score -= $val;
+        $quality = array();
+        $qualityScore = self::TOP_SCORE - $errorPoint;
+        if ($qualityScore < 0) {
+            $qualityScore = 0;
+        }
+        $quality[self::SCORE] = $qualityScore;
+        if ($qualityScore != self::TOP_SCORE) {
+            $error = 0;
+            foreach ($ruleResults as $ruleResult) {
+                if ($ruleResult == self::FAILED) {
+                    $error++;
+                }
             }
-            $statExport[self::QUALITY][self::REPORT] = $errors;
-            $statExport[self::QUALITY][self::RESULT] = sizeof($errors)." quality rules errors";
+            $quality[self::RESULT] = $error . " quality rules errors";
         } else {
-            $statExport[self::QUALITY][self::RESULT] = "All quality rules passed";
+            $quality[self::RESULT] = "All quality rules passed";
         }
+        $quality["rules"] = $ruleResults;
 
-        if ($score<0){
-            $score = 0;
-        }
-        $statExport[self::QUALITY]['score']=$score;
-
+        global $ID;
+        $statExport["id"] = $ID;
         ksort($statExport);
+
+        /**
+         * Quality after the sort to get them at the end
+         */
+        $statExport[self::QUALITY] = $quality;
+
+
         // doku.php?id=somepage&do=export_combo_stats
         header('Content-Type: application/json');
         $this->doc .= json_encode($statExport, JSON_PRETTY_PRINT);
@@ -231,19 +292,29 @@ class renderer_plugin_combo_stats extends Doku_Renderer
     }
 
     /**
-     * the format we produce
+     * the type of renderer
+     * The plugin can add data to this renderer
      */
     public function getFormat()
     {
-        return 'json';
+        return 'stats';
     }
 
     public function internallink($id, $name = null, $search = null, $returnonly = false, $linktype = 'content')
     {
+
+        /**
+         * Stats
+         */
         global $ID;
         resolve_pageid(getNS($ID), $id, $exists);
+        $this->stats['internal_links']++;
+        if (!$exists) $this->stats['broken_links']++;
 
-        // calculate link width
+
+        /**
+         * Calculate link distance
+         */
         $a = explode(':', getNS($ID));
         $b = explode(':', getNS($id));
         while (isset($a[0]) && $a[0] == $b[0]) {
@@ -251,10 +322,9 @@ class renderer_plugin_combo_stats extends Doku_Renderer
             array_shift($b);
         }
         $length = count($a) + count($b);
-        $this->stats[self::LINK_LENGTHS][] = $length;
+        $this->stats[self::INTERNAL_LINK_DISTANCE][] = $length;
 
-        $this->stats['internal_links']++;
-        if (!$exists) $this->stats['broken_links']++;
+
     }
 
     public function externallink($url, $name = null)
@@ -264,9 +334,9 @@ class renderer_plugin_combo_stats extends Doku_Renderer
 
     public function header($text, $level, $pos)
     {
-        $this->stats[self::HEADER_COUNT]['h'.$level]++;
+        $this->stats[self::HEADER_COUNT]['h' . $level]++;
         $this->headerId++;
-        $this->stats[self::HEADER_POSITION][$this->headerId] = 'h'.$level;
+        $this->stats[self::HEADER_POSITION][$this->headerId] = 'h' . $level;
     }
 
     public function smiley($smiley)
@@ -354,7 +424,7 @@ class renderer_plugin_combo_stats extends Doku_Renderer
          * Length
          */
         $len = strlen($text);
-        $this->stats[self::PLAINTEXT][$this->plainTextId]['len']=$len;
+        $this->stats[self::PLAINTEXT][$this->plainTextId]['len'] = $len;
 
 
         /**

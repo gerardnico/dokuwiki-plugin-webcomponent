@@ -28,8 +28,7 @@ class plugin_combo_renderer_test extends DokuWikiTest
 
 
     /**
-     * Test a internal canonical rewrite redirect
-     *
+     * Test to test that it's working
      */
     public function test_no_toc()
     {
@@ -45,7 +44,6 @@ class plugin_combo_renderer_test extends DokuWikiTest
         // In a request
         $request = new TestRequest();
         $request->get(array('id' => $pageId), '/doku.php');
-
 
 
     }
