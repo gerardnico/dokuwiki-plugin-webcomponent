@@ -229,7 +229,7 @@ class renderer_plugin_combo_analysis extends Doku_Renderer
             $headerCount--; // h1 is supposed to have no words
             if ($headerCount > 0) {
 
-                $avgWordsCountBySection = $this->stats['words'] / $headerCount;
+                $avgWordsCountBySection = round($this->stats['words'] / $headerCount);
                 $statExport['word_section_count']['avg'] = $avgWordsCountBySection;
 
                 /**

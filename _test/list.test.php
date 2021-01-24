@@ -1,8 +1,6 @@
 <?php
 
 use ComboStrap\StyleUtility;
-use ComboStrap\Text;
-use ComboStrap\HtmlUtility;
 use ComboStrap\PluginUtility;
 use ComboStrap\TestUtility;
 
