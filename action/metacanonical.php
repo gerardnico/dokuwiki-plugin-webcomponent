@@ -1,5 +1,6 @@
 <?php
 
+use ComboStrap\MetadataUtility;
 use ComboStrap\PluginUtility;
 use ComboStrap\UrlCanonical;
 
@@ -77,7 +78,7 @@ class action_plugin_combo_metacanonical extends DokuWiki_Action_Plugin
          * {@link wl()} use the constant DOKU_URL that is set before any test via getBaseURL(true)
          */
 
-        $canonical = PluginUtility::getMeta(UrlCanonical::CANONICAL_PROPERTY);
+        $canonical = MetadataUtility::getMeta(UrlCanonical::CANONICAL_PROPERTY);
 
         /**
          * The last part of the id as canonical

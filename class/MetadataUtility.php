@@ -87,4 +87,24 @@ class MetadataUtility
         return $content;
 
     }
+
+    /**
+     * Get a meta for the current page
+     * @param $key - the meta key
+     * @return string
+     */
+    public static function getMeta($key)
+    {
+        return p_get_metadata(PluginUtility::getPageId(), $key);
+    }
+
+    /**
+     * Set a meta for the current page
+     * @param $key
+     * @param $value
+     */
+    public static function setMeta($key, $value)
+    {
+        p_set_metadata(PluginUtility::getPageId(), array($key => $value));
+    }
 }

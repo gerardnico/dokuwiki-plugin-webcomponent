@@ -11,7 +11,9 @@
  */
 if (!defined('DOKU_INC')) die();
 
+use ComboStrap\Analytics;
 use splitbrain\phpcli\Options;
+require_once(__DIR__ . '/class/Analytics.php');
 
 /**
  * The memory of the server 128 is not enough
@@ -126,8 +128,6 @@ class cli_plugin_combo extends DokuWiki_CLI_Plugin
 
         }
 
-        /** @var helper_plugin_qc $qc */
-        $qc = plugin_load('helper', 'qc');
 
         $header = array(
             'id',
@@ -137,7 +137,6 @@ class cli_plugin_combo extends DokuWiki_CLI_Plugin
             'chars',
             'external_links',
             'external_medias',
-            'formatted',
             'h1',
             'h2',
             'h3',
@@ -151,28 +150,33 @@ class cli_plugin_combo extends DokuWiki_CLI_Plugin
         fwrite($fileHandle, implode(",", $header) . PHP_EOL);
         while ($page = array_shift($pages)) {
             $id=$page['id'];
+
+            // Run as admin to overcome the fact that
+            // anonymous user cannot set all links and backlinnks
+            global $USERINFO;
+            $USERINFO['grps'] = array('admin');
+
+
             echo 'Processing the page '.$id . "\n";
-            // $meta = p_get_metadata($id);
-            $backlinks = sizeof(ft_backlinks($id, true));
-            $qcData = $qc->getQCData($id);
+            $data = Analytics::getDataAsArray($id,false);
+            $statistics = $data[Analytics::STATISTICS];
             $row = array(
                 'id' => $id,
-                'backlinks' => $backlinks,
-                'broken_links' => $qcData['broken_links'],
-                'changes' => $qcData['changes'],
-                'chars' => $qcData['chars'],
-                'external_links' => $qcData['external_links'],
-                'external_medias' => $qcData['external_medias'],
-                'formatted' => $qcData['formatted'],
-                'h1' => $qcData['header_count'][1],
-                'h2' => $qcData['header_count'][2],
-                'h3' => $qcData['header_count'][3],
-                'h4' => $qcData['header_count'][4],
-                'h5' => $qcData['header_count'][5],
-                'internal_links' => $qcData['internal_links'],
-                'internal_medias' => $qcData['internal_medias'],
-                'words' => $qcData['words'],
-                'score' => $qcData['score']
+                'backlinks' => $statistics[Analytics::INTERNAL_BACKLINKS],
+                'broken_links' => $statistics[Analytics::INTERNAL_LINKS_BROKEN],
+                'changes' => $statistics[Analytics::CHANGES],
+                'chars' => $statistics[Analytics::CHARS],
+                'external_links' => $statistics[Analytics::EXTERNAL_LINKS],
+                'external_medias' => $statistics[Analytics::EXTERNAL_MEDIAS],
+                'h1' => $statistics[Analytics::HEADERS]['h1'],
+                'h2' => $statistics[Analytics::HEADERS]['h2'],
+                'h3' => $statistics[Analytics::HEADERS]['h3'],
+                'h4' => $statistics[Analytics::HEADERS]['h4'],
+                'h5' => $statistics[Analytics::HEADERS]['h5'],
+                'internal_links' => $statistics[Analytics::INTERNAL_LINKS],
+                'internal_medias' => $statistics[Analytics::INTERNAL_MEDIAS],
+                'words' => $statistics[Analytics::WORDS],
+                'low' => $data[Analytics::QUALITY]['low']
             );
             fwrite($fileHandle, implode(",", $row) . PHP_EOL);
         }

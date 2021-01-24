@@ -6,15 +6,16 @@
  *
  */
 
+use ComboStrap\Analytics;
 use ComboStrap\PluginUtility;
 use ComboStrap\SeoUtility;
 use ComboStrap\TestUtility;
-use ComboStrap\TplConstant;
-use dokuwiki\Extension\Event;
+
 
 require_once(__DIR__ . '/../class/PluginUtility.php');
 require_once(__DIR__ . '/../class/TestUtility.php');
 require_once(__DIR__ . '/../class/SeoUtility.php');
+require_once(__DIR__ . '/../class/Analytics.php');
 
 
 /**
@@ -47,22 +48,24 @@ class plugin_combo_quality_test extends DokuWikiTest
         /**
          * A high quality page
          */
-        $highPage = "high{$commonTerm}";
-        $lowPage = "low{$commonTerm}";
+        $highPageId = "high{$commonTerm}";
+        $lowPageId = "low{$commonTerm}";
 
         /**
          * The high page with a link to a low quality page
          * to check that the link is not showing
          */
-        $contentHighQualityPage = "high {$commonTerm} [[:{$lowPage}]]";
-        TestUtility::addPage($highPage, $contentHighQualityPage);
+        $contentHighQualityPage = "high {$commonTerm} [[:{$lowPageId}]]";
+        TestUtility::addPage($highPageId, $contentHighQualityPage);
+        SeoUtility::setLowQualityPage($highPageId,false);
 
         /**
          * The low page with a link to a high quality page
          * to check that the backlinks are not showing the low quality page
          */
-        $contentLowQualityPage = "low {$commonTerm} [[:{$highPage}]]";
-        TestUtility::addPage($lowPage, $contentLowQualityPage);
+        $contentLowQualityPage = "low {$commonTerm} [[:{$highPageId}]]";
+        TestUtility::addPage($lowPageId, $contentLowQualityPage);
+        SeoUtility::setLowQualityPage($lowPageId,true);
 
         $user = null;
         $groups = array();
@@ -70,8 +73,8 @@ class plugin_combo_quality_test extends DokuWikiTest
         /**
          * Test ACL
          */
-        $this->assertEquals(AUTH_NONE, auth_aclcheck($lowPage, $user, $groups));
-        $this->assertEquals(AUTH_UPLOAD, auth_aclcheck($highPage, $user, $groups));
+        $this->assertEquals(AUTH_NONE, auth_aclcheck($lowPageId, $user, $groups));
+        $this->assertEquals(AUTH_UPLOAD, auth_aclcheck($highPageId, $user, $groups));
 
         /**
          * Test Full Search
@@ -79,16 +82,16 @@ class plugin_combo_quality_test extends DokuWikiTest
         $regex = array();
         $pageSearch = ft_pageSearch($commonTerm, $regex);
         $this->assertEquals(1, sizeof($pageSearch));
-        $this->assertArrayHasKey($highPage, $pageSearch);
-        $this->assertArrayNotHasKey($lowPage, $pageSearch);
+        $this->assertArrayHasKey($highPageId, $pageSearch);
+        $this->assertArrayNotHasKey($lowPageId, $pageSearch);
 
         /**
          * Test Page Lookup
          */
         $pageLookup = ft_pageLookup($commonTerm);
         $this->assertEquals(1, sizeof($pageLookup));
-        $this->assertArrayHasKey($highPage, $pageLookup);
-        $this->assertArrayNotHasKey($lowPage, $pageLookup);
+        $this->assertArrayHasKey($highPageId, $pageLookup);
+        $this->assertArrayNotHasKey($lowPageId, $pageLookup);
 
         /**
          * Search function, check the ACL
@@ -118,15 +121,15 @@ class plugin_combo_quality_test extends DokuWikiTest
             $pages[$result['id']] = 1;
         }
         $this->assertTrue(sizeof($pages) > 1);
-        $this->assertArrayHasKey($highPage, $pages);
-        $this->assertArrayNotHasKey($lowPage, $pages);
+        $this->assertArrayHasKey($highPageId, $pages);
+        $this->assertArrayNotHasKey($lowPageId, $pages);
 
         /**
          * Backlink from a low page for a anonymous user
          * should not be visible
          * (ACL based)
          */
-        $ft_backlinks = ft_backlinks($highPage);
+        $ft_backlinks = ft_backlinks($highPageId);
         $this->assertEquals(array(), $ft_backlinks);
 
         /**
@@ -153,8 +156,8 @@ class plugin_combo_quality_test extends DokuWikiTest
             $recentPages[$result['id']] = 1;
         }
         $this->assertTrue(sizeof($recentPages) >= 1);
-        $this->assertArrayHasKey($highPage, $recentPages);
-        $this->assertArrayNotHasKey($lowPage, $recentPages);
+        $this->assertArrayHasKey($highPageId, $recentPages);
+        $this->assertArrayNotHasKey($lowPageId, $recentPages);
 
         /**
          * A low quality page should not leak in the Sitemap
@@ -165,7 +168,7 @@ class plugin_combo_quality_test extends DokuWikiTest
          * there is no method to extract and test the pages
          * we test the acl check signature used in the function {@link Mapper::generate()}
          */
-        $aclCheck = auth_aclcheck($lowPage, '', array()) ;
+        $aclCheck = auth_aclcheck($lowPageId, '', array()) ;
         $this->assertTrue($aclCheck < AUTH_READ);
 
         /**
@@ -189,6 +192,19 @@ class plugin_combo_quality_test extends DokuWikiTest
             TestUtility::normalizeDokuWikiHtml($expected),
             TestUtility::normalizeDokuWikiHtml($render)
         );
+
+    }
+
+    /**
+     * Create a low pages
+     */
+    public function testStatsIntegration()
+    {
+        $contentLowQualityPage = "low page";
+        $lowPageId = "integrationLowPage";
+        TestUtility::addPage($lowPageId, $contentLowQualityPage);
+        Analytics::process($lowPageId);
+        $this->assertEquals(true,SeoUtility::isLowQualityPage($lowPageId));
 
     }
 

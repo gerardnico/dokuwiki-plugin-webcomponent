@@ -1,42 +1,32 @@
 <?php
 
 
+use ComboStrap\Analytics;
+use ComboStrap\SeoUtility;
 use ComboStrap\Text;
 use dokuwiki\ChangeLog\PageChangeLog;
 
 require_once(__DIR__ . '/../class/Text.php');
+require_once(__DIR__ . '/../class/SeoUtility.php');
+require_once(__DIR__ . '/../class/Analytics.php');
 
 
 /**
- * A stats Renderer
+ * A analysis Renderer that exports stats/quality/metadata in a json format
  * You can export the data with
- * doku.php?id=somepage&do=export_combo_json
+ * doku.php?id=somepage&do=export_combo_analysis
  */
-class renderer_plugin_combo_json extends Doku_Renderer
+class renderer_plugin_combo_analysis extends Doku_Renderer
 {
-    /**
-     * Constant in Key or value
-     */
-    const HEADER_POSITION = 'header_id';
-    const HEADERS = 'headers';
     const DATE_CREATED = 'date_created';
-    const DATE_MODIFIED = 'date_modified';
-    const TITLE = 'title';
-    const QUALITY = 'quality';
     const PLAINTEXT = 'formatted';
     const RESULT = "result";
-    const SCORE = "score";
     const DESCRIPTION = "description";
     const PASSED = "Passed";
     const FAILED = "Failed";
     const RULE_FIXME = "fixme_min";
     const RULE_TITLE_PRESENT = "title_present";
-    const INTERNAL_BACKLINKS = "internal_backlinks";
-    const INTERNAL_LINKS = 'internal_links';
-    const INTERNAL_LINK_DISTANCE = 'internal_links_distance';
-    const INTERNAL_LINKS_BROKEN = 'internal_links_broken';
     const FIXME = 'fixme';
-    const WORDS = 'words';
 
     /**
      * Rules key
@@ -61,52 +51,25 @@ class renderer_plugin_combo_json extends Doku_Renderer
     const CONF_QUALITY_SCORE_CORRECT_HEADER_STRUCTURE = 'qualityScoreCorrectOutline';
     const CONF_QUALITY_SCORE_CORRECT_CONTENT = 'qualityScoreCorrectContentLength';
     const CONF_QUALITY_SCORE_NO_FIXME = 'qualityScoreNoFixMe';
-    const CONF_QUALITY_SCORE_CORRECT_WORD_SECTION_RATIO = 'qualityScoreCorrectWordSectionRatio';
+    const CONF_QUALITY_SCORE_CORRECT_WORD_SECTION_AVERAGE = 'qualityScoreCorrectWordSectionAvg';
     const CONF_QUALITY_SCORE_INTERNAL_LINK_BROKEN_FACTOR = 'qualityScoreNoBrokenLinks';
+    const CONF_QUALITY_SCORE_CHANGES_FACTOR = 'qualityScoreChangesFactor';
 
 
     /**
-     * We store all our data in an array
+     * The processing data
+     * that should be {@link  renderer_plugin_combo_analysis::reset()}
      */
-    protected $stats = array(
-
-        self::HEADERS => array(),
-        self::HEADER_POSITION => array(),
-        'linebreak' => 0,
-        'quote_nest' => 0,
-        'quote_count' => 0,
-        'hr' => 0,
-        self::PLAINTEXT => 0,
-        self::DATE_CREATED => 0,
-        self::DATE_MODIFIED => 0,
-        'changes' => 0,
-        'authors' => array(),
-        self::INTERNAL_LINKS => 0,
-        'internal_medias' => 0,
-        self::INTERNAL_LINKS_BROKEN => 0,
-        'external_links' => 0,
-        'external_medias' => 0,
-        self::INTERNAL_LINK_DISTANCE => array(),
-        'chars' => 0,
-        self::WORDS => 0,
-    );
+    protected $stats = array(); // the stats
+    protected $metadata = array(); // the metadata
+    protected $headerId = 0; // the id of the header on the page (first, second, ...)
 
     /**
-     * Metadata export
-     * @var array
+     * Don't known this variable ?
      */
-    protected $metadata = array();
-
     protected $quotelevel = 0;
     protected $formattingBracket = 0;
     protected $tableopen = false;
-
-    /**
-     * @var int The id of the header on the pahe
-     * 1 = first header
-     * 2 = second header
-     */
-    protected $headerId = 0;
     private $plainTextId = 0;
 
     public function document_start() // phpcs:ignore PSR1.Methods.CamelCapsMethodName.NotCamelCaps
@@ -114,16 +77,19 @@ class renderer_plugin_combo_json extends Doku_Renderer
         global $ID;
 
         $meta = p_get_metadata($ID);
-
-        $this->metadata[self::DATE_CREATED] = date('Y-m-d h:i:s', $meta['date']['created']);
-        $this->metadata[self::DATE_MODIFIED] = date('Y-m-d h:i:s', $meta['date']['modified']);
-        $this->metadata[self::TITLE] = $meta['title'];
+        $this->metadata[Analytics::TITLE] = $meta['title'];
+        $timestampCreation = $meta['date']['created'];
+        $this->metadata[self::DATE_CREATED] = date('Y-m-d h:i:s', $timestampCreation);
+        $timestampModification = $meta['date']['modified'];
+        $this->metadata[Analytics::DATE_MODIFIED] = date('Y-m-d h:i:s', $timestampModification);
+        $this->metadata['age_creation'] = round((time() - $timestampCreation)/60/60/24);
+        $this->metadata['age_modification'] = round((time() - $timestampModification)/60/60/24);
 
         // get author info
         $changelog = new PageChangeLog($ID);
         $revs = $changelog->getRevisions(0, 10000);
         array_push($revs, $meta['last_change']['date']);
-        $this->stats['changes'] = count($revs);
+        $this->stats[Analytics::CHANGES] = count($revs);
         foreach ($revs as $rev) {
             $info = $changelog->getRevisionInfo($rev);
             if ($info['user']) {
@@ -135,14 +101,14 @@ class renderer_plugin_combo_json extends Doku_Renderer
 
         // work on raw text
         $text = rawWiki($ID);
-        $this->stats['chars'] = strlen($text);
+        $this->stats[Analytics::CHARS] = strlen($text);
 
         /**
          * The word count does not take into account
          * words with non-words characters such as < =
          * Therefore the node and attribute are not taken in the count
          */
-        $this->stats[self::WORDS] = Text::getWordCount($text);
+        $this->stats[Analytics::WORDS] = Text::getWordCount($text);
     }
 
 
@@ -162,16 +128,16 @@ class renderer_plugin_combo_json extends Doku_Renderer
         /**
          * Internal link distance summary calculation
          */
-        $linkLengths = $statExport[self::INTERNAL_LINK_DISTANCE];
-        unset($statExport[self::INTERNAL_LINK_DISTANCE]);
+        $linkLengths = $statExport[Analytics::INTERNAL_LINK_DISTANCE];
+        unset($statExport[Analytics::INTERNAL_LINK_DISTANCE]);
         $countBacklinks = count($linkLengths);
-        $statExport[self::INTERNAL_LINK_DISTANCE]['avg'] = null;
-        $statExport[self::INTERNAL_LINK_DISTANCE]['max'] = null;
-        $statExport[self::INTERNAL_LINK_DISTANCE]['min'] = null;
+        $statExport[Analytics::INTERNAL_LINK_DISTANCE]['avg'] = null;
+        $statExport[Analytics::INTERNAL_LINK_DISTANCE]['max'] = null;
+        $statExport[Analytics::INTERNAL_LINK_DISTANCE]['min'] = null;
         if ($countBacklinks > 0) {
-            $statExport[self::INTERNAL_LINK_DISTANCE]['avg'] = array_sum($linkLengths) / $countBacklinks;
-            $statExport[self::INTERNAL_LINK_DISTANCE]['max'] = max($linkLengths);
-            $statExport[self::INTERNAL_LINK_DISTANCE]['min'] = min($linkLengths);
+            $statExport[Analytics::INTERNAL_LINK_DISTANCE]['avg'] = array_sum($linkLengths) / $countBacklinks;
+            $statExport[Analytics::INTERNAL_LINK_DISTANCE]['max'] = max($linkLengths);
+            $statExport[Analytics::INTERNAL_LINK_DISTANCE]['min'] = min($linkLengths);
         }
 
         /**
@@ -200,7 +166,7 @@ class renderer_plugin_combo_json extends Doku_Renderer
          * A title should be present
          */
         $ruleResults[self::RULE_TITLE_PRESENT][self::DESCRIPTION] = "A title should be present";
-        if (empty($this->stats[self::TITLE])) {
+        if (empty($this->metadata[Analytics::TITLE])) {
             $ruleResults[self::RULE_TITLE_PRESENT][self::RESULT] = self::FAILED;
         } else {
             $qualityScores[self::RULE_TITLE_PRESENT] = $this->getConf(self::CONF_QUALITY_SCORE_TITLE_PRESENT, 10);;
@@ -211,8 +177,8 @@ class renderer_plugin_combo_json extends Doku_Renderer
          * Outline / Header structure
          */
         $ruleResults[self::RULE_OUTLINE_STRUCTURE][self::DESCRIPTION] = "The headers should have a tree structure (outline, toc)";
-        $headersCount = count($this->stats[self::HEADER_POSITION]);
-        unset($statExport[self::HEADER_POSITION]);
+        $headersCount = count($this->stats[Analytics::HEADER_POSITION]);
+        unset($statExport[Analytics::HEADER_POSITION]);
         $treeError = 0;
         for ($i = 1; $i < $headersCount; $i++) {
             $currentHeaderLevel = $this->stats['header_struct'][$i];
@@ -232,18 +198,18 @@ class renderer_plugin_combo_json extends Doku_Renderer
         /**
          * Document length
          */
-        $minimalWordCount = 150;
+        $minimalWordCount = 50;
         $ruleResults[self::RULE_WORDS_MINIMAL][self::DESCRIPTION] = "A page should have at minimal " . $minimalWordCount . " words.";
-        $maximalWordCount = 2000;
+        $maximalWordCount = 1500;
         $ruleResults[self::RULE_WORDS_MAXIMAL][self::DESCRIPTION] = "A page should have at maximal " . $maximalWordCount . " words.";
         $correctContentLength = true;
-        if ($this->stats[self::WORDS] < $minimalWordCount) {
+        if ($this->stats[Analytics::WORDS] < $minimalWordCount) {
             $ruleResults[self::RULE_WORDS_MINIMAL][self::RESULT] = self::FAILED;
             $correctContentLength = false;
         } else {
             $ruleResults[self::RULE_WORDS_MINIMAL][self::RESULT] = self::PASSED;
         }
-        if ($this->stats[self::WORDS] > $maximalWordCount) {
+        if ($this->stats[Analytics::WORDS] > $maximalWordCount) {
             $ruleResults[self::RULE_WORDS_MAXIMAL][self::RESULT] = self::FAILED;
             $correctContentLength = false;
         } else {
@@ -257,53 +223,63 @@ class renderer_plugin_combo_json extends Doku_Renderer
         /**
          * Average Number of words by header section to text ratio
          */
-        $headerCount = array_sum($this->stats[self::HEADERS]);
-        $headerCount--; // h1 is supposed to have no words
-        if ($headerCount > 0) {
+        $headers = $this->stats[Analytics::HEADERS];
+        if ($headers!=null) {
+            $headerCount = array_sum($headers);
+            $headerCount--; // h1 is supposed to have no words
+            if ($headerCount > 0) {
 
-            $avgWordsCountBySection = $this->stats['words'] / $headerCount;
-            $statExport['word_section_count']['avg'] = $avgWordsCountBySection;
+                $avgWordsCountBySection = $this->stats['words'] / $headerCount;
+                $statExport['word_section_count']['avg'] = $avgWordsCountBySection;
 
-            /**
-             * Min words by header section
-             */
-            $wordsByHeaderMin = 20;
-            $ruleResults[self::RULE_AVERAGE_WORDS_BY_SECTION_MIN][self::DESCRIPTION] = "A page should have at minimal a average of {$wordsByHeaderMin} words by section.";
+                /**
+                 * Min words by header section
+                 */
+                $wordsByHeaderMin = 20;
+                $ruleResults[self::RULE_AVERAGE_WORDS_BY_SECTION_MIN][self::DESCRIPTION] = "A page should have at minimal a average of {$wordsByHeaderMin} words by section.";
 
-            /**
-             * Max words by header section
-             */
-            $wordsByHeaderMax = 300;
-            $ruleResults[self::RULE_AVERAGE_WORDS_BY_SECTION_MAX][self::DESCRIPTION] = "A page should have at maximal a average of {$wordsByHeaderMax} words by section.";
-            $correctAverageWordsBySection = true;
-            if ($avgWordsCountBySection < $wordsByHeaderMin) {
-                $ruleResults[self::RULE_AVERAGE_WORDS_BY_SECTION_MIN][self::RESULT] = self::FAILED;
-                $correctAverageWordsBySection = false;
-            } else {
-                $ruleResults[self::RULE_AVERAGE_WORDS_BY_SECTION_MIN][self::RESULT] = self::PASSED;
+                /**
+                 * Max words by header section
+                 */
+                $wordsByHeaderMax = 300;
+                $ruleResults[self::RULE_AVERAGE_WORDS_BY_SECTION_MAX][self::DESCRIPTION] = "A page should have at maximal a average of {$wordsByHeaderMax} words by section.";
+                $correctAverageWordsBySection = true;
+                if ($avgWordsCountBySection < $wordsByHeaderMin) {
+                    $ruleResults[self::RULE_AVERAGE_WORDS_BY_SECTION_MIN][self::RESULT] = self::FAILED;
+                    $correctAverageWordsBySection = false;
+                } else {
+                    $ruleResults[self::RULE_AVERAGE_WORDS_BY_SECTION_MIN][self::RESULT] = self::PASSED;
+                }
+                if ($avgWordsCountBySection > $wordsByHeaderMax) {
+                    $ruleResults[self::RULE_AVERAGE_WORDS_BY_SECTION_MAX][self::RESULT] = self::FAILED;
+                    $correctAverageWordsBySection = false;
+                } else {
+                    $ruleResults[self::RULE_AVERAGE_WORDS_BY_SECTION_MAX][self::RESULT] = self::PASSED;
+                }
+                if ($correctAverageWordsBySection) {
+                    $qualityScores['correct_word_avg_by_section'] = $this->getConf(self::CONF_QUALITY_SCORE_CORRECT_WORD_SECTION_AVERAGE, 10);
+                }
+
             }
-            if ($avgWordsCountBySection > $wordsByHeaderMax) {
-                $ruleResults[self::RULE_AVERAGE_WORDS_BY_SECTION_MAX][self::RESULT] = self::FAILED;
-                $correctAverageWordsBySection = false;
-            } else {
-                $ruleResults[self::RULE_AVERAGE_WORDS_BY_SECTION_MAX][self::RESULT] = self::PASSED;
-            }
-            if ($correctAverageWordsBySection) {
-                $qualityScores['correct_word_avg_by_section'] = $this->getConf(self::CONF_QUALITY_SCORE_CORRECT_WORD_SECTION_RATIO, 10);
-            }
-
         }
 
         /**
          * Internal Backlinks rule
          */
         $ruleResults[self::RULE_INTERNAL_BACKLINKS_MIN][self::DESCRIPTION] = "A page should have at minimum one link from another page (internal backlink)";
-        $countBacklinks = count(ft_backlinks($ID));
-        $statExport[self::INTERNAL_BACKLINKS] = $countBacklinks;
+
+        /**
+         * If a page is a low quality page, if the process run
+         * anonymous, we will not see all {@link ft_backlinks()}
+         * we use then the index directly to avoid confusion
+         */
+        $backlinks = idx_get_indexer()->lookupKey('relation_references', $ID);
+        $countBacklinks = count($backlinks);
+        $statExport[Analytics::INTERNAL_BACKLINKS] = $countBacklinks;
         if ($countBacklinks == 0) {
             $ruleResults[self::RULE_INTERNAL_BACKLINKS_MIN][self::RESULT] = self::FAILED;
         } else {
-            $qualityScores[self::INTERNAL_BACKLINKS] = $countBacklinks * $this->getConf(self::CONF_QUALITY_SCORE_INTERNAL_BACKLINK_FACTOR, 1);
+            $qualityScores[Analytics::INTERNAL_BACKLINKS] = $countBacklinks * $this->getConf(self::CONF_QUALITY_SCORE_INTERNAL_BACKLINK_FACTOR, 1);
             $ruleResults[self::RULE_INTERNAL_BACKLINKS_MIN][self::RESULT] = self::PASSED;
         }
 
@@ -311,25 +287,30 @@ class renderer_plugin_combo_json extends Doku_Renderer
          * Internal links
          */
         $ruleResults[self::RULE_INTERNAL_LINKS_MIN][self::DESCRIPTION] = "A page should have at minimal a link to another page (internal link)";
-        $internalLinksCount = $this->stats[self::INTERNAL_LINKS];
+        $internalLinksCount = $this->stats[Analytics::INTERNAL_LINKS];
         if ($internalLinksCount == 0) {
             $ruleResults[self::RULE_INTERNAL_LINKS_MIN][self::RESULT] = self::FAILED;
         } else {
             $ruleResults[self::RULE_INTERNAL_LINKS_MIN][self::RESULT] = self::PASSED;
-            $qualityScores[self::INTERNAL_LINKS] = $countBacklinks * $this->getConf(self::CONF_QUALITY_SCORE_INTERNAL_LINK_FACTOR, 1);;
+            $qualityScores[Analytics::INTERNAL_LINKS] = $countBacklinks * $this->getConf(self::CONF_QUALITY_SCORE_INTERNAL_LINK_FACTOR, 1);;
         }
 
         /**
          * Broken Links
          */
         $ruleResults[self::RULE_INTERNAL_BROKEN_LINKS_MAX][self::DESCRIPTION] = "A page should not have a link to a non-existing page (broken link)";
-        $brokenLinksCount = $this->stats[self::INTERNAL_LINKS_BROKEN];
+        $brokenLinksCount = $this->stats[Analytics::INTERNAL_LINKS_BROKEN];
         if ($brokenLinksCount > 2) {
             $ruleResults[self::RULE_INTERNAL_BROKEN_LINKS_MAX][self::RESULT] = self::FAILED;
         } else {
-            $qualityScores['no_' . self::INTERNAL_LINKS_BROKEN] = $this->getConf(self::CONF_QUALITY_SCORE_INTERNAL_LINK_BROKEN_FACTOR, 2);;;
+            $qualityScores['no_' . Analytics::INTERNAL_LINKS_BROKEN] = $this->getConf(self::CONF_QUALITY_SCORE_INTERNAL_LINK_BROKEN_FACTOR, 2);;;
             $ruleResults[self::RULE_INTERNAL_BROKEN_LINKS_MAX][self::RESULT] = self::PASSED;
         }
+
+        /**
+         * Changes, the more changes the better
+         */
+        $qualityScores[Analytics::CHANGES] = $this->stats[Analytics::CHANGES]* $this->getConf(self::CONF_QUALITY_SCORE_CHANGES_FACTOR, 0.25);;;
 
 
         /**
@@ -393,27 +374,32 @@ class renderer_plugin_combo_json extends Doku_Renderer
         } else {
             $qualityResult = "All quality rules passed";
         }
-        $lowLevelRules = [
+
+        /**
+         * Low level
+         */
+        $mandatoryRules = [
             self::RULE_WORDS_MINIMAL,
             self::RULE_INTERNAL_BACKLINKS_MIN,
             self::RULE_WORDS_MAXIMAL,
             self::RULE_INTERNAL_LINKS_MIN
         ];
         $mandatoryRulesBroken = [];
-        foreach ($lowLevelRules as $lowLevelRule) {
+        foreach ($mandatoryRules as $lowLevelRule) {
             if (in_array($lowLevelRule, $brokenRules)) {
                 $mandatoryRulesBroken[] = $lowLevelRule;
             }
         }
-        $qualityLevel = "good";
+        $lowLevel = false;
         if (sizeof($mandatoryRulesBroken) > 0) {
-            $qualityLevel = "low";
+            $lowLevel = true;
         }
+        SeoUtility::setLowQualityPage($ID,$lowLevel);
 
         /**
          * Building the quality object in order
          */
-        $quality["level"] = $qualityLevel;
+        $quality["low"]=$lowLevel;
         if (sizeof($mandatoryRulesBroken)>0) {
             ksort($mandatoryRulesBroken);
             $quality['failed_mandatory_rules'] = $mandatoryRulesBroken;
@@ -430,16 +416,22 @@ class renderer_plugin_combo_json extends Doku_Renderer
         global $ID;
         $json = array();
         $json["id"] = $ID;
+        $json['metadata']=$this->metadata;
         ksort($statExport);
-        $json["statistics"]=$statExport;
-        $json[self::QUALITY] = $quality; // Quality after the sort to get them at the end
+        $json[Analytics::STATISTICS]=$statExport;
+        $json[Analytics::QUALITY] = $quality; // Quality after the sort to get them at the end
 
 
         /**
          * The result can be seen with
-         * doku.php?id=somepage&do=export_combo_stats
+         * doku.php?id=somepage&do=export_combo_analysis
          */
-        header('Content-Type: application/json');
+        /**
+         * Set the header for the export.php file
+         */
+        p_set_metadata($ID, array("format"=>
+            array("combo_".$this->getPluginComponent() => array("Content-Type" => 'application/json'))
+        ));
         $this->doc .= json_encode($json, JSON_PRETTY_PRINT);
 
     }
@@ -459,8 +451,8 @@ class renderer_plugin_combo_json extends Doku_Renderer
          */
         global $ID;
         resolve_pageid(getNS($ID), $id, $exists);
-        $this->stats[self::INTERNAL_LINKS]++;
-        if (!$exists) $this->stats[self::INTERNAL_LINKS_BROKEN]++;
+        $this->stats[Analytics::INTERNAL_LINKS]++;
+        if (!$exists) $this->stats[Analytics::INTERNAL_LINKS_BROKEN]++;
 
 
         /**
@@ -473,21 +465,21 @@ class renderer_plugin_combo_json extends Doku_Renderer
             array_shift($b);
         }
         $length = count($a) + count($b);
-        $this->stats[self::INTERNAL_LINK_DISTANCE][] = $length;
+        $this->stats[Analytics::INTERNAL_LINK_DISTANCE][] = $length;
 
 
     }
 
     public function externallink($url, $name = null)
     {
-        $this->stats['external_links']++;
+        $this->stats[Analytics::EXTERNAL_LINKS]++;
     }
 
     public function header($text, $level, $pos)
     {
-        $this->stats[self::HEADERS]['h' . $level]++;
+        $this->stats[Analytics::HEADERS]['h' . $level]++;
         $this->headerId++;
-        $this->stats[self::HEADER_POSITION][$this->headerId] = 'h' . $level;
+        $this->stats[Analytics::HEADER_POSITION][$this->headerId] = 'h' . $level;
 
     }
 
@@ -595,15 +587,20 @@ class renderer_plugin_combo_json extends Doku_Renderer
 
     public function internalmedia($src, $title = null, $align = null, $width = null, $height = null, $cache = null, $linking = null)
     {
-        $this->stats['internal_medias']++;
+        $this->stats[Analytics::INTERNAL_MEDIAS]++;
     }
 
     public function externalmedia($src, $title = null, $align = null, $width = null, $height = null, $cache = null, $linking = null)
     {
-        $this->stats['external_medias']++;
+        $this->stats[Analytics::EXTERNAL_MEDIAS]++;
     }
 
-
+    public function reset()
+    {
+        $this->stats=array();
+        $this->metadata=array();
+        $this->headerId = 0;
+    }
 
 
 }

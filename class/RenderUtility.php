@@ -27,19 +27,31 @@ class RenderUtility
     }
 
     /**
-     * @param $pageContent
+     * @param $pageContent - the text (not the id)
+     * @param bool $stripOpenAndEnd - to avoid the p element in test rendering
      * @return array
      */
-    public static function getInstructions($pageContent)
+    public static function getInstructions($pageContent, $stripOpenAndEnd = true)
     {
+
         $instructions = p_get_instructions($pageContent);
-        $lastPBlockPosition = sizeof($instructions) - 2;
-        if ($instructions[1][0] == 'p_open') {
-            unset($instructions[1]);
+
+        if ($stripOpenAndEnd) {
+            $lastPBlockPosition = sizeof($instructions) - 2;
+            /**
+             * p_open = document_start in renderer
+             */
+            if ($instructions[1][0] == 'p_open') {
+                unset($instructions[1]);
+            }
+            /**
+             * p_open = document_end in renderer
+             */
+            if ($instructions[$lastPBlockPosition][0] == 'p_close') {
+                unset($instructions[$lastPBlockPosition]);
+            }
         }
-        if ($instructions[$lastPBlockPosition][0] == 'p_close') {
-            unset($instructions[$lastPBlockPosition]);
-        }
+
         return $instructions;
     }
 
@@ -56,5 +68,10 @@ class RenderUtility
         } else {
             return false;
         }
+    }
+
+    public static function renderId2Json($pageId)
+    {
+        return Analytics::getDataAsJson($pageId);
     }
 }

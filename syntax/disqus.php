@@ -1,6 +1,7 @@
 <?php
 
 use ComboStrap\LogUtility;
+use ComboStrap\MetadataUtility;
 use ComboStrap\PluginUtility;
 use ComboStrap\UrlCanonical;
 
@@ -127,7 +128,7 @@ class syntax_plugin_combo_disqus extends DokuWiki_Syntax_Plugin
                 }
                 $forumShortName = hsc($forumShortName);
 
-                $disqusIdentifier = PluginUtility::getMeta(self::META_DISQUS_IDENTIFIER);
+                $disqusIdentifier = MetadataUtility::getMeta(self::META_DISQUS_IDENTIFIER);
                 if (empty($disqusIdentifier)) {
 
                     $disqusIdentifier = $attributes[self::ATTRIBUTE_IDENTIFIER];
@@ -135,11 +136,11 @@ class syntax_plugin_combo_disqus extends DokuWiki_Syntax_Plugin
                         $disqusIdentifier = PluginUtility::getPageId();
                     }
 
-                    $canonical = PluginUtility::getMeta(UrlCanonical::CANONICAL_PROPERTY);
+                    $canonical = MetadataUtility::getMeta(UrlCanonical::CANONICAL_PROPERTY);
                     if (!empty($canonical)) {
                         $disqusIdentifier = $canonical;
                     }
-                    PluginUtility::setMeta(self::META_DISQUS_IDENTIFIER,$disqusIdentifier);
+                    MetadataUtility::setMeta(self::META_DISQUS_IDENTIFIER, $disqusIdentifier);
                 }
                 $disqusConfig = "this.page.identifier = \"$disqusIdentifier\";";
 

@@ -45,7 +45,15 @@ class Text
         if (empty($text)) {
             return false;
         }
-        $preg_match = preg_match('/^[\w-]*$/u', $text);
+        /**
+         * We also allow `-` minus
+         *
+         * And because otherwise the words are not counted:
+         *   * `'` (used to highlight words)
+         *   * `[|]` used in links
+         *   * `,` used at the end of a sentenct
+         */
+        $preg_match = preg_match("/^[\w-'\]\[\|,]*$/u", $text);
         return $preg_match == 1;
     }
 

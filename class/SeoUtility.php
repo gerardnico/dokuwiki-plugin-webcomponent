@@ -52,11 +52,21 @@ class SeoUtility
      */
     static function isLowQualityPage($id)
     {
-        if ($id == "lowpage" || $id == ":lowpage") {
-            return true;
-        } else {
-            return false;
-        }
+
+        return p_get_metadata($id, "quality")["low"] == true;
+
+    }
+
+    /**
+     * Set the page quality
+     * @param $id
+     * @param $boolean true if this is a low quality page rank false otherwise
+     */
+    static function setLowQualityPage($id, $boolean)
+    {
+
+        p_set_metadata($id, array("quality" => array("low" => $boolean)));
+
     }
 
     /**
@@ -89,5 +99,6 @@ class SeoUtility
         }
 
     }
+
 
 }
