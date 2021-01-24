@@ -36,9 +36,29 @@ class action_plugin_combo_css extends DokuWiki_Action_Plugin
     /**
      * Front end or backend
      */
-    const END_KEY = 'end';
+    const WHICH_END_KEY = 'end';
     const VALUE_FRONT = 'front';
     const VALUE_BACK = 'back';
+
+    /**
+     * List of excluded plugin
+     */
+    const EXCLUDED_PLUGINS = array(
+        "acl",
+        "authplain",
+        "changes",
+        "config",
+        "extension",
+        "info",
+        "move",
+        "popularity",
+        "revert",
+        "safefnrecode",
+        "searchindex",
+        "sqlite",
+        "upgrade",
+        "usermanager"
+    );
 
     /**
      * Registers a callback function for a given event
@@ -54,14 +74,22 @@ class action_plugin_combo_css extends DokuWiki_Action_Plugin
     {
 
 
-        $urlPropertyValue = PluginUtility::getPropertyValue(self::END_KEY, self::VALUE_BACK);
+        /**
+         * Delete the all.css file due to `group` class
+         */
+        $controller->register_hook('CSS_STYLES_INCLUDED', 'BEFORE', $this, 'handle_css_styles');
+
+        /**
+         * For front-end/public only
+         */
+        $urlPropertyValue = PluginUtility::getPropertyValue(self::WHICH_END_KEY, self::VALUE_BACK);
         if (PluginUtility::getRequestScript() == "css.php" && $urlPropertyValue == self::VALUE_FRONT) {
             /**
              * The process follows the following steps:
              *     * With CSS_STYLES_INCLUDED, you choose the file that you want
              *     * then with CSS_CACHE_USE, you can change the cache key name
              */
-            $controller->register_hook('CSS_STYLES_INCLUDED', 'BEFORE', $this, 'handle_css_styles');
+            $controller->register_hook('CSS_STYLES_INCLUDED', 'BEFORE', $this, 'handle_front_css_styles');
             $controller->register_hook('CSS_CACHE_USE', 'BEFORE', $this, 'handle_css_cache');
         }
 
@@ -103,7 +131,7 @@ class action_plugin_combo_css extends DokuWiki_Action_Plugin
                     }
 
                     if ($enableMinimalFrontEnd) {
-                        $link['href'] .= '&' . self::END_KEY . '=' . self::VALUE_FRONT . '';
+                        $link['href'] .= '&' . self::WHICH_END_KEY . '=' . self::VALUE_FRONT . '';
                         return;
                     }
 
@@ -134,7 +162,7 @@ class action_plugin_combo_css extends DokuWiki_Action_Plugin
 
         $enableMinimalFrontEnd = $this->getConf(self::CONF_ENABLE_MINIMAL_FRONTEND_STYLESHEET, false);
         if ($enableMinimalFrontEnd) {
-            $propertyValue = PluginUtility::getPropertyValue(self::END_KEY);
+            $propertyValue = PluginUtility::getPropertyValue(self::WHICH_END_KEY);
             if ($propertyValue == self::VALUE_FRONT) {
                 $event->data->key .= self::VALUE_FRONT;
                 $event->data->cache = getCacheName($event->data->key, $event->data->ext);
@@ -144,7 +172,7 @@ class action_plugin_combo_css extends DokuWiki_Action_Plugin
     }
 
     /**
-     * Finally, handle the CSS script list. The script would be fit to do even more stuff / types
+     * Handle the front CSS script list. The script would be fit to do even more stuff / types
      * but handles only admin and default currently.
      *
      * @param Doku_Event $event event object by reference
@@ -152,7 +180,7 @@ class action_plugin_combo_css extends DokuWiki_Action_Plugin
      *                           handler was registered]
      * @return void
      */
-    public function handle_css_styles(Doku_Event &$event, $param)
+    public function handle_front_css_styles(Doku_Event &$event, $param)
     {
         /**
          * Trick to be able to test
@@ -160,10 +188,11 @@ class action_plugin_combo_css extends DokuWiki_Action_Plugin
          * is started
          * we change the value to see if the payload is less big
          */
-        $propertyValue = PluginUtility::getPropertyValue(self::END_KEY);
+        $propertyValue = PluginUtility::getPropertyValue(self::WHICH_END_KEY);
         if ($propertyValue == self::VALUE_BACK) {
             return;
         }
+
 
         /**
          * There is one call by:
@@ -191,23 +220,7 @@ class action_plugin_combo_css extends DokuWiki_Action_Plugin
                     }
                     // Excluded
                     $isExcluded = false;
-                    $excludedPlugins = array(
-                        "acl",
-                        "authplain",
-                        "changes",
-                        "config",
-                        "extension",
-                        "info",
-                        "move",
-                        "popularity",
-                        "revert",
-                        "safefnrecode",
-                        "searchindex",
-                        "sqlite",
-                        "upgrade",
-                        "usermanager"
-                    );
-                    foreach ($excludedPlugins as $plugin) {
+                    foreach (self::EXCLUDED_PLUGINS as $plugin) {
                         if (strpos($file, 'lib/plugins/' . $plugin)) {
                             $isExcluded = true;
                             break;
@@ -229,6 +242,47 @@ class action_plugin_combo_css extends DokuWiki_Action_Plugin
                 // Interwiki styles are here, we keep (in the lib/css.php file)
                 break;
 
+        }
+    }
+
+    /**
+     * Handle all CSS script list.
+     *
+     * @param Doku_Event $event event object by reference
+     * @param mixed $param [the parameters passed as fifth argument to register_hook() when this
+     *                           handler was registered]
+     * @return void
+     */
+    public function handle_css_styles(Doku_Event &$event, $param)
+    {
+
+        /**
+         * There is one call by:
+         *   * mediatype (ie scree, all, print, speech)
+         *   * and one call for the dokuwiki default
+         */
+        switch ($event->data['mediatype']) {
+
+            case 'print':
+            case 'screen':
+            case 'all':
+                /**
+                 * Get the file by reference
+                 */
+                $files = &$event->data['files'];
+                /**
+                 * Strap has a copy of
+                 * the all.css without the group clear fix
+                 */
+                global $conf;
+                if ($conf['template'] == PluginUtility::TEMPLATE_STRAP_NAME) {
+                    foreach ($files as $file => $dir) {
+                        if (strpos($file, 'lib/styles/all.css')) {
+                            unset($files[$file]);
+                        }
+                    }
+                }
+                break;
         }
     }
 }

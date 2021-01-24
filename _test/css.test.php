@@ -22,8 +22,6 @@ class plugin_combo_css_test extends DokuWikiTest
     public function setUp()
     {
         $this->pluginsEnabled[] = PluginUtility::PLUGIN_BASE_NAME;
-
-
         parent::setUp();
     }
 
@@ -43,7 +41,7 @@ class plugin_combo_css_test extends DokuWikiTest
         $testRequest = new TestRequest();
         $testResponse = $testRequest->get(array('id' => $pageId),"/doku.php");
         $cssHrefAttribute = $testResponse->queryHTML('link[href*="css.php"]' )->attr('href');
-        $endKeyValue =  UrlUtility::getPropertyValue($cssHrefAttribute, action_plugin_combo_css::END_KEY);
+        $endKeyValue =  UrlUtility::getPropertyValue($cssHrefAttribute, action_plugin_combo_css::WHICH_END_KEY);
         $this->assertEquals(action_plugin_combo_css::VALUE_FRONT, $endKeyValue);
 
     }

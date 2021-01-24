@@ -69,14 +69,18 @@ class TestUtility
      * in the setUp of test before the parent:setUp
      *
      * @param $configurations - an array of configuration
-     *
+     * @param string $namespace - if null change a dokuwiki conf
      */
-    public static function setConf($configurations)
+    public static function setConf($configurations, $namespace = 'plugin')
     {
         $file = dirname(DOKU_CONF) . '/conf/local.php';
         $text = DOKU_LF;
         foreach ($configurations as $key => $value) {
-            $text .= '$conf[\'plugin\'][\'' . PluginUtility::PLUGIN_BASE_NAME . '\'][\'' . $key . '\'] = \'' . $value . '\';  ' . DOKU_LF;
+            $text .= '$conf';
+            if ($namespace != null) {
+                $text .= '[\'' . $namespace . '\'][\'' . PluginUtility::PLUGIN_BASE_NAME . '\']';
+            }
+            $text .= '[\'' . $key . '\'] = \'' . $value . '\';  ' . DOKU_LF;
         }
         file_put_contents($file, $text, FILE_APPEND);
 
@@ -99,7 +103,7 @@ class TestUtility
      */
     public static function getMeta($pageId, $key)
     {
-        return p_get_metadata($pageId,$key);
+        return p_get_metadata($pageId, $key);
     }
 
     /**
@@ -108,7 +112,7 @@ class TestUtility
     public static function becomeSuperUser(&$request)
     {
         global $conf;
-        $request->setServer('REMOTE_USER',$conf['superuser']);
+        $request->setServer('REMOTE_USER', $conf['superuser']);
     }
 
     /**
@@ -132,7 +136,8 @@ class TestUtility
      * @param $key
      * @return mixed|null
      */
-    private static function getMetaDirect($pageId, $key){
+    private static function getMetaDirect($pageId, $key)
+    {
         $meta = p_read_metadata($pageId, false);
         $meta = p_render_metadata($pageId, $meta);
         if ($meta == null) {
@@ -161,7 +166,7 @@ class TestUtility
     public static function addPage($pageId, $content, $summary = "Test")
     {
 
-        saveWikiText($pageId,$content,$summary);
+        saveWikiText($pageId, $content, $summary);
 
         /**
          * The static $recursion field of {@link p_get_metadata()}
@@ -186,14 +191,15 @@ class TestUtility
      * @param $text
      * @return mixed
      */
-    static function normalizeDokuWikiHtml($text){
+    static function normalizeDokuWikiHtml($text)
+    {
 
         /**
          * By default, Dokuwiki instruction wraps the output with a p element
          * See {@link plugin_combo_dokuwiki_test::test_p_tag()}
          */
-        StringUtility::ltrim($text,"<p>");
-        StringUtility::rtrim($text,"</p>");
+        StringUtility::ltrim($text, "<p>");
+        StringUtility::rtrim($text, "</p>");
 
         return HtmlUtility::normalize($text);
     }

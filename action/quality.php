@@ -1,9 +1,9 @@
 <?php
 
 
-
 use ComboStrap\SeoUtility;
-require_once (__DIR__.'/../class/SeoUtility.php');
+
+require_once(__DIR__ . '/../class/SeoUtility.php');
 
 /**
  * Class action_plugin_combo_quality
@@ -23,7 +23,7 @@ class action_plugin_combo_quality extends DokuWiki_Action_Plugin
     public function register(Doku_Event_Handler $controller)
     {
 
-
+        if ($this->getConf(SeoUtility::CONF_PRIVATE_LOW_QUALITY_PAGE_ENABLED)) {
             /**
              * https://www.dokuwiki.org/devel:event:auth_acl_check
              */
@@ -41,21 +41,17 @@ class action_plugin_combo_quality extends DokuWiki_Action_Plugin
              * https://www.dokuwiki.org/devel:event:feed_data_process
              */
             $controller->register_hook('FEED_DATA_PROCESS', 'AFTER', $this, 'handleRssFeed', array());
+        }
 
     }
 
     function handleAclCheck(&$event, $param)
     {
-        /**
-         * Plugin Configuration are not available in the register function
-         * This is why we check it in the handler function
-         */
-        if ($this->getConf(SeoUtility::CONF_PRIVATE_LOW_QUALITY_PAGE_ENABLED)) {
-            $id = $event->data['id'];
-            $user = $event->data['user'];
-            if (SeoUtility::isPageToExclude($id, $user)) {
-                return $event->result = AUTH_NONE;
-            }
+
+        $id = $event->data['id'];
+        $user = $event->data['user'];
+        if (SeoUtility::isPageToExclude($id, $user)) {
+            return $event->result = AUTH_NONE;
         }
 
     }
@@ -98,19 +94,16 @@ class action_plugin_combo_quality extends DokuWiki_Action_Plugin
     /**
      * @param $event
      */
-    private function excludeLowQualityPageFromSearch(&$event)
+    private
+    function excludeLowQualityPageFromSearch(&$event)
     {
-        /**
-         * Plugin Configuration are not available in the register function
-         * This is why we check it in the handler function
-         */
-        if ($this->getConf(SeoUtility::CONF_PRIVATE_LOW_QUALITY_PAGE_ENABLED)) {
-            foreach (array_keys($event->result) as $idx) {
-                if (SeoUtility::isPageToExclude($idx)) {
-                    unset($event->result[$idx]);
-                }
+
+        foreach (array_keys($event->result) as $idx) {
+            if (SeoUtility::isPageToExclude($idx)) {
+                unset($event->result[$idx]);
             }
         }
+
     }
 
 

@@ -27,9 +27,10 @@ class plugin_combo_quality_test extends DokuWikiTest
     public function setUp()
     {
         $this->pluginsEnabled[] = PluginUtility::PLUGIN_BASE_NAME;
-        global $conf;
+        TestUtility::setConf(array(
+            SeoUtility::CONF_PRIVATE_LOW_QUALITY_PAGE_ENABLED => 1,
+        ));
         parent::setUp();
-        $conf['plugin'][PluginUtility::PLUGIN_BASE_NAME][SeoUtility::CONF_PRIVATE_LOW_QUALITY_PAGE_ENABLED]=1;
 
     }
 

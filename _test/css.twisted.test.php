@@ -27,10 +27,15 @@ class plugin_combo_css_twisted_test extends DokuWikiTest
         /**
          * {@link DokuWikiTest} set the environment at set up to front
          */
-        TestUtility::setTestProperty(action_plugin_combo_css::END_KEY, action_plugin_combo_css::VALUE_FRONT);
+        TestUtility::setTestProperty(action_plugin_combo_css::WHICH_END_KEY, action_plugin_combo_css::VALUE_FRONT);
         TestUtility::setTestProperty("SCRIPT_NAME", "css.php");
 
-        TestUtility::setConf(array(action_plugin_combo_css::CONF_ENABLE_MINIMAL_FRONTEND_STYLESHEET => 1));
+        TestUtility::setConf(array(
+            action_plugin_combo_css::CONF_ENABLE_MINIMAL_FRONTEND_STYLESHEET => 1,
+        ));
+        TestUtility::setConf(array(
+            'template'=>PluginUtility::TEMPLATE_STRAP_NAME
+        ),null);
 
 
         parent::setUp();
@@ -73,7 +78,7 @@ class plugin_combo_css_twisted_test extends DokuWikiTest
         /**
          * A call as backend
          */
-        TestUtility::setTestProperty(action_plugin_combo_css::END_KEY, action_plugin_combo_css::VALUE_BACK);
+        TestUtility::setTestProperty(action_plugin_combo_css::WHICH_END_KEY, action_plugin_combo_css::VALUE_BACK);
         ob_start();
         css_out();
         $output = ob_get_contents();

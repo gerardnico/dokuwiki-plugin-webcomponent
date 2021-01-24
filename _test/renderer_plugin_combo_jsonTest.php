@@ -17,7 +17,7 @@ use ComboStrap\TestUtility;
 require_once(__DIR__ . '/../class/PluginUtility.php');
 require_once(__DIR__ . '/../class/TestUtility.php');
 
-class renderer_plugin_combo_statsTest extends DokuWikiTest
+class renderer_plugin_combo_jsonTest extends DokuWikiTest
 {
 
     public function setUp()
@@ -37,13 +37,39 @@ class renderer_plugin_combo_statsTest extends DokuWikiTest
          * used the in the switch of the {@link \dokuwiki\Action\Export::preProcess()} function
          */
         $file = wikiFN($pageId, 0);
-        $renderer = "combo_stats";
+        $renderer = "combo_json";
         global $ID;
         $ID=$pageId;
         $result = p_render($renderer, p_cached_instructions($file,false,$pageId), $info);
         $json = json_decode($result);
         $this->assertEquals($pageId, $json->id);
         $this->assertEquals("low", $json->quality->level);
+        $this->assertEquals(1, $json->statistics->words);
+
+    }
+
+    public function testWordCountLevel()
+    {
+        // Save a test page
+        $pageId = "stats";
+        $content = "==== bla ====\n".
+            "one two three four"
+        ;
+        TestUtility::addPage($pageId, $content, 'Page creation');
+
+        /**
+         * The p_render function was stolen from the {@link p_cached_output} function
+         * used the in the switch of the {@link \dokuwiki\Action\Export::preProcess()} function
+         */
+        $file = wikiFN($pageId, 0);
+        $renderer = "combo_json";
+        global $ID;
+        $ID=$pageId;
+        $result = p_render($renderer, p_cached_instructions($file,false,$pageId), $info);
+        $json = json_decode($result);
+        $this->assertEquals($pageId, $json->id);
+        $this->assertEquals("low", $json->quality->level);
+        $this->assertEquals(5, $json->statistics->words);
 
     }
 }

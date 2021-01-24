@@ -1,14 +1,18 @@
 <?php
 
 
+use ComboStrap\Text;
 use dokuwiki\ChangeLog\PageChangeLog;
+
+require_once(__DIR__ . '/../class/Text.php');
+
 
 /**
  * A stats Renderer
  * You can export the data with
- * doku.php?id=somepage&do=export_combo_stats
+ * doku.php?id=somepage&do=export_combo_json
  */
-class renderer_plugin_combo_stats extends Doku_Renderer
+class renderer_plugin_combo_json extends Doku_Renderer
 {
     /**
      * Constant in Key or value
@@ -64,7 +68,7 @@ class renderer_plugin_combo_stats extends Doku_Renderer
     /**
      * We store all our data in an array
      */
-    public $stats = array(
+    protected $stats = array(
 
         self::HEADERS => array(),
         self::HEADER_POSITION => array(),
@@ -85,12 +89,18 @@ class renderer_plugin_combo_stats extends Doku_Renderer
         self::INTERNAL_LINK_DISTANCE => array(),
         'chars' => 0,
         self::WORDS => 0,
-
     );
+
+    /**
+     * Metadata export
+     * @var array
+     */
+    protected $metadata = array();
 
     protected $quotelevel = 0;
     protected $formattingBracket = 0;
     protected $tableopen = false;
+
     /**
      * @var int The id of the header on the pahe
      * 1 = first header
@@ -102,12 +112,12 @@ class renderer_plugin_combo_stats extends Doku_Renderer
     public function document_start() // phpcs:ignore PSR1.Methods.CamelCapsMethodName.NotCamelCaps
     {
         global $ID;
+
         $meta = p_get_metadata($ID);
 
-        // get some dates from meta data
-        $this->stats[self::DATE_CREATED] = date('Y-m-d h:i:s', $meta['date']['created']);
-        $this->stats[self::DATE_MODIFIED] = date('Y-m-d h:i:s', $meta['date']['modified']);
-        $this->stats[self::TITLE] = $meta['title'];
+        $this->metadata[self::DATE_CREATED] = date('Y-m-d h:i:s', $meta['date']['created']);
+        $this->metadata[self::DATE_MODIFIED] = date('Y-m-d h:i:s', $meta['date']['modified']);
+        $this->metadata[self::TITLE] = $meta['title'];
 
         // get author info
         $changelog = new PageChangeLog($ID);
@@ -126,7 +136,7 @@ class renderer_plugin_combo_stats extends Doku_Renderer
         // work on raw text
         $text = rawWiki($ID);
         $this->stats['chars'] = strlen($text);
-        $this->stats[self::WORDS] = count(array_filter(preg_split('/[^\w\-_]/u', $text)));
+        $this->stats[self::WORDS] = Text::getWordCount($text);
     }
 
 
@@ -409,12 +419,14 @@ class renderer_plugin_combo_stats extends Doku_Renderer
         $quality["rules"]['details'] = $ruleResults;
 
         /**
-         * Building the JSON in order
+         * Building the Top JSON in order
          */
         global $ID;
-        $statExport["id"] = $ID;
+        $json = array();
+        $json["id"] = $ID;
         ksort($statExport);
-        $statExport[self::QUALITY] = $quality; // Quality after the sort to get them at the end
+        $json["statistics"]=$statExport;
+        $json[self::QUALITY] = $quality; // Quality after the sort to get them at the end
 
 
         /**
@@ -422,7 +434,7 @@ class renderer_plugin_combo_stats extends Doku_Renderer
          * doku.php?id=somepage&do=export_combo_stats
          */
         header('Content-Type: application/json');
-        $this->doc .= json_encode($statExport, JSON_PRETTY_PRINT);
+        $this->doc .= json_encode($json, JSON_PRETTY_PRINT);
 
     }
 
@@ -470,6 +482,7 @@ class renderer_plugin_combo_stats extends Doku_Renderer
         $this->stats[self::HEADERS]['h' . $level]++;
         $this->headerId++;
         $this->stats[self::HEADER_POSITION][$this->headerId] = 'h' . $level;
+        $this->stats[self::WORDS] -= 2;
     }
 
     public function smiley($smiley)
@@ -585,6 +598,7 @@ class renderer_plugin_combo_stats extends Doku_Renderer
     }
 
 
+
+
 }
 
-//Setup VIM: ex: et ts=4 enc=utf-8 :
