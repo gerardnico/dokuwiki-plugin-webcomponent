@@ -153,15 +153,8 @@ class syntax_plugin_combo_list extends DokuWiki_Syntax_Plugin
             switch ($state) {
                 case DOKU_LEXER_ENTER :
                     if (!PluginUtility::htmlSnippetAlreadyAdded($renderer->info, self::TAG)) {
-                        $styles = array();
-                        $styles['list-style-type'] = 'none';
-                        $styles['padding'] = '0 0'; // Padding on list is 40px left default
-                        $styles['line-height'] = '1.75rem';
-                        $styles['border'] = '1px solid #e5e5e5';
-                        $styles['width'] = '100%';
-                        $styles['display'] = 'block';
-                        $styles['border-radius'] = '0.25rem';
-                        $renderer->doc .= '<style>' . StyleUtility::getRule($styles, "." . self::COMBO_LIST_CLASS) . '</style>';
+                        $styles = $this->getStyles();
+                        $renderer->doc .= '<style>' . StyleUtility::getRule($styles, "." . self::COMBO_LIST_CLASS) . '</style>'.DOKU_LF;
                     }
                     $renderer->doc .= $data[PluginUtility::PAYLOAD] . DOKU_LF;
                     break;
@@ -177,6 +170,22 @@ class syntax_plugin_combo_list extends DokuWiki_Syntax_Plugin
 
         // unsupported $mode
         return false;
+    }
+
+    /**
+     * @return array
+     */
+    static public function getStyles()
+    {
+        $styles = array();
+        $styles['list-style-type'] = 'none';
+        $styles['padding'] = '0 0'; // Padding on list is 40px left default
+        $styles['line-height'] = '1.75rem';
+        $styles['border'] = '1px solid #e5e5e5';
+        $styles['width'] = '100%';
+        $styles['display'] = 'block';
+        $styles['border-radius'] = '0.25rem';
+        return $styles;
     }
 
 

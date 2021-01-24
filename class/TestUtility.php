@@ -129,6 +129,11 @@ class TestUtility
         return RenderUtility::renderText2Xhtml($text);
     }
 
+    public static function HtmlDiff($expected, $rendered)
+    {
+        return HtmlUtility::diff($expected, $rendered);
+    }
+
     /**
      * See {@link getMeta}
      *
@@ -202,7 +207,7 @@ class TestUtility
             StringUtility::ltrim($text, "<p>");
             StringUtility::rtrim($text, "</p>");
         }
-
+        $text = str_replace(DOKU_LF.DOKU_LF,DOKU_LF,$text);
         return HtmlUtility::normalize($text);
     }
 }

@@ -57,4 +57,15 @@ class Text
         return $preg_match == 1;
     }
 
+    public static function normalize($expected)
+    {
+        $expected = preg_replace("/[\s]/", " ", $expected);
+        $expected = str_replace("  ", " ", $expected);
+        $expected = str_replace("  ", " ", $expected);
+        $expected = str_replace("  ", " ", $expected);
+        $expected = str_replace("  ", " ", $expected);
+        return trim($expected);
+
+    }
+
 }

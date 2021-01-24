@@ -14,8 +14,11 @@ namespace ComboStrap;
 
 
 use DOMDocument;
+use DOMNode;
+use DOMNodeList;
 use http\Exception\RuntimeException;
 use SimpleXMLElement;
+
 require_once(__DIR__ . '/../class/PluginUtility.php');
 require_once(__DIR__ . '/../class/XmlUtility.php');
 
@@ -88,7 +91,7 @@ class HtmlUtility
      */
     public static function format($text)
     {
-        if (empty($text)){
+        if (empty($text)) {
             throw new \RuntimeException("The text should not be empty");
         }
         $doc = new DOMDocument();
@@ -101,11 +104,44 @@ class HtmlUtility
         $doc->formatOutput = true;
         $DOMNodeList = $doc->getElementsByTagName("body")->item(0)->childNodes;
         $output = "";
-        foreach ($DOMNodeList as $value){
-            $output .= $doc->saveXML($value).DOKU_LF;
+        foreach ($DOMNodeList as $value) {
+            $output .= $doc->saveXML($value) . DOKU_LF;
         }
         // Type doc can also be reach with $domNode->ownerDocument
         return $output;
+
+
+    }
+
+    /**
+     * Return a diff
+     * @param $left
+     * @param $right
+     * @return mixed
+     * DOMDocument supports formatted XML while SimpleXMLElement does not.
+     * @noinspection PhpComposerExtensionStubsInspection
+     */
+    public static function diff($left, $right)
+    {
+        if (empty($right)) {
+            throw new \RuntimeException("The left text should not be empty");
+        }
+        if (empty($left)) {
+            throw new \RuntimeException("The left text should not be empty");
+        }
+        /**
+         * The @ is to suppress the error because of HTML5 tag such as footer
+         * https://stackoverflow.com/questions/6090667/php-domdocument-errors-warnings-on-html5-tags
+         */
+        $leftDocument = new DOMDocument();
+        $leftDocument->loadHTML($left);
+        $rightDocument = new DOMDocument();
+        $rightDocument->loadHTML($right);
+
+        $error = "";
+        self::diffNode($leftDocument, $rightDocument, $error);
+
+        return $error;
 
 
     }
@@ -116,6 +152,64 @@ class HtmlUtility
      */
     public static function countLines($text)
     {
-        return count(preg_split("/<\/p>|<\/h[1-9]{1}>|<br|<\/tr>|<\/li>|<hr>|<\/pre>/",$text)) - 1;
+        return count(preg_split("/<\/p>|<\/h[1-9]{1}>|<br|<\/tr>|<\/li>|<hr>|<\/pre>/", $text)) - 1;
+    }
+
+    /**
+     *
+     * Tip: To get the text of a node:
+     * $leftNode->ownerDocument->saveHTML($leftNode)
+     */
+    /** @noinspection PhpComposerExtensionStubsInspection */
+    private static function diffNode(DOMNode $leftNode, DOMNode $rightNode, &$error)
+    {
+
+        $leftNodeName = $leftNode->localName;
+        $rightNodeName = $rightNode->localName;
+        if ($leftNodeName != $rightNodeName) {
+            $error .= "The node (" . $rightNode->getNodePath() . ") are different (" . $leftNodeName . "," . $rightNodeName . ")\n";
+        }
+        if ($leftNode->hasAttributes()) {
+            $leftAttributesLength = $leftNode->attributes->length;
+            $rightAttributesLength = $rightNode->attributes->length;
+            if ($leftAttributesLength != $rightAttributesLength) {
+                $error .= "The node (" . $rightNode->getNodePath() . ") have different number of attributes (" . $leftAttributesLength . "," . $rightAttributesLength . ")\n";
+            }
+            if ($leftAttributesLength != 0) {
+                for ($i = 0; $i < $leftAttributesLength; $i++) {
+                    $leftAtt = $leftNode->attributes->item($i);
+                    $rightAtt = $rightNode->attributes->item($i);
+                    $leftAttName = $leftAtt->nodeName;
+                    $rightAttName = $rightAtt->nodeName;
+                    if ($leftAttName != $rightAttName){
+                        $error .= "The attribute (". $leftAttName .") of the node (" . $rightNode->getNodePath() . ") have different name than the right (" .$rightAttName . ")\n";
+                    }
+                    $leftAttValue = $leftAtt->nodeValue;
+                    $rightAttValue = $rightAtt->nodeValue;
+                    if ($leftAttValue != $rightAttValue){
+                        $error .= "The attribute (". $leftAttName .") of the node (" . $rightNode->getNodePath() . ") have a different value (".$leftAttValue.") than the right (" .$rightAttValue . ")\n";
+                    }
+            }
+            }
+        }
+        if ($leftNode->nodeName=="#text") {
+            $leftNodeValue = trim($leftNode->nodeValue);
+            $rightNodeValue = trim($rightNode->nodeValue);
+            if ($leftNodeValue != $rightNodeValue) {
+                $error .= "The node (" . $rightNode->getNodePath() . ") have different value (" . $leftNodeValue . "," . $rightNodeValue . ")\n";
+            }
+        }
+        /**
+         * Sub
+         */
+        if ($leftNode->hasChildNodes()) {
+
+            for ($i = 0; $i < $leftNode->childNodes->length; $i++) {
+                $lefChildNode = $leftNode->childNodes->item($i);
+                $rightChildNode = $rightNode->childNodes->item($i);
+                self::diffNode($lefChildNode, $rightChildNode, $error);
+            }
+        }
+
     }
 }

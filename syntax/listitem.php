@@ -21,7 +21,7 @@ class syntax_plugin_combo_listitem extends DokuWiki_Syntax_Plugin
      * The style added
      * @return array
      */
-    static function getListItemStyle()
+    static function getStyles()
     {
         $styles = array();
         $styles['position'] = 'relative'; // Why ?
@@ -191,8 +191,8 @@ class syntax_plugin_combo_listitem extends DokuWiki_Syntax_Plugin
             switch ($state) {
                 case DOKU_LEXER_ENTER :
                     if (!PluginUtility::htmlSnippetAlreadyAdded($renderer->info,self::TAG)) {
-                        $styles = self::getListItemStyle();
-                        $renderer->doc .= '<style>' . StyleUtility::getRule($styles, "." . self::COMBO_LIST_ITEM_CLASS) . '</style>';
+                        $styles = self::getStyles();
+                        $renderer->doc .= '<style>' . StyleUtility::getRule($styles, "." . self::COMBO_LIST_ITEM_CLASS) . '</style>'.DOKU_LF;
                     }
                     $renderer->doc .= $data[PluginUtility::PAYLOAD] . DOKU_LF;
                     break;

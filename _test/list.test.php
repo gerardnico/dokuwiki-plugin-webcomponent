@@ -1,15 +1,15 @@
 <?php
 
 use ComboStrap\StyleUtility;
-use ComboStrap\TitleUtility;
+use ComboStrap\Text;
 use ComboStrap\HtmlUtility;
-use ComboStrap\LinkUtility;
 use ComboStrap\PluginUtility;
 use ComboStrap\TestUtility;
 
 require_once(__DIR__ . '/../class/PluginUtility.php');
 require_once(__DIR__ . '/../class/TestUtility.php');
 require_once(__DIR__ . '/../class/StyleUtility.php');
+require_once(__DIR__ . '/../class/Text.php');
 
 /**
  * Test the component plugin
@@ -34,7 +34,7 @@ class plugin_combo_list_test extends DokuWikiTest
     public function test_list()
     {
 
-        $text = <<<EOF
+        $plainText = <<<EOF
 <list>
     <li>
         Icon
@@ -45,19 +45,20 @@ class plugin_combo_list_test extends DokuWikiTest
 </list>
 EOF;
 
-        $styleNode = '<style>' . StyleUtility::getRule(syntax_plugin_combo_listitem::getListItemStyle(), "." . syntax_plugin_combo_listitem::COMBO_LIST_ITEM_CLASS) . '</style>';
-        $expected = TestUtility::normalizeDokuWikiHtml("<ul class=\"combo-list\">
-{$styleNode}
-<li class=\"combo-list-item\">Icon</li>
-<li class=\"combo-list-item\">Badge</li>
+        $styleListItem = '<style>' . StyleUtility::getRule(syntax_plugin_combo_listitem::getStyles(), "." . syntax_plugin_combo_listitem::COMBO_LIST_ITEM_CLASS) . '</style>';
+        $styleList = '<style>' . StyleUtility::getRule(syntax_plugin_combo_list::getStyles(), "." . syntax_plugin_combo_list::COMBO_LIST_CLASS) . '</style>';
+        $expected = <<<EOF
+{$styleList}
+<ul class="combo-list">
+{$styleListItem}
+<li class="combo-list-item">Icon</li>
+<li class="combo-list-item">Badge</li>
 </ul>
-");
-        $rendered = PluginUtility::render($text);
-        $normalizedOutput =  TestUtility::normalizeDokuWikiHtml($rendered,true);
-        $this->assertEquals(
-            $expected,
-            $normalizedOutput
-        );
+EOF;
+
+        $rendered = PluginUtility::render($plainText);
+        $error = TestUtility::HtmlDiff($expected, $rendered);
+        $this->assertEquals("", $error);
 
     }
 
