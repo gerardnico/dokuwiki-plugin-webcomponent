@@ -18,7 +18,7 @@ require_once(__DIR__ . '/../class/Text.php');
 class TextTest extends \DokuWikiTest
 {
 
-    public function testName()
+    public function testBase()
     {
         $count = Text::getWordCount("hallo world");
         $this->assertEquals(2,$count);
@@ -31,6 +31,33 @@ class TextTest extends \DokuWikiTest
         $count = Text::getWordCount($content);
         $this->assertEquals(5,$count);
 
+
     }
+
+    public function testHtml()
+    {
+        /**
+         * Test node and attribute are not taken into account
+         */
+        $content = "==== bla ====\n<note group name='value'>one two th-ree fo_ur</note>";
+        $count = Text::getWordCount($content);
+        $this->assertEquals(6,$count);
+
+    }
+
+    public function testIsWord()
+    {
+
+        $this->assertTrue(Text::isWord("bla"));
+        $this->assertTrue(Text::isWord("bl-a"));
+        $this->assertTrue(Text::isWord("bl_a"));
+        $this->assertFalse(Text::isWord(""));
+        $this->assertFalse(Text::isWord("bl_a>"));
+        $this->assertFalse(Text::isWord("<bl_a>"));
+        $this->assertFalse(Text::isWord("<bl_a"));
+        $this->assertFalse(Text::isWord("a=b"));
+
+    }
+
 
 }

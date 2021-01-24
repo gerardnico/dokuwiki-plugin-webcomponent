@@ -136,6 +136,12 @@ class renderer_plugin_combo_json extends Doku_Renderer
         // work on raw text
         $text = rawWiki($ID);
         $this->stats['chars'] = strlen($text);
+
+        /**
+         * The word count does not take into account
+         * words with non-words characters such as < =
+         * Therefore the node and attribute are not taken in the count
+         */
         $this->stats[self::WORDS] = Text::getWordCount($text);
     }
 
@@ -482,7 +488,7 @@ class renderer_plugin_combo_json extends Doku_Renderer
         $this->stats[self::HEADERS]['h' . $level]++;
         $this->headerId++;
         $this->stats[self::HEADER_POSITION][$this->headerId] = 'h' . $level;
-        $this->stats[self::WORDS] -= 2;
+
     }
 
     public function smiley($smiley)
