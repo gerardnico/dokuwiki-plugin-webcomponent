@@ -189,17 +189,19 @@ class TestUtility
     /**
      * Format an HTML in order to be able to compare it
      * @param $text
+     * @param bool $keepDokuWikiRootNode - set it to true if your output does not have a root element
      * @return mixed
      */
-    static function normalizeDokuWikiHtml($text)
+    static function normalizeDokuWikiHtml($text, $keepDokuWikiRootNode = false)
     {
-
         /**
          * By default, Dokuwiki instruction wraps the output with a p element
          * See {@link plugin_combo_dokuwiki_test::test_p_tag()}
          */
-        StringUtility::ltrim($text, "<p>");
-        StringUtility::rtrim($text, "</p>");
+        if (!$keepDokuWikiRootNode) {
+            StringUtility::ltrim($text, "<p>");
+            StringUtility::rtrim($text, "</p>");
+        }
 
         return HtmlUtility::normalize($text);
     }

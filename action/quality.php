@@ -23,7 +23,7 @@ class action_plugin_combo_quality extends DokuWiki_Action_Plugin
     public function register(Doku_Event_Handler $controller)
     {
 
-        if ($this->getConf(SeoUtility::CONF_PRIVATE_LOW_QUALITY_PAGE_ENABLED)) {
+        if ($this->getConf(SeoUtility::CONF_LOW_QUALITY_PAGE_NOT_PUBLIC_ENABLE)) {
             /**
              * https://www.dokuwiki.org/devel:event:auth_acl_check
              */

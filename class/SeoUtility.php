@@ -24,26 +24,7 @@ use Doku_Renderer_xhtml;
 class SeoUtility
 {
 
-    const CONF_PRIVATE_LOW_QUALITY_PAGE_ENABLED = "privateLowQualityPageEnabled";
-
-    /**
-     * Is logged in
-     * @param $user
-     * @return boolean
-     */
-    static function isLoggedIn($user)
-    {
-        $loggedIn = false;
-        if (!empty($user)) {
-            $loggedIn = true;
-        } else {
-            global $INPUT;
-            if ($INPUT->server->has('REMOTE_USER')) {
-                $loggedIn = true;
-            }
-        }
-        return $loggedIn;
-    }
+    const CONF_LOW_QUALITY_PAGE_NOT_PUBLIC_ENABLE = "lowQualityPageNotPublicEnable";
 
     /**
      * Low page quality
@@ -78,7 +59,7 @@ class SeoUtility
      */
     public static function isPageToExclude($id, $user = '')
     {
-        if (!self::isLoggedIn($user)) {
+        if (!Auth::isLoggedIn($user)) {
             if (self::isLowQualityPage($id)) {
                 /**
                  * Low quality page should not

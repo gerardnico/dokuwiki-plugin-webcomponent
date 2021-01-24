@@ -73,7 +73,6 @@ class HtmlUtility
      * Return a formatted HTML that does take into account the {@link DOKU_LF}
      * @param $text
      * @return mixed
-     * @throws \Exception
      */
     public static function normalize($text)
     {
@@ -86,12 +85,11 @@ class HtmlUtility
      * @param $text
      * @return mixed
      * DOMDocument supports formatted XML while SimpleXMLElement does not.
-     * @throws \Exception if empty
      */
     public static function format($text)
     {
         if (empty($text)){
-            throw new \Exception("The text should not be empty");
+            throw new \RuntimeException("The text should not be empty");
         }
         $doc = new DOMDocument();
         /**

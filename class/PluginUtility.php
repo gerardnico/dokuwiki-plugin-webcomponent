@@ -739,7 +739,7 @@ class PluginUtility
      * Check if a HTML tag was already added for a request
      * The request id is just the timestamp
      * An indicator array should be provided
-     * @param $info - the render info
+     * @param $info - the render->info array
      * @param $snippetName - the name of the snippet (or $this->getPluginComponent())
      * @return bool
      */

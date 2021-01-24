@@ -13,12 +13,19 @@ if (!defined('DOKU_INC')) die();
 class syntax_plugin_combo_preformatted extends DokuWiki_Syntax_Plugin
 {
 
+    const TAG='preformatted';
     /**
      * Enable or disable this component
      */
     const CONF_PREFORMATTED_ENABLE = 'preformattedEnable';
 
-
+    /**
+     * Syntax Type.
+     *
+     * Needs to return one of the mode types defined in $PARSER_MODES in parser.php
+     * @see https://www.dokuwiki.org/devel:syntax_plugins#syntax_types
+     * @see DokuWiki_Syntax_Plugin::getType()
+     */
     function getType()
     {
         return 'container';
@@ -57,7 +64,7 @@ class syntax_plugin_combo_preformatted extends DokuWiki_Syntax_Plugin
     function getSort()
     {
         /**
-         * Should be less than the code syntax plugin
+         * Should be less than the preformatted mode
          * which is 20
          **/
         return 19;
@@ -104,7 +111,7 @@ class syntax_plugin_combo_preformatted extends DokuWiki_Syntax_Plugin
     function handle($match, $state, $pos, Doku_Handler $handler)
     {
 
-        return $match;
+        return array($match);
 
     }
 
@@ -120,9 +127,8 @@ class syntax_plugin_combo_preformatted extends DokuWiki_Syntax_Plugin
      */
     function render($format, Doku_Renderer $renderer, $data)
     {
-        $renderer->doc .= $data;
+        $renderer->doc .= trim($data[0]);
         return false;
-
     }
 
 

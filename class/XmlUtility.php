@@ -142,12 +142,11 @@ class XmlUtility
     /**
      * @param $text
      * @return mixed
-     * @throws \Exception
      */
     public static function normalize($text)
     {
         if (empty($text)){
-            throw new \Exception("The text should not be empty");
+            throw new \RuntimeException("The text should not be empty");
         }
         $doc = new DOMDocument();
         $doc->loadXML($text);

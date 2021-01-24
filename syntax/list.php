@@ -19,7 +19,6 @@ class syntax_plugin_combo_list extends DokuWiki_Syntax_Plugin
     const COMBO_LIST_CLASS = "combo-list";
 
 
-
     /**
      * Syntax Type.
      *
@@ -63,7 +62,7 @@ class syntax_plugin_combo_list extends DokuWiki_Syntax_Plugin
 
     function getSort()
     {
-        return 201;
+        return 15;
     }
 
 
@@ -103,7 +102,7 @@ class syntax_plugin_combo_list extends DokuWiki_Syntax_Plugin
             case DOKU_LEXER_ENTER :
 
                 $attributes = PluginUtility::getTagAttributes($match);
-                PluginUtility::addClass2Attributes(self::COMBO_LIST_CLASS,$attributes);
+                PluginUtility::addClass2Attributes(self::COMBO_LIST_CLASS, $attributes);
 
                 $html = '<ul';
                 if (sizeof($attributes)) {
@@ -153,18 +152,16 @@ class syntax_plugin_combo_list extends DokuWiki_Syntax_Plugin
             $state = $data[PluginUtility::STATE];
             switch ($state) {
                 case DOKU_LEXER_ENTER :
-                    if (!PluginUtility::htmlSnippetAlreadyAdded($renderer->info,"list")) {
-                        if (FsWikiUtility::getMainPageId()!=null) {
-                            $styles = array();
-                            $styles['list-style-type'] = 'none';
-                            $styles['padding'] = '0 0'; // Padding on list is 40px left default
-                            $styles['line-height'] = '1.75rem';
-                            $styles['border'] = '1px solid #e5e5e5';
-                            $styles['width'] = '100%';
-                            $styles['display'] = 'block';
-                            $styles['border-radius'] = '0.25rem';
-                            $renderer->doc .= '<style>' . StyleUtility::getRule($styles, "." . self::COMBO_LIST_CLASS) . '</style>';
-                        }
+                    if (!PluginUtility::htmlSnippetAlreadyAdded($renderer->info, self::TAG)) {
+                        $styles = array();
+                        $styles['list-style-type'] = 'none';
+                        $styles['padding'] = '0 0'; // Padding on list is 40px left default
+                        $styles['line-height'] = '1.75rem';
+                        $styles['border'] = '1px solid #e5e5e5';
+                        $styles['width'] = '100%';
+                        $styles['display'] = 'block';
+                        $styles['border-radius'] = '0.25rem';
+                        $renderer->doc .= '<style>' . StyleUtility::getRule($styles, "." . self::COMBO_LIST_CLASS) . '</style>';
                     }
                     $renderer->doc .= $data[PluginUtility::PAYLOAD] . DOKU_LF;
                     break;

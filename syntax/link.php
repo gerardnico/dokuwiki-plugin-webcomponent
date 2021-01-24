@@ -80,14 +80,14 @@ class syntax_plugin_combo_link extends DokuWiki_Syntax_Plugin
          * Without the low quality page module enabled
          * we take over only on a subset of component
          */
-        if (!$this->getConf(SeoUtility::CONF_PRIVATE_LOW_QUALITY_PAGE_ENABLED)) {
+        if (!$this->getConf(SeoUtility::CONF_LOW_QUALITY_PAGE_NOT_PUBLIC_ENABLE)) {
             // Only inside the following component
             $authorizedMode =
                 [
                     PluginUtility::getModeForComponent(syntax_plugin_combo_button::TAG),
                     PluginUtility::getModeForComponent(syntax_plugin_combo_cite::TAG),
                     PluginUtility::getModeForComponent(syntax_plugin_combo_dropdown::TAG),
-                    PluginUtility::getModeForComponent(syntax_plugin_combo_listitem::MODE_NAME)
+                    PluginUtility::getModeForComponent(syntax_plugin_combo_listitem::TAG)
                 ];
             if (in_array($mode, $authorizedMode)) {
                 $this->Lexer->addSpecialPattern(LinkUtility::LINK_PATTERN, $mode, PluginUtility::getModeForComponent($this->getPluginComponent()));
@@ -161,7 +161,7 @@ class syntax_plugin_combo_link extends DokuWiki_Syntax_Plugin
                 $id = $attributes[LinkUtility::ATTRIBUTE_ID];
                 if (
                     $type == "internal"
-                    && $this->getConf(SeoUtility::CONF_PRIVATE_LOW_QUALITY_PAGE_ENABLED)
+                    && $this->getConf(SeoUtility::CONF_LOW_QUALITY_PAGE_NOT_PUBLIC_ENABLE)
                     && SeoUtility::isPageToExclude($id)
                 ) {
                     $htmlLink = LinkUtility::renderAsSpanElement($attributes);

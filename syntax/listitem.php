@@ -13,10 +13,25 @@ use ComboStrap\StyleUtility;
 class syntax_plugin_combo_listitem extends DokuWiki_Syntax_Plugin
 {
 
-    const MODE_NAME = "listitem";
+    const TAG = "listitem";
     const TAGS = array("list-item", "li");
     const COMBO_LIST_ITEM_CLASS = "combo-list-item";
 
+    /**
+     * The style added
+     * @return array
+     */
+    static function getListItemStyle()
+    {
+        $styles = array();
+        $styles['position'] = 'relative'; // Why ?
+        $styles['display'] = 'flex';
+        $styles['align-items'] = 'center';
+        $styles['justify-content'] = 'flex-start';
+        $styles['padding'] = '8px 16px'; // Padding at the left and right
+        $styles['overflow'] = 'hidden';
+        return $styles;
+    }
 
 
     /**
@@ -64,10 +79,11 @@ class syntax_plugin_combo_listitem extends DokuWiki_Syntax_Plugin
      * @see Doku_Parser_Mode::getSort()
      * the mode with the lowest sort number will win out
      * Higher than {@link syntax_plugin_combo_list}
+     * but less than {@link syntax_plugin_combo_preformatted}
      */
     function getSort()
     {
-        return 201;
+        return 18;
     }
 
 
@@ -78,7 +94,12 @@ class syntax_plugin_combo_listitem extends DokuWiki_Syntax_Plugin
          * This selection helps also because
          * the pattern for the li tag could also catch a list tag
          */
-        if ($mode == PluginUtility::getModeForComponent(syntax_plugin_combo_list::TAG)) {
+        $authorizedModes = array(
+            PluginUtility::getModeForComponent(syntax_plugin_combo_list::TAG),
+            PluginUtility::getModeForComponent(syntax_plugin_combo_preformatted::TAG)
+            );
+
+        if (in_array($mode,$authorizedModes)) {
             foreach (self::TAGS as $tag) {
                 $pattern = PluginUtility::getContainerTagPattern($tag);
                 $this->Lexer->addEntryPattern($pattern, $mode, PluginUtility::getModeForComponent($this->getPluginComponent()));
@@ -130,10 +151,14 @@ class syntax_plugin_combo_listitem extends DokuWiki_Syntax_Plugin
                     PluginUtility::PAYLOAD => $html);
 
             case DOKU_LEXER_UNMATCHED :
-
+                if (!empty(trim($match))) {
+                    $payload = "<span>" . PluginUtility::escape($match) . '</span>';
+                } else {
+                    $payload = "";
+                }
                 return array(
                     PluginUtility::STATE => $state,
-                    PluginUtility::PAYLOAD => "<span>" . PluginUtility::escape($match) . '</span>');
+                    PluginUtility::PAYLOAD => $payload);
 
             case DOKU_LEXER_EXIT :
 
@@ -165,17 +190,9 @@ class syntax_plugin_combo_listitem extends DokuWiki_Syntax_Plugin
             $state = $data[PluginUtility::STATE];
             switch ($state) {
                 case DOKU_LEXER_ENTER :
-                    if (!PluginUtility::htmlSnippetAlreadyAdded($renderer->info,self::MODE_NAME)) {
-                        if (FsWikiUtility::getMainPageId() != null) {
-                            $styles = array();
-                            $styles['position'] = 'relative'; // Why ?
-                            $styles['display'] = 'flex';
-                            $styles['align-items'] = 'center';
-                            $styles['justify-content'] = 'flex-start';
-                            $styles['padding'] = '8px 16px'; // Padding at the left and right
-                            $styles['overflow'] = 'hidden';
-                            $renderer->doc .= '<style>' . StyleUtility::getRule($styles, "." . self::COMBO_LIST_ITEM_CLASS) . '</style>';
-                        }
+                    if (!PluginUtility::htmlSnippetAlreadyAdded($renderer->info,self::TAG)) {
+                        $styles = self::getListItemStyle();
+                        $renderer->doc .= '<style>' . StyleUtility::getRule($styles, "." . self::COMBO_LIST_ITEM_CLASS) . '</style>';
                     }
                     $renderer->doc .= $data[PluginUtility::PAYLOAD] . DOKU_LF;
                     break;
