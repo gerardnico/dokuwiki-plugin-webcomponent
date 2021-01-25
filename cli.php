@@ -13,6 +13,7 @@ if (!defined('DOKU_INC')) die();
 
 use ComboStrap\Analytics;
 use splitbrain\phpcli\Options;
+
 require_once(__DIR__ . '/class/Analytics.php');
 
 /**
@@ -48,7 +49,7 @@ class cli_plugin_combo extends DokuWiki_CLI_Plugin
      */
     protected function setup(Options $options)
     {
-        $options->setHelp('Extract statistics information');
+        $options->setHelp('Run the analytics process');
         $options->registerOption('version', 'print version', 'v');
         $options->registerArgument(
             'namespaces',
@@ -56,8 +57,12 @@ class cli_plugin_combo extends DokuWiki_CLI_Plugin
             false);
         $options->registerOption(
             'output',
-            "Where to store the output eg. a filename. If not given the output is written to STDOUT.",
+            "Optional, where to store the analytical data as csv eg. a filename.",
             'o', 'file');
+        $options->registerOption(
+            'cache',
+            "Optional, returns from the cache if set",
+            'c', false);
 
     }
 
@@ -71,25 +76,31 @@ class cli_plugin_combo extends DokuWiki_CLI_Plugin
         $namespaces = array_map('cleanID', $options->getArgs());
         if (!count($namespaces)) $namespaces = array(''); //import from top
 
-        $output = $options->getOpt('output', '-');
-        if ($output == '-') $output = 'php://stdout';
+        $output = $options->getOpt('output', '');
+        //if ($output == '-') $output = 'php://stdout';
+        $cache = $options->getOpt('cache', false);
 
-        $fileHandle = @fopen($output, 'w');
-        if (!$fileHandle) $this->fatal("Failed to open $output");
-        $this->process($namespaces, $fileHandle);
-        fclose($fileHandle);
+
+        $this->process($namespaces, $output, $cache);
+
 
     }
 
     /**
      * @param $namespaces
-     * @param $fileHandle
+     * @param $output
+     * @param bool $cache
      * @param int $depth recursion depth. 0 for unlimited
      */
-    private function process($namespaces, $fileHandle, $depth = 0)
+    private function process($namespaces, $output, $cache = false, $depth = 0)
     {
         global $conf;
 
+        $fileHandle = null;
+        if (!empty($output)) {
+            $fileHandle = @fopen($output, 'w');
+            if (!$fileHandle) $this->fatal("Failed to open $output");
+        }
 
         // find pages
         $pages = array();
@@ -129,27 +140,29 @@ class cli_plugin_combo extends DokuWiki_CLI_Plugin
         }
 
 
-        $header = array(
-            'id',
-            'backlinks',
-            'broken_links',
-            'changes',
-            'chars',
-            'external_links',
-            'external_medias',
-            'h1',
-            'h2',
-            'h3',
-            'h4',
-            'h5',
-            'internal_links',
-            'internal_medias',
-            'words',
-            'score'
-        );
-        fwrite($fileHandle, implode(",", $header) . PHP_EOL);
+        if (!empty($fileHandle)) {
+            $header = array(
+                'id',
+                'backlinks',
+                'broken_links',
+                'changes',
+                'chars',
+                'external_links',
+                'external_medias',
+                'h1',
+                'h2',
+                'h3',
+                'h4',
+                'h5',
+                'internal_links',
+                'internal_medias',
+                'words',
+                'score'
+            );
+            fwrite($fileHandle, implode(",", $header) . PHP_EOL);
+        }
         while ($page = array_shift($pages)) {
-            $id=$page['id'];
+            $id = $page['id'];
 
             // Run as admin to overcome the fact that
             // anonymous user cannot set all links and backlinnks
@@ -157,28 +170,34 @@ class cli_plugin_combo extends DokuWiki_CLI_Plugin
             $USERINFO['grps'] = array('admin');
 
 
-            echo 'Processing the page '.$id . "\n";
-            $data = Analytics::getDataAsArray($id,false);
-            $statistics = $data[Analytics::STATISTICS];
-            $row = array(
-                'id' => $id,
-                'backlinks' => $statistics[Analytics::INTERNAL_BACKLINKS_COUNT],
-                'broken_links' => $statistics[Analytics::INTERNAL_LINKS_BROKEN_COUNT],
-                'changes' => $statistics[Analytics::EDITS_COUNT],
-                'chars' => $statistics[Analytics::CHARS_COUNT],
-                'external_links' => $statistics[Analytics::EXTERNAL_LINKS_COUNT],
-                'external_medias' => $statistics[Analytics::EXTERNAL_MEDIAS],
-                'h1' => $statistics[Analytics::HEADERS_COUNT]['h1'],
-                'h2' => $statistics[Analytics::HEADERS_COUNT]['h2'],
-                'h3' => $statistics[Analytics::HEADERS_COUNT]['h3'],
-                'h4' => $statistics[Analytics::HEADERS_COUNT]['h4'],
-                'h5' => $statistics[Analytics::HEADERS_COUNT]['h5'],
-                'internal_links' => $statistics[Analytics::INTERNAL_LINKS_COUNT],
-                'internal_medias' => $statistics[Analytics::INTERNAL_MEDIAS_COUNT],
-                'words' => $statistics[Analytics::WORDS_COUNT],
-                'low' => $data[Analytics::QUALITY]['low']
-            );
-            fwrite($fileHandle, implode(",", $row) . PHP_EOL);
+            echo 'Processing the page ' . $id ."\n";
+
+            $data = Analytics::getDataAsArray($id, $cache);
+            if (!empty($fileHandle)) {
+                $statistics = $data[Analytics::STATISTICS];
+                $row = array(
+                    'id' => $id,
+                    'backlinks' => $statistics[Analytics::INTERNAL_BACKLINKS_COUNT],
+                    'broken_links' => $statistics[Analytics::INTERNAL_LINKS_BROKEN_COUNT],
+                    'changes' => $statistics[Analytics::EDITS_COUNT],
+                    'chars' => $statistics[Analytics::CHARS_COUNT],
+                    'external_links' => $statistics[Analytics::EXTERNAL_LINKS_COUNT],
+                    'external_medias' => $statistics[Analytics::EXTERNAL_MEDIAS],
+                    'h1' => $statistics[Analytics::HEADERS_COUNT]['h1'],
+                    'h2' => $statistics[Analytics::HEADERS_COUNT]['h2'],
+                    'h3' => $statistics[Analytics::HEADERS_COUNT]['h3'],
+                    'h4' => $statistics[Analytics::HEADERS_COUNT]['h4'],
+                    'h5' => $statistics[Analytics::HEADERS_COUNT]['h5'],
+                    'internal_links' => $statistics[Analytics::INTERNAL_LINKS_COUNT],
+                    'internal_medias' => $statistics[Analytics::INTERNAL_MEDIAS_COUNT],
+                    'words' => $statistics[Analytics::WORDS_COUNT],
+                    'low' => $data[Analytics::QUALITY]['low']
+                );
+                fwrite($fileHandle, implode(",", $row) . PHP_EOL);
+            }
+        }
+        if (!empty($fileHandle)) {
+            fclose($fileHandle);
         }
 
     }

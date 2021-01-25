@@ -101,3 +101,8 @@ $meta[LowQualityPage::CONF_LOW_QUALITY_PAGE_PROTECTION_MODE] = array('multichoic
  * Preformatted mode enable
  */
 $meta[syntax_plugin_combo_preformatted::CONF_PREFORMATTED_ENABLE] = array('onoff');
+
+/**
+ * The mandatory rules
+ */
+$meta[renderer_plugin_combo_analytics::CONF_MANDATORY_QUALITY_RULES] = array('multicheckbox', '_choices' => renderer_plugin_combo_analytics::CONF_MANDATORY_QUALITY_RULES_DEFAULT_VALUE);

@@ -171,28 +171,33 @@ class HtmlUtility
         }
         if ($leftNode->hasAttributes()) {
             $leftAttributesLength = $leftNode->attributes->length;
-            $rightAttributesLength = $rightNode->attributes->length;
-            if ($leftAttributesLength != $rightAttributesLength) {
-                $error .= "The node (" . $rightNode->getNodePath() . ") have different number of attributes (" . $leftAttributesLength . "," . $rightAttributesLength . ")\n";
-            }
-            if ($leftAttributesLength != 0) {
-                for ($i = 0; $i < $leftAttributesLength; $i++) {
-                    $leftAtt = $leftNode->attributes->item($i);
-                    $rightAtt = $rightNode->attributes->item($i);
-                    $leftAttName = $leftAtt->nodeName;
-                    $rightAttName = $rightAtt->nodeName;
-                    if ($leftAttName != $rightAttName){
-                        $error .= "The attribute (". $leftAttName .") of the node (" . $rightNode->getNodePath() . ") have different name than the right (" .$rightAttName . ")\n";
+            $rightNodeAttributes = $rightNode->attributes;
+            if ($rightNodeAttributes == null) {
+                $error .= "The node (" . $rightNode->getNodePath() . ") have no attributes while the left node has.\n";
+            } else {
+                $rightAttributesLength = $rightNodeAttributes->length;
+                if ($leftAttributesLength != $rightAttributesLength) {
+                    $error .= "The node (" . $rightNode->getNodePath() . ") have different number of attributes (" . $leftAttributesLength . "," . $rightAttributesLength . ")\n";
+                }
+                if ($leftAttributesLength != 0) {
+                    for ($i = 0; $i < $leftAttributesLength; $i++) {
+                        $leftAtt = $leftNode->attributes->item($i);
+                        $rightAtt = $rightNodeAttributes->item($i);
+                        $leftAttName = $leftAtt->nodeName;
+                        $rightAttName = $rightAtt->nodeName;
+                        if ($leftAttName != $rightAttName) {
+                            $error .= "The attribute (" . $leftAttName . ") of the node (" . $rightNode->getNodePath() . ") have different name than the right (" . $rightAttName . ")\n";
+                        }
+                        $leftAttValue = $leftAtt->nodeValue;
+                        $rightAttValue = $rightAtt->nodeValue;
+                        if ($leftAttValue != $rightAttValue) {
+                            $error .= "The attribute (" . $leftAttName . ") of the node (" . $rightNode->getNodePath() . ") have a different value (" . $leftAttValue . ") than the right (" . $rightAttValue . ")\n";
+                        }
                     }
-                    $leftAttValue = $leftAtt->nodeValue;
-                    $rightAttValue = $rightAtt->nodeValue;
-                    if ($leftAttValue != $rightAttValue){
-                        $error .= "The attribute (". $leftAttName .") of the node (" . $rightNode->getNodePath() . ") have a different value (".$leftAttValue.") than the right (" .$rightAttValue . ")\n";
-                    }
-            }
+                }
             }
         }
-        if ($leftNode->nodeName=="#text") {
+        if ($leftNode->nodeName == "#text") {
             $leftNodeValue = trim($leftNode->nodeValue);
             $rightNodeValue = trim($rightNode->nodeValue);
             if ($leftNodeValue != $rightNodeValue) {
@@ -204,10 +209,47 @@ class HtmlUtility
          */
         if ($leftNode->hasChildNodes()) {
 
-            for ($i = 0; $i < $leftNode->childNodes->length; $i++) {
-                $lefChildNode = $leftNode->childNodes->item($i);
-                $rightChildNode = $rightNode->childNodes->item($i);
-                self::diffNode($lefChildNode, $rightChildNode, $error);
+            $rightChildNodes = $rightNode->childNodes;
+            $rightChildNodesCount = $rightChildNodes->length;
+            if ($rightChildNodes == null || $rightChildNodesCount == 0) {
+                $error .= "The left node (" . $leftNode->getNodePath() . ") have child nodes while the right has not.\n";
+            } else {
+                $leftChildNodeCount = $leftNode->childNodes->length;
+                $leftChildIndex = 0;
+                $rightChildIndex = 0;
+                while ($leftChildIndex < $leftChildNodeCount && $rightChildIndex < $rightChildNodesCount) {
+                    $leftChildIndex++;
+                    $leftChildNode = $leftNode->childNodes->item($leftChildIndex);
+                    if ($leftChildNode->nodeName == "#text") {
+                        $leftChildNodeValue = trim($leftChildNode->nodeValue);
+                        if (empty(trim($leftChildNodeValue))) {
+                            $leftChildIndex++;
+                            $leftChildNode = $leftNode->childNodes->item($leftChildIndex);
+                        }
+                    }
+
+                    $rightChildIndex++;
+                    $rightChildNode = $rightChildNodes->item($rightChildIndex);
+                    if ($rightChildNode->nodeName == "#text") {
+                        $leftChildNodeValue = trim($rightChildNode->nodeValue);
+                        if (empty(trim($leftChildNodeValue))) {
+                            $rightChildIndex++;
+                            $rightChildNode = $rightChildNodes->item($rightChildIndex);
+                        }
+                    }
+
+                    if ($rightChildNode != null) {
+                        if ($leftChildNode!=null) {
+                            self::diffNode($leftChildNode, $rightChildNode, $error);
+                        } else {
+                            $error .= "The right node (" . $rightChildNode->getNodePath() . ") does not exist in the left document.\n";
+                        }
+                    } else {
+                        if ($leftChildNode!=null) {
+                            $error .= "The left node (" . $leftChildNode->getNodePath() . ") does not exist in the right document.\n";
+                        }
+                    }
+                }
             }
         }
 

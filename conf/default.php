@@ -33,12 +33,12 @@ $conf['extra_pattern'] = '{{backlinks>.}}';
  * Disqus
  * See {@link syntax_plugin_combo_disqus::CONF_DEFAULT_ATTRIBUTES}
  */
-$conf['disqusDefaultAttributes']='shortName=""';
+$conf['disqusDefaultAttributes'] = 'shortName=""';
 
 /**
  * ie {@link action_plugin_combo_urlmanager::GO_TO_BEST_END_PAGE_NAME}
  */
-$conf['ActionReaderFirst']  = 'GoToBestEndPageName';
+$conf['ActionReaderFirst'] = 'GoToBestEndPageName';
 
 /**
  * ie {@link action_plugin_combo_urlmanager::GO_TO_BEST_PAGE_NAME}
@@ -47,7 +47,7 @@ $conf['ActionReaderSecond'] = 'GoToBestPageName';
 /**
  * ie {@link action_plugin_combo_urlmanager::GO_TO_SEARCH_ENGINE}
  */
-$conf['ActionReaderThird']  = 'GoToSearchEngine';
+$conf['ActionReaderThird'] = 'GoToSearchEngine';
 $conf['GoToEditMode'] = 1;
 $conf['ShowPageNameIsNotUnique'] = 1;
 $conf['ShowMessageClassic'] = 1;
@@ -70,7 +70,7 @@ $conf['MinimalNamesCountForAutomaticCanonical'] = 0;
  * See {@link IconUtility::CONF_ICONS_MEDIA_NAMESPACE}
  * See {@link IconUtility::CONF_ICONS_MEDIA_NAMESPACE_DEFAULT}
  */
-$conf['icons_namespace']=":combostrap:icons";
+$conf['icons_namespace'] = ":combostrap:icons";
 
 /**
  * Css Optimization
@@ -86,8 +86,8 @@ $conf['disableDokuwikiStylesheet'] = 0;
  * See {@link \ComboStrap\MetadataUtility::CONF_METADATA_DEFAULT_ATTRIBUTES
  * See {@link \ComboStrap\MetadataUtility::EXCLUDE_ATTRIBUTE
  */
-$conf['enableMetadataViewerWhenEditing']= 1;
-$conf['metadataViewerDefaultAttributes']= 'title="Metadata" exclude="tableofcontents"';
+$conf['enableMetadataViewerWhenEditing'] = 1;
+$conf['metadataViewerDefaultAttributes'] = 'title="Metadata" exclude="tableofcontents"';
 
 /**
  * Badge
@@ -125,4 +125,9 @@ $conf['lowQualityPageProtectionMode'] = "acl";
  * See {@link syntax_plugin_combo_preformatted::CONF_PREFORMATTED_ENABLE}
  */
 $conf['preformattedEnable'] = 0;
+
+/**
+ * {@link renderer_plugin_combo_analytics::CONF_MANDATORY_QUALITY_RULES}
+ */
+$conf['mandatoryQualityRules'] = 'words_min,internal_backlinks_min,internal_links_min';
 

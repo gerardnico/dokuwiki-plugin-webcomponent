@@ -78,13 +78,19 @@ $lang[Prism::CONF_POWERSHELL_PROMPT] = PluginUtility::getUrl("prism", "Prism Com
 $lang[syntax_plugin_combo_code::CONF_CODE_ENABLE] = PluginUtility::getUrl("code", "Code Component") . ' - Enable or disable the code component';
 $lang[syntax_plugin_combo_file::CONF_FILE_ENABLE] = PluginUtility::getUrl("file", "File Component") . ' - Enable or disable the file component';
 
-/**
- * Seo
- */
-$lang[LowQualityPage::CONF_LOW_QUALITY_PAGE_PROTECTION_ENABLE] = PluginUtility::getUrl("quality", "Quality Component") . ' - If enabled, low quality page will be made private and not available to search engine';
+
 
 /**
  * Preformatted mode
  */
 $lang[syntax_plugin_combo_preformatted::CONF_PREFORMATTED_ENABLE] = PluginUtility::getUrl("preformatted", "Preformatted Component") . ' - If checked, the default preformatted mode of dokuwiki is enabled';
+
+/**
+ * Mandatory rules
+ */
+$lang[renderer_plugin_combo_analytics::CONF_MANDATORY_QUALITY_RULES] = PluginUtility::getUrl("quality:rule", "Mandatory Quality rules") . ' - The mandatory quality rules are the rules that should pass to consider the quality of page as not `low`';
+$lang[LowQualityPage::CONF_LOW_QUALITY_PAGE_PROTECTION_ENABLE] = PluginUtility::getUrl("lqpp", "Low quality page protection")." - If enabled, a low quality page will no more be discoverable by search engine or anonymous user.";
+$lang[LowQualityPage::CONF_LOW_QUALITY_PAGE_PROTECTION_MODE] = PluginUtility::getUrl("lqpp", "Low quality page protection mode")." - Choose the protection mode. Hidden (but still accessible) vs Acl (User should log in)";
+
+
 ?>

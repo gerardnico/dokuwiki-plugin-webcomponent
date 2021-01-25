@@ -43,6 +43,9 @@ class plugin_combo_hiddenpage_test extends DokuWikiTest
         $sidekick = tpl_getConf(TplConstant::CONF_SIDEKICK);
         $this->assertTrue(isHiddenPage($sidekick));
 
+        global $conf;
+        $this->assertTrue(isHiddenPage($conf["sidebar"]));
+
         $this->assertTrue(isHiddenPage(PluginUtility::COMBOSTRAP_NAMESPACE_NAME));
 
         $this->assertFalse(isHiddenPage("whatever"));
