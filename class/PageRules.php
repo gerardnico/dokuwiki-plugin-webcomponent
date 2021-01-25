@@ -1,6 +1,8 @@
 <?php
 
 namespace ComboStrap;
+use helper_plugin_sqlite;
+
 /**
  * The manager that handles the redirection metadata
  *

@@ -15,11 +15,6 @@ class UrlCanonical
      */
     private $sqlite;
 
-    /**
-     * A static object served everywhere when needed
-     * @var UrlCanonical
-     */
-    static $urlCanonical;
 
 
     /**
@@ -79,7 +74,7 @@ class UrlCanonical
     }
 
     /**
-     * Delete Redirection
+     * Delete Page
      * @param string $id
      */
     function deletePage($id)

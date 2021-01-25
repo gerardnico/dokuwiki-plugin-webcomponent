@@ -2,8 +2,11 @@
 
 
 use ComboStrap\Analytics;
+use ComboStrap\LogUtility;
 use ComboStrap\LowQualityPage;
+use ComboStrap\PluginUtility;
 use ComboStrap\Text;
+use ComboStrap\UrlCanonical;
 use dokuwiki\ChangeLog\PageChangeLog;
 
 require_once(__DIR__ . '/../class/Text.php');
@@ -56,7 +59,6 @@ class renderer_plugin_combo_analytics extends Doku_Renderer
     const CONF_QUALITY_SCORE_CHANGES_FACTOR = 'qualityScoreChangesFactor';
 
 
-
     /**
      * The processing data
      * that should be {@link  renderer_plugin_combo_analysis::reset()}
@@ -83,8 +85,12 @@ class renderer_plugin_combo_analytics extends Doku_Renderer
         $this->metadata[self::DATE_CREATED] = date('Y-m-d h:i:s', $timestampCreation);
         $timestampModification = $meta['date']['modified'];
         $this->metadata[Analytics::DATE_MODIFIED] = date('Y-m-d h:i:s', $timestampModification);
-        $this->metadata['age_creation'] = round((time() - $timestampCreation)/60/60/24);
-        $this->metadata['age_modification'] = round((time() - $timestampModification)/60/60/24);
+        $this->metadata['age_creation'] = round((time() - $timestampCreation) / 60 / 60 / 24);
+        $this->metadata['age_modification'] = round((time() - $timestampModification) / 60 / 60 / 24);
+        $canonical = $meta[UrlCanonical::CANONICAL_PROPERTY];
+        if (!empty($canonical)) {
+            $this->metadata[UrlCanonical::CANONICAL_PROPERTY] = $canonical;
+        }
 
         // get author info
         $changelog = new PageChangeLog($ID);
@@ -225,7 +231,7 @@ class renderer_plugin_combo_analytics extends Doku_Renderer
          * Average Number of words by header section to text ratio
          */
         $headers = $this->stats[Analytics::HEADERS];
-        if ($headers!=null) {
+        if ($headers != null) {
             $headerCount = array_sum($headers);
             $headerCount--; // h1 is supposed to have no words
             if ($headerCount > 0) {
@@ -311,7 +317,7 @@ class renderer_plugin_combo_analytics extends Doku_Renderer
         /**
          * Changes, the more changes the better
          */
-        $qualityScores[Analytics::CHANGES] = $this->stats[Analytics::CHANGES]* $this->getConf(self::CONF_QUALITY_SCORE_CHANGES_FACTOR, 0.25);;;
+        $qualityScores[Analytics::CHANGES] = $this->stats[Analytics::CHANGES] * $this->getConf(self::CONF_QUALITY_SCORE_CHANGES_FACTOR, 0.25);;;
 
 
         /**
@@ -395,18 +401,18 @@ class renderer_plugin_combo_analytics extends Doku_Renderer
         if (sizeof($mandatoryRulesBroken) > 0) {
             $lowLevel = true;
         }
-        LowQualityPage::setLowQualityPage($ID,$lowLevel);
+        LowQualityPage::setLowQualityPage($ID, $lowLevel);
 
         /**
          * Building the quality object in order
          */
-        $quality["low"]=$lowLevel;
-        if (sizeof($mandatoryRulesBroken)>0) {
+        $quality["low"] = $lowLevel;
+        if (sizeof($mandatoryRulesBroken) > 0) {
             ksort($mandatoryRulesBroken);
             $quality['failed_mandatory_rules'] = $mandatoryRulesBroken;
         }
         $quality["scoring"] = $qualityScoring;
-        $quality["rules"][self::RESULT]=$qualityResult;
+        $quality["rules"][self::RESULT] = $qualityResult;
 
         ksort($ruleResults);
         $quality["rules"]['details'] = $ruleResults;
@@ -417,9 +423,9 @@ class renderer_plugin_combo_analytics extends Doku_Renderer
         global $ID;
         $json = array();
         $json["id"] = $ID;
-        $json['metadata']=$this->metadata;
+        $json['metadata'] = $this->metadata;
         ksort($statExport);
-        $json[Analytics::STATISTICS]=$statExport;
+        $json[Analytics::STATISTICS] = $statExport;
         $json[Analytics::QUALITY] = $quality; // Quality after the sort to get them at the end
 
 
@@ -430,10 +436,40 @@ class renderer_plugin_combo_analytics extends Doku_Renderer
         /**
          * Set the header for the export.php file
          */
-        p_set_metadata($ID, array("format"=>
-            array("combo_".$this->getPluginComponent() => array("Content-Type" => 'application/json'))
+        p_set_metadata($ID, array("format" =>
+            array("combo_" . $this->getPluginComponent() => array("Content-Type" => 'application/json'))
         ));
-        $this->doc .= json_encode($json, JSON_PRETTY_PRINT);
+        $json_encoded = json_encode($json, JSON_PRETTY_PRINT);
+
+        $sqlite = PluginUtility::getSqlite();
+        if ($sqlite != null) {
+            /**
+             * Sqlite Plugin installed
+             */
+            $canonical = $this->metadata[UrlCanonical::CANONICAL_PROPERTY];
+            if (empty($canonical)){
+                $canonical = $ID; // not null constraint unfortunately
+            }
+            $entry = array(
+                'CANONICAL' => $canonical,
+                'ANALYTICS' => $json_encoded,
+                'ID' => $ID
+            );
+            $res = $sqlite->query("SELECT count(*) FROM PAGES where ID = ?", $ID);
+            if ($sqlite->res2single($res) == 1) {
+                // Upset not supported on all version
+                //$upsert = 'insert into PAGES (ID,CANONICAL,ANALYTICS) values (?,?,?) on conflict (ID,CANONICAL) do update set ANALYTICS = EXCLUDED.ANALYTICS';
+                $update = 'update PAGES SET CANONICAL = ?, ANALYTICS = ? where ID=?';
+                $res = $sqlite->query($update, $entry);
+            } else {
+                $res = $sqlite->storeEntry('PAGES',$entry);
+            }
+            if (!$res) {
+                LogUtility::msg("There was a problem during the upsert: {$sqlite->getAdapter()->getDb()->errorInfo()}");
+            }
+            $sqlite->res_close($res);
+        }
+        $this->doc .= $json_encoded;
 
     }
 
@@ -598,8 +634,8 @@ class renderer_plugin_combo_analytics extends Doku_Renderer
 
     public function reset()
     {
-        $this->stats=array();
-        $this->metadata=array();
+        $this->stats = array();
+        $this->metadata = array();
         $this->headerId = 0;
     }
 

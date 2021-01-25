@@ -2,7 +2,7 @@
 CREATE TABLE PAGES
 (
     ID        TEXT NOT NULL, -- The page id
-    CANONICAL TEXT NOT NULL              -- The canonical value should be unique
+    CANONICAL TEXT NOT NULL  -- The canonical value should be unique
 );
 CREATE UNIQUE INDEX PAGES_UK ON PAGES (ID, CANONICAL);
 

@@ -19,12 +19,13 @@ require_once(__DIR__ . '/../class/PluginUtility.php');
 require_once(__DIR__ . '/../class/TestUtility.php');
 require_once(__DIR__ . '/../class/Analytics.php');
 
-class renderer_plugin_combo_analysisTest extends DokuWikiTest
+class renderer_plugin_combo_analyticsTest extends DokuWikiTest
 {
 
     public function setUp()
     {
         $this->pluginsEnabled[] = PluginUtility::PLUGIN_BASE_NAME;
+        $this->pluginsEnabled[] = 'sqlite';
         parent::setUp();
     }
 
@@ -40,7 +41,7 @@ class renderer_plugin_combo_analysisTest extends DokuWikiTest
 
     }
 
-    public function testWordCountLevel()
+    public function testBase()
     {
         // Save a test page
         $pageId = "stats";
@@ -52,6 +53,9 @@ class renderer_plugin_combo_analysisTest extends DokuWikiTest
         $this->assertEquals($pageId, $json->id);
         $this->assertEquals(true, $json->quality->low);
         $this->assertEquals(5, $json->statistics->words);
+
+        // Run it twice to test the upsert
+        Analytics::getDataAsJson($pageId);
 
     }
 
@@ -99,7 +103,7 @@ EOD;
         $json = Analytics::getDataAsJson($pageId);
         $this->assertEquals($pageId, $json->id);
         $this->assertEquals(true, $json->quality->low);
-        $this->assertEquals(5, $json->statistics->words);
+        $this->assertEquals(96, $json->statistics->words);
 
     }
 

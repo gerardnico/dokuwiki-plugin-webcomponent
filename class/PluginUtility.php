@@ -4,6 +4,7 @@
 namespace ComboStrap;
 
 
+use helper_plugin_sqlite;
 use TestRequest;
 
 require_once(__DIR__ . '/LogUtility.php');
