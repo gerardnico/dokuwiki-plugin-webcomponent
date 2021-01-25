@@ -27,10 +27,10 @@ class Text
     {
         $text = str_replace("<", "\n<", $text);
         $text = str_replace(">", ">\n", $text);
-        // \w shorthand word notation
-        // \- allows also the minus -
+        // \s shorthand for whitespace
+        // | the table and links are separated with a |
         // /u for unicode support (https://www.php.net/manual/en/reference.pcre.pattern.modifiers.php)
-        $wordSeparator = '/[\s]/u';
+        $wordSeparator = '/[\s|]/u';
         $preg_split = preg_split($wordSeparator, $text);
         $wordsWithoutEmpty = array_filter($preg_split, 'self::isWord');
         return count($wordsWithoutEmpty);
@@ -50,7 +50,7 @@ class Text
          *
          * And because otherwise the words are not counted:
          *   * `'` (used to highlight words)
-         *   * `[|]` used in links
+         *   * `[]` used in links
          *   * `,` used at the end of a sentenct
          */
         $preg_match = preg_match("/^[\w-'\]\[\|,]*$/u", $text);

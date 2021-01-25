@@ -20,9 +20,12 @@
  *
  */
 
+use ComboStrap\Analytics;
 use ComboStrap\LogUtility;
 use ComboStrap\PluginUtility;
 use ComboStrap\UrlCanonical;
+
+require_once(__DIR__ . '/../class/Analytics.php');
 
 if (!defined('DOKU_INC')) {
     die();
@@ -121,7 +124,7 @@ class syntax_plugin_combo_frontmatter extends DokuWiki_Syntax_Plugin
             $jsonKey = array_map('trim', array_keys($json));
             // We will get a php warning here because the values may be an array
             // and trim accept only string
-            $oldLevel = error_reporting(E_ERROR );
+            $oldLevel = error_reporting(E_ERROR);
             $jsonValues = array_map('trim', $json);
             error_reporting($oldLevel);
             $json = array_combine($jsonKey, $jsonValues);
@@ -134,6 +137,7 @@ class syntax_plugin_combo_frontmatter extends DokuWiki_Syntax_Plugin
                 "creator",
                 "contributor"
             ];
+            $result = array();
             foreach ($json as $key => $value) {
 
                 // Not modifiable metadata
@@ -144,12 +148,14 @@ class syntax_plugin_combo_frontmatter extends DokuWiki_Syntax_Plugin
 
                 // Description is special
                 if ($key == "description") {
+                    $result["description"] = $value;
                     p_set_metadata($ID, array("description" => array("abstract" => $value)));
                     continue;
                 }
 
                 // Canonical should be lowercase
                 if ($key == UrlCanonical::CANONICAL_PROPERTY) {
+                    $result[UrlCanonical::CANONICAL_PROPERTY] = $value;
                     $value = strtolower($value);
                 }
 
@@ -160,7 +166,9 @@ class syntax_plugin_combo_frontmatter extends DokuWiki_Syntax_Plugin
 
             $this->closeParsing($json);
 
-            return array("state" => self::PARSING_STATE_SUCCESSFUL);
+            $result["state"]= self::PARSING_STATE_SUCCESSFUL;
+
+            return $result;
         }
 
         return array();
@@ -184,17 +192,24 @@ class syntax_plugin_combo_frontmatter extends DokuWiki_Syntax_Plugin
         // What is ?: https://developers.google.com/search/docs/data-types/qapage
         // How to ?: https://developers.google.com/search/docs/data-types/how-to
 
-        if ($format == 'metadata') {
-
-
-            global $ID;
-
-            /** @var Doku_Renderer_metadata $renderer */
-            $state = $data["state"];
-            if ($state == self::PARSING_STATE_ERROR) {
-                LogUtility::msg("Front Matter: The json object for the page ($ID) is not valid", LogUtility::LVL_MSG_ERROR);
-            }
-
+        switch ($format) {
+            case 'metadata':
+                global $ID;
+                /** @var Doku_Renderer_metadata $renderer */
+                $state = $data["state"];
+                if ($state == self::PARSING_STATE_ERROR) {
+                    LogUtility::msg("Front Matter: The json object for the page ($ID) is not valid", LogUtility::LVL_MSG_ERROR);
+                }
+                break;
+            case Analytics::RENDERER_FORMAT:
+                /** @var renderer_plugin_combo_analytics $renderer */
+                if (array_key_exists("description", $data)) {
+                    $renderer->setMeta("description", $data["description"]);
+                }
+                if (array_key_exists(UrlCanonical::CANONICAL_PROPERTY, $data)) {
+                    $renderer->setMeta(UrlCanonical::CANONICAL_PROPERTY, $data[UrlCanonical::CANONICAL_PROPERTY]);
+                }
+                break;
 
         }
         return true;

@@ -27,8 +27,6 @@ class renderer_plugin_combo_analytics extends Doku_Renderer
     const DESCRIPTION = "description";
     const PASSED = "Passed";
     const FAILED = "Failed";
-    const RULE_FIXME = "fixme_min";
-    const RULE_TITLE_PRESENT = "title_present";
     const FIXME = 'fixme';
 
     /**
@@ -42,7 +40,10 @@ class renderer_plugin_combo_analytics extends Doku_Renderer
     const RULE_AVERAGE_WORDS_BY_SECTION_MAX = 'words_by_section_avg_max';
     const RULE_INTERNAL_LINKS_MIN = 'internal_links_min';
     const RULE_INTERNAL_BROKEN_LINKS_MAX = 'internal_links_broken_max';
-
+    const RULE_DESCRIPTION_PRESENT = 'description_present';
+    const RULE_FIXME = "fixme_min";
+    const RULE_TITLE_PRESENT = "title_present";
+    const RULE_CANONICAL_PRESENT = "canonical_present";
 
     /**
      * Quality Score factors
@@ -57,6 +58,8 @@ class renderer_plugin_combo_analytics extends Doku_Renderer
     const CONF_QUALITY_SCORE_CORRECT_WORD_SECTION_AVERAGE = 'qualityScoreCorrectWordSectionAvg';
     const CONF_QUALITY_SCORE_INTERNAL_LINK_BROKEN_FACTOR = 'qualityScoreNoBrokenLinks';
     const CONF_QUALITY_SCORE_CHANGES_FACTOR = 'qualityScoreChangesFactor';
+    const CONF_QUALITY_SCORE_DESCRIPTION_PRESENT = 'qualityScoreDescriptionPresent';
+    const CONF_QUALITY_SCORE_CANONICAL_PRESENT = 'qualityScoreCanonicalPresent';
 
 
     /**
@@ -87,10 +90,7 @@ class renderer_plugin_combo_analytics extends Doku_Renderer
         $this->metadata[Analytics::DATE_MODIFIED] = date('Y-m-d h:i:s', $timestampModification);
         $this->metadata['age_creation'] = round((time() - $timestampCreation) / 60 / 60 / 24);
         $this->metadata['age_modification'] = round((time() - $timestampModification) / 60 / 60 / 24);
-        $canonical = $meta[UrlCanonical::CANONICAL_PROPERTY];
-        if (!empty($canonical)) {
-            $this->metadata[UrlCanonical::CANONICAL_PROPERTY] = $canonical;
-        }
+
 
         // get author info
         $changelog = new PageChangeLog($ID);
@@ -159,31 +159,50 @@ class renderer_plugin_combo_analytics extends Doku_Renderer
         /**
          * No fixme
          */
-        $ruleResults[self::RULE_FIXME][self::DESCRIPTION] = "A page should have no fixme";
         $fixmeCount = $this->stats[self::FIXME];
         $statExport[self::FIXME] = $fixmeCount == null ? 0 : $fixmeCount;
         if ($fixmeCount != 0) {
-            $ruleResults[self::RULE_FIXME][self::RESULT] = self::FAILED;
+            $ruleResults[self::RULE_FIXME] = self::FAILED;
         } else {
-            $ruleResults[self::RULE_FIXME][self::RESULT] = self::PASSED;
+            $ruleResults[self::RULE_FIXME] = self::PASSED;
             $qualityScores['no_' . self::FIXME] = $this->getConf(self::CONF_QUALITY_SCORE_NO_FIXME, 1);;
         }
 
         /**
          * A title should be present
          */
-        $ruleResults[self::RULE_TITLE_PRESENT][self::DESCRIPTION] = "A title should be present";
         if (empty($this->metadata[Analytics::TITLE])) {
-            $ruleResults[self::RULE_TITLE_PRESENT][self::RESULT] = self::FAILED;
+            $ruleResults[self::RULE_TITLE_PRESENT] = self::FAILED;
         } else {
             $qualityScores[self::RULE_TITLE_PRESENT] = $this->getConf(self::CONF_QUALITY_SCORE_TITLE_PRESENT, 10);;
-            $ruleResults[self::RULE_TITLE_PRESENT][self::RESULT] = self::PASSED;
+            $ruleResults[self::RULE_TITLE_PRESENT] = self::PASSED;
+        }
+
+        /**
+         * A description should be present
+         */
+        if (empty($this->metadata[self::DESCRIPTION])) {
+            $ruleResults[self::RULE_DESCRIPTION_PRESENT] = self::FAILED;
+            $ruleInfo[self::RULE_CANONICAL_PRESENT]="A description is not present in the frontmatter";
+        } else {
+            $qualityScores[self::RULE_DESCRIPTION_PRESENT] = $this->getConf(self::CONF_QUALITY_SCORE_DESCRIPTION_PRESENT, 8);;
+            $ruleResults[self::RULE_DESCRIPTION_PRESENT] = self::PASSED;
+        }
+
+        /**
+         * A canonical should be present
+         */
+        if (empty($this->metadata[UrlCanonical::CANONICAL_PROPERTY])) {
+            $ruleResults[self::RULE_CANONICAL_PRESENT] = self::FAILED;
+            $ruleInfo[self::RULE_CANONICAL_PRESENT]="A canonical is not present in the frontmatter";
+        } else {
+            $qualityScores[self::RULE_CANONICAL_PRESENT] = $this->getConf(self::CONF_QUALITY_SCORE_CANONICAL_PRESENT, 5);;
+            $ruleResults[self::RULE_CANONICAL_PRESENT] = self::PASSED;
         }
 
         /**
          * Outline / Header structure
          */
-        $ruleResults[self::RULE_OUTLINE_STRUCTURE][self::DESCRIPTION] = "The headers should have a tree structure (outline, toc)";
         $headersCount = count($this->stats[Analytics::HEADER_POSITION]);
         unset($statExport[Analytics::HEADER_POSITION]);
         $treeError = 0;
@@ -192,35 +211,35 @@ class renderer_plugin_combo_analytics extends Doku_Renderer
             $previousHeaderLevel = $this->stats['header_struct'][$i - 1];
             if ($currentHeaderLevel - $previousHeaderLevel > 1) {
                 $treeError += 1;
-                $ruleResults[self::RULE_OUTLINE_STRUCTURE][self::RESULT][self::DESCRIPTION][] = "The " . $i . " header (h" . $currentHeaderLevel . ") has a level bigger than its precedent (" . $previousHeaderLevel . ")";
+                $ruleInfo[self::RULE_OUTLINE_STRUCTURE] = "The " . $i . " header (h" . $currentHeaderLevel . ") has a level bigger than its precedent (" . $previousHeaderLevel . ")";
             }
         }
         if ($treeError > 0 || $headersCount == 0) {
-            $ruleResults[self::RULE_OUTLINE_STRUCTURE][self::RESULT] = self::FAILED;
+            $ruleResults[self::RULE_OUTLINE_STRUCTURE] = self::FAILED;
         } else {
-            $qualityScores['correct_outline'] = $this->getConf(self::CONF_QUALITY_SCORE_CORRECT_HEADER_STRUCTURE, 10);
-            $ruleResults[self::RULE_OUTLINE_STRUCTURE][self::RESULT] = self::PASSED;
+            $qualityScores['correct_outline'] = $this->getConf(self::CONF_QUALITY_SCORE_CORRECT_HEADER_STRUCTURE, 3);
+            $ruleResults[self::RULE_OUTLINE_STRUCTURE] = self::PASSED;
         }
 
         /**
          * Document length
          */
         $minimalWordCount = 50;
-        $ruleResults[self::RULE_WORDS_MINIMAL][self::DESCRIPTION] = "A page should have at minimal " . $minimalWordCount . " words.";
         $maximalWordCount = 1500;
-        $ruleResults[self::RULE_WORDS_MAXIMAL][self::DESCRIPTION] = "A page should have at maximal " . $maximalWordCount . " words.";
         $correctContentLength = true;
         if ($this->stats[Analytics::WORDS_COUNT] < $minimalWordCount) {
-            $ruleResults[self::RULE_WORDS_MINIMAL][self::RESULT] = self::FAILED;
+            $ruleResults[self::RULE_WORDS_MINIMAL] = self::FAILED;
             $correctContentLength = false;
+            $ruleInfo[self::RULE_WORDS_MINIMAL]="The number of words is less than {$minimalWordCount}";
         } else {
-            $ruleResults[self::RULE_WORDS_MINIMAL][self::RESULT] = self::PASSED;
+            $ruleResults[self::RULE_WORDS_MINIMAL] = self::PASSED;
         }
         if ($this->stats[Analytics::WORDS_COUNT] > $maximalWordCount) {
-            $ruleResults[self::RULE_WORDS_MAXIMAL][self::RESULT] = self::FAILED;
+            $ruleResults[self::RULE_WORDS_MAXIMAL] = self::FAILED;
+            $ruleInfo[self::RULE_WORDS_MAXIMAL]="The number of words is more than {$maximalWordCount}";
             $correctContentLength = false;
         } else {
-            $ruleResults[self::RULE_WORDS_MAXIMAL][self::RESULT] = self::PASSED;
+            $ruleResults[self::RULE_WORDS_MAXIMAL] = self::PASSED;
         }
         if ($correctContentLength) {
             $qualityScores['correct_content_length'] = $this->getConf(self::CONF_QUALITY_SCORE_CORRECT_CONTENT, 10);
@@ -236,32 +255,31 @@ class renderer_plugin_combo_analytics extends Doku_Renderer
             $headerCount--; // h1 is supposed to have no words
             if ($headerCount > 0) {
 
-                $avgWordsCountBySection = round($this->stats['words'] / $headerCount);
+                $avgWordsCountBySection = round($this->stats[Analytics::WORDS_COUNT] / $headerCount);
                 $statExport['word_section_count']['avg'] = $avgWordsCountBySection;
 
                 /**
                  * Min words by header section
                  */
                 $wordsByHeaderMin = 20;
-                $ruleResults[self::RULE_AVERAGE_WORDS_BY_SECTION_MIN][self::DESCRIPTION] = "A page should have at minimal a average of {$wordsByHeaderMin} words by section.";
-
                 /**
                  * Max words by header section
                  */
                 $wordsByHeaderMax = 300;
-                $ruleResults[self::RULE_AVERAGE_WORDS_BY_SECTION_MAX][self::DESCRIPTION] = "A page should have at maximal a average of {$wordsByHeaderMax} words by section.";
                 $correctAverageWordsBySection = true;
                 if ($avgWordsCountBySection < $wordsByHeaderMin) {
-                    $ruleResults[self::RULE_AVERAGE_WORDS_BY_SECTION_MIN][self::RESULT] = self::FAILED;
+                    $ruleResults[self::RULE_AVERAGE_WORDS_BY_SECTION_MIN] = self::FAILED;
                     $correctAverageWordsBySection = false;
+                    $ruleInfo[self::RULE_AVERAGE_WORDS_BY_SECTION_MAX]="The number of words by section is less than {$wordsByHeaderMin}";
                 } else {
-                    $ruleResults[self::RULE_AVERAGE_WORDS_BY_SECTION_MIN][self::RESULT] = self::PASSED;
+                    $ruleResults[self::RULE_AVERAGE_WORDS_BY_SECTION_MIN] = self::PASSED;
                 }
                 if ($avgWordsCountBySection > $wordsByHeaderMax) {
-                    $ruleResults[self::RULE_AVERAGE_WORDS_BY_SECTION_MAX][self::RESULT] = self::FAILED;
+                    $ruleResults[self::RULE_AVERAGE_WORDS_BY_SECTION_MAX] = self::FAILED;
                     $correctAverageWordsBySection = false;
+                    $ruleInfo[self::RULE_AVERAGE_WORDS_BY_SECTION_MAX]="The number of words by section is more than {$wordsByHeaderMax}";
                 } else {
-                    $ruleResults[self::RULE_AVERAGE_WORDS_BY_SECTION_MAX][self::RESULT] = self::PASSED;
+                    $ruleResults[self::RULE_AVERAGE_WORDS_BY_SECTION_MAX] = self::PASSED;
                 }
                 if ($correctAverageWordsBySection) {
                     $qualityScores['correct_word_avg_by_section'] = $this->getConf(self::CONF_QUALITY_SCORE_CORRECT_WORD_SECTION_AVERAGE, 10);
@@ -272,10 +290,7 @@ class renderer_plugin_combo_analytics extends Doku_Renderer
 
         /**
          * Internal Backlinks rule
-         */
-        $ruleResults[self::RULE_INTERNAL_BACKLINKS_MIN][self::DESCRIPTION] = "A page should have at minimum one link from another page (internal backlink)";
-
-        /**
+         *
          * If a page is a low quality page, if the process run
          * anonymous, we will not see all {@link ft_backlinks()}
          * we use then the index directly to avoid confusion
@@ -284,34 +299,35 @@ class renderer_plugin_combo_analytics extends Doku_Renderer
         $countBacklinks = count($backlinks);
         $statExport[Analytics::INTERNAL_BACKLINKS_COUNT] = $countBacklinks;
         if ($countBacklinks == 0) {
-            $ruleResults[self::RULE_INTERNAL_BACKLINKS_MIN][self::RESULT] = self::FAILED;
+            $ruleResults[self::RULE_INTERNAL_BACKLINKS_MIN] = self::FAILED;
+            $ruleInfo[self::RULE_INTERNAL_BACKLINKS_MIN]="There is no backlinks";
         } else {
             $qualityScores[Analytics::INTERNAL_BACKLINKS_COUNT] = $countBacklinks * $this->getConf(self::CONF_QUALITY_SCORE_INTERNAL_BACKLINK_FACTOR, 1);
-            $ruleResults[self::RULE_INTERNAL_BACKLINKS_MIN][self::RESULT] = self::PASSED;
+            $ruleResults[self::RULE_INTERNAL_BACKLINKS_MIN] = self::PASSED;
         }
 
         /**
          * Internal links
          */
-        $ruleResults[self::RULE_INTERNAL_LINKS_MIN][self::DESCRIPTION] = "A page should have at minimal a link to another page (internal link)";
         $internalLinksCount = $this->stats[Analytics::INTERNAL_LINKS_COUNT];
         if ($internalLinksCount == 0) {
-            $ruleResults[self::RULE_INTERNAL_LINKS_MIN][self::RESULT] = self::FAILED;
+            $ruleResults[self::RULE_INTERNAL_LINKS_MIN] = self::FAILED;
+            $ruleInfo[self::RULE_INTERNAL_BACKLINKS_MIN]="There is no internal links";
         } else {
-            $ruleResults[self::RULE_INTERNAL_LINKS_MIN][self::RESULT] = self::PASSED;
+            $ruleResults[self::RULE_INTERNAL_LINKS_MIN] = self::PASSED;
             $qualityScores[Analytics::INTERNAL_LINKS_COUNT] = $countBacklinks * $this->getConf(self::CONF_QUALITY_SCORE_INTERNAL_LINK_FACTOR, 1);;
         }
 
         /**
          * Broken Links
          */
-        $ruleResults[self::RULE_INTERNAL_BROKEN_LINKS_MAX][self::DESCRIPTION] = "A page should not have a link to a non-existing page (broken link)";
         $brokenLinksCount = $this->stats[Analytics::INTERNAL_LINKS_BROKEN_COUNT];
         if ($brokenLinksCount > 2) {
-            $ruleResults[self::RULE_INTERNAL_BROKEN_LINKS_MAX][self::RESULT] = self::FAILED;
+            $ruleResults[self::RULE_INTERNAL_BROKEN_LINKS_MAX] = self::FAILED;
+            $ruleInfo[self::RULE_INTERNAL_BACKLINKS_MIN]="There is {$brokenLinksCount} broken links";
         } else {
             $qualityScores['no_' . Analytics::INTERNAL_LINKS_BROKEN_COUNT] = $this->getConf(self::CONF_QUALITY_SCORE_INTERNAL_LINK_BROKEN_FACTOR, 2);;;
-            $ruleResults[self::RULE_INTERNAL_BROKEN_LINKS_MAX][self::RESULT] = self::PASSED;
+            $ruleResults[self::RULE_INTERNAL_BROKEN_LINKS_MAX] = self::PASSED;
         }
 
         /**
@@ -371,7 +387,7 @@ class renderer_plugin_combo_analytics extends Doku_Renderer
          */
         $brokenRules = array();
         foreach ($ruleResults as $ruleName => $ruleResult) {
-            if ($ruleResult[self::RESULT] == self::FAILED) {
+            if ($ruleResult == self::FAILED) {
                 $brokenRules[] = $ruleName;
             }
         }
@@ -413,6 +429,9 @@ class renderer_plugin_combo_analytics extends Doku_Renderer
         }
         $quality["scoring"] = $qualityScoring;
         $quality["rules"][self::RESULT] = $qualityResult;
+        if (!empty($ruleInfo)) {
+            $quality["rules"]["info"] = $ruleInfo;
+        }
 
         ksort($ruleResults);
         $quality["rules"]['details'] = $ruleResults;
@@ -447,7 +466,7 @@ class renderer_plugin_combo_analytics extends Doku_Renderer
              * Sqlite Plugin installed
              */
             $canonical = $this->metadata[UrlCanonical::CANONICAL_PROPERTY];
-            if (empty($canonical)){
+            if (empty($canonical)) {
                 $canonical = $ID; // not null constraint unfortunately
             }
             $entry = array(
@@ -462,7 +481,7 @@ class renderer_plugin_combo_analytics extends Doku_Renderer
                 $update = 'update PAGES SET CANONICAL = ?, ANALYTICS = ? where ID=?';
                 $res = $sqlite->query($update, $entry);
             } else {
-                $res = $sqlite->storeEntry('PAGES',$entry);
+                $res = $sqlite->storeEntry('PAGES', $entry);
             }
             if (!$res) {
                 LogUtility::msg("There was a problem during the upsert: {$sqlite->getAdapter()->getDb()->errorInfo()}");
@@ -637,6 +656,11 @@ class renderer_plugin_combo_analytics extends Doku_Renderer
         $this->stats = array();
         $this->metadata = array();
         $this->headerId = 0;
+    }
+
+    public function setMeta($key, $value)
+    {
+        $this->metadata[$key] = $value;
     }
 
 
