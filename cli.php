@@ -162,20 +162,20 @@ class cli_plugin_combo extends DokuWiki_CLI_Plugin
             $statistics = $data[Analytics::STATISTICS];
             $row = array(
                 'id' => $id,
-                'backlinks' => $statistics[Analytics::INTERNAL_BACKLINKS],
-                'broken_links' => $statistics[Analytics::INTERNAL_LINKS_BROKEN],
-                'changes' => $statistics[Analytics::CHANGES],
-                'chars' => $statistics[Analytics::CHARS],
-                'external_links' => $statistics[Analytics::EXTERNAL_LINKS],
+                'backlinks' => $statistics[Analytics::INTERNAL_BACKLINKS_COUNT],
+                'broken_links' => $statistics[Analytics::INTERNAL_LINKS_BROKEN_COUNT],
+                'changes' => $statistics[Analytics::EDITS_COUNT],
+                'chars' => $statistics[Analytics::CHARS_COUNT],
+                'external_links' => $statistics[Analytics::EXTERNAL_LINKS_COUNT],
                 'external_medias' => $statistics[Analytics::EXTERNAL_MEDIAS],
-                'h1' => $statistics[Analytics::HEADERS]['h1'],
-                'h2' => $statistics[Analytics::HEADERS]['h2'],
-                'h3' => $statistics[Analytics::HEADERS]['h3'],
-                'h4' => $statistics[Analytics::HEADERS]['h4'],
-                'h5' => $statistics[Analytics::HEADERS]['h5'],
-                'internal_links' => $statistics[Analytics::INTERNAL_LINKS],
-                'internal_medias' => $statistics[Analytics::INTERNAL_MEDIAS],
-                'words' => $statistics[Analytics::WORDS],
+                'h1' => $statistics[Analytics::HEADERS_COUNT]['h1'],
+                'h2' => $statistics[Analytics::HEADERS_COUNT]['h2'],
+                'h3' => $statistics[Analytics::HEADERS_COUNT]['h3'],
+                'h4' => $statistics[Analytics::HEADERS_COUNT]['h4'],
+                'h5' => $statistics[Analytics::HEADERS_COUNT]['h5'],
+                'internal_links' => $statistics[Analytics::INTERNAL_LINKS_COUNT],
+                'internal_medias' => $statistics[Analytics::INTERNAL_MEDIAS_COUNT],
+                'words' => $statistics[Analytics::WORDS_COUNT],
                 'low' => $data[Analytics::QUALITY]['low']
             );
             fwrite($fileHandle, implode(",", $row) . PHP_EOL);

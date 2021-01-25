@@ -23,18 +23,18 @@ class Analytics
      * Constant in Key or value
      */
     const HEADER_POSITION = 'header_id';
-    const INTERNAL_BACKLINKS = "internal_backlinks";
-    const WORDS = 'words';
+    const INTERNAL_BACKLINKS_COUNT = "internal_backlinks_count";
+    const WORDS_COUNT = 'words_count';
     const INTERNAL_LINK_DISTANCE = 'internal_links_distance';
-    const CHANGES = 'changes';
-    const INTERNAL_LINKS_BROKEN = 'internal_links_broken';
+    const EDITS_COUNT = 'edits_count';
+    const INTERNAL_LINKS_BROKEN_COUNT = 'internal_broken_links_count';
     const TITLE = 'title';
-    const INTERNAL_LINKS = 'internal_links';
-    const EXTERNAL_MEDIAS = 'external_medias';
-    const CHARS = 'chars';
-    const INTERNAL_MEDIAS = 'internal_medias';
-    const EXTERNAL_LINKS = 'external_links';
-    const HEADERS = 'headers';
+    const INTERNAL_LINKS_COUNT = 'internal_links_count';
+    const EXTERNAL_MEDIAS = 'external_medias_count';
+    const CHARS_COUNT = 'chars_count';
+    const INTERNAL_MEDIAS_COUNT = 'internal_medias_count';
+    const EXTERNAL_LINKS_COUNT = 'external_links_count';
+    const HEADERS_COUNT = 'headers_count';
     const QUALITY = 'quality';
     const STATISTICS = "statistics";
 
