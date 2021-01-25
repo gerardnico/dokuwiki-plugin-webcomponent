@@ -119,16 +119,18 @@ class renderer_plugin_combo_analytics extends Doku_Renderer
         /**
          * Internal link distance summary calculation
          */
-        $linkLengths = $statExport[Analytics::INTERNAL_LINK_DISTANCE];
-        unset($statExport[Analytics::INTERNAL_LINK_DISTANCE]);
-        $countBacklinks = count($linkLengths);
-        $statExport[Analytics::INTERNAL_LINK_DISTANCE]['avg'] = null;
-        $statExport[Analytics::INTERNAL_LINK_DISTANCE]['max'] = null;
-        $statExport[Analytics::INTERNAL_LINK_DISTANCE]['min'] = null;
-        if ($countBacklinks > 0) {
-            $statExport[Analytics::INTERNAL_LINK_DISTANCE]['avg'] = array_sum($linkLengths) / $countBacklinks;
-            $statExport[Analytics::INTERNAL_LINK_DISTANCE]['max'] = max($linkLengths);
-            $statExport[Analytics::INTERNAL_LINK_DISTANCE]['min'] = min($linkLengths);
+        if (array_key_exists(Analytics::INTERNAL_LINK_DISTANCE,$statExport)) {
+            $linkLengths = $statExport[Analytics::INTERNAL_LINK_DISTANCE];
+            unset($statExport[Analytics::INTERNAL_LINK_DISTANCE]);
+            $countBacklinks = count($linkLengths);
+            $statExport[Analytics::INTERNAL_LINK_DISTANCE]['avg'] = null;
+            $statExport[Analytics::INTERNAL_LINK_DISTANCE]['max'] = null;
+            $statExport[Analytics::INTERNAL_LINK_DISTANCE]['min'] = null;
+            if ($countBacklinks > 0) {
+                $statExport[Analytics::INTERNAL_LINK_DISTANCE]['avg'] = array_sum($linkLengths) / $countBacklinks;
+                $statExport[Analytics::INTERNAL_LINK_DISTANCE]['max'] = max($linkLengths);
+                $statExport[Analytics::INTERNAL_LINK_DISTANCE]['min'] = min($linkLengths);
+            }
         }
 
         /**

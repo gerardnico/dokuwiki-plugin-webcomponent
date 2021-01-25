@@ -31,7 +31,7 @@ ini_set('memory_limit', '256M');
  *
  * ```
  * docker exec -ti $(CONTAINER) /bin/bash
- * ./bin/plugin.php combo -o pages.csv
+ * ./bin/plugin.php combo -c
  * ```
  * or via the IDE
  *
