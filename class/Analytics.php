@@ -17,7 +17,7 @@ class Analytics
 {
 
 
-    const ANALYSIS_RENDERER = "combo_analysis";
+
     const DATE_MODIFIED = 'date_modified';
     /**
      * Constant in Key or value
@@ -37,6 +37,12 @@ class Analytics
     const HEADERS = 'headers';
     const QUALITY = 'quality';
     const STATISTICS = "statistics";
+
+    /**
+     * The format returned by the renderer
+     */
+    const RENDERER_FORMAT = "analytics";
+    const RENDERER_NAME = "combo_".self::RENDERER_FORMAT;
 
     /**
      * @param $pageId
@@ -63,12 +69,12 @@ class Analytics
             if (file_exists($file)) {
                 $content = file_get_contents($file);
                 $instructions = RenderUtility::getInstructions($content,false);
-                return p_render(self::ANALYSIS_RENDERER, $instructions, $info);
+                return p_render(self::RENDERER_NAME, $instructions, $info);
             } else {
                 return false;
             }
         } else {
-            $result = p_cached_output(wikiFN($pageId, 0), self::ANALYSIS_RENDERER, $pageId);
+            $result = p_cached_output(wikiFN($pageId, 0), self::RENDERER_NAME, $pageId);
         }
         $ID = $oldId;
         return $result;

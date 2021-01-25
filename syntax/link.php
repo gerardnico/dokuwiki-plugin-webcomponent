@@ -5,10 +5,11 @@ require_once(__DIR__ . "/../class/PluginUtility.php");
 require_once(__DIR__ . "/../class/LinkUtility.php");
 require_once(__DIR__ . "/../class/HtmlUtility.php");
 
+use ComboStrap\Analytics;
 use ComboStrap\HtmlUtility;
 use ComboStrap\LinkUtility;
 use ComboStrap\PluginUtility;
-use ComboStrap\SeoUtility;
+use ComboStrap\LowQualityPage;
 use ComboStrap\Tag;
 
 if (!defined('DOKU_INC')) die();
@@ -80,14 +81,15 @@ class syntax_plugin_combo_link extends DokuWiki_Syntax_Plugin
          * Without the low quality page module enabled
          * we take over only on a subset of component
          */
-        if (!$this->getConf(SeoUtility::CONF_LOW_QUALITY_PAGE_NOT_PUBLIC_ENABLE)) {
+        if (!$this->getConf(LowQualityPage::CONF_LOW_QUALITY_PAGE_PROTECTION_ENABLE)) {
             // Only inside the following component
             $authorizedMode =
                 [
                     PluginUtility::getModeForComponent(syntax_plugin_combo_button::TAG),
                     PluginUtility::getModeForComponent(syntax_plugin_combo_cite::TAG),
                     PluginUtility::getModeForComponent(syntax_plugin_combo_dropdown::TAG),
-                    PluginUtility::getModeForComponent(syntax_plugin_combo_listitem::TAG)
+                    PluginUtility::getModeForComponent(syntax_plugin_combo_listitem::TAG),
+                    PluginUtility::getModeForComponent(syntax_plugin_combo_preformatted::TAG)
                 ];
             if (in_array($mode, $authorizedMode)) {
                 $this->Lexer->addSpecialPattern(LinkUtility::LINK_PATTERN, $mode, PluginUtility::getModeForComponent($this->getPluginComponent()));
@@ -159,12 +161,16 @@ class syntax_plugin_combo_link extends DokuWiki_Syntax_Plugin
 
                 $type = $attributes[LinkUtility::ATTRIBUTE_TYPE];
                 $id = $attributes[LinkUtility::ATTRIBUTE_ID];
+                /**
+                 * If this is a low quality internal page,
+                 * print a shallow link for the anonymous user
+                 */
                 if (
                     $type == "internal"
-                    && $this->getConf(SeoUtility::CONF_LOW_QUALITY_PAGE_NOT_PUBLIC_ENABLE)
-                    && SeoUtility::isPageToExclude($id)
+                    && $this->getConf(LowQualityPage::CONF_LOW_QUALITY_PAGE_PROTECTION_ENABLE)
+                    && LowQualityPage::isPageToExclude($id)
                 ) {
-                    $htmlLink = LinkUtility::renderAsSpanElement($attributes);
+                    $htmlLink = LinkUtility::renderLowQualityProtectedLink($attributes);
                 } else {
                     $htmlLink = LinkUtility::renderAsAnchorElement($renderer, $attributes);
                     $htmlLink = LinkUtility::deleteDokuWikiClass($htmlLink);
@@ -194,6 +200,7 @@ class syntax_plugin_combo_link extends DokuWiki_Syntax_Plugin
 
                 return true;
                 break;
+
         }
         // unsupported $mode
         return false;

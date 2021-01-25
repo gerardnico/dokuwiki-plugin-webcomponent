@@ -129,6 +129,12 @@ class TestUtility
         return RenderUtility::renderText2Xhtml($text);
     }
 
+    /**
+     * Return list of line with a description error by line
+     * @param $expected
+     * @param $rendered
+     * @return mixed|string
+     */
     public static function HtmlDiff($expected, $rendered)
     {
         return HtmlUtility::diff($expected, $rendered);

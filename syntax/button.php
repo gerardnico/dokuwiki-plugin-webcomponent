@@ -35,8 +35,6 @@ class syntax_plugin_combo_button extends DokuWiki_Syntax_Plugin
 {
 
 
-    const INTERNAL_LINK_PATTERN = "\[\[.*?\]\](?!\])";
-
     const TAG = "button";
 
 

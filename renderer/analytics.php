@@ -2,21 +2,21 @@
 
 
 use ComboStrap\Analytics;
-use ComboStrap\SeoUtility;
+use ComboStrap\LowQualityPage;
 use ComboStrap\Text;
 use dokuwiki\ChangeLog\PageChangeLog;
 
 require_once(__DIR__ . '/../class/Text.php');
-require_once(__DIR__ . '/../class/SeoUtility.php');
+require_once(__DIR__ . '/../class/LowQualityPage.php');
 require_once(__DIR__ . '/../class/Analytics.php');
 
 
 /**
  * A analysis Renderer that exports stats/quality/metadata in a json format
  * You can export the data with
- * doku.php?id=somepage&do=export_combo_analysis
+ * doku.php?id=somepage&do=export_combo_analytics
  */
-class renderer_plugin_combo_analysis extends Doku_Renderer
+class renderer_plugin_combo_analytics extends Doku_Renderer
 {
     const DATE_CREATED = 'date_created';
     const PLAINTEXT = 'formatted';
@@ -54,6 +54,7 @@ class renderer_plugin_combo_analysis extends Doku_Renderer
     const CONF_QUALITY_SCORE_CORRECT_WORD_SECTION_AVERAGE = 'qualityScoreCorrectWordSectionAvg';
     const CONF_QUALITY_SCORE_INTERNAL_LINK_BROKEN_FACTOR = 'qualityScoreNoBrokenLinks';
     const CONF_QUALITY_SCORE_CHANGES_FACTOR = 'qualityScoreChangesFactor';
+
 
 
     /**
@@ -394,7 +395,7 @@ class renderer_plugin_combo_analysis extends Doku_Renderer
         if (sizeof($mandatoryRulesBroken) > 0) {
             $lowLevel = true;
         }
-        SeoUtility::setLowQualityPage($ID,$lowLevel);
+        LowQualityPage::setLowQualityPage($ID,$lowLevel);
 
         /**
          * Building the quality object in order
@@ -440,7 +441,7 @@ class renderer_plugin_combo_analysis extends Doku_Renderer
      */
     public function getFormat()
     {
-        return 'json';
+        return Analytics::RENDERER_FORMAT;
     }
 
     public function internallink($id, $name = null, $search = null, $returnonly = false, $linktype = 'content')

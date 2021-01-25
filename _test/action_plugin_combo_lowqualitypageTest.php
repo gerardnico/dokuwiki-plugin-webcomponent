@@ -1,20 +1,24 @@
 <?php
 /**
+ * Copyright (c) 2021. ComboStrap, Inc. and its affiliates. All Rights Reserved.
  *
- * plugin_combo
- * @group plugins
+ * This source code is licensed under the GPL license found in the
+ * COPYING  file in the root directory of this source tree.
+ *
+ * @license  GPL 3 (https://www.gnu.org/licenses/gpl-3.0.en.html)
+ * @author   ComboStrap <support@combostrap.com>
  *
  */
 
 use ComboStrap\Analytics;
 use ComboStrap\PluginUtility;
-use ComboStrap\SeoUtility;
+use ComboStrap\LowQualityPage;
 use ComboStrap\TestUtility;
 
 
 require_once(__DIR__ . '/../class/PluginUtility.php');
 require_once(__DIR__ . '/../class/TestUtility.php');
-require_once(__DIR__ . '/../class/SeoUtility.php');
+require_once(__DIR__ . '/../class/LowQualityPage.php');
 require_once(__DIR__ . '/../class/Analytics.php');
 
 
@@ -22,14 +26,14 @@ require_once(__DIR__ . '/../class/Analytics.php');
  * Class plugin_combo_quality_test
  * Low quality page are handled differently
  */
-class plugin_combo_quality_test extends DokuWikiTest
+class action_plugin_combo_lowqualitypageTest extends DokuWikiTest
 {
 
     public function setUp()
     {
         $this->pluginsEnabled[] = PluginUtility::PLUGIN_BASE_NAME;
         TestUtility::setConf(array(
-            SeoUtility::CONF_LOW_QUALITY_PAGE_NOT_PUBLIC_ENABLE => 1,
+            LowQualityPage::CONF_LOW_QUALITY_PAGE_PROTECTION_ENABLE => 1,
         ));
         parent::setUp();
 
@@ -57,7 +61,7 @@ class plugin_combo_quality_test extends DokuWikiTest
          */
         $contentHighQualityPage = "high {$commonTerm} [[:{$lowPageId}]]";
         TestUtility::addPage($highPageId, $contentHighQualityPage);
-        SeoUtility::setLowQualityPage($highPageId,false);
+        LowQualityPage::setLowQualityPage($highPageId, false);
 
         /**
          * The low page with a link to a high quality page
@@ -65,7 +69,7 @@ class plugin_combo_quality_test extends DokuWikiTest
          */
         $contentLowQualityPage = "low {$commonTerm} [[:{$highPageId}]]";
         TestUtility::addPage($lowPageId, $contentLowQualityPage);
-        SeoUtility::setLowQualityPage($lowPageId,true);
+        LowQualityPage::setLowQualityPage($lowPageId, true);
 
         $user = null;
         $groups = array();
@@ -168,7 +172,7 @@ class plugin_combo_quality_test extends DokuWikiTest
          * there is no method to extract and test the pages
          * we test the acl check signature used in the function {@link Mapper::generate()}
          */
-        $aclCheck = auth_aclcheck($lowPageId, '', array()) ;
+        $aclCheck = auth_aclcheck($lowPageId, '', array());
         $this->assertTrue($aclCheck < AUTH_READ);
 
         /**
@@ -177,11 +181,8 @@ class plugin_combo_quality_test extends DokuWikiTest
          * with span element
          */
         $render = TestUtility::renderText2Xhtml($contentHighQualityPage);
-        $expected = "high page <span data-wiki-id=\":lowpage\">:lowpage</span>";
-        $this->assertEquals(
-            TestUtility::normalizeDokuWikiHtml($expected),
-            TestUtility::normalizeDokuWikiHtml($render)
-        );
+        $expected = "high page <a href=\"#\" class=\"low-quality\" data-wiki-id=\":lowpage\" data-toggle=\"tooltip\" title=\"To follow this link, you need to log in (".LowQualityPage::ACRONYM.")\">:lowpage</a>";
+        $this->assertEquals( "",TestUtility::HtmlDiff($expected,$render));
         /**
          * Render the low quality page as anonymous user
          * The link should render with anchor
@@ -204,7 +205,7 @@ class plugin_combo_quality_test extends DokuWikiTest
         $lowPageId = "integrationLowPage";
         TestUtility::addPage($lowPageId, $contentLowQualityPage);
         Analytics::process($lowPageId);
-        $this->assertEquals(true,SeoUtility::isLowQualityPage($lowPageId));
+        $this->assertEquals(true, LowQualityPage::isLowQualityPage($lowPageId));
 
     }
 

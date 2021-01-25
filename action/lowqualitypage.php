@@ -1,33 +1,35 @@
 <?php
 
 
-use ComboStrap\SeoUtility;
+use ComboStrap\LowQualityPage;
 
-require_once(__DIR__ . '/../class/SeoUtility.php');
+require_once(__DIR__ . '/../class/LowQualityPage.php');
 
 /**
- * Class action_plugin_combo_quality
  *
- *
- * https://www.dokuwiki.org/plugin:qc
- * https://www.dokuwiki.org/plugin:readability
- *
- * Quality Guideline SEO
- * https://developers.google.com/search/docs/advanced/guidelines/auto-gen-content
- * https://support.google.com/webmasters/answer/9044175#thin-content
  */
-class action_plugin_combo_quality extends DokuWiki_Action_Plugin
+class action_plugin_combo_lowqualitypage extends DokuWiki_Action_Plugin
 {
 
 
     public function register(Doku_Event_Handler $controller)
     {
 
-        if ($this->getConf(SeoUtility::CONF_LOW_QUALITY_PAGE_NOT_PUBLIC_ENABLE)) {
-            /**
-             * https://www.dokuwiki.org/devel:event:auth_acl_check
-             */
-            $controller->register_hook('AUTH_ACL_CHECK', 'AFTER', $this, 'handleAclCheck', array());
+        if ($this->getConf(LowQualityPage::CONF_LOW_QUALITY_PAGE_PROTECTION_ENABLE)) {
+
+            $securityConf = $this->getConf(LowQualityPage::CONF_LOW_QUALITY_PAGE_PROTECTION_MODE);
+            if ($securityConf == LowQualityPage::HIDDEN) {
+                /**
+                 * https://www.dokuwiki.org/devel:event:pageutils_id_hidepage
+                 */
+                $controller->register_hook('PAGEUTILS_ID_HIDEPAGE', 'BEFORE', $this, 'handleHiddenCheck', array());
+            } else {
+                /**
+                 * https://www.dokuwiki.org/devel:event:auth_acl_check
+                 */
+                $controller->register_hook('AUTH_ACL_CHECK', 'AFTER', $this, 'handleAclCheck', array());
+            }
+
             /**
              * https://www.dokuwiki.org/devel:event:search_query_pagelookup
              */
@@ -45,13 +47,34 @@ class action_plugin_combo_quality extends DokuWiki_Action_Plugin
 
     }
 
+    /**
+     * Set a low page has hidden
+     * @param $event
+     * @param $param
+     */
+    function handleHiddenCheck(&$event, $param)
+    {
+
+        $id = $event->data['id'];
+        $user = $event->data['user'];
+        if (LowQualityPage::isPageToExclude($id, $user)) {
+            $event->data['hidden'] = true;
+        }
+
+    }
+
+    /**
+     * Make the authorization to NONE for low page
+     * @param $event
+     * @param $param
+     */
     function handleAclCheck(&$event, $param)
     {
 
         $id = $event->data['id'];
         $user = $event->data['user'];
-        if (SeoUtility::isPageToExclude($id, $user)) {
-            return $event->result = AUTH_NONE;
+        if (LowQualityPage::isPageToExclude($id, $user)) {
+            $event->result = AUTH_NONE;
         }
 
     }
@@ -99,7 +122,7 @@ class action_plugin_combo_quality extends DokuWiki_Action_Plugin
     {
 
         foreach (array_keys($event->result) as $idx) {
-            if (SeoUtility::isPageToExclude($idx)) {
+            if (LowQualityPage::isPageToExclude($idx)) {
                 unset($event->result[$idx]);
             }
         }

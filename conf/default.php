@@ -115,9 +115,10 @@ $conf['powershellPrompt'] = 'PS C:\\';
 
 /**
  * SEO module
- * See {@link \ComboStrap\SeoUtility::CONF_LOW_QUALITY_PAGE_NOT_PUBLIC_ENABLE}
+ * See {@link \ComboStrap\LowQualityPage::CONF_LOW_QUALITY_PAGE_PROTECTION_ENABLE}
  */
-$conf['lowQualityPageNotPublicEnable'] = 0;
+$conf['lowQualityPageProtectionEnable'] = 0;
+$conf['lowQualityPageProtectionMode'] = "acl";
 
 /**
  * Preformatted mode disable
@@ -125,7 +126,3 @@ $conf['lowQualityPageNotPublicEnable'] = 0;
  */
 $conf['preformattedEnable'] = 0;
 
-/**
- * Low quality page not public
- */
-$conf['preformattedEnable'] = 0;

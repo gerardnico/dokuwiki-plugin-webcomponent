@@ -234,14 +234,14 @@ class LinkUtility
      * @param array $attributes
      * @return string
      */
-    public static function renderAsSpanElement(array $attributes)
+    public static function renderLowQualityProtectedLink(array $attributes)
     {
         $id = $attributes[self::ATTRIBUTE_ID];
         $title = $attributes[self::ATTRIBUTE_TITLE];
         if (empty($title)){
             $title = $id;
         }
-        return "<span data-wiki-id=\"{$id}\">{$title}</span>";
+        return "<a href=\"#\" class=\"low-quality\" data-wiki-id=\"{$id}\" data-toggle=\"tooltip\" title=\"To follow this link, you need to log in (".LowQualityPage::ACRONYM.")\">{$title}</a>";
     }
 
 }

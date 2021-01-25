@@ -5,7 +5,7 @@ use ComboStrap\IconUtility;
 use ComboStrap\MetadataUtility;
 use ComboStrap\PluginUtility;
 use ComboStrap\Prism;
-use ComboStrap\SeoUtility;
+use ComboStrap\LowQualityPage;
 use ComboStrap\UrlManagerBestEndPage;
 
 require_once(__DIR__ . '/../../class/PluginUtility.php');
@@ -81,7 +81,7 @@ $lang[syntax_plugin_combo_file::CONF_FILE_ENABLE] = PluginUtility::getUrl("file"
 /**
  * Seo
  */
-$lang[SeoUtility::CONF_LOW_QUALITY_PAGE_NOT_PUBLIC_ENABLE] = PluginUtility::getUrl("quality", "Quality Component") . ' - If enabled, low quality page will be made private and not available to search engine';
+$lang[LowQualityPage::CONF_LOW_QUALITY_PAGE_PROTECTION_ENABLE] = PluginUtility::getUrl("quality", "Quality Component") . ' - If enabled, low quality page will be made private and not available to search engine';
 
 /**
  * Preformatted mode

@@ -13,18 +13,21 @@
 namespace ComboStrap;
 
 
-use Doku_Renderer_metadata;
-use Doku_Renderer_xhtml;
+require_once(__DIR__ . '/../class/Auth.php');
 
 /**
- * Class SeoUtility
+ * Class LowQualityPage
  * @package ComboStrap
  *
  */
-class SeoUtility
+class LowQualityPage
 {
 
-    const CONF_LOW_QUALITY_PAGE_NOT_PUBLIC_ENABLE = "lowQualityPageNotPublicEnable";
+    const ACRONYM = "LQPP"; // low quality page protection
+    const CONF_LOW_QUALITY_PAGE_PROTECTION_ENABLE = "lowQualityPageProtectionEnable";
+    const CONF_LOW_QUALITY_PAGE_PROTECTION_MODE = "lowQualityPageProtectionMode";
+    const ACL = "acl";
+    const HIDDEN = "hidden";
 
     /**
      * Low page quality
