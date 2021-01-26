@@ -40,6 +40,11 @@ class action_plugin_combo_lowqualitypageTest extends DokuWikiTest
     }
 
 
+    /**
+     * Test the low quality page functionality
+     * without the run of the {@link renderer_plugin_combo_analytics}
+     * that set the low page indicator
+     */
     function testLowQualityPage()
     {
 
@@ -50,7 +55,7 @@ class action_plugin_combo_lowqualitypageTest extends DokuWikiTest
         $commonTerm = "page";
 
         /**
-         * A high quality page
+         * Pages
          */
         $highPageId = "high{$commonTerm}";
         $lowPageId = "low{$commonTerm}";
@@ -194,18 +199,40 @@ class action_plugin_combo_lowqualitypageTest extends DokuWikiTest
             TestUtility::normalizeDokuWikiHtml($render)
         );
 
+
+
+
     }
 
     /**
-     * Create a low pages
+     * Test the integration with the renderer
      */
     public function testStatsIntegration()
     {
-        $contentLowQualityPage = "low page";
+        /**
+         * Neighbors page of the low quality page
+         */
+        $neighborPage = "Adjacent page";
+        TestUtility::addPage($neighborPage, "");
+
+        /**
+         * Low quality page
+         */
+        $contentLowQualityPage = "low page [[${neighborPage}]]";
         $lowPageId = "integrationLowPage";
         TestUtility::addPage($lowPageId, $contentLowQualityPage);
-        Analytics::process($lowPageId);
+
+        /**
+         * Start the stat
+         */
+        $stats = Analytics::getDataAsArray($lowPageId);
+
+        /**
+         * Test
+         */
         $this->assertEquals(true, LowQualityPage::isLowQualityPage($lowPageId));
+        $this->assertEquals(1, $stats[Analytics::STATISTICS][Analytics::INTERNAL_LINKS_COUNT]);
+
 
     }
 

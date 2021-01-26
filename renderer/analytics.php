@@ -2,6 +2,7 @@
 
 
 use ComboStrap\Analytics;
+use ComboStrap\LinkUtility;
 use ComboStrap\LogUtility;
 use ComboStrap\LowQualityPage;
 use ComboStrap\PluginUtility;
@@ -76,7 +77,7 @@ class renderer_plugin_combo_analytics extends Doku_Renderer
      * The processing data
      * that should be {@link  renderer_plugin_combo_analysis::reset()}
      */
-    protected $stats = array(); // the stats
+    public $stats = array(); // the stats
     protected $metadata = array(); // the metadata
     protected $headerId = 0; // the id of the header on the page (first, second, ...)
 
@@ -119,7 +120,7 @@ class renderer_plugin_combo_analytics extends Doku_Renderer
         /**
          * Internal link distance summary calculation
          */
-        if (array_key_exists(Analytics::INTERNAL_LINK_DISTANCE,$statExport)) {
+        if (array_key_exists(Analytics::INTERNAL_LINK_DISTANCE, $statExport)) {
             $linkLengths = $statExport[Analytics::INTERNAL_LINK_DISTANCE];
             unset($statExport[Analytics::INTERNAL_LINK_DISTANCE]);
             $countBacklinks = count($linkLengths);
@@ -196,24 +197,31 @@ class renderer_plugin_combo_analytics extends Doku_Renderer
         /**
          * Outline / Header structure
          */
-        $headersCount = count($this->stats[Analytics::HEADER_POSITION]);
-        unset($statExport[Analytics::HEADER_POSITION]);
         $treeError = 0;
-        for ($i = 1; $i < $headersCount; $i++) {
-            $currentHeaderLevel = $this->stats['header_struct'][$i];
-            $previousHeaderLevel = $this->stats['header_struct'][$i - 1];
-            if ($currentHeaderLevel - $previousHeaderLevel > 1) {
-                $treeError += 1;
-                $ruleInfo[self::RULE_OUTLINE_STRUCTURE] = "The " . $i . " header (h" . $currentHeaderLevel . ") has a level bigger than its precedent (" . $previousHeaderLevel . ")";
+        $headersCount = 0;
+        if (array_key_exists(Analytics::HEADER_POSITION, $this->stats)) {
+            $headersCount = count($this->stats[Analytics::HEADER_POSITION]);
+            unset($statExport[Analytics::HEADER_POSITION]);
+            for ($i = 1; $i < $headersCount; $i++) {
+                $currentHeaderLevel = $this->stats['header_struct'][$i];
+                $previousHeaderLevel = $this->stats['header_struct'][$i - 1];
+                if ($currentHeaderLevel - $previousHeaderLevel > 1) {
+                    $treeError += 1;
+                    $ruleInfo[self::RULE_OUTLINE_STRUCTURE] = "The " . $i . " header (h" . $currentHeaderLevel . ") has a level bigger than its precedent (" . $previousHeaderLevel . ")";
+                }
             }
         }
         if ($treeError > 0 || $headersCount == 0) {
             $qualityScores['correct_outline'] = 0;
             $ruleResults[self::RULE_OUTLINE_STRUCTURE] = self::FAILED;
+            if ($headersCount==0){
+                $ruleInfo[self::RULE_OUTLINE_STRUCTURE] = "There is no header";
+            }
         } else {
             $qualityScores['correct_outline'] = $this->getConf(self::CONF_QUALITY_SCORE_CORRECT_HEADER_STRUCTURE, 3);
             $ruleResults[self::RULE_OUTLINE_STRUCTURE] = self::PASSED;
         }
+
 
         /**
          * Document length
@@ -524,27 +532,7 @@ class renderer_plugin_combo_analytics extends Doku_Renderer
     public function internallink($id, $name = null, $search = null, $returnonly = false, $linktype = 'content')
     {
 
-        /**
-         * Stats
-         */
-        global $ID;
-        resolve_pageid(getNS($ID), $id, $exists);
-        $this->stats[Analytics::INTERNAL_LINKS_COUNT]++;
-        if (!$exists) $this->stats[Analytics::INTERNAL_LINKS_BROKEN_COUNT]++;
-
-
-        /**
-         * Calculate link distance
-         */
-        $a = explode(':', getNS($ID));
-        $b = explode(':', getNS($id));
-        while (isset($a[0]) && $a[0] == $b[0]) {
-            array_shift($a);
-            array_shift($b);
-        }
-        $length = count($a) + count($b);
-        $this->stats[Analytics::INTERNAL_LINK_DISTANCE][] = $length;
-
+        LinkUtility::processInternalLinkStats($id, $this->stats);
 
     }
 

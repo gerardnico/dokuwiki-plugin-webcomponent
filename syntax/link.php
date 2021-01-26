@@ -201,6 +201,15 @@ class syntax_plugin_combo_link extends DokuWiki_Syntax_Plugin
                 return true;
                 break;
 
+            case Analytics::RENDERER_FORMAT:
+                /**
+                 *
+                 * @var renderer_plugin_combo_analytics $renderer
+                 */
+                $id = $data[PluginUtility::ATTRIBUTES][LinkUtility::ATTRIBUTE_ID];
+                LinkUtility::processInternalLinkStats($id, $renderer->stats);
+                break;
+
         }
         // unsupported $mode
         return false;

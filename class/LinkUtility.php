@@ -244,4 +244,34 @@ class LinkUtility
         return "<a href=\"#\" class=\"low-quality\" data-wiki-id=\"{$id}\" data-toggle=\"tooltip\" title=\"To follow this link, you need to log in (".LowQualityPage::ACRONYM.")\">{$title}</a>";
     }
 
+    /**
+     * @param $id
+     * @param array $stats
+     * Calculate internal link statistics
+     */
+    public static function processInternalLinkStats($id, array &$stats)
+    {
+        /**
+         * Stats
+         */
+        global $ID;
+        resolve_pageid(getNS($ID), $id, $exists);
+        $stats[Analytics::INTERNAL_LINKS_COUNT]++;
+        if (!$exists) $stats[Analytics::INTERNAL_LINKS_BROKEN_COUNT]++;
+
+
+        /**
+         * Calculate link distance
+         */
+        $a = explode(':', getNS($ID));
+        $b = explode(':', getNS($id));
+        while (isset($a[0]) && $a[0] == $b[0]) {
+            array_shift($a);
+            array_shift($b);
+        }
+        $length = count($a) + count($b);
+        $stats[Analytics::INTERNAL_LINK_DISTANCE][] = $length;
+
+    }
+
 }
