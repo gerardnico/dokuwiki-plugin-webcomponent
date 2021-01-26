@@ -125,6 +125,9 @@ class syntax_plugin_combo_icon extends DokuWiki_Syntax_Plugin
                 if($tag->isDescendantOf(syntax_plugin_combo_list::TAG)){
                     PluginUtility::addClass2Attributes("mr-2",$attributesToRender);
                 }
+                /**
+                 * TODO: When getting the instructions, the file is loaded. This should go to the render if there is too much file open
+                 */
                 $html = IconUtility::renderIconByAttributes($attributesToRender);
                 return array(
                     PluginUtility::STATE=> $state,

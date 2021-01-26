@@ -80,6 +80,9 @@ class PluginUtility
      */
     public static $PLUGIN_NAME;
 
+    /** @var helper_plugin_sqlite $sqlite */
+    protected static $sqlite;
+
 
     /**
      * Init the data store
@@ -94,41 +97,45 @@ class PluginUtility
     static function getSqlite()
     {
 
-        /** @var helper_plugin_sqlite $sqlite */
-        $sqlite = plugin_load('helper', 'sqlite');
-        if ($sqlite == null) {
-            # TODO: Man we cannot get the message anymore ['SqliteMandatory'];
-            $sqliteMandatoryMessage = "The Sqlite Plugin is mandatory. Some functionalities of the Combostraps Plugin may not work.";
-            msg($sqliteMandatoryMessage, LogUtility::LVL_MSG_ERROR);
-            return null;
-        }
-        $adapter = $sqlite->getAdapter();
-        if ($adapter == null) {
-            $sqliteMandatoryMessage = "The Sqlite Php Extension is mandatory. It seems that it's not available on this installation.";
-            msg($sqliteMandatoryMessage, LogUtility::LVL_MSG_ERROR);
-            return null;
-        }
+        if (self::$sqlite==null) {
+            /**
+             * Init
+             */
+            self::$sqlite = plugin_load('helper', 'sqlite');
+            if (self::$sqlite == null) {
+                # TODO: Man we cannot get the message anymore ['SqliteMandatory'];
+                $sqliteMandatoryMessage = "The Sqlite Plugin is mandatory. Some functionalities of the Combostraps Plugin may not work.";
+                msg($sqliteMandatoryMessage, LogUtility::LVL_MSG_ERROR);
+                return null;
+            }
+            $adapter = self::$sqlite->getAdapter();
+            if ($adapter == null) {
+                $sqliteMandatoryMessage = "The Sqlite Php Extension is mandatory. It seems that it's not available on this installation.";
+                msg($sqliteMandatoryMessage, LogUtility::LVL_MSG_ERROR);
+                return null;
+            }
 
-        $adapter->setUseNativeAlter(true);
+            $adapter->setUseNativeAlter(true);
 
-        // The name of the database (on windows, it should be
-        $dbname = strtolower(self::PLUGIN_BASE_NAME);
-        global $conf;
+            // The name of the database (on windows, it should be
+            $dbname = strtolower(self::PLUGIN_BASE_NAME);
+            global $conf;
 
-        $oldDbName = '404manager';
-        $oldDbFile = $conf['metadir'] . "/{$oldDbName}.sqlite";
-        $oldDbFileSqlite3 = $conf['metadir'] . "/{$oldDbName}.sqlite3";
-        if (file_exists($oldDbFile) || file_exists($oldDbFileSqlite3)) {
-            $dbname = $oldDbName;
+            $oldDbName = '404manager';
+            $oldDbFile = $conf['metadir'] . "/{$oldDbName}.sqlite";
+            $oldDbFileSqlite3 = $conf['metadir'] . "/{$oldDbName}.sqlite3";
+            if (file_exists($oldDbFile) || file_exists($oldDbFileSqlite3)) {
+                $dbname = $oldDbName;
+            }
+
+            $init = self::$sqlite->init($dbname, DOKU_PLUGIN . PluginUtility::PLUGIN_BASE_NAME . '/db/');
+            if (!$init) {
+                # TODO: Message 'SqliteUnableToInitialize'
+                $message = "Unable to initialize Sqlite";
+                LogUtility::msg($message, MSG_MANAGERS_ONLY);
+            }
         }
-
-        $init = $sqlite->init($dbname, DOKU_PLUGIN . PluginUtility::PLUGIN_BASE_NAME . '/db/');
-        if (!$init) {
-            # TODO: Message 'SqliteUnableToInitialize'
-            $message = "Unable to initialize Sqlite";
-            LogUtility::msg($message, MSG_MANAGERS_ONLY);
-        }
-        return $sqlite;
+        return self::$sqlite;
 
     }
 

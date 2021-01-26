@@ -13,7 +13,6 @@
 namespace ComboStrap;
 
 
-use RuntimeException;
 
 class LogUtility
 {
@@ -37,7 +36,7 @@ class LogUtility
     public static function msg($message, $level = self::LVL_MSG_ERROR, $canonical = null)
     {
 
-        self::log2FrontEnd($message,$level,$canonical);
+        self::log2FrontEnd($message, $level, $canonical);
         /**
          * Print to a log file
          * Note: {@link dbg()} dbg print to the web page
@@ -52,13 +51,13 @@ class LogUtility
 
         $loglevel = self::LVL_MSG_INFO;
         global $INPUT;
-        $loglevelProp = $INPUT->str("loglevel",null);
-        if ($loglevelProp!=null){
+        $loglevelProp = $INPUT->str("loglevel", null);
+        if ($loglevelProp != null) {
             $loglevel = $loglevelProp;
         }
         if (defined('DOKU_UNITTEST')
             && ($level == self::LVL_MSG_WARNING || $level == self::LVL_MSG_ERROR)
-            && ( $loglevel != self::LVL_MSG_ERROR )
+            && ($loglevel != self::LVL_MSG_ERROR)
         ) {
             throw new \RuntimeException($msg);
         }
@@ -99,16 +98,20 @@ class LogUtility
      */
     public static function log2FrontEnd($message, $level, $canonical, $withIconURL = true)
     {
+        /**
+         * If we are not in the console
+         */
+        $isCLI = ( php_sapi_name() == 'cli' );
+        if (!$isCLI) {
+            $prefix = PluginUtility::getUrl("", PluginUtility::$PLUGIN_NAME, $withIconURL);
+            if ($canonical != null) {
+                $prefix = PluginUtility::getUrl($canonical, ucfirst(str_replace(":", " ", $canonical)));
+            }
 
-        $prefix = PluginUtility::getUrl("", PluginUtility::$PLUGIN_NAME, $withIconURL);
-        if ($canonical != null) {
-            $prefix = PluginUtility::getUrl($canonical, ucfirst(str_replace(":", " ", $canonical)));
+            $htmlMsg = $prefix . " - " . $message;
+            if ($level != self::LVL_MSG_DEBUG) {
+                msg($htmlMsg, $level, '', '', MSG_USERS_ONLY);
+            }
         }
-
-        $htmlMsg = $prefix . " - " . $message;
-        if ($level != self::LVL_MSG_DEBUG) {
-            msg($htmlMsg, $level, '', '', MSG_USERS_ONLY);
-        }
-
     }
 }
