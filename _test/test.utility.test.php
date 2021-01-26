@@ -60,7 +60,7 @@ class plugin_combo_test_utility_test extends DokuWikiTest
         global $conf;
         $conf['plugin'][PluginUtility::PLUGIN_BASE_NAME][action_plugin_combo_css::CONF_ENABLE_MINIMAL_FRONTEND_STYLESHEET]=1;
 
-        $pageId = "cssQueryStringPage";
+        $pageId = "css_query_string_page";
         TestUtility::addPage($pageId, "A page that should exist to be able to make a query", "Summary");
         $testRequest = new TestRequest();
         $testResponse = $testRequest->get(array('id' => $pageId),"/doku.php");
@@ -76,7 +76,7 @@ class plugin_combo_test_utility_test extends DokuWikiTest
     public function test_css_disable_dokuwiki_stylesheet()
     {
 
-        $pageId = "cssDisableDokuwikiStyleSheet";
+        $pageId = "css_disable_dokuwiki_stylesheet";
         TestUtility::addPage($pageId, "A page that should exist to be able to make a query", "Summary");
         global $conf;
         $conf['plugin'][PluginUtility::PLUGIN_BASE_NAME][action_plugin_combo_css::CONF_DISABLE_DOKUWIKI_STYLESHEET]=1;

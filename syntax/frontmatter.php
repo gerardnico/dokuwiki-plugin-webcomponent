@@ -193,9 +193,9 @@ class syntax_plugin_combo_frontmatter extends DokuWiki_Syntax_Plugin
         // How to ?: https://developers.google.com/search/docs/data-types/how-to
 
         switch ($format) {
-            case 'metadata':
+            case 'xhtml':
                 global $ID;
-                /** @var Doku_Renderer_metadata $renderer */
+                /** @var Doku_Renderer_xhtml $renderer */
                 $state = $data["state"];
                 if ($state == self::PARSING_STATE_ERROR) {
                     LogUtility::msg("Front Matter: The json object for the page ($ID) is not valid", LogUtility::LVL_MSG_ERROR);

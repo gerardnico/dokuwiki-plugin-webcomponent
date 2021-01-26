@@ -179,11 +179,11 @@ class plugin_combo_url_manager_page_rules_test extends DokuWikiTest
         $pageRules->deleteAll();
 
         // in the $ID value, the first : is suppressed
-        $oldNameSpace = "aVeryOldNamespace";
-        $sourcePageId = "{$oldNameSpace}:subNamespace:table";
+        $oldNameSpace = "a_very_old_namespace";
+        $sourcePageId = "{$oldNameSpace}:sub_namespace:table";
         TestUtility::addPage($sourcePageId, "", 'Without content the page is deleted');
-        $newNameSpaceName = "aNewNameSpace";
-        $targetPage = "{$newNameSpaceName}:subNamespace:table";
+        $newNameSpaceName = "a_new_namespace";
+        $targetPage = "{$newNameSpaceName}:sub_namespace:table";
         TestUtility::addPage($targetPage, 'EXPLICIT_REDIRECT_PAGE_TARGET', 'Test initialization');
 
         // Create the rules
@@ -226,7 +226,7 @@ class plugin_combo_url_manager_page_rules_test extends DokuWikiTest
      */
     public function testPageRuleDbOperations()
     {
-        $targetPage = 'testRedirectionsOperations:test';
+        $targetPage = 'test_redirections_operations:test';
         TestUtility::addPage($targetPage, 'Test ', 'but without any common name (namespace) in the path');
 
         $pageRules = new PageRules(PluginUtility::getSqlite());

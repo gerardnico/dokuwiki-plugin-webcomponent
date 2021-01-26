@@ -13,6 +13,8 @@
 namespace ComboStrap;
 
 
+use TestRequest;
+
 class Auth
 {
 
@@ -33,6 +35,15 @@ class Auth
             }
         }
         return $loggedIn;
+    }
+
+    /**
+     * @param TestRequest $request
+     */
+    public static function becomeSuperUser(&$request)
+    {
+        global $conf;
+        $request->setServer('REMOTE_USER', $conf['superuser']);
     }
 
 }

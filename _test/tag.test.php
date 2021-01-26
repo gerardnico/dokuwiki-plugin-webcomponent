@@ -51,7 +51,7 @@ class plugin_combo_tag_test extends DokuWikiTest
         $text = '<card><blockquote warning>' . DOKU_LF
             . ' ' . DOKU_LF
             . '<tag important></tag></blockquote></card>';
-        $id = "idTestNode";
+        $id = "id_test_node";
         TestUtility::addPage($id, $text);
         $testRequest = new TestRequest();
         $response = $testRequest->get(array("id" => $id));
@@ -82,7 +82,7 @@ class plugin_combo_tag_test extends DokuWikiTest
             . '<header></header>' . DOKU_LF
             . '<tag important></tag>' . DOKU_LF
             . '</blockquote></card>';
-        $id = "idTestSibling";
+        $id = "id_test_sibling";
         TestUtility::addPage($id, $text);
         $testRequest = new TestRequest();
         $response = $testRequest->get(array("id" => $id));
@@ -109,7 +109,7 @@ class plugin_combo_tag_test extends DokuWikiTest
             . '<header></header>' . DOKU_LF
             . '<tag important>Unmatched</tag>' . DOKU_LF
             . '</blockquote></card>';
-        $id = "idTestSibling";
+        $id = "id_test_sibling";
         TestUtility::addPage($id, $text);
         $testRequest = new TestRequest();
         $response = $testRequest->get(array("id" => $id));
@@ -146,7 +146,7 @@ class plugin_combo_tag_test extends DokuWikiTest
             . '<tag important />' . DOKU_LF
             . '</blockquote>' . DOKU_LF
             . '</card>';
-        $id = "idTestSibling";
+        $id = "id_test_sibling";
         TestUtility::addPage($id, $text);
         $testRequest = new TestRequest();
         $response = $testRequest->get(array("id" => $id));
@@ -175,7 +175,7 @@ class plugin_combo_tag_test extends DokuWikiTest
             . '<badge>Hallo [[url|url]]</badge>'
             . '</tag>' . DOKU_LF
             . '</blockquote></card>';
-        $id = "idTestSibling";
+        $id = "id_test_sibling";
         TestUtility::addPage($id, $text);
         $testRequest = new TestRequest();
         $response = $testRequest->get(array("id" => $id));

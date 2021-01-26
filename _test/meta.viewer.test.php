@@ -48,7 +48,7 @@ class plugin_combo_metaviewer_test extends DokuWikiTest
     public function test_box_is_showing_metadata_tag()
     {
 
-        $pageId="metadataViewer";
+        $pageId="metadata_viewer";
         TestUtility::addPage($pageId, MetadataUtility::TAG, "Summary");
         $request = new TestRequest();
         $response = $request->get(array('id' => $pageId), '/doku.php');

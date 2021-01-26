@@ -1,5 +1,6 @@
 <?php
 
+use ComboStrap\Auth;
 use ComboStrap\LogUtility;
 use ComboStrap\PluginUtility;
 use ComboStrap\StringUtility;
@@ -24,6 +25,7 @@ class plugin_combo_frontmatter_test extends DokuWikiTest
     {
 
         $this->pluginsEnabled[] = PluginUtility::PLUGIN_BASE_NAME;
+        $this->pluginsEnabled[] = "sqlite";
         parent::setUp();
 
 
@@ -36,7 +38,7 @@ class plugin_combo_frontmatter_test extends DokuWikiTest
     public function test_frontmatter_meta_setting()
     {
 
-        $pageId = 'frontMatterTest';
+        $pageId = 'front_matter_test';
         $key = 'whatever';
         $value = "A whatever value";
         $text = DOKU_LF . '---json' . DOKU_LF
@@ -60,7 +62,7 @@ class plugin_combo_frontmatter_test extends DokuWikiTest
     public function test_frontmatter_meta_not_modifiable()
     {
 
-        $pageId = 'frontMatterTest';
+        $pageId = 'front_matter_test';
         $key = 'user';
         $value = "another user";
         $text = DOKU_LF . '---json' . DOKU_LF
@@ -92,7 +94,7 @@ class plugin_combo_frontmatter_test extends DokuWikiTest
 
 
 
-        $pageId = 'frontMatterTestNotValid';
+        $pageId = 'front_matter_test_not_valid';
         $text = DOKU_LF . '---json' . DOKU_LF
             . '{' . DOKU_LF
             . '   "key":"value\'\'' . DOKU_LF
@@ -104,7 +106,7 @@ class plugin_combo_frontmatter_test extends DokuWikiTest
 
 
         $request = new TestRequest();
-        TestUtility::becomeSuperUser($request);
+        Auth::becomeSuperUser($request);
         $response = $request->get(
             array(
                 'id'=>$pageId,
@@ -119,12 +121,6 @@ class plugin_combo_frontmatter_test extends DokuWikiTest
         $result = StringUtility::contain("is not valid",$text);
         // check the result
         $this->assertTrue($result,"The json error message is not in ({$text})");
-        /**
-         * We use a bigger below because
-         * when running in debug mode, there is two messages
-         * but not in normal mode, there is 4
-         */
-        $this->assertTrue($div->count()>=2,"There is 2 errors message (sqlite and json) in {$text}");
 
 
     }

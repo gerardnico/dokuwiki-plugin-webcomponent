@@ -13,7 +13,6 @@
 namespace ComboStrap;
 
 
-
 class LogUtility
 {
     const LVL_MSG_INFO = 0;
@@ -100,9 +99,18 @@ class LogUtility
     {
         /**
          * If we are not in the console
+         * and not in test
+         * we test that the message comes in the front end
+         * (example {@link \plugin_combo_frontmatter_test}
          */
-        $isCLI = ( php_sapi_name() == 'cli' );
-        if (!$isCLI) {
+        $isCLI = (php_sapi_name() == 'cli');
+        $print = true;
+        if ($isCLI) {
+            if (!defined('DOKU_UNITTEST')) {
+                $print = false;
+            }
+        }
+        if ($print) {
             $prefix = PluginUtility::getUrl("", PluginUtility::$PLUGIN_NAME, $withIconURL);
             if ($canonical != null) {
                 $prefix = PluginUtility::getUrl($canonical, ucfirst(str_replace(":", " ", $canonical)));

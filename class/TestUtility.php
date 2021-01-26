@@ -108,15 +108,6 @@ class TestUtility
     }
 
     /**
-     * @param TestRequest $request
-     */
-    public static function becomeSuperUser(&$request)
-    {
-        global $conf;
-        $request->setServer('REMOTE_USER', $conf['superuser']);
-    }
-
-    /**
      * @param $expected
      * @return mixed
      */

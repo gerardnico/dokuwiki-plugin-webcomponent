@@ -79,7 +79,7 @@ class dokuwiki_plugin_combo_related_test extends DokuWikiTest
         self::createReferrerPage(self::$referrers[self::REFERRERS_ID_TOP]);
 
         // Extra Pattern Page
-        $PageId = 'extraPatternTest';
+        $PageId = 'extra_pattern_test';
         self::$extraPatternPage = self::TEST_PAGE_NAMESPACE . $PageId;
         TestUtility::addPage(self::$extraPatternPage,
             '======  ' . $PageId . ' ======' . DW_LF . DW_LF .

@@ -67,13 +67,17 @@ EOF;
     public function test_pipeline_link()
     {
 
+        $styleListItem = '<style>' . StyleUtility::getRule(syntax_plugin_combo_listitem::getStyles(), "." . syntax_plugin_combo_listitem::COMBO_LIST_ITEM_CLASS) . '</style>';
+        $styleList = '<style>' . StyleUtility::getRule(syntax_plugin_combo_list::getStyles(), "." . syntax_plugin_combo_list::COMBO_LIST_CLASS) . '</style>';
         $input = '<list><li>[[hallo|<' . syntax_plugin_combo_pipeline::TAG . '>"Hallo World" | rconcat(" ...") </' . syntax_plugin_combo_pipeline::TAG . '>]]</li></list>';
         $output = PluginUtility::render($input);
-        $this->assertEquals('<ul class="combo-list">
-<li class="combo-list-item">
-<a href="/./doku.php?id=hallo" class="wikilink2" title="hallo" rel="nofollow" data-wiki-id="hallo">Hallo World ...</a></li>
+        $this->assertEquals("{$styleList}
+<ul class=\"combo-list\">
+{$styleListItem}
+<li class=\"combo-list-item\">
+<a href=\"/./doku.php?id=hallo\" class=\"wikilink2\" title=\"hallo\" rel=\"nofollow\" data-wiki-id=\"hallo\">Hallo World ...</a></li>
 </ul>
-', $output);
+", $output);
 
     }
 

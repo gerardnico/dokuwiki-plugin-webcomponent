@@ -90,7 +90,7 @@ class plugin_combo_url_manager_test extends DokuWikiTest
         // A page without the second level
         $goodTarget = $firstLevelName . $pathSeparator . $name;
         // A page in another branch on the same level
-        $badTarget = "otherBranch" . $pathSeparator . $firstLevelName . $pathSeparator . $name;
+        $badTarget = "other_branch" . $pathSeparator . $firstLevelName . $pathSeparator . $name;
 
         $pageRules = new PageRules(PluginUtility::getSqlite());
         $pageRules->deleteAll();
