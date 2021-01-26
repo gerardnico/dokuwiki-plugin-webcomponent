@@ -104,9 +104,9 @@ class LinkUtility
         /**
          * To allow {@link \syntax_plugin_combo_pipeline}
          */
-        if (strpos($title,"<pipeline>")!==false) {
-            $title=str_replace("<pipeline>","",$title);
-            $title=str_replace("</pipeline>","",$title);
+        if (strpos($title, "<pipeline>") !== false) {
+            $title = str_replace("<pipeline>", "", $title);
+            $title = str_replace("</pipeline>", "", $title);
             $title = PipelineUtility::execute($title);
         }
 
@@ -146,9 +146,9 @@ class LinkUtility
          * or is not configured
          * if this is the case, add a span to make it xml valid
          */
-        if (!XmlUtility::isXml($html)){
+        if (!XmlUtility::isXml($html)) {
             $html = "<span>$html</span>";
-            if (!XmlUtility::isXml($html)){
+            if (!XmlUtility::isXml($html)) {
                 LogUtility::msg("The link ($id) could not be transformed as valid XML");
             }
         }
@@ -212,7 +212,7 @@ class LinkUtility
         /**
          * The extra style for the link
          */
-        return HtmlUtility::addAttributeValue($htmlLink,"style", self::STYLE_VALUE);
+        return HtmlUtility::addAttributeValue($htmlLink, "style", self::STYLE_VALUE);
 
     }
 
@@ -221,9 +221,10 @@ class LinkUtility
      * @param $htmlLink
      * @return bool|false|string
      */
-    public static function deleteDokuWikiClass($htmlLink){
+    public static function deleteDokuWikiClass($htmlLink)
+    {
         // only wikilink1 (wikilink2 shows a red link if the page does not exist)
-        return HtmlUtility::deleteClassValue($htmlLink,"wikilink1");
+        return HtmlUtility::deleteClassValue($htmlLink, "wikilink1");
     }
 
     /**
@@ -238,10 +239,10 @@ class LinkUtility
     {
         $id = $attributes[self::ATTRIBUTE_ID];
         $title = $attributes[self::ATTRIBUTE_TITLE];
-        if (empty($title)){
+        if (empty($title)) {
             $title = $id;
         }
-        return "<a href=\"#\" class=\"low-quality\" data-wiki-id=\"{$id}\" data-toggle=\"tooltip\" title=\"To follow this link, you need to log in (".LowQualityPage::ACRONYM.")\">{$title}</a>";
+        return "<a href=\"#\" class=\"low-quality\" data-wiki-id=\"{$id}\" data-toggle=\"tooltip\" title=\"To follow this link, you need to log in (" . LowQualityPage::ACRONYM . ")\">{$title}</a>";
     }
 
     /**
@@ -252,12 +253,27 @@ class LinkUtility
     public static function processInternalLinkStats($id, array &$stats)
     {
         /**
-         * Stats
+         * Internal link count
+         */
+        $stats[Analytics::INTERNAL_LINKS_COUNT]++;
+
+
+        /**
+         * If this a query string, this is the same page
          */
         global $ID;
+        if (strpos($id, '?') === 0) {
+            $id = $ID;
+        }
+
+        /**
+         * Broken link ?
+         */
         resolve_pageid(getNS($ID), $id, $exists);
-        $stats[Analytics::INTERNAL_LINKS_COUNT]++;
-        if (!$exists) $stats[Analytics::INTERNAL_LINKS_BROKEN_COUNT]++;
+        if (!$exists) {
+            $stats[Analytics::INTERNAL_LINKS_BROKEN_COUNT]++;
+            $stats[Analytics::INFO][] = "The internal link {$id} does not exist.";
+        }
 
 
         /**
@@ -271,6 +287,7 @@ class LinkUtility
         }
         $length = count($a) + count($b);
         $stats[Analytics::INTERNAL_LINK_DISTANCE][] = $length;
+
 
     }
 

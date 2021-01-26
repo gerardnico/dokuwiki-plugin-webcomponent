@@ -2,6 +2,7 @@
 
 namespace ComboStrap;
 
+use http\Exception\RuntimeException;
 use TestRequest;
 
 require_once(__DIR__ . '/../class/HtmlUtility.php');
@@ -176,6 +177,10 @@ class TestUtility
      */
     public static function addPage($pageId, $content, $summary = "Test")
     {
+
+        if ($pageId !== strtolower($pageId)){
+            throw new \RuntimeException("The page id {$pageId} should be lowercase with dokuwiki");
+        }
 
         saveWikiText($pageId, $content, $summary);
 

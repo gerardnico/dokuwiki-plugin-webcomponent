@@ -212,14 +212,14 @@ class action_plugin_combo_lowqualitypageTest extends DokuWikiTest
         /**
          * Neighbors page of the low quality page
          */
-        $neighborPage = "Adjacent page";
-        TestUtility::addPage($neighborPage, "");
+        $neighborPage = "adjacent_page";
+        TestUtility::addPage($neighborPage, "Content");
 
         /**
          * Low quality page
          */
-        $contentLowQualityPage = "low page [[${neighborPage}]]";
-        $lowPageId = "integrationLowPage";
+        $contentLowQualityPage = "low page [[${neighborPage}]] [[?do=action]] [[broken]]";
+        $lowPageId = "integration_low_page";
         TestUtility::addPage($lowPageId, $contentLowQualityPage);
 
         /**
@@ -231,7 +231,8 @@ class action_plugin_combo_lowqualitypageTest extends DokuWikiTest
          * Test
          */
         $this->assertEquals(true, LowQualityPage::isLowQualityPage($lowPageId));
-        $this->assertEquals(1, $stats[Analytics::STATISTICS][Analytics::INTERNAL_LINKS_COUNT]);
+        $this->assertEquals("internal links",3, $stats[Analytics::STATISTICS][Analytics::INTERNAL_LINKS_COUNT]);
+        $this->assertEquals("broken links",1, $stats[Analytics::STATISTICS][Analytics::INTERNAL_LINKS_BROKEN_COUNT]);
 
 
     }

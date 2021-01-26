@@ -37,12 +37,17 @@ class Analytics
     const HEADERS_COUNT = 'headers_count';
     const QUALITY = 'quality';
     const STATISTICS = "statistics";
+    /**
+     * An array of info for errors mostly
+     */
+    const INFO = "info";
 
     /**
      * The format returned by the renderer
      */
     const RENDERER_FORMAT = "analytics";
     const RENDERER_NAME = "combo_".self::RENDERER_FORMAT;
+
 
     /**
      * @param $pageId
