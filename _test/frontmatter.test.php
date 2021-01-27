@@ -1,15 +1,13 @@
 <?php
 
 use ComboStrap\Auth;
-use ComboStrap\LogUtility;
 use ComboStrap\PluginUtility;
 use ComboStrap\StringUtility;
-use ComboStrap\TestUtility;
 
-require_once(__DIR__ . '/../class/PluginUtility.php');
-require_once(__DIR__ . '/../class/TestUtility.php');
-require_once(__DIR__ . '/../class/StringUtility.php');
-require_once(__DIR__ . '/../class/LogUtility.php');
+require_once(__DIR__ . '/TestUtility.php');
+require_once(__DIR__ . '/../../combo/class/' . 'PluginUtility.php');
+require_once(__DIR__ . '/../../combo/class/' . 'StringUtility.php');
+require_once(__DIR__ . '/../../combo/class/' . 'LogUtility.php');
 
 /**
  * Test the front matter component plugin

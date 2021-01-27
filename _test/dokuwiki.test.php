@@ -9,7 +9,7 @@ use ComboStrap\TestUtility;
  * @group plugin_combo
  * @group plugins
  */
-require_once(__DIR__ . '/../class/TestUtility.php');
+require_once(__DIR__ . '/TestUtility.php');
 
 
 class plugin_combo_dokuwiki_test extends DokuWikiTest

@@ -14,8 +14,8 @@ use ComboStrap\PluginUtility;
 use ComboStrap\Prism;
 use ComboStrap\TestUtility;
 
-require_once(__DIR__ . '/../class/PluginUtility.php');
-require_once(__DIR__ . '/../class/Prism.php');
+require_once(__DIR__ . '/../../combo/class/' . 'PluginUtility.php');
+require_once(__DIR__ . '/../../combo/class/' . 'Prism.php');
 
 /**
  * For the prism syntax test, see {@link syntax_plugin_combo_codeTest}
@@ -42,7 +42,7 @@ class dokuwiki_plugin_combo_console_test extends DokuWikiTest
         $htmlProduced = '<pre class="combo_console" data-download-link="true" data-src="file.html"><code class="language-html combo_console">&lt;code html&gt;&lt;/code&gt;</code></pre>';
         $expected .= $htmlProduced;
         $expected .= $htmlProduced;
-        $expected .= '<p>'.$extra.'</p>';
+        $expected .= '<p>' . $extra . '</p>';
 
         $xhtml = PluginUtility::render($text);
         $this->assertEquals(
@@ -51,8 +51,6 @@ class dokuwiki_plugin_combo_console_test extends DokuWikiTest
         );
 
     }
-
-
 
 
 }

@@ -1,12 +1,11 @@
 <?php
 
 use ComboStrap\PluginUtility;
-use ComboStrap\TestUtility;
 use dokuwiki\plugin\config\core\ConfigParser;
 use dokuwiki\plugin\config\core\Loader;
 
-require_once(__DIR__ . '/../class/PluginUtility.php');
-require_once(__DIR__ . '/../class/TestUtility.php');
+require_once(__DIR__ . '/../../combo/class/' . '/PluginUtility.php');
+require_once(__DIR__ . '/TestUtility.php');
 
 
 /**
@@ -36,17 +35,14 @@ class plugin_combo_edit_test extends DokuWikiTest
     {
 
         $pageId = "edit";
-        TestUtility::addPage($pageId,"basic Content");
+        TestUtility::addPage($pageId, "basic Content");
         $request = new TestRequest();
         PluginUtility::runAsAdmin($request);
-        $response = $request->get(array('do' => 'edit', 'page' => $pageId),'/doku.php');
-        $this->assertNotFalse($response,"No error");
-
+        $response = $request->get(array('do' => 'edit', 'page' => $pageId), '/doku.php');
+        $this->assertNotFalse($response, "No error");
 
 
     }
-
-
 
 
 }
