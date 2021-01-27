@@ -13,13 +13,11 @@
 use ComboStrap\Analytics;
 use ComboStrap\PluginUtility;
 use ComboStrap\LowQualityPage;
-use ComboStrap\TestUtility;
 
-
-require_once(__DIR__ . '/../class/PluginUtility.php');
-require_once(__DIR__ . '/../class/TestUtility.php');
-require_once(__DIR__ . '/../class/LowQualityPage.php');
-require_once(__DIR__ . '/../class/Analytics.php');
+require_once(__DIR__ . '/TestUtility.php');
+require_once(__DIR__ . '/../../combo/class/' . 'PluginUtility.php');
+require_once(__DIR__ . '/../../combo/class/' . 'LowQualityPage.php');
+require_once(__DIR__ . '/../../combo/class/' . 'Analytics.php');
 
 
 /**
@@ -186,8 +184,8 @@ class action_plugin_combo_lowqualitypageTest extends DokuWikiTest
          * with span element
          */
         $render = TestUtility::renderText2Xhtml($contentHighQualityPage);
-        $expected = "high page <a href=\"#\" class=\"low-quality\" data-wiki-id=\":lowpage\" data-toggle=\"tooltip\" title=\"To follow this link, you need to log in (".LowQualityPage::ACRONYM.")\">:lowpage</a>";
-        $this->assertEquals( "",TestUtility::HtmlDiff($expected,$render));
+        $expected = "high page <a href=\"#\" class=\"low-quality\" data-wiki-id=\":lowpage\" data-toggle=\"tooltip\" title=\"To follow this link, you need to log in (" . LowQualityPage::ACRONYM . ")\">:lowpage</a>";
+        $this->assertEquals("", TestUtility::HtmlDiff($expected, $render));
         /**
          * Render the low quality page as anonymous user
          * The link should render with anchor
@@ -198,8 +196,6 @@ class action_plugin_combo_lowqualitypageTest extends DokuWikiTest
             TestUtility::normalizeDokuWikiHtml($expected),
             TestUtility::normalizeDokuWikiHtml($render)
         );
-
-
 
 
     }
@@ -231,8 +227,8 @@ class action_plugin_combo_lowqualitypageTest extends DokuWikiTest
          * Test
          */
         $this->assertEquals(true, LowQualityPage::isLowQualityPage($lowPageId));
-        $this->assertEquals("internal links",3, $stats[Analytics::STATISTICS][Analytics::INTERNAL_LINKS_COUNT]);
-        $this->assertEquals("broken links",1, $stats[Analytics::STATISTICS][Analytics::INTERNAL_LINKS_BROKEN_COUNT]);
+        $this->assertEquals(3, $stats[Analytics::STATISTICS][Analytics::INTERNAL_LINKS_COUNT], "internal links");
+        $this->assertEquals(1, $stats[Analytics::STATISTICS][Analytics::INTERNAL_LINKS_BROKEN_COUNT], "broken links");
 
 
     }

@@ -1,6 +1,7 @@
 <?php
 
-require_once(__DIR__ . '/../class/PluginUtility.php');
+
+require_once(__DIR__ . '/../../combo/class/'.'PluginUtility.php');
 
 use ComboStrap\TestUtility;
 use ComboStrap\TitleUtility;

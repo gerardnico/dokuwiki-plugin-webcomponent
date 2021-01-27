@@ -10,7 +10,15 @@
 use ComboStrap\ArrayUtility;
 use ComboStrap\PluginUtility;
 
-require_once(__DIR__ . '/../class/ArrayUtility.php');
+require_once(__DIR__ . '/../../combo/class/'.'ArrayUtility.php');
+
+/**
+ * Class plugin_combo_array_test
+ *
+ * @group plugin_combo
+ * @group plugins
+ *
+ */
 class plugin_combo_array_test extends DokuWikiTest
 {
     public function test_filter_array()

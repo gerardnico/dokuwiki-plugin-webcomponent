@@ -12,7 +12,7 @@ Steps to be taken to do a release (functional or snapshot)
 /bin/plugin.php combo
 ```
   * Release Type:
-    * Functional Release: Change the date in the [info plugin file](../plugin.info.txt) and [info template file](../../../tpl/strap/template.info.txt)
+    * Functional Release: Change the date in the [info plugin file](../../combo/plugin.info.txt) and [info template file](../../../tpl/strap/template.info.txt)
     * Snapshot Release: Do nothing
   * Release Type:
     * Functional Release: Change the snapshot value to the date in the [changes page](http://localhost:81/changes)

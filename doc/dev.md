@@ -31,4 +31,18 @@ To reload the page when a file has changed - [brow](./browser-sync-start.bat)
 browser-sync-start.bat
 ```
 
+## Private / Public Repo
 
+```bash
+git config --global core.excludesfile fullPathGitIgnore
+```
+https://docs.travis-ci.com/user/installing-dependencies/#installing-projects-from-source
+
+Strategy:
+  * use [private submodule](https://www.appveyor.com/docs/how-to/private-git-sub-modules/) such as adding
+`/.gitmodules` to `.gitignore` and share it amongst developers via a back-channel.
+  * 2 different repositories where the [relationship is build using symlinks](https://stackoverflow.com/questions/2195826/proper-git-workflow-for-combined-os-and-private-code)
+
+```batch
+mklink /D "D:\dokuwiki\lib\plugins\combo\_test"  "D:\dokuwiki\lib\plugins\combo_test\_test"
+```

@@ -11,8 +11,8 @@ use ComboStrap\Sqlite;
 use ComboStrap\TestUtility;
 use ComboStrap\UrlCanonical;
 
-require_once(__DIR__ . '/../class/PluginUtility.php');
-require_once(__DIR__ . '/../class/TestUtility.php');
+require_once(__DIR__ . '/../../combo/class/'.'PluginUtility.php');
+require_once(__DIR__ . '/TestUtility.php');
 
 
 

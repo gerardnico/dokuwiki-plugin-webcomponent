@@ -1,11 +1,12 @@
 <?php
 
+use ComboStrap\TestUtility;
 use ComboStrap\TitleUtility;
 use ComboStrap\HtmlUtility;
 use ComboStrap\PluginUtility;
 
-require_once(__DIR__ . '/../class/PluginUtility.php');
-require_once(__DIR__ . '/../class/TitleUtility.php');
+require_once(__DIR__ . '/../../combo/class/' . 'PluginUtility.php');
+require_once(__DIR__ . '/../../combo/class/' . 'TitleUtility.php');
 
 /**
  * Test the component plugin
@@ -43,10 +44,10 @@ class plugin_combo_teaser_test extends DokuWikiTest
         $xhtml = p_render('xhtml', $instructions, $info);
         $expected = '<div class="card">' . DOKU_LF
             . '<div class="card-body">' . DOKU_LF
-            . '<h4 class="card-title">Teaser Title</h4>'.DOKU_LF
-            . 'A example taken '.DOKU_LF
-            . '</div>'.DOKU_LF
-            . '</div>'.DOKU_LF;
+            . '<h4 class="card-title">Teaser Title</h4>' . DOKU_LF
+            . 'A example taken ' . DOKU_LF
+            . '</div>' . DOKU_LF
+            . '</div>' . DOKU_LF;
 
         $this->assertEquals(HtmlUtility::normalize($expected), HtmlUtility::normalize($xhtml));
 
@@ -62,13 +63,13 @@ class plugin_combo_teaser_test extends DokuWikiTest
         $instructions = p_get_instructions($doku_text);
         $xhtml = p_render('xhtml', $instructions, $info);
         $expected = '<div class="card">' . DOKU_LF
-            .'<div class="card-header">'.DOKU_LF
-            . 'Teaser Header'.DOKU_LF
-            .'</div>'.DOKU_LF
+            . '<div class="card-header">' . DOKU_LF
+            . 'Teaser Header' . DOKU_LF
+            . '</div>' . DOKU_LF
             . '<div class="card-body">' . DOKU_LF
-            . 'A example taken '.DOKU_LF
-            . '</div>'.DOKU_LF
-            . '</div>'.DOKU_LF;
+            . 'A example taken ' . DOKU_LF
+            . '</div>' . DOKU_LF
+            . '</div>' . DOKU_LF;
 
         $this->assertEquals(HtmlUtility::normalize($expected), HtmlUtility::normalize($xhtml));
 

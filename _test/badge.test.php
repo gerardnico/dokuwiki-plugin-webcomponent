@@ -5,11 +5,10 @@ use ComboStrap\PluginUtility;
 use ComboStrap\StringUtility;
 use ComboStrap\TestUtility;
 
-require_once(__DIR__ . '/../class/PluginUtility.php');
-require_once(__DIR__ . '/../class/StringUtility.php');
+require_once(__DIR__ . '/../../combo/class/' . 'PluginUtility.php');
+require_once(__DIR__ . '/../../combo/class/' . 'StringUtility.php');
 
 /**
- * Test the component plugin
  *
  * @group plugin_combo
  * @group plugins

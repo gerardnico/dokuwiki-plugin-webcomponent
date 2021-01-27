@@ -12,8 +12,14 @@ use ComboStrap\Sqlite;
 use ComboStrap\TestUtility;
 use ComboStrap\UrlCanonical;
 
-require_once(__DIR__ . '/../class/UrlCanonical.php');
 
+require_once(__DIR__ . '/../../combo/class/'.'UrlCanonical.php');
+
+/**
+ *
+ * @group plugin_combo
+ * @group plugins
+ */
 class plugin_combo_canonical_test extends DokuWikiTest
 {
 
