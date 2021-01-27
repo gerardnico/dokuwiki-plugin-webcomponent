@@ -10,6 +10,7 @@
 
 use ComboStrap\PageRules;
 use ComboStrap\PluginUtility;
+use ComboStrap\Sqlite;
 use ComboStrap\TestUtility;
 
 require_once(__DIR__ . '/../class/PluginUtility.php');
@@ -36,7 +37,7 @@ class plugin_combo_url_manager_test extends DokuWikiTest
         $conf['plugin'][PluginUtility::PLUGIN_BASE_NAME]['ActionReaderFirst'] = action_plugin_combo_urlmanager::GO_TO_SEARCH_ENGINE;
 
         global $AUTH_ACL;
-        $aclReadOnlyFile = PluginUtility::$DIR_RESOURCES . '/acl.auth.read_only.php';
+        $aclReadOnlyFile = TestConstant::$DIR_RESOURCES . '/acl.auth.read_only.php';
         $AUTH_ACL = file($aclReadOnlyFile);
 
         $request = new TestRequest();
@@ -92,7 +93,7 @@ class plugin_combo_url_manager_test extends DokuWikiTest
         // A page in another branch on the same level
         $badTarget = "other_branch" . $pathSeparator . $firstLevelName . $pathSeparator . $name;
 
-        $pageRules = new PageRules(PluginUtility::getSqlite());
+        $pageRules = new PageRules(Sqlite::getSqlite());
         $pageRules->deleteAll();
 
 
@@ -103,7 +104,7 @@ class plugin_combo_url_manager_test extends DokuWikiTest
 
         // Read only otherwise, you go in edit mode
         global $AUTH_ACL;
-        $aclReadOnlyFile = PluginUtility::$DIR_RESOURCES . '/acl.auth.read_only.php';
+        $aclReadOnlyFile = TestConstant::$DIR_RESOURCES . '/acl.auth.read_only.php';
         $AUTH_ACL = file($aclReadOnlyFile);
 
 
@@ -161,12 +162,12 @@ class plugin_combo_url_manager_test extends DokuWikiTest
         TestUtility::addPage($goodTargetId, 'The start page of the 404 page namespace', 'Test initialization');
 
         // Delete any redirections
-        $pageRules = new PageRules(PluginUtility::getSqlite());
+        $pageRules = new PageRules(Sqlite::getSqlite());
         $pageRules->deleteAll();
 
         // Read only otherwise, you go in edit mode
         global $AUTH_ACL;
-        $aclReadOnlyFile = PluginUtility::$DIR_RESOURCES . '/acl.auth.read_only.php';
+        $aclReadOnlyFile = TestConstant::$DIR_RESOURCES . '/acl.auth.read_only.php';
         $AUTH_ACL = file($aclReadOnlyFile);
 
         // Test request
@@ -202,7 +203,7 @@ class plugin_combo_url_manager_test extends DokuWikiTest
         $conf['plugin'][PluginUtility::PLUGIN_BASE_NAME]['ActionReaderFirst'] = action_plugin_combo_urlmanager::GO_TO_BEST_END_PAGE_NAME;
 
         global $AUTH_ACL;
-        $aclReadOnlyFile = PluginUtility::$DIR_RESOURCES . '/acl.auth.read_only.php';
+        $aclReadOnlyFile = TestConstant::$DIR_RESOURCES . '/acl.auth.read_only.php';
         $AUTH_ACL = file($aclReadOnlyFile);
 
         $name = "best_end_page_name";
@@ -256,7 +257,7 @@ class plugin_combo_url_manager_test extends DokuWikiTest
         $badTarget = $subName2 . $pathSeparator . $name; // score of 4: same page name score of 4
 
 
-        $pageRules = new PageRules(PluginUtility::getSqlite());
+        $pageRules = new PageRules(Sqlite::getSqlite());
         $pageRules->deleteAll();
 
 
@@ -266,7 +267,7 @@ class plugin_combo_url_manager_test extends DokuWikiTest
 
         // Read only otherwise, you go in edit mode
         global $AUTH_ACL;
-        $aclReadOnlyFile = PluginUtility::$DIR_RESOURCES . '/acl.auth.read_only.php';
+        $aclReadOnlyFile = TestConstant::$DIR_RESOURCES . '/acl.auth.read_only.php';
         $AUTH_ACL = file($aclReadOnlyFile);
 
 

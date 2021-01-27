@@ -12,6 +12,7 @@
 
 use ComboStrap\PageRules;
 use ComboStrap\PluginUtility;
+use ComboStrap\Sqlite;
 use ComboStrap\TestUtility;
 use ComboStrap\UrlCanonical;
 
@@ -35,7 +36,7 @@ class plugin_combo_url_manager_page_rules_test extends DokuWikiTest
     public function test_externalRedirect_without_pattern()
     {
 
-        $pageRules = (new PageRules(PluginUtility::getSqlite()));
+        $pageRules = (new PageRules(Sqlite::getSqlite()));
         $pageRules->deleteAll();
 
         $pattern = "ToBeRedirected";
@@ -63,7 +64,7 @@ class plugin_combo_url_manager_page_rules_test extends DokuWikiTest
          */
         // Read only otherwise you are redirected to the Edit Mode
         global $AUTH_ACL;
-        $aclReadOnlyFile = PluginUtility::$DIR_RESOURCES . '/acl.auth.read_only.php';
+        $aclReadOnlyFile = TestConstant::$DIR_RESOURCES . '/acl.auth.read_only.php';
         $AUTH_ACL = file($aclReadOnlyFile);
 
         $request = new TestRequest();
@@ -86,7 +87,7 @@ class plugin_combo_url_manager_page_rules_test extends DokuWikiTest
     public function test_internalRedirectToExistingPage()
     {
 
-        $pageRules = new PageRules(PluginUtility::getSqlite());
+        $pageRules = new PageRules(Sqlite::getSqlite());
         $pageRules->deleteAll();
 
         // in the $ID value, the first : is suppressed
@@ -104,7 +105,7 @@ class plugin_combo_url_manager_page_rules_test extends DokuWikiTest
 
         // Read only otherwise, you go in edit mode
         global $AUTH_ACL;
-        $aclReadOnlyFile = PluginUtility::$DIR_RESOURCES . '/acl.auth.read_only.php';
+        $aclReadOnlyFile = TestConstant::$DIR_RESOURCES . '/acl.auth.read_only.php';
         $AUTH_ACL = file($aclReadOnlyFile);
 
 
@@ -129,7 +130,7 @@ class plugin_combo_url_manager_page_rules_test extends DokuWikiTest
     public function test_internalRedirectWithSimplePattern()
     {
 
-        $pageRules = new PageRules(PluginUtility::getSqlite());
+        $pageRules = new PageRules(Sqlite::getSqlite());
         $pageRules->deleteAll();
 
         // in the $ID value, the first : is suppressed
@@ -151,7 +152,7 @@ class plugin_combo_url_manager_page_rules_test extends DokuWikiTest
 
         // Read only otherwise, you go in edit mode
         global $AUTH_ACL;
-        $aclReadOnlyFile = PluginUtility::$DIR_RESOURCES . '/acl.auth.read_only.php';
+        $aclReadOnlyFile = TestConstant::$DIR_RESOURCES . '/acl.auth.read_only.php';
         $AUTH_ACL = file($aclReadOnlyFile);
 
 
@@ -175,7 +176,7 @@ class plugin_combo_url_manager_page_rules_test extends DokuWikiTest
     public function test_internalRedirectWithComplexPattern()
     {
 
-        $pageRules = new PageRules(PluginUtility::getSqlite());
+        $pageRules = new PageRules(Sqlite::getSqlite());
         $pageRules->deleteAll();
 
         // in the $ID value, the first : is suppressed
@@ -197,7 +198,7 @@ class plugin_combo_url_manager_page_rules_test extends DokuWikiTest
 
         // Read only otherwise, you go in edit mode
         global $AUTH_ACL;
-        $aclReadOnlyFile = PluginUtility::$DIR_RESOURCES . '/acl.auth.read_only.php';
+        $aclReadOnlyFile = TestConstant::$DIR_RESOURCES . '/acl.auth.read_only.php';
         $AUTH_ACL = file($aclReadOnlyFile);
 
 
@@ -229,7 +230,7 @@ class plugin_combo_url_manager_page_rules_test extends DokuWikiTest
         $targetPage = 'test_redirections_operations:test';
         TestUtility::addPage($targetPage, 'Test ', 'but without any common name (namespace) in the path');
 
-        $pageRules = new PageRules(PluginUtility::getSqlite());
+        $pageRules = new PageRules(Sqlite::getSqlite());
 
 
         $pageRules->deleteAll();

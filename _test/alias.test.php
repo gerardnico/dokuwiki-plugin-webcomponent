@@ -7,6 +7,7 @@
  */
 
 use ComboStrap\PluginUtility;
+use ComboStrap\Sqlite;
 use ComboStrap\TestUtility;
 use ComboStrap\UrlCanonical;
 
@@ -33,7 +34,7 @@ class plugin_combo_alias_test extends DokuWikiTest
     public function test_canonical()
     {
 
-        $urlCanonicalManager = new UrlCanonical(PluginUtility::getSqlite());
+        $urlCanonicalManager = new UrlCanonical(Sqlite::getSqlite());
 
         // Data
         $pageId = "web:javascript:variable";
@@ -169,7 +170,7 @@ class plugin_combo_alias_test extends DokuWikiTest
         $request->get(array('id' => $pageId), '/doku.php');
         $canonicalMeta = p_get_metadata($pageId, $canonicalKey, METADATA_RENDER_UNLIMITED);
         $this->assertEquals("", $canonicalMeta,"No canonical in the meta when automatic canonical is off");
-        $urlCanonical = new UrlCanonical(PluginUtility::getSqlite());
+        $urlCanonical = new UrlCanonical(Sqlite::getSqlite());
         $page = $urlCanonical->getPage($pageId);
         $this->assertEquals("", $page[$canonicalKey],"No canonical value in the database either");
 

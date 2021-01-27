@@ -3,6 +3,7 @@
 use ComboStrap\LogUtility;
 use ComboStrap\PageRules;
 use ComboStrap\PluginUtility;
+use ComboStrap\Sqlite;
 
 if (!defined('DOKU_INC')) die();
 
@@ -65,7 +66,7 @@ class admin_plugin_combo_pagerules extends DokuWiki_Admin_Plugin
 
         if ($this->pageRuleManager == null) {
 
-            $sqlite = PluginUtility::getSqlite();
+            $sqlite = Sqlite::getSqlite();
             if ($sqlite == null) {
                 // A message should have already been send by the getSqlite function
                 return;

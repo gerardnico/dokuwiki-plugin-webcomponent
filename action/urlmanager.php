@@ -3,6 +3,7 @@
 use ComboStrap\LogUtility;
 use ComboStrap\PageRules;
 use ComboStrap\PluginUtility;
+use ComboStrap\Sqlite;
 use ComboStrap\UrlCanonical;
 use ComboStrap\UrlManagerBestEndPage;
 use ComboStrap\UrlUtility;
@@ -17,6 +18,7 @@ if (!defined('DOKU_PLUGIN')) define('DOKU_PLUGIN', DOKU_INC . 'lib/plugins/');
 require_once(__DIR__ . '/../class/PageRules.php');
 require_once(__DIR__ . '/../class/UrlCanonical.php');
 require_once(__DIR__ . '/../class/UrlUtility.php');
+require_once(__DIR__ . '/../class/Sqlite.php');
 require_once(__DIR__ . '/../class/UrlManagerBestEndPage.php');
 require_once(__DIR__ . '/urlmessage.php');
 
@@ -110,7 +112,7 @@ class action_plugin_combo_urlmanager extends DokuWiki_Action_Plugin
         // because otherwise the sqlite plugin would become mandatory for all test
         // because dokuwiki instantiate all action class first
         if ($this->sqlite == null) {
-            $this->sqlite = PluginUtility::getSqlite();
+            $this->sqlite = Sqlite::getSqlite();
             if ($this->sqlite == null) {
                 return false;
             } else {

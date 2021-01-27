@@ -5,6 +5,7 @@ namespace ComboStrap;
 
 
 use helper_plugin_sqlite;
+use TestConstant;
 use TestRequest;
 
 require_once(__DIR__ . '/LogUtility.php');
@@ -69,75 +70,12 @@ class PluginUtility
     static $PLUGIN_LANG;
 
     /**
-     * @var string
-     */
-    static $DIR_RESOURCES;
-
-    /**
      * The plugin name
      * (not the same than the base as it's not related to the directory
      * @var string
      */
     public static $PLUGIN_NAME;
 
-    /** @var helper_plugin_sqlite $sqlite */
-    protected static $sqlite;
-
-
-    /**
-     * Init the data store
-     * Sqlite cannot be static because
-     * between two test classes
-     * the data dir where the database is saved is deleted.
-     *
-     * You need to store the variable in your plugin
-     *
-     * @return helper_plugin_sqlite $sqlite
-     */
-    static function getSqlite()
-    {
-
-        if (self::$sqlite==null) {
-            /**
-             * Init
-             */
-            self::$sqlite = plugin_load('helper', 'sqlite');
-            if (self::$sqlite == null) {
-                # TODO: Man we cannot get the message anymore ['SqliteMandatory'];
-                $sqliteMandatoryMessage = "The Sqlite Plugin is mandatory. Some functionalities of the Combostraps Plugin may not work.";
-                msg($sqliteMandatoryMessage, LogUtility::LVL_MSG_ERROR);
-                return null;
-            }
-            $adapter = self::$sqlite->getAdapter();
-            if ($adapter == null) {
-                $sqliteMandatoryMessage = "The Sqlite Php Extension is mandatory. It seems that it's not available on this installation.";
-                msg($sqliteMandatoryMessage, LogUtility::LVL_MSG_ERROR);
-                return null;
-            }
-
-            $adapter->setUseNativeAlter(true);
-
-            // The name of the database (on windows, it should be
-            $dbname = strtolower(self::PLUGIN_BASE_NAME);
-            global $conf;
-
-            $oldDbName = '404manager';
-            $oldDbFile = $conf['metadir'] . "/{$oldDbName}.sqlite";
-            $oldDbFileSqlite3 = $conf['metadir'] . "/{$oldDbName}.sqlite3";
-            if (file_exists($oldDbFile) || file_exists($oldDbFileSqlite3)) {
-                $dbname = $oldDbName;
-            }
-
-            $init = self::$sqlite->init($dbname, DOKU_PLUGIN . PluginUtility::PLUGIN_BASE_NAME . '/db/');
-            if (!$init) {
-                # TODO: Message 'SqliteUnableToInitialize'
-                $message = "Unable to initialize Sqlite";
-                LogUtility::msg($message, MSG_MANAGERS_ONLY);
-            }
-        }
-        return self::$sqlite;
-
-    }
 
 
     /**
@@ -152,7 +90,6 @@ class PluginUtility
         self::$PLUGIN_NAME = 'ComboStrap';
         global $lang;
         self::$PLUGIN_LANG = $lang[self::PLUGIN_BASE_NAME];
-        self::$DIR_RESOURCES = __DIR__ . '/../_testResources';
         self::$URL_BASE = "https://" . parse_url(self::$INFO_PLUGIN['url'], PHP_URL_HOST);
 
     }

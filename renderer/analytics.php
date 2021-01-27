@@ -5,7 +5,7 @@ use ComboStrap\Analytics;
 use ComboStrap\LinkUtility;
 use ComboStrap\LogUtility;
 use ComboStrap\LowQualityPage;
-use ComboStrap\PluginUtility;
+use ComboStrap\Sqlite;
 use ComboStrap\Text;
 use ComboStrap\UrlCanonical;
 use dokuwiki\ChangeLog\PageChangeLog;
@@ -490,7 +490,7 @@ class renderer_plugin_combo_analytics extends Doku_Renderer
         ));
         $json_encoded = json_encode($json, JSON_PRETTY_PRINT);
 
-        $sqlite = PluginUtility::getSqlite();
+        $sqlite = Sqlite::getSqlite();
         if ($sqlite != null) {
             /**
              * Sqlite Plugin installed

@@ -43,7 +43,7 @@ final class plugin_combo_icon_test extends DokuWikiTest
         $widthValue = '96px';
         $heightValue = '64px';
         $mediaDir = dirname(DOKU_CONF) . '/data/media';
-        TestUtils::rcopy($mediaDir, PluginUtility::$DIR_RESOURCES . '/logo.svg');
+        TestUtils::rcopy($mediaDir, TestConstant::$DIR_RESOURCES . '/logo.svg');
 
         TestUtility::addPage($iconPage, '<icon name="logo.svg" width="' . $widthValue . '" height="' . $heightValue . '" class="' .$expectedClassValue.'" style="'.$expectedStyleValue.'"/>', '');
 
@@ -78,7 +78,7 @@ final class plugin_combo_icon_test extends DokuWikiTest
         $widthValue = '96px';
         $heightValue = '64px';
         $mediaDir = dirname(DOKU_CONF) . '/data/media';
-        TestUtils::rcopy($mediaDir, PluginUtility::$DIR_RESOURCES . '/'.$name);
+        TestUtils::rcopy($mediaDir, TestConstant::$DIR_RESOURCES . '/'.$name);
 
 
         TestUtility::addPage($iconPage, '<icon name="' . $name . '" width="' . $widthValue . '" height="' . $heightValue . '" class="' .$expectedClassValue.'" style="'.$expectedStyleValue.'"/>', '');
@@ -110,7 +110,7 @@ final class plugin_combo_icon_test extends DokuWikiTest
         $heightValue = '64px';
         TestUtility::addPage($iconPage, '<icon name="'.$name.'" width="' . $widthValue . '" height="' . $heightValue . '" class="' .$expectedClassValue.'" style="'.$expectedStyleValue.'"/>', '');
 
-        TestUtils::rcopy(dirname(DOKU_CONF).'/data/media', PluginUtility::$DIR_RESOURCES . '/logo.svg');
+        TestUtils::rcopy(dirname(DOKU_CONF).'/data/media', TestConstant::$DIR_RESOURCES . '/logo.svg');
 
         $request = new TestRequest();
         $response = $request->get(array('id' => $iconPage), '/doku.php');
