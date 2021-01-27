@@ -13,11 +13,11 @@
 use ComboStrap\PageRules;
 use ComboStrap\PluginUtility;
 use ComboStrap\Sqlite;
-use ComboStrap\TestUtility;
+
 use ComboStrap\UrlCanonical;
 
-require_once(__DIR__ . '/../class/PageRules.php');
-require_once(__DIR__ . '/../action/urlmanager.php');
+require_once(__DIR__ . '/../../combo/class/'.'PageRules.php');
+require_once(__DIR__ . '/../../combo/action/'.'/urlmanager.php');
 class plugin_combo_url_manager_page_rules_test extends DokuWikiTest
 {
 

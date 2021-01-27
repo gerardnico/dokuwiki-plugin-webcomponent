@@ -11,11 +11,11 @@
 use ComboStrap\PageRules;
 use ComboStrap\PluginUtility;
 use ComboStrap\Sqlite;
-use ComboStrap\TestUtility;
 
-require_once(__DIR__ . '/../class/PluginUtility.php');
-require_once(__DIR__ . '/../action/urlmanager.php');
-require_once(__DIR__ . '/../action/urlmessage.php');
+
+require_once(__DIR__ . '/../../combo/class/'.'PluginUtility.php');
+require_once(__DIR__ . '/../../combo/action/'.'/urlmanager.php');
+require_once(__DIR__ . '/../../combo/action/'.'/urlmessage.php');
 class plugin_combo_url_manager_test extends DokuWikiTest
 {
 

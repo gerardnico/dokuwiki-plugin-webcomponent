@@ -1,10 +1,9 @@
 <?php
 
 use ComboStrap\PluginUtility;
-use ComboStrap\TestUtility;
 
-require_once(__DIR__ . '/../class/PluginUtility.php');
 
+require_once(__DIR__ . '/../../combo/class/' . '/PluginUtility.php');
 
 
 /**
@@ -40,7 +39,7 @@ class plugin_combo_js_test extends DokuWikiTest
         } catch (Exception $e) {
             $message = $e->getMessage();
         }
-        $this->assertEquals("/lib/exe/js.php \n--- only /doku.php, /lib/exe/fetch.php, /lib/exe/detail.php, /lib/exe/ajax.php are supported currently",$message);
+        $this->assertEquals("/lib/exe/js.php \n--- only /doku.php, /lib/exe/fetch.php, /lib/exe/detail.php, /lib/exe/ajax.php are supported currently", $message);
 
     }
 
@@ -56,8 +55,8 @@ class plugin_combo_js_test extends DokuWikiTest
         TestUtility::addPage($pageId, $doku_text, $test_name);
         $testRequest = new TestRequest();
         $testResponse = $testRequest->get(array('id' => $pageId));
-        $jsSrcAttribute = $testResponse->queryHTML('script[src*="js.php"]' )->attr('src');
-        $pos = strpos($jsSrcAttribute,action_plugin_combo_js::ACCESS_PROPERTY_KEY.'=public');
+        $jsSrcAttribute = $testResponse->queryHTML('script[src*="js.php"]')->attr('src');
+        $pos = strpos($jsSrcAttribute, action_plugin_combo_js::ACCESS_PROPERTY_KEY . '=public');
         $this->assertEquals(true, $pos > 0);
 
 
@@ -78,7 +77,7 @@ class plugin_combo_js_test extends DokuWikiTest
         js_out();
         $output = ob_get_contents();
         ob_end_clean();
-        $this->assertTrue(strlen($output)>0,"There is an output");
+        $this->assertTrue(strlen($output) > 0, "There is an output");
 
     }
 }

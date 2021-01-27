@@ -4,8 +4,8 @@ use ComboStrap\PluginUtility;
 use dokuwiki\plugin\config\core\ConfigParser;
 use dokuwiki\plugin\config\core\Loader;
 
-require_once (__DIR__ . '/../class/PluginUtility.php');
-require_once (__DIR__ . '/../class/PluginUtility.php');
+require_once(__DIR__ . '/../../combo/class/' . 'PluginUtility.php');
+require_once(__DIR__ . '/../../combo/class/' . 'PluginUtility.php');
 
 /**
  * Test the component plugin
@@ -30,7 +30,7 @@ class dokuwiki_plugin_combo_plugin_test extends DokuWikiTest
      */
     public function test_pluginInfoTxt()
     {
-        $file = __DIR__ . '/../plugin.info.txt';
+        $file = __DIR__ . '/../../combo/' . 'plugin.info.txt';
         $this->assertFileExists($file);
 
         $info = confToHash($file);
@@ -69,12 +69,6 @@ class dokuwiki_plugin_combo_plugin_test extends DokuWikiTest
             PluginUtility::PLUGIN_BASE_NAME . " plugin is loaded"
         );
     }
-
-
-
-
-
-
 
 
 }

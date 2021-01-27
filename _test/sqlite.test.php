@@ -2,7 +2,7 @@
 
 use ComboStrap\PluginUtility;
 
-require_once(__DIR__ . '/../class/PluginUtility.php');
+require_once(__DIR__ . '/../../combo/class/'.'PluginUtility.php');
 class dokuwiki_plugin_combo_sqlite_test extends DokuWikiTest
 {
 

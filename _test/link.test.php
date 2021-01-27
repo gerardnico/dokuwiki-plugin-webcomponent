@@ -18,14 +18,12 @@
  *
  */
 
-use ComboStrap\AdsUtility;
 use ComboStrap\LinkUtility;
 use ComboStrap\PluginUtility;
-use ComboStrap\TestUtility;
 
-require_once(__DIR__ . '/../class/PluginUtility.php');
-require_once(__DIR__ . '/../class/TestUtility.php');
-require_once(__DIR__ . '/../class/LinkUtility.php');
+require_once(__DIR__ . '/TestUtility.php');
+require_once(__DIR__ . '/../../combo/class/' . 'PluginUtility.php');
+require_once(__DIR__ . '/../../combo/class/' . 'LinkUtility.php');
 
 
 class plugin_combo_link_test extends DokuWikiTest
@@ -46,18 +44,18 @@ class plugin_combo_link_test extends DokuWikiTest
 
         $id = 'namespace:page';
         $fragment = '#section';
-        $qualifiedId = $id.$fragment;
+        $qualifiedId = $id . $fragment;
         $title = 'title';
-        $dokuInternalLink = '[['.$qualifiedId.'|' . $title . ']]';
+        $dokuInternalLink = '[[' . $qualifiedId . '|' . $title . ']]';
         $attributes = LinkUtility::getAttributes($dokuInternalLink);
-        $this->assertEquals(LinkUtility::TYPE_INTERNAL,$attributes[LinkUtility::ATTRIBUTE_TYPE],"It should be the good type");
-        $this->assertEquals($qualifiedId,$attributes[LinkUtility::ATTRIBUTE_ID],"It should be the good id");
-        $this->assertEquals($title,$attributes[LinkUtility::ATTRIBUTE_TITLE],"It should be the good title");
+        $this->assertEquals(LinkUtility::TYPE_INTERNAL, $attributes[LinkUtility::ATTRIBUTE_TYPE], "It should be the good type");
+        $this->assertEquals($qualifiedId, $attributes[LinkUtility::ATTRIBUTE_ID], "It should be the good id");
+        $this->assertEquals($title, $attributes[LinkUtility::ATTRIBUTE_TITLE], "It should be the good title");
 
         $render = new Doku_Renderer_xhtml();
-        $html = LinkUtility::renderAsAnchorElement($render,$attributes);
-        $expectedHtml = '<a href="/./doku.php?id='.$qualifiedId.'" class="wikilink2" title="'.$id.'" rel="nofollow" data-wiki-id="'.$id.'">'.$title.'</a>';
-        $this->assertEquals($expectedHtml,$html,"The html should be the good one");
+        $html = LinkUtility::renderAsAnchorElement($render, $attributes);
+        $expectedHtml = '<a href="/./doku.php?id=' . $qualifiedId . '" class="wikilink2" title="' . $id . '" rel="nofollow" data-wiki-id="' . $id . '">' . $title . '</a>';
+        $this->assertEquals($expectedHtml, $html, "The html should be the good one");
     }
 
     public function test_interwiki_link()
@@ -67,13 +65,13 @@ class plugin_combo_link_test extends DokuWikiTest
         $link = "[[{$id}|{$title}]]";
         $attributes = LinkUtility::getAttributes($link);
         $this->assertEquals(3, sizeof($attributes));
-        $this->assertEquals(LinkUtility::TYPE_INTERWIKI,$attributes[LinkUtility::ATTRIBUTE_TYPE],"It should be the good type");
-        $this->assertEquals($id,$attributes[LinkUtility::ATTRIBUTE_ID],"It should be the good id");
-        $this->assertEquals($title,$attributes[LinkUtility::ATTRIBUTE_TITLE],"It should be the good title");
+        $this->assertEquals(LinkUtility::TYPE_INTERWIKI, $attributes[LinkUtility::ATTRIBUTE_TYPE], "It should be the good type");
+        $this->assertEquals($id, $attributes[LinkUtility::ATTRIBUTE_ID], "It should be the good id");
+        $this->assertEquals($title, $attributes[LinkUtility::ATTRIBUTE_TITLE], "It should be the good title");
 
         $render = new Doku_Renderer_xhtml();
-        $html = LinkUtility::renderAsAnchorElement($render,$attributes);
-        $this->assertEquals("<span>$title</span>",$html,"The html should be the good one");
+        $html = LinkUtility::renderAsAnchorElement($render, $attributes);
+        $this->assertEquals("<span>$title</span>", $html, "The html should be the good one");
 
     }
 

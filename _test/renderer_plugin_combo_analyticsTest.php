@@ -13,11 +13,11 @@
 
 use ComboStrap\PluginUtility;
 use ComboStrap\Analytics;
-use ComboStrap\TestUtility;
 
-require_once(__DIR__ . '/../class/PluginUtility.php');
-require_once(__DIR__ . '/../class/TestUtility.php');
-require_once(__DIR__ . '/../class/Analytics.php');
+
+require_once(__DIR__ . '/../../combo/class/'.'PluginUtility.php');
+require_once(__DIR__ . '/TestUtility.php');
+require_once(__DIR__ . '/../../combo/class/'.'Analytics.php');
 
 class renderer_plugin_combo_analyticsTest extends DokuWikiTest
 {

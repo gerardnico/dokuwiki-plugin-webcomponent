@@ -8,7 +8,7 @@
 
 use ComboStrap\PluginUtility;
 use ComboStrap\Sqlite;
-use ComboStrap\TestUtility;
+
 use ComboStrap\UrlCanonical;
 
 require_once(__DIR__ . '/../../combo/class/'.'PluginUtility.php');

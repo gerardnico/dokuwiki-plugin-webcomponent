@@ -10,10 +10,11 @@
 
 use ComboStrap\IconUtility;
 use ComboStrap\PluginUtility;
-use ComboStrap\TestUtility;
 
-require_once (__DIR__ . '/../class/PluginUtility.php');
-require_once (__DIR__.'/../syntax/icon.php');
+
+require_once (__DIR__ . '/../../combo/class/'.'PluginUtility.php');
+require_once (__DIR__ . '/TestConstant.php');
+
 
 final class plugin_combo_icon_test extends DokuWikiTest
 {

@@ -9,7 +9,7 @@
 
 use ComboStrap\PluginUtility;
 use ComboStrap\Sqlite;
-use ComboStrap\TestUtility;
+
 use ComboStrap\UrlCanonical;
 
 

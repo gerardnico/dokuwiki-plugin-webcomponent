@@ -11,7 +11,7 @@
  */
 
 use ComboStrap\PluginUtility;
-use ComboStrap\TestUtility;
+
 use dokuwiki\Cache\CacheInstructions;
 use dokuwiki\Cache\CacheRenderer;
 

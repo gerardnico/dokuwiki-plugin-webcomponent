@@ -13,7 +13,7 @@
 namespace ComboStrap;
 
 
-require_once(__DIR__ . '/../class/Text.php');
+require_once(__DIR__ . '/../../combo/class/'.'Text.php');
 
 class TextTest extends \DokuWikiTest
 {

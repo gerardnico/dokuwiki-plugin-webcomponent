@@ -22,11 +22,11 @@ use ComboStrap\AdsUtility;
 use ComboStrap\PipelineUtility;
 use ComboStrap\PluginUtility;
 use ComboStrap\TemplateUtility;
-use ComboStrap\TestUtility;
 
-require_once(__DIR__ . '/../class/PipelineUtility.php');
-require_once(__DIR__ . '/../class/PluginUtility.php');
-require_once(__DIR__ . '/../class/TemplateUtility.php');
+
+require_once(__DIR__ . '/../../combo/class/'.'PipelineUtility.php');
+require_once(__DIR__ . '/../../combo/class/'.'PluginUtility.php');
+require_once(__DIR__ . '/../../combo/class/'.'TemplateUtility.php');
 
 
 class plugin_combo_pipeline_test extends DokuWikiTest

@@ -1,13 +1,10 @@
 <?php
 
-use ComboStrap\TitleUtility;
-use ComboStrap\HtmlUtility;
-use ComboStrap\LinkUtility;
-use ComboStrap\PluginUtility;
-use ComboStrap\TestUtility;
 
-require_once(__DIR__ . '/../class/PluginUtility.php');
-require_once(__DIR__ . '/../class/TestUtility.php');
+use ComboStrap\PluginUtility;
+
+require_once(__DIR__ . '/TestUtility.php');
+require_once(__DIR__ . '/../../combo/class/'.'/PluginUtility.php');
 
 /**
  * Test the component plugin

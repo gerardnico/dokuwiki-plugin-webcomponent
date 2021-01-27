@@ -3,10 +3,10 @@
 use ComboStrap\HtmlUtility;
 use ComboStrap\LinkUtility;
 use ComboStrap\PluginUtility;
-use ComboStrap\TestUtility;
 
-require_once(__DIR__ . '/../class/PluginUtility.php');
-require_once(__DIR__ . '/../class/HtmlUtility.php');
+
+require_once(__DIR__ . '/../../combo/class/'.'PluginUtility.php');
+require_once(__DIR__ . '/../../combo/class/'.'HtmlUtility.php');
 
 /**
  * Test the {@link syntax_plugin_combo_tooltip} component

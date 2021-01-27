@@ -10,9 +10,9 @@
 
 use ComboStrap\PagesIndex;
 use ComboStrap\PluginUtility;
-use ComboStrap\TestUtility;
 
-require_once(__DIR__ . '/../action/urlmessage.php');
+
+require_once(__DIR__ . '/../../combo/action/'.'/urlmessage.php');
 
 class plugin_combo_url_message_test extends DokuWikiTest
 {

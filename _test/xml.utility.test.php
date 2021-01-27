@@ -4,7 +4,7 @@ use ComboStrap\LinkUtility;
 use ComboStrap\PluginUtility;
 use ComboStrap\XmlUtility;
 
-require_once(__DIR__ . '/../class/XmlUtility.php');
+require_once(__DIR__ . '/../../combo/class/'.'XmlUtility.php');
 
 
 /**

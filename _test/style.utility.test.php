@@ -8,10 +8,10 @@
 
 use ComboStrap\PluginUtility;
 use ComboStrap\StyleUtility;
-use ComboStrap\TestUtility;
+
 use ComboStrap\UrlCanonical;
 
-require_once(__DIR__ . '/../class/StyleUtility.php');
+require_once(__DIR__ . '/../../combo/class/'.'StyleUtility.php');
 
 
 

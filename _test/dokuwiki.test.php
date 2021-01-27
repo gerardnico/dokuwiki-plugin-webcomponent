@@ -1,7 +1,7 @@
 <?php
 
 use ComboStrap\HtmlUtility;
-use ComboStrap\TestUtility;
+
 
 /**
  * Tests over DokuWiki function for the Combo plugin
