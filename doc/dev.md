@@ -46,3 +46,10 @@ Strategy:
 ```batch
 mklink /D "D:\dokuwiki\lib\plugins\combo\_test"  "D:\dokuwiki\lib\plugins\combo_test\_test"
 ```
+
+The link stay static in order to help IDEA and to allows good refactoring
+
+```php
+require_once (__DIR__ . '/../../combo/class/'.'class.php');
+```
+

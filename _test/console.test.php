@@ -18,8 +18,7 @@ require_once(__DIR__ . '/../class/PluginUtility.php');
 require_once(__DIR__ . '/../class/Prism.php');
 
 /**
-
- * For the prism syntax test, see {@link dokuwiki_plugin_combo_code_test}
+ * For the prism syntax test, see {@link syntax_plugin_combo_codeTest}
  */
 class dokuwiki_plugin_combo_console_test extends DokuWikiTest
 {
